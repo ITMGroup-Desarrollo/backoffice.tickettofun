@@ -48,9 +48,9 @@ user_guide_src/cilexer/dist/*
 user_guide_src/cilexer/pycilexer.egg-info/*
 
 #codeigniter 3
-application/logs/*
-!application/logs/index.html
-!application/logs/.htaccess
+core/app/logs/*
+!core/app/logs/index.html
+!core/app/logs/.htaccess
 /vendor/
 
 ### CodeIgniter Patch ###
