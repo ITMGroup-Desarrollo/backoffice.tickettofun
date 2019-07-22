@@ -10,6 +10,7 @@
 */
 class Page extends CI_Model
 {
+    public $logo = '';
     public $menu = '';
     public $metas = '';
     public $scripts = '';
@@ -59,7 +60,12 @@ class Page extends CI_Model
                 'icon',
                 'image/x-icon'
             );
+
+            $this->logo = $this->settings['GLOBAL']->logo;
         }
+
+        $body = '';
+        $body = $this->_get_components();
 
         $contents = array();
         $content['title']    = $title;
@@ -68,7 +74,7 @@ class Page extends CI_Model
         $content['id']       = $this->page_name;
         $content['scripts']  = $this->scripts['js'];
         $content['css']      = $this->scripts['css'];
-        $content['contents'] = $menu . $this->_get_components();
+        $content['contents'] = $body;
 
         return $content;
     }
@@ -176,7 +182,6 @@ class Page extends CI_Model
             }
 
             $base_url = "window.baseUrl = '" . base_url() . "'" . PHP_EOL;
-
             $scripts = custom('script', '', $base_url) . $this->scripts['js'];
 
             $this->scripts['js'] = $scripts;
@@ -236,17 +241,16 @@ class Page extends CI_Model
 
             foreach ($result as $row)
             {
-                $description = json_decode($row->content_description);
-
-                if ($this->page_name == 'task')
-                {
-                    $code = "[forms=" . strtolower($this->odt_name) . "]";
-                    $description->short_code = $code;
-                }
-
+                $description = json_decode($row->content_seq);
                 $contents .= $this->build->build_components($description);
             }
         }
+
+        if ($this->page_name == 'signin')
+            $contents = str_replace('{y}', date('Y'), $contents);
+
+        // Set logo
+        $contents = str_replace('{logo}', $this->logo, $contents);
 
         return $contents;
     }
