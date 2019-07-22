@@ -74,9 +74,9 @@ $active_group = 'default';
 $query_builder = TRUE;
 
 // Set database information for all develop environments
-$user = 'usr';
-$password = 'pass';
-$database = 'db';
+$user = 'usr_itm';
+$password = 'Dk!eXXoSS4Ps';
+$database = 'itm_core';
 
 $db['default'] = array(
     'dsn'   => '',
@@ -91,7 +91,7 @@ $db['default'] = array(
     'cache_on' => FALSE,
     'cachedir' => '',
     'char_set' => 'utf8',
-    'dbcollat' => 'utf8_unicode_ci',
+    'dbcollat' => 'utf8_general_ci',
     'swap_pre' => '',
     'encrypt' => FALSE,
     'compress' => FALSE,
