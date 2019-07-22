@@ -83,3 +83,14 @@ defined('EXIT_USER_INPUT')     OR define('EXIT_USER_INPUT', 7); // invalid user 
 defined('EXIT_DATABASE')       OR define('EXIT_DATABASE', 8); // database error
 defined('EXIT__AUTO_MIN')      OR define('EXIT__AUTO_MIN', 9); // lowest automatically-assigned error code
 defined('EXIT__AUTO_MAX')      OR define('EXIT__AUTO_MAX', 125); // highest automatically-assigned error code
+
+/*
+|--------------------------------------------------------------------------
+| API Key
+|--------------------------------------------------------------------------
+|
+| Used to getting token access to core.
+|
+*/
+defined('API_KEY') OR define('API_KEY', 'mvS80TiF0G9VStnUE0jYwUXrMIDYuTYkcBauSPxYEvC');
+defined('TOKEN_ENDPOINT') OR define('TOKEN_ENDPOINT', 'http://localhost:8181/v1/token');
