@@ -69,8 +69,19 @@ class Forms
                         );
                     }
 
-                    $label = form_label($row->label_name, '', $this->attrib);
-                    $element = $label . $element;
+                    if ($row->element_type == 'CHECKBOX')
+                    {
+                        $element = custom(
+                            'label',
+                            $this->attrib,
+                            $element . $row->label_name
+                        );
+                    }
+                    else
+                    {
+                        $label = form_label($row->label_name, '', $this->attrib);
+                        $element = $label . $element;
+                    }
                 }
 
                 if ( ! empty($row->content_tag))
