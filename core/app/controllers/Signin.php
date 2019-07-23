@@ -8,13 +8,13 @@ class Signin extends CI_Controller
     */
     public function index()
     {
-        //$this->load->library('grant_access');
+        $this->load->library('user_session', NULL, 'user');
 
         $view = $this->uri->segment(1);
         $view = (empty($view)) ? 'signin' : $view;
 
-        //if ($this->grant_access->active_session())
-          //  redirect(base_url('dashboard'));
+        if ($this->user->active_session())
+            redirect(base_url('services'));
 
         $this->load->Model('Page');
         $this->Page->page_name = $view;
@@ -39,5 +39,31 @@ class Signin extends CI_Controller
         }
 
         $this->load->view('Master', $data);
+    }
+
+    /**
+    * Set credentials on session object.
+    *
+    * @param  php://input JSON form information
+    * @return void
+    */
+    public function set_data()
+    {
+        $this->load->library('user_session', NULL, 'user');
+
+        $credentials = json_decode(file_get_contents('php://input'));
+
+        $this->user->set_session($credentials);
+    }
+
+    /**
+    * Close active session
+    *
+    * @return void
+    */
+    public function logout()
+    {
+        $this->load->library('session');
+        $this->session->sess_destroy();
     }
 }
