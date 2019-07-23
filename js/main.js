@@ -1,14 +1,16 @@
 'use strict'
 var menu
+var info
 var base = window.baseUrl
 var token = window.token
+
 var app = {
   signin: function(response) {
     MicroModal.close('wait-modal')
 
     response = JSON.parse(response)
 
-    if (response.status === 'error') {
+    if (response.code == 400) {
       var _alertModal = document.getElementById('alert-modal-content')
       var _message = utils.createElement('p', '', '', response.message)
 
@@ -16,13 +18,25 @@ var app = {
       _alertModal.appendChild(_message)
 
       MicroModal.show('alert-modal')
+
+      document.querySelector('[name="user_mail"]').value = ''
+      document.querySelector('[name="user_password"]').value = ''
     }
 
-    document.querySelector('[name="user_mail"]').value = ''
-    document.querySelector('[name="user_password"]').value = ''
+    if(response.code === 200) {
+      var user = JSON.parse(response.message)
 
-    if(response.code === 200)
-      location.href = 'dashboard'
+      info.remember = 0
+      if(document.querySelector('[name="remember"]').checked)
+        info.remember =  1
+
+      info.user = user;
+
+      console.log(info)
+      var url = `${base}signin/set_data`
+      utils.post(JSON.stringify(info), url, null)
+      location.href = 'users'
+    }
   },
   logout: function() {
     location.href = `${base}signin`
@@ -81,22 +95,18 @@ if (login !== null) {
     valid = utils.dataValidator(fields)
 
     if(valid) {
-      var remember = 0
-      if(document.querySelector('[name="remember"]').checked)
-        remember = 1
-
-      var info = {
+      info = {
         email: document.querySelector('[name="user_mail"]').value,
         password: document.querySelector('[name="user_password"]').value,
       }
 
       var url = 'http://localhost:8181/auth/login'
-      utils.post(JSON.stringify(info), url, 'POST', app.signin)
+      utils.api(JSON.stringify(info), url, 'POST', app.signin)
     }
   })
 }
 
-var logout = document.querySelector('[class="dud-logout"]')
+var logout = document.querySelector('[class="signout"]')
 if (logout !== null) {
   logout.addEventListener('click', function (e) {
     var url = `${base}signin/logout`
