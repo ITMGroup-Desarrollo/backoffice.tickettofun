@@ -15,7 +15,7 @@ var utils = {
       par.insertBefore(s, src)
     })(document, 'script')
   },
-  post: function (data, endpoint, httpverb, method, element) {
+  api: function (data, endpoint, httpverb, method, element) {
     if (method !== null) MicroModal.show('wait-modal')
 
     var xHR = new XMLHttpRequest()
@@ -30,7 +30,25 @@ var utils = {
 
     xHR.open(httpverb, endpoint, true)
     xHR.setRequestHeader('Content-Type', 'application/json')
-    xHR.setRequestHeader('Authorization', token);
+    xHR.setRequestHeader('Authorization', token)
+    xHR.withCredentials = true
+    xHR.send(data)
+  },
+  post: function (data, endpoint, method, element) {
+    if (method !== null) MicroModal.show('wait-modal')
+
+    var xHR = new XMLHttpRequest()
+
+    xHR.onreadystatechange = function () {
+      if (xHR.readyState == 4) {
+        if (xHR.status == 200)
+          if (method !== null)
+            method(xHR.response, element)
+      }
+    }
+
+    xHR.open('POST', endpoint, true)
+    xHR.setRequestHeader('Content-Type', 'application/json')
     xHR.send(data)
   },
   buildModal: function buildModal(id, cnHeader, cnButton) {
