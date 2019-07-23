@@ -16,9 +16,8 @@ class Menu {
 
     public $menu;
     public $sub_menu;
-    public $li_attrib;
-    public $nav_attrib;
-    public $anchor_attrib;
+    public $arrow_attrib;
+    public $anchor_attrib;    
 
     public function __construct()
     {
@@ -29,11 +28,10 @@ class Menu {
 
         $this->anchor_attrib = array(
             'href' => '',
-            'css'  => ''
+            'class'  => ''
         );
 
-        $this->li_attrib  = array('class' => 'nav-item pcoded-hasmenu');
-        $this->nav_attrib = array('class' => 'nav pcoded-inner-navbar');
+        $this->arrow_attrib = array('class' => 'fa fa-chevron-down');
     }
 
     public function get($options)
@@ -56,8 +54,8 @@ class Menu {
             $this->CI->db->close();
 
             $grouper = '';
-            $nav_bar = '';
             $grouper_title = '';
+            $nav_bar = '{current_user}';
             foreach ($result as $row)
             {
                 if (empty($grouper_title))
@@ -65,27 +63,29 @@ class Menu {
 
                 if ($grouper_title != $row->grouper_name)
                 {
-                    $nav_bar .= $grouper . $menu;
+                    $menu = custom('ul', '', $menu);
+                    $nav_bar .= custom('div', array('class' => 'menu-section'),
+                        $grouper . $menu
+                    );
 
                     $menu = '';
                     $grouper_title = $row->grouper_name;
                 }
 
                 $grouper = custom($row->container_html, '', $grouper_title);
-                $grouper = custom(
-                    'li',
-                    array('class' => 'nav-item pcoded-menu-caption'),
-                    $grouper
-                );
-
                 $menu .= $this->_get_menu($row, $options);
             }
 
             if ( ! empty($menu))
-                $nav_bar .= $grouper . $menu;
+            {
+                $menu = custom('ul', '', $menu);
+                $nav_bar .= custom('div', array('class' => 'menu-section'),
+                    $grouper . $menu
+                );
+            }
         }
 
-        $this->menu = custom('ul', $this->nav_attrib, $nav_bar);
+        $this->menu = $nav_bar . '{bottom_menu}';
 
         return $this->menu;
     }
@@ -101,52 +101,36 @@ class Menu {
 
         for ($i = 0; $i < count($links); $i++)
         {
-            $this->anchor_attrib['class']  = 'nav-link';
-
             $glyph = '';
             if ( ! empty($glyphs[$i]))
-            {
                 $glyph = custom('i', array('class' => $glyphs[$i]));
-                $glyph = custom(
-                    'span',
-                    array('class' => 'pcoded-micon'),
-                    $glyph
-                );
-            }
 
-            $menu = custom(
-                'span',
-                array('class' => 'pcoded-mtext'),
-                $menus[$i]
-            );
+            $menu = custom('span', '', $menus[$i]);
 
             $submenu_active = '';
             if (strtolower($menus[$i]) == $actives[0])
             {
                 $submenu_active = $actives[1];
-                $this->li_attrib['class'] .= ' active pcoded-trigger';
+                $this->anchor_attrib['class'] .= 'active';
             }
-            else
-            {
-                $this->li_attrib['class'] = 'nav-item pcoded-hasmenu';
-            }
-
 
             $sub_menu = '';
             if ( ! empty($options->sub_menus))
             {
                 $sub_menu = $this->_get_submenu($options, $submenu_active);
                 $this->anchor_attrib['href'] = '#';
+                $this->anchor_attrib['data-toggle'] = "sidebar";
             }
             else
             {
                 $this->anchor_attrib['href'] = base_url($links[$i]);
             }
 
+            $menu .= custom('i', $this->arrow_attrib, '');
             $menu = custom('a', $this->anchor_attrib, $glyph . $menu);
 
             $menu .= $sub_menu;
-            $this->menu .= custom('li', $this->li_attrib, $menu);
+            $this->menu .= custom('li', '', $menu);
         }
 
         return $this->menu;
@@ -164,25 +148,21 @@ class Menu {
         {
             $option = '/' . strtolower($menu_names[$i]);
 
-            $li_attrib = array();
+            $anchor_attrib = array();
             if (strtolower($menu_names[$i]) == $active)
-            {
-                $li_attrib = array(
-                    'class' => 'active'
-                );
-            }
+                $anchor_attrib['class'] = 'active';
 
             $this->anchor_attrib['href'] = base_url($links[$i] . $option);
 
             $menu = custom('a', $this->anchor_attrib, $menu_names[$i]);
-            $menu = custom('li', $li_attrib, $menu);
+            $menu = custom('li', '', $menu);
 
             $menus .= $menu;
        }
 
         $this->sub_menu = custom(
             'ul',
-            array('class' => 'pcoded-submenu'),
+            array('class' => 'submenu'),
             $menus
         );
 
