@@ -203,6 +203,17 @@ class Page extends CI_Model
             $base_url = "window.baseUrl = '" . base_url() . "'" . PHP_EOL;
             $scripts = custom('script', '', $base_url) . $this->scripts['js'];
 
+            if ($this->page_name != 'signin')
+            {
+                $this->load->library('session');
+                $token = $this->session->userdata('token');
+
+                $script = "window.token = '{$token}'";
+                $token = custom('script', '', $script);
+
+                $scripts .= $token;
+            }
+
             $this->scripts['js'] = $scripts;
         }
 
