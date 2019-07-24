@@ -32,8 +32,7 @@ var app = {
 
       info.user = user
       info.token = window.token
-
-      console.log(info)
+      
       var url = `${base}signin/set_data`
       utils.post(JSON.stringify(info), url, app.access)
     }
