@@ -92,5 +92,6 @@ defined('EXIT__AUTO_MAX')      OR define('EXIT__AUTO_MAX', 125); // highest auto
 | Used to getting token access to core.
 |
 */
+defined('HOST') OR define ('HOST', 'http://localhost:8181/');
+defined('TOKEN_ROUTE') OR define('TOKEN_ENDPOINT', 'v1/token');
 defined('API_KEY') OR define('API_KEY', 'mvS80TiF0G9VStnUE0jYwUXrMIDYuTYkcBauSPxYEvC');
-defined('TOKEN_ENDPOINT') OR define('TOKEN_ENDPOINT', 'http://localhost:8181/v1/token');

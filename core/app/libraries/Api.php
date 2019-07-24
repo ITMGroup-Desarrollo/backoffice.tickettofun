@@ -22,8 +22,9 @@ class Api
     public function get_token()
     {
         $params = new stdClass();
+
         $params->id = API_KEY;
-        $endpoint = TOKEN_ENDPOINT;
+        $endpoint = HOST . TOKEN_ROUTE;
 
         return $this->_request('POST', $endpoint, $this->headers, $params);
     }
