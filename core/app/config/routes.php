@@ -52,3 +52,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $route['default_controller'] = 'signin';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
+
+//Services
+$route["services/list"] = "services/index/$1";
+$route["services/new"]   = "services/index/$1";
