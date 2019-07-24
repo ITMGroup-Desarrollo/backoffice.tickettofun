@@ -2,6 +2,7 @@
 
 var validator = {
   rgx: {
+    number: /^\d+$/,
     empty: /([^\s])/,
     space: /\s+abc/,
     phoneLength: /^\d{10}$/,
