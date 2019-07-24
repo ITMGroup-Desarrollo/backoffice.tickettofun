@@ -30,13 +30,16 @@ var app = {
       if(document.querySelector('[name="remember"]').checked)
         info.remember =  1
 
-      info.user = user;
+      info.user = user
+      info.token = window.token
 
       console.log(info)
       var url = `${base}signin/set_data`
-      utils.post(JSON.stringify(info), url, null)
-      location.href = 'users'
+      utils.post(JSON.stringify(info), url, app.access)
     }
+  },
+  access: function() {
+    location.href = 'users'
   },
   logout: function() {
     location.href = `${base}signin`

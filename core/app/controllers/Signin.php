@@ -45,7 +45,7 @@ class Signin extends CI_Controller
     * Set credentials on session object.
     *
     * @param  php://input JSON form information
-    * @return void
+    * @return 200         Success code
     */
     public function set_data()
     {
@@ -54,6 +54,8 @@ class Signin extends CI_Controller
         $credentials = json_decode(file_get_contents('php://input'));
 
         $this->user->set_session($credentials);
+
+        echo 200;
     }
 
     /**
