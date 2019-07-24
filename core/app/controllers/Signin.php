@@ -22,12 +22,8 @@ class Signin extends CI_Controller
         $data = $this->Page->get_contents();
 
         // Get token
-        $params = new stdClass();
-        $params->id = API_KEY;
-        $endpoint = TOKEN_ENDPOINT;
-
         $response = json_decode(
-            $this->api->get_token('POST', $endpoint, $params)
+            $this->api->get_token()
         );
 
         if ($response->code == 200)

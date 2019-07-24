@@ -12,12 +12,29 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Api
 {
-    public function get_token($method, $endpoint, $params)
+    public $headers;
+
+    public function __construct()
     {
-        return $this->_get_token($method, $endpoint, $params);
+        $this->headers = array("Content-Type: application/json");
     }
 
-    private function _get_token($method, $endpoint, $params)
+    public function get_token()
+    {
+        $params = new stdClass();
+        $params->id = API_KEY;
+        $endpoint = TOKEN_ENDPOINT;
+
+        return $this->_request('POST', $endpoint, $this->headers, $params);
+    }
+
+    public function request_api($method, $endpoint, $params, $token)
+    {
+        $this->headers[] = "Authorization: " . $token;
+        return $this->_request($method, $endpoint, $this->headers, $params);
+    }
+
+    private function _request($method, $endpoint, $headers, $params)
     {
         $curl = curl_init();
         $data = json_encode($params);
@@ -32,9 +49,7 @@ class Api
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => $method,
             CURLOPT_POSTFIELDS => $data,
-            CURLOPT_HTTPHEADER => array(
-                "Content-Type: application/json"
-            ),
+            CURLOPT_HTTPHEADER => $headers,
         ));
 
         $response = curl_exec($curl);
