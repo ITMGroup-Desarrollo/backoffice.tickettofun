@@ -38,6 +38,7 @@ class Services extends CI_Controller
         else
         {
             $form = $this->Service->get_form();
+            $form = str_replace('{id}', 'add-service', $form);
 
             $data['contents'] = str_replace(
                 '{title}', 'New service', $data['contents']
@@ -47,6 +48,46 @@ class Services extends CI_Controller
                 '{content}', $form, $data['contents']
             );
         }
+
+        $this->load->view('Master', $data);
+    }
+
+    /**
+    *Update page for this controller
+    */
+    public function update()
+    {
+        $this->load->library('user_session', NULL, 'user');
+
+        if ( ! $this->user->active_session())
+            redirect(base_url('signin'));
+
+        $view   = $this->uri->segment(1);
+        $option = $this->uri->segment(2);
+
+        $this->load->Model('Page');
+        $this->Page->page_name = $view;
+
+        $data = $this->Page->get_contents();
+
+        $this->load->Model('Service');
+
+        $form = $this->Service->get_form();
+        $form = str_replace('{id}', 'update-service', $form);
+
+        $data['contents'] = str_replace(
+            '{title}', 'Edit service', $data['contents']
+        );
+
+        $data['contents'] = str_replace(
+            '{content}', $form, $data['contents']
+        );
+
+        $service = $this->Service->get_data($option);
+        $service = 'window.service = ' . json_encode($service);
+
+        $script = custom('script', '', $service);
+        $data['scripts'] = $script .  $data['scripts'];
 
         $this->load->view('Master', $data);
     }

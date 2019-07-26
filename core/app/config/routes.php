@@ -56,3 +56,4 @@ $route['translate_uri_dashes'] = FALSE;
 //Services
 $route["services/list"] = "services/index/$1";
 $route["services/new"]   = "services/index/$1";
+$route["services/(:num)"]   = "services/update/$1";
