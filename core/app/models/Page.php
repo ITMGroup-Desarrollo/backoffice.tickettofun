@@ -19,12 +19,14 @@ class Page extends CI_Model
     public $settings = array();
     public $submenu_active = '';
     public $settings_values = '';
+    public $script_attrib = array();
 
 
     public function __construct()
     {
         parent::__construct();
         $this->settings_values = '';
+        $this->script_attrib = array('type' => 'text/javascript');
     }
 
     public function get_contents()
@@ -185,15 +187,18 @@ class Page extends CI_Model
                     {
                         $this->scripts['js'] .= custom(
                             'script',
-                            '',
+                            $this->script_attrib,
                             $row->code_description
                         );
                     }
                     else
                     {
+                        $attrib = $this->script_attrib;
+                        $attrib['src'] = base_url($row->script_addr);
+
                         $this->scripts['js'] .= custom(
                             'script',
-                            array('src' => base_url($row->script_addr)),
+                            $attrib,
                             ''
                         );
                     }
@@ -201,7 +206,9 @@ class Page extends CI_Model
             }
 
             $base_url = "window.baseUrl = '" . base_url() . "'" . PHP_EOL;
-            $scripts = custom('script', '', $base_url) . $this->scripts['js'];
+
+            $scripts = custom('script', $this->script_attrib, $base_url);
+            $scripts .= $this->scripts['js'];
 
             if ($this->page_name != 'signin')
             {
@@ -209,7 +216,7 @@ class Page extends CI_Model
                 $token = $this->session->userdata('token');
 
                 $script = "window.token = '{$token}'";
-                $token = custom('script', '', $script);
+                $token = custom('script', $this->script_attrib, $script);
 
                 $scripts .= $token;
             }
