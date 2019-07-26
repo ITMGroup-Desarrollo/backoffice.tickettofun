@@ -98,7 +98,11 @@ class Service extends CI_Model
         }
         else
         {
-            $this->model = custom('tr', '', '');
+            $aux = '';
+            for ($i = 0; $i < 7; $i++)
+                $aux .= custom('td', '', '');
+
+            $this->model = custom('tr', '', $aux);
         }
 
         $this->model = str_replace('{rows}', $this->model, $table_content);
