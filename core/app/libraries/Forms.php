@@ -27,8 +27,8 @@ class Forms
         $this->form_attrib = '';
         $this->content_form = '';
 
+        $this->wrapper_attrib = array('class' => 'col-sm-10 col-md-8');
         $this->button_attrib = array('class' => 'btn btn-default cancel');
-        $this->wrapper_attrib = array('class' => 'col-sm-10 col-md-8');        
 
         $this->CI =& get_instance();
     }
@@ -136,7 +136,10 @@ class Forms
 
         if ($params[0] != 'signin') 
         {
-            $this->form_attrib = array('class' => 'form-horizontal');
+            $this->form_attrib = array(
+                'id' => '{id}',
+                'class' => 'form-horizontal'
+            );
 
             // Add buttons form
             $this->CI->load->Model('Page');
