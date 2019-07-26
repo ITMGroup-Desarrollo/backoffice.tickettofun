@@ -94,6 +94,6 @@ defined('EXIT__AUTO_MAX')      OR define('EXIT__AUTO_MAX', 125); // highest auto
 */
 defined('HOST') OR define ('HOST', 'http://localhost:8181/');
 defined('TOKEN_ROUTE') OR define('TOKEN_ROUTE', 'v1/token');
-defined('GET_SERVICES_ROUTE') OR define('SERVICES_ENDPOINT', 'api/v1/products');
+defined('GET_SERVICES_ROUTE') OR define('GET_SERVICES_ROUTE', 'api/v1/products');
 defined('GET_LOCATIONS_ROUTE') OR define('GET_LOCATIONS_ROUTE', 'api/v1/locations');
 defined('API_KEY') OR define('API_KEY', 'mvS80TiF0G9VStnUE0jYwUXrMIDYuTYkcBauSPxYEvC');
