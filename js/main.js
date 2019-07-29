@@ -140,11 +140,11 @@ if (account !== null) {
     var menu = document.querySelector('.current-user .menu')
     menu.classList.add('active')
   })
-}
 
-document.body.addEventListener('click', function(e) {
-  document.querySelector('.menu').classList.remove('active')
-})
+  document.body.addEventListener('click', function(e) {
+    document.querySelector('.menu').classList.remove('active')
+  })
+}
 
 MicroModal.init()
 
