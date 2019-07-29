@@ -83,6 +83,19 @@ var app = {
         }
       })
     }
+
+    // mobile sidebar toggler
+    var mobileMenu = document.querySelector('#content .sidebar-toggler')
+    mobileMenu.addEventListener('click', function(e) {
+      e.stopPropagation()
+
+      document.body.classList.add('open-sidebar')
+    })
+
+    var content = document.querySelector('#content')
+    content.addEventListener('click', function(e) {
+      document.body.classList.remove('open-sidebar')
+    })
   }
 }
 
