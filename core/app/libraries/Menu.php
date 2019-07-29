@@ -111,7 +111,7 @@ class Menu {
             if (strtolower($menus[$i]) == $actives[0])
             {
                 $submenu_active = $actives[1];
-                $this->anchor_attrib['class'] .= 'active';
+                $this->anchor_attrib['class'] = 'active';
             }
 
             $sub_menu = '';
@@ -152,9 +152,9 @@ class Menu {
             if (strtolower($menu_names[$i]) == $active)
                 $anchor_attrib['class'] = 'active';
 
-            $this->anchor_attrib['href'] = base_url($links[$i] . $option);
+            $anchor_attrib['href'] = base_url($links[$i] . $option);
 
-            $menu = custom('a', $this->anchor_attrib, $menu_names[$i]);
+            $menu = custom('a', $anchor_attrib, $menu_names[$i]);
             $menu = custom('li', '', $menu);
 
             $menus .= $menu;
