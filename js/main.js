@@ -116,22 +116,20 @@ if (logout !== null) {
   })
 }
 
-var accountMenu = document.querySelector('.current-user')
-if (accountMenu !== null) {
-  accountMenu.addEventListener('click', function (e) {
+var account = document.querySelector('.current-user .name')
+if (account !== null) {
+  account.addEventListener('click', function (e) {
     e.preventDefault()
+    e.stopPropagation()
 
-    var element = document.querySelector('.current-user')
-
-    menu = element.querySelector('.menu')
-    if (menu.classList.contains('active')) {
-      menu.classList.remove('active')
-    }
-    else {
-      menu.classList.add('active')
-    }
+    var menu = document.querySelector('.current-user .menu')
+    menu.classList.add('active')
   })
 }
+
+document.body.addEventListener('click', function(e) {
+  document.querySelector('.menu').classList.remove('active')
+})
 
 MicroModal.init()
 
