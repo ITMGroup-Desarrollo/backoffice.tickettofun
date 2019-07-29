@@ -108,12 +108,14 @@ if (login !== null) {
   })
 }
 
-var logout = document.querySelector('[class="signout"]')
-if (logout !== null) {
-  logout.addEventListener('click', function (e) {
-    var url = `${base}signin/logout`
-    utils.post(null, url, app.logout)
-  })
+var logouts = document.querySelectorAll('[class="signout"]')
+if (logouts.length > 0) {
+  for (var i = 0, l = logouts.length; i < l; i++) {
+    logouts[i].addEventListener('click', function (e) {
+      var url = `${base}signin/logout`
+      utils.post(null, url, app.logout)
+    })
+  }
 }
 
 var account = document.querySelector('.current-user .name')
