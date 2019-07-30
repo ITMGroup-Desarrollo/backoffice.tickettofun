@@ -143,7 +143,6 @@ class User extends CI_Model
             $user->first_name    = $response->message->first_name;
             $user->last_name     = $response->message->last_name;
             $user->email_addr    = $response->message->email_addr;
-            // $user->user_password = $response->message->user_password;
             $user->active        = $response->message->active_status;
         } 
         else 
