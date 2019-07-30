@@ -133,8 +133,8 @@ if (save != null) {
 
       if (form != null) {
         info.active_status = document.querySelector('[name="status"]').value
-
-        var url = `http://localhost:8181/api/v1/users/edit/${user.id}`
+        
+        var url = `http://localhost:8181/api/v1/users/edit/${userobj.id}`
         utils.api(JSON.stringify(info), url, 'PUT', user.update)
       }
     }
@@ -165,8 +165,11 @@ if (form != null) {
 
 form = document.querySelector('#update-user')
 if (form != null) {
-  var password_input = form.querySelector('[name="user_password"]');
-  password_input.parentElement.parentElement.style.display = 'none';
+  var password_input = form.querySelector('[name="user_password"]')
+  password_input.parentElement.parentElement.style.display = 'none'
+
+  password_input.removeAttribute('[data-validator]')
+  password_input.removeAttribute('[data-validator-message]')
 
   document.querySelector('[name="status"]').value = userobj.active
   document.querySelector('[name="rol"]').value = userobj.rol
