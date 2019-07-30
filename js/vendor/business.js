@@ -3,9 +3,9 @@ var info
 var form
 var base = window.baseUrl
 var token = window.token
-var business = window.business
+var businessData = window.business
 
-var user= {
+var bussines = {
   add: function(response) {
     MicroModal.close('wait-modal')
 
@@ -89,6 +89,11 @@ var user= {
 
       MicroModal.show('alert-modal')
     }
+  },
+  setData: function() {
+    document.querySelector('[name="name"]').value = businessData.name
+    document.querySelector('[name="status"]').value = businessData.active
+    document.querySelector('[name="destination"]').value = businessData.destination
   }
 }
 
@@ -98,11 +103,12 @@ if (cancel != null) {
     e.preventDefault()
     
     form = document.querySelector('#add-business')
-    if(form != null){
+    if(form != null)
+      form.reset()
 
-    }
-
-    form.reset();
+    form = document.querySelector('#update-business')
+    if (form != null)
+      bussines.setData()
   });
 }
 
@@ -125,8 +131,8 @@ if (save != null) {
       form = document.querySelector('#add-business')
 
       if (form != null) {
-        var url = 'http://localhost:8181/api/v1/unities/add'
-        utils.api(JSON.stringify(info), url, 'POST', user.add)
+        var url = `${apiHost}/api/v1/unities/add`
+        utils.api(JSON.stringify(info), url, 'POST', business.add)
       }
 
       form = document.querySelector('#update-business')
@@ -134,8 +140,8 @@ if (save != null) {
       if (form != null) {
         info.status = document.querySelector('[name="status"]').value
         
-        var url = `http://localhost:8181/api/v1/unities/edit/${business.id}`
-        utils.api(JSON.stringify(info), url, 'PUT', user.update)
+        var url = `${apiHost}/api/v1/unities/edit/${businessData.id}`
+        utils.api(JSON.stringify(info), url, 'PUT', business.update)
       }
     }
   })
@@ -152,26 +158,21 @@ for (var i = 0, l = options.length; i < l; i++) {
       element = e.target.parentElement
 
     var id = element.getAttribute('data-id')
-    var url = `http://localhost:8181/api/v1/unities/del/${id}`
+    var url = `${apiHost}/api/v1/unities/del/${id}`
     
-      utils.api(JSON.stringify({}), url, 'DELETE', user.delete, element)
+      utils.api(JSON.stringify({}), url, 'DELETE', business.delete, element)
   })
 }
 
 form = document.querySelector('#add-business')
 if (form != null) {
   var status_combo = form.querySelector('[name="status"]')
-  status_combo.parentElement.parentElement.style.display = 'none'
-  //status_combo.parentElement.parentElement.remove()
+  status_combo.parentElement.parentElement.remove()
 }
 
 form = document.querySelector('#update-business')
-if (form != null) {
-  console.log(business.destination);
-  document.querySelector('[name="name"]').value = business.name
-  document.querySelector('[name="destination"]').value = business.destination
-  document.querySelector('[name="status"]').value = business.active
-}
+if (form != null)
+  bussines.setData()
 
 var servicesTable = document.querySelector('#services-registers')
 if (servicesTable !== null) {

@@ -3,9 +3,9 @@ var info
 var form
 var base = window.baseUrl
 var token = window.token
-var service = window.service
+var serviceData = window.service
 
-var user= {
+var service = {
   add: function(response) {
     MicroModal.close('wait-modal')
 
@@ -89,6 +89,14 @@ var user= {
 
       MicroModal.show('alert-modal')
     }
+  },
+  setData: function() {
+    document.querySelector('[name="code"]').value = serviceData .code
+    document.querySelector('[name="status"]').value = serviceData .active
+    document.querySelector('[name="service_name"]').value = serviceData.name
+    document.querySelector('[name="min_available"]').value = serviceData.max
+    document.querySelector('[name="max_available"]').value = serviceData.min
+    document.querySelector('[name="location"]').value = serviceData .location
   }
 }
 
@@ -98,7 +106,13 @@ if (cancel != null) {
     e.preventDefault()
 
     form = document.querySelector('#add-service')
-    form.reset();
+    if (form != null)
+      form.reset()
+
+    form = document.querySelector('#update-service')
+
+    if (form != null)
+      service.setData()
   });
 }
 
@@ -124,8 +138,8 @@ if (save != null) {
       form = document.querySelector('#add-service')
 
       if (form != null) {
-        var url = 'http://localhost:8181/api/v1/products/add'
-        utils.api(JSON.stringify(info), url, 'POST', user.add)
+        var url = `${apiHost}/api/v1/products/add`
+        utils.api(JSON.stringify(info), url, 'POST', service.add)
       }
 
       form = document.querySelector('#update-service')
@@ -133,8 +147,8 @@ if (save != null) {
       if (form != null) {
         info.active_status = document.querySelector('[name="status"]').value
 
-        var url = `http://localhost:8181/api/v1/products/edit/${service.id}`
-        utils.api(JSON.stringify(info), url, 'PUT', user.update)
+        var url = `${apiHost}/api/v1/products/edit/${serviceData.id}`
+        utils.api(JSON.stringify(info), url, 'PUT', service.update)
       }
     }
   })
@@ -151,26 +165,20 @@ for (var i = 0, l = options.length; i < l; i++) {
       element = e.target.parentElement
 
     var id = element.getAttribute('data-id')
-    var url = `http://localhost:8181/api/v1/products/del/${id}`
-      utils.api(JSON.stringify({}), url, 'DELETE', user.delete, element)
+    var url = `${apiHost}/api/v1/products/del/${id}`
+      utils.api(JSON.stringify({}), url, 'DELETE', service.delete, element)
   })
 }
 
 form = document.querySelector('#add-service')
 if (form != null) {
   var status_combo = form.querySelector('[name="status"]')
-  status_combo.parentElement.parentElement.style.display = 'none'
+  status_combo.parentElement.parentElement.remove()
 }
 
 form = document.querySelector('#update-service')
-if (form != null) {
-  document.querySelector('[name="code"]').value = service.code
-  document.querySelector('[name="status"]').value = service.active
-  document.querySelector('[name="location"]').value = service.location
-  document.querySelector('[name="service_name"]').value = service.name
-  document.querySelector('[name="min_available"]').value = service.max
-  document.querySelector('[name="max_available"]').value = service.min
-}
+if (form != null)
+  service.setData()
 
 var servicesTable = document.querySelector('#services-registers')
 if (servicesTable !== null) {

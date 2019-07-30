@@ -89,6 +89,13 @@ var user= {
 
       MicroModal.show('alert-modal')
     }
+  },
+  setData: function() {
+    document.querySelector('[name="rol"]').value = userData.rol
+    document.querySelector('[name="status"]').value = userData.active
+    document.querySelector('[name="last_name"]').value = userData.last_name
+    document.querySelector('[name="first_name"]').value = userData.first_name
+    document.querySelector('[name="email_addr"]').value = userData.email_addr
   }
 }
 
@@ -98,7 +105,12 @@ if (cancel != null) {
     e.preventDefault()
 
     form = document.querySelector('#add-user')
-    form.reset();
+    if (form != null)
+      form.reset()
+
+    form = document.querySelector('#update-user')
+    if (form != null)
+      reseller.setData()
   });
 }
 
@@ -125,7 +137,7 @@ if (save != null) {
       if (form != null) {
         info.user_password = document.querySelector('[name="user_password"]').value
 
-        var url = 'http://localhost:8181/api/v1/users/add'
+        var url = `${apiHost}/api/v1/users/add`
         utils.api(JSON.stringify(info), url, 'POST', user.add)
       }
 
@@ -133,8 +145,8 @@ if (save != null) {
 
       if (form != null) {
         info.active_status = document.querySelector('[name="status"]').value
-        
-        var url = `http://localhost:8181/api/v1/users/edit/${userData.id}`
+
+        var url = `${apiHost}/api/v1/users/edit/${userData.id}`
         utils.api(JSON.stringify(info), url, 'PUT', user.update)
       }
     }
@@ -152,7 +164,7 @@ for (var i = 0, l = options.length; i < l; i++) {
       element = e.target.parentElement
 
     var id = element.getAttribute('data-id')
-    var url = `http://localhost:8181/api/v1/users/del/${id}`
+    var url = `${apiHost}/api/v1/users/del/${id}`
       utils.api(JSON.stringify({}), url, 'DELETE', user.delete, element)
   })
 }
@@ -168,11 +180,7 @@ if (form != null) {
   var password_input = form.querySelector('[name="user_password"]')
   password_input.parentElement.parentElement.remove()
 
-  document.querySelector('[name="status"]').value = userData.active
-  document.querySelector('[name="rol"]').value = userData.rol
-  document.querySelector('[name="first_name"]').value = userData.first_name
-  document.querySelector('[name="last_name"]').value = userData.last_name
-  document.querySelector('[name="email_addr"]').value = userData.email_addr
+  user.setData()
 }
 
 var usersTable = document.querySelector('#users-registers')

@@ -3,9 +3,9 @@ var info
 var form
 var base = window.baseUrl
 var token = window.token
-var reseller = window.reseller
+var resellerData = window.reseller
 
-var user= {
+var reseller= {
   add: function(response) {
     MicroModal.close('wait-modal')
 
@@ -89,6 +89,11 @@ var user= {
 
       MicroModal.show('alert-modal')
     }
+  },
+  setData: function() {
+    document.querySelector('[name="status"]').value = resellerData.active
+    document.querySelector('[name="channel"]').value = resellerData.channel_id
+    document.querySelector('[name="reseller_name"]').value = resellerData.reseller_name
   }
 }
 
@@ -98,7 +103,12 @@ if (cancel != null) {
     e.preventDefault()
 
     form = document.querySelector('#add-reseller')
-    form.reset();
+    if (form != null)
+      form.reset()
+
+    form = document.querySelector('#update-reseller')
+    if (form != null)
+      reseller.setData()
   });
 }
 
@@ -122,8 +132,8 @@ if (save != null) {
       form = document.querySelector('#add-reseller')
 
       if (form != null) {
-        var url = 'http://localhost:8181/api/v1/resellers/add'
-        utils.api(JSON.stringify(info), url, 'POST', user.add)
+        var url = `${apiHost}/api/v1/resellers/add`
+        utils.api(JSON.stringify(info), url, 'POST', reseller.add)
       }
 
       form = document.querySelector('#update-reseller')
@@ -131,8 +141,8 @@ if (save != null) {
       if (form != null) {
         info.active_status = document.querySelector('[name="status"]').value
 
-        var url = `http://localhost:8181/api/v1/resellers/edit/${reseller.id}`
-        utils.api(JSON.stringify(info), url, 'PUT', user.update)
+        var url = `${apiHost}/api/v1/resellers/edit/${resellerData.id}`
+        utils.api(JSON.stringify(info), url, 'PUT', reseller.update)
       }
     }
   })
@@ -149,8 +159,8 @@ for (var i = 0, l = options.length; i < l; i++) {
       element = e.target.parentElement
 
     var id = element.getAttribute('data-id')
-    var url = `http://localhost:8181/api/v1/resellers/del/${id}`
-      utils.api(JSON.stringify({}), url, 'DELETE', user.delete, element)
+    var url = `${apiHost}/api/v1/resellers/del/${id}`
+      utils.api(JSON.stringify({}), url, 'DELETE', reseller.delete, element)
   })
 }
 
@@ -161,12 +171,8 @@ if (form != null) {
 }
 
 form = document.querySelector('#update-reseller')
-if (form != null) {  
-  document.querySelector('[name="reseller_name"]').value = reseller.reseller_name
-  document.querySelector('[name="status"]').value = reseller.active
-  document.querySelector('[name="channel"]').value = reseller.channel_id
-  
-}
+if (form != null)
+  reseller.setData()
 
 var servicesTable = document.querySelector('#resellers-registers')
 if (servicesTable !== null) {

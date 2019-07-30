@@ -5,7 +5,7 @@ var base = window.baseUrl
 var token = window.token
 var destinationData = window.destination
 
-var destination= {
+var destination = {
   add: function(response) {
     MicroModal.close('wait-modal')
 
@@ -89,6 +89,11 @@ var destination= {
 
       MicroModal.show('alert-modal')
     }
+  },
+  setData: function() {
+    document.querySelector('[name="name"]').value = destinationData.name
+    document.querySelector('[name="status"]').value = destinationData.active    
+    document.querySelector('[name="country"]').value = destinationData.country
   }
 }
 
@@ -96,9 +101,14 @@ var cancel = document.querySelector('.cancel')
 if (cancel != null) {
   cancel.addEventListener('click', function(e) {
     e.preventDefault()
-    
+
     form = document.querySelector('#add-destination')
-    form.reset();
+    if (form != null)
+      form.reset()
+
+    form = document.querySelector('#update-destination')
+    if (form != null)
+      destination.setData()
   });
 }
 
@@ -121,7 +131,7 @@ if (save != null) {
       form = document.querySelector('#add-destination')
 
       if (form != null) {
-        var url = 'http://localhost:8181/api/v1/destinations/add'
+        var url = `${apiHost}/api/v1/destinations/add`
         utils.api(JSON.stringify(info), url, 'POST', destination.add)
       }
 
@@ -130,7 +140,7 @@ if (save != null) {
       if (form != null) {
         info.status = document.querySelector('[name="status"]').value
 
-        var url = `http://localhost:8181/api/v1/destinations/edit/${destinationData.id}`
+        var url = `${apiHost}/api/v1/destinations/edit/${destinationData.id}`
         utils.api(JSON.stringify(info), url, 'PUT', destination.update)
       }
     }
@@ -148,8 +158,9 @@ for (var i = 0, l = options.length; i < l; i++) {
       element = e.target.parentElement
 
     var id = element.getAttribute('data-id')
-    var url = `http://localhost:8181/api/v1/destinations/del/${id}`
-      utils.api(JSON.stringify({}), url, 'DELETE', destination.delete, element)
+
+    var url = `${apiHost}/api/v1/destinations/del/${id}`
+    utils.api(JSON.stringify({}), url, 'DELETE', destination.delete, element)
   })
 }
 
@@ -160,11 +171,8 @@ if (form != null) {
 }
 
 form = document.querySelector('#update-destination')
-if (form != null) {
-  document.querySelector('[name="status"]').value = destinationData.active
-  document.querySelector('[name="name"]').value = destinationData.name
-  document.querySelector('[name="country"]').value = destinationData.country
-}
+if (form != null)
+  destination.setData()
 
 var destinationsTable = document.querySelector('#destinations-registers')
 if (destinationsTable !== null) {

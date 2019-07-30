@@ -5,7 +5,7 @@ var base = window.baseUrl
 var token = window.token
 var channelData = window.channel
 
-var channel= {
+var channel = {
   add: function(response) {
     MicroModal.close('wait-modal')
 
@@ -89,6 +89,10 @@ var channel= {
 
       MicroModal.show('alert-modal')
     }
+  },
+  setData: function() {
+    document.querySelector('[name="status"]').value = channelData.active
+    document.querySelector('[name="channel_name"]').value = channelData.name
   }
 }
 
@@ -98,7 +102,12 @@ if (cancel != null) {
     e.preventDefault()
 
     form = document.querySelector('#add-channel')
-    form.reset();
+    if (form != null)
+      form.reset()
+
+    form = document.querySelector('#update-channel')
+      if (form != null)
+        channel.setData()
   });
 }
 
@@ -120,8 +129,8 @@ if (save != null) {
       form = document.querySelector('#add-channel')
 
       if (form != null) {
-        var url = 'http://localhost:8181/api/v1/channels/add'
-        utils.api(JSON.stringify(info), url, 'POST', channel.add)
+        var url = `${apiHost}/api/v1/channels/add`
+        utils.api(JSON.stringify(info), url, 'POST', channels.add)
       }
 
       form = document.querySelector('#update-channel')
@@ -129,8 +138,8 @@ if (save != null) {
       if (form != null) {
         info.active_status = document.querySelector('[name="status"]').value
 
-        var url = `http://localhost:8181/api/v1/channels/edit/${channelData.id}`
-        utils.api(JSON.stringify(info), url, 'PUT', channel.update)
+        var url = `${apiHost}/api/v1/channels/edit/${channelData.id}`
+        utils.api(JSON.stringify(info), url, 'PUT', channels.update)
       }
     }
   })
@@ -147,8 +156,9 @@ for (var i = 0, l = options.length; i < l; i++) {
       element = e.target.parentElement
 
     var id = element.getAttribute('data-id')
-    var url = `http://localhost:8181/api/v1/channels/del/${id}`
-      utils.api(JSON.stringify({}), url, 'DELETE', channel.delete, element)
+
+    var url = `${apiHost}/api/v1/channels/del/${id}`
+    utils.api(JSON.stringify({}), url, 'DELETE', channels.delete, element)
   })
 }
 
@@ -159,10 +169,8 @@ if (form != null) {
 }
 
 form = document.querySelector('#update-channel')
-if (form != null) {
-  document.querySelector('[name="status"]').value = channelData.active
-  document.querySelector('[name="channel_name"]').value = channelData.name
-}
+if (form != null)
+  channel.setData()
 
 var channelsTable = document.querySelector('#channels-registers')
 if (channelsTable !== null) {
