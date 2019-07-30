@@ -3,9 +3,9 @@ var info
 var form
 var base = window.baseUrl
 var token = window.token
-var channel = window.channel
+var channelData = window.channel
 
-var user= {
+var channel= {
   add: function(response) {
     MicroModal.close('wait-modal')
 
@@ -121,7 +121,7 @@ if (save != null) {
 
       if (form != null) {
         var url = 'http://localhost:8181/api/v1/channels/add'
-        utils.api(JSON.stringify(info), url, 'POST', user.add)
+        utils.api(JSON.stringify(info), url, 'POST', channel.add)
       }
 
       form = document.querySelector('#update-channel')
@@ -129,8 +129,8 @@ if (save != null) {
       if (form != null) {
         info.active_status = document.querySelector('[name="status"]').value
 
-        var url = `http://localhost:8181/api/v1/channels/edit/${channel.id}`
-        utils.api(JSON.stringify(info), url, 'PUT', user.update)
+        var url = `http://localhost:8181/api/v1/channels/edit/${channelData.id}`
+        utils.api(JSON.stringify(info), url, 'PUT', channel.update)
       }
     }
   })
@@ -148,7 +148,7 @@ for (var i = 0, l = options.length; i < l; i++) {
 
     var id = element.getAttribute('data-id')
     var url = `http://localhost:8181/api/v1/channels/del/${id}`
-      utils.api(JSON.stringify({}), url, 'DELETE', user.delete, element)
+      utils.api(JSON.stringify({}), url, 'DELETE', channel.delete, element)
   })
 }
 
@@ -160,8 +160,8 @@ if (form != null) {
 
 form = document.querySelector('#update-channel')
 if (form != null) {
-  document.querySelector('[name="status"]').value = channel.active
-  document.querySelector('[name="channel_name"]').value = channel.name
+  document.querySelector('[name="status"]').value = channelData.active
+  document.querySelector('[name="channel_name"]').value = channelData.name
 }
 
 var channelsTable = document.querySelector('#channels-registers')

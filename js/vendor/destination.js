@@ -3,9 +3,9 @@ var info
 var form
 var base = window.baseUrl
 var token = window.token
-var destination = window.destination
+var destinationData = window.destination
 
-var user= {
+var destination= {
   add: function(response) {
     MicroModal.close('wait-modal')
 
@@ -96,13 +96,7 @@ var cancel = document.querySelector('.cancel')
 if (cancel != null) {
   cancel.addEventListener('click', function(e) {
     e.preventDefault()
-
-    // if($('#add-destination').length) { 
-    //   form = document.querySelector('#add-destination')
-    // } else {
-    //   form = document.querySelector('#update-destination')
-    // }
-
+    
     form = document.querySelector('#add-destination')
     form.reset();
   });
@@ -128,7 +122,7 @@ if (save != null) {
 
       if (form != null) {
         var url = 'http://localhost:8181/api/v1/destinations/add'
-        utils.api(JSON.stringify(info), url, 'POST', user.add)
+        utils.api(JSON.stringify(info), url, 'POST', destination.add)
       }
 
       form = document.querySelector('#update-destination')
@@ -136,8 +130,8 @@ if (save != null) {
       if (form != null) {
         info.status = document.querySelector('[name="status"]').value
 
-        var url = `http://localhost:8181/api/v1/destinations/edit/${destination.id}`
-        utils.api(JSON.stringify(info), url, 'PUT', user.update)
+        var url = `http://localhost:8181/api/v1/destinations/edit/${destinationData.id}`
+        utils.api(JSON.stringify(info), url, 'PUT', destination.update)
       }
     }
   })
@@ -155,7 +149,7 @@ for (var i = 0, l = options.length; i < l; i++) {
 
     var id = element.getAttribute('data-id')
     var url = `http://localhost:8181/api/v1/destinations/del/${id}`
-      utils.api(JSON.stringify({}), url, 'DELETE', user.delete, element)
+      utils.api(JSON.stringify({}), url, 'DELETE', destination.delete, element)
   })
 }
 
@@ -167,9 +161,9 @@ if (form != null) {
 
 form = document.querySelector('#update-destination')
 if (form != null) {
-  document.querySelector('[name="status"]').value = destination.active
-  document.querySelector('[name="name"]').value = destination.name
-  document.querySelector('[name="country"]').value = destination.country
+  document.querySelector('[name="status"]').value = destinationData.active
+  document.querySelector('[name="name"]').value = destinationData.name
+  document.querySelector('[name="country"]').value = destinationData.country
 }
 
 var destinationsTable = document.querySelector('#destinations-registers')

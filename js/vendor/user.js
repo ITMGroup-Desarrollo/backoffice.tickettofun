@@ -3,7 +3,7 @@ var info
 var form
 var base = window.baseUrl
 var token = window.token
-var userobj = window.user
+var userData = window.user
 
 var user= {
   add: function(response) {
@@ -134,7 +134,7 @@ if (save != null) {
       if (form != null) {
         info.active_status = document.querySelector('[name="status"]').value
         
-        var url = `http://localhost:8181/api/v1/users/edit/${userobj.id}`
+        var url = `http://localhost:8181/api/v1/users/edit/${userData.id}`
         utils.api(JSON.stringify(info), url, 'PUT', user.update)
       }
     }
@@ -168,11 +168,11 @@ if (form != null) {
   var password_input = form.querySelector('[name="user_password"]')
   password_input.parentElement.parentElement.remove()
 
-  document.querySelector('[name="status"]').value = userobj.active
-  document.querySelector('[name="rol"]').value = userobj.rol
-  document.querySelector('[name="first_name"]').value = userobj.first_name
-  document.querySelector('[name="last_name"]').value = userobj.last_name
-  document.querySelector('[name="email_addr"]').value = userobj.email_addr
+  document.querySelector('[name="status"]').value = userData.active
+  document.querySelector('[name="rol"]').value = userData.rol
+  document.querySelector('[name="first_name"]').value = userData.first_name
+  document.querySelector('[name="last_name"]').value = userData.last_name
+  document.querySelector('[name="email_addr"]').value = userData.email_addr
 }
 
 var usersTable = document.querySelector('#users-registers')
