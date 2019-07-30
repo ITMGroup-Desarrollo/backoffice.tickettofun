@@ -96,10 +96,14 @@ defined('HOST') OR define ('HOST', 'http://localhost:8181/');
 defined('TOKEN_ROUTE') OR define('TOKEN_ROUTE', 'v1/token');
 defined('GET_SERVICES_ROUTE') OR define('GET_SERVICES_ROUTE', 'api/v1/products');
 defined('GET_LOCATIONS_ROUTE') OR define('GET_LOCATIONS_ROUTE', 'api/v1/locations');
+
 defined('GET_ROLES_ROUTE') OR define('GET_ROLES_ROUTE', 'api/v1/roles');
 defined('GET_CHANNELS_ROUTE') OR define('GET_CHANNELS_ROUTE', 'api/v1/channels');
 defined('GET_DESTINATIONS_ROUTE') OR define('GET_DESTINATIONS_ROUTE', 'api/v1/destinations');
 defined('GET_USERS_ROUTE') OR define('GET_USERS_ROUTE', 'api/v1/users');
 defined('GET_COUNTRIES_ROUTE') OR define('GET_COUNTRIES_ROUTE', 'api/v1/countries');
+
 defined('GET_RESELLERS_ROUTE') OR define('GET_RESELLERS_ROUTE', 'api/v1/resellers');
+defined('GET_BUSINESS_ROUTE') OR define('GET_BUSINESS_ROUTE', 'api/v1/unities');
+
 defined('API_KEY') OR define('API_KEY', 'mvS80TiF0G9VStnUE0jYwUXrMIDYuTYkcBauSPxYEvC');

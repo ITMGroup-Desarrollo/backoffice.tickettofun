@@ -77,3 +77,8 @@ $route["users/(:num)"]   = "users/update/$1";
 $route["resellers/list"] = "resellers/index/$1";
 $route["resellers/new"]   = "resellers/index/$1";
 $route["resellers/(:num)"]   = "resellers/update/$1";
+
+//bussines_unity
+$route["business/list"] = "business/index/$1";
+$route["business/new"]   = "business/index/$1";
+$route["business/(:num)"]   = "business/update/$1";
