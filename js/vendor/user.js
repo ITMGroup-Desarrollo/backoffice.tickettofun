@@ -168,8 +168,8 @@ if (form != null) {
   var password_input = form.querySelector('[name="user_password"]')
   password_input.parentElement.parentElement.style.display = 'none'
 
-  password_input.removeAttribute('[data-validator]')
-  password_input.removeAttribute('[data-validator-message]')
+  password_input.removeAttribute('data-validator')
+  password_input.removeAttribute('data-validator-message')
 
   document.querySelector('[name="status"]').value = userobj.active
   document.querySelector('[name="rol"]').value = userobj.rol
