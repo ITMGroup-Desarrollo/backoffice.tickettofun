@@ -110,7 +110,7 @@ if (cancel != null) {
 
     form = document.querySelector('#update-user')
     if (form != null)
-      reseller.setData()
+      user.setData()
   });
 }
 

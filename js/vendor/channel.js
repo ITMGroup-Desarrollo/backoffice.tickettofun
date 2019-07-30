@@ -139,7 +139,7 @@ if (save != null) {
         info.active_status = document.querySelector('[name="status"]').value
 
         var url = `${apiHost}/api/v1/channels/edit/${channelData.id}`
-        utils.api(JSON.stringify(info), url, 'PUT', channels.update)
+        utils.api(JSON.stringify(info), url, 'PUT', channel.update)
       }
     }
   })
@@ -158,7 +158,7 @@ for (var i = 0, l = options.length; i < l; i++) {
     var id = element.getAttribute('data-id')
 
     var url = `${apiHost}/api/v1/channels/del/${id}`
-    utils.api(JSON.stringify({}), url, 'DELETE', channels.delete, element)
+    utils.api(JSON.stringify({}), url, 'DELETE', channel.delete, element)
   })
 }
 
