@@ -160,16 +160,13 @@ for (var i = 0, l = options.length; i < l; i++) {
 form = document.querySelector('#add-user')
 if (form != null) {
   var status_combo = form.querySelector('[name="status"]')
-  status_combo.parentElement.parentElement.style.display = 'none'
+  status_combo.parentElement.parentElement.remove()
 }
 
 form = document.querySelector('#update-user')
 if (form != null) {
   var password_input = form.querySelector('[name="user_password"]')
-  password_input.parentElement.parentElement.style.display = 'none'
-
-  password_input.removeAttribute('data-validator')
-  password_input.removeAttribute('data-validator-message')
+  password_input.parentElement.parentElement.remove()
 
   document.querySelector('[name="status"]').value = userobj.active
   document.querySelector('[name="rol"]').value = userobj.rol

@@ -155,7 +155,7 @@ for (var i = 0, l = options.length; i < l; i++) {
 form = document.querySelector('#add-channel')
 if (form != null) {
   var status_combo = form.querySelector('[name="status"]')
-  status_combo.parentElement.parentElement.style.display = 'none'
+   status_combo.parentElement.parentElement.remove()
 }
 
 form = document.querySelector('#update-channel')
