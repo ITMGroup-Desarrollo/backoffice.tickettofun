@@ -152,7 +152,7 @@ class Forms
 
             $buttons = custom('BUTTON', $this->button_attrib, 'Cancel');
             $this->button_attrib['class'] = 'btn btn-success save';
-            $buttons .= custom('BUTTON', $this->button_attrib, 'Save service');
+            $buttons .= custom('BUTTON', $this->button_attrib, 'Save');
 
             $content = str_replace('{buttons}', $buttons, $content);
 
@@ -168,8 +168,16 @@ class Forms
 
     public function get_catalog($catalog_id)
     {
-        if ($catalog_id == 1)
+
+        switch ($catalog_id)
+        {
+            case 1:
             return $this->_get_catalog_api($catalog_id);
+            break;
+            case 3:
+            return $this->_get_catalog_api($catalog_id);
+            break;
+        }
 
         return $this->_get_catalog($catalog_id);
     }
@@ -294,10 +302,18 @@ class Forms
         $options = array();
 
         $endpoint = '';
+
         switch ($catalog_id)
         {
             case 1: 
                 $endpoint = HOST . GET_LOCATIONS_ROUTE;
+                $value = 'location_id';
+                $name  = 'location_name';
+                break;
+            case 3: 
+                $endpoint = HOST . GET_ROLES_ROUTE;
+                $value = 'rol_id';
+                $name  = 'rol_name';
                 break;
         }
 
@@ -312,12 +328,13 @@ class Forms
         );
 
         $options[''] = '-- Choice option --';
+
         if ($response->code == 200)
         {
             $rows = $response->message;
 
             foreach ($rows as $row)
-                $options[$row->location_id] = $row->location_name;
+                $options[$row->$value] = $row->$name;
         }
 
         return $options;
