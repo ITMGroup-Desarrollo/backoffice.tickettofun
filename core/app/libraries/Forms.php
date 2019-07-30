@@ -145,6 +145,7 @@ class Forms
             $this->CI->load->Model('Page');
             $this->CI->load->library('Build');
 
+            $this->CI->db->close();
             $content = $this->CI->Page->get_settings('');
             $content = $this->CI->build->build_components(
                 $content['BUTTONS_FORM']
@@ -168,7 +169,6 @@ class Forms
 
     public function get_catalog($catalog_id)
     {
-
         switch ($catalog_id)
         {
             case 1:
