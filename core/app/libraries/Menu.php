@@ -42,11 +42,10 @@ class Menu {
         $this->CI->load->library('session');
 
         $values = array(
-            $this->CI->session->userdata('rol_id'),
             $this->CI->session->userdata('user_id')
         );
 
-        $query_result = $this->CI->db->query('CALL get_menu(?,?)', $values);
+        $query_result = $this->CI->db->query('CALL get_menu(?)', $values);
 
         if ($query_result->num_rows())
         {
