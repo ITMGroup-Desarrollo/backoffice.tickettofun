@@ -138,6 +138,8 @@ class Business_unity extends CI_Model
             $service->name = $response->message->unity_name;
             $service->destination = $response->message->destination_id;
             $service->active   = $response->message->active_status;
+        }else{
+            redirect('/business/list');
         }
 
         return $service;
