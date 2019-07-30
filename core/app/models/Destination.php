@@ -140,6 +140,10 @@ class Destination extends CI_Model
             $destination->country  = $response->message->country;
             $destination->active   = $response->message->active_status;
         }
+        else 
+        {
+            redirect('/destinations/list');
+        }
 
         return $destination;
     }

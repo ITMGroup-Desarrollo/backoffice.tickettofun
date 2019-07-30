@@ -138,6 +138,10 @@ class Channel extends CI_Model
             $channel->name     = $response->message->channel_name;
             $channel->active   = $response->message->active_status;
         }
+        else 
+        {
+            redirect('/channels/list');
+        }
 
         return $channel;
     }

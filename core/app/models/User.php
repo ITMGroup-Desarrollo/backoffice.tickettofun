@@ -145,6 +145,10 @@ class User extends CI_Model
             $user->email_addr    = $response->message->email_addr;
             // $user->user_password = $response->message->user_password;
             $user->active        = $response->message->active_status;
+        } 
+        else 
+        {
+            redirect('/users/list');
         }
 
         return $user;
