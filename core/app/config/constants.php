@@ -101,4 +101,5 @@ defined('GET_CHANNELS_ROUTE') OR define('GET_CHANNELS_ROUTE', 'api/v1/channels')
 defined('GET_DESTINATIONS_ROUTE') OR define('GET_DESTINATIONS_ROUTE', 'api/v1/destinations');
 defined('GET_USERS_ROUTE') OR define('GET_USERS_ROUTE', 'api/v1/users');
 defined('GET_COUNTRIES_ROUTE') OR define('GET_COUNTRIES_ROUTE', 'api/v1/countries');
+defined('GET_RESELLERS_ROUTE') OR define('GET_RESELLERS_ROUTE', 'api/v1/resellers');
 defined('API_KEY') OR define('API_KEY', 'mvS80TiF0G9VStnUE0jYwUXrMIDYuTYkcBauSPxYEvC');

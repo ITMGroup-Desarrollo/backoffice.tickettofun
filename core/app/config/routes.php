@@ -58,14 +58,10 @@ $route["services/list"] = "services/index/$1";
 $route["services/new"]   = "services/index/$1";
 $route["services/(:num)"]   = "services/update/$1";
 
-
-//Start === Made by Jorge Saurina
-
 //Channels
 $route["channels/list"] = "channels/index/$1";
 $route["channels/new"]   = "channels/index/$1";
 $route["channels/(:num)"]   = "channels/update/$1";
-
 
 //Destinations
 $route["destinations/list"] = "destinations/index/$1";
@@ -77,4 +73,7 @@ $route["users/list"] = "users/index/$1";
 $route["users/new"]   = "users/index/$1";
 $route["users/(:num)"]   = "users/update/$1";
 
-//End === Made by Jorge Saurina
+// Resellers
+$route["resellers/list"] = "resellers/index/$1";
+$route["resellers/new"]   = "resellers/index/$1";
+$route["resellers/(:num)"]   = "resellers/update/$1";

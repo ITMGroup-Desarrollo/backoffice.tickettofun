@@ -177,6 +177,9 @@ class Forms
             case 3:
             return $this->_get_catalog_api($catalog_id);
             break;
+            case 4:
+            return $this->_get_catalog_api($catalog_id);
+            break;
         }
 
         return $this->_get_catalog($catalog_id);
@@ -314,6 +317,12 @@ class Forms
                 $endpoint = HOST . GET_ROLES_ROUTE;
                 $value = 'rol_id';
                 $name  = 'rol_name';
+                break;
+
+            case 4: 
+                $endpoint = HOST . GET_CHANNELS_ROUTE;
+                $value = 'channel_id';
+                $name  = 'channel_name';
                 break;
         }
 
