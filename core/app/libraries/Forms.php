@@ -172,21 +172,23 @@ class Forms
         switch ($catalog_id)
         {
             case 1:
-            return $this->_get_catalog_api($catalog_id);
+                return $this->_get_catalog_api($catalog_id);
             break;
             case 3:
-            return $this->_get_catalog_api($catalog_id);
+                return $this->_get_catalog_api($catalog_id);
             break;
             case 4://Destination
             return $this->_get_catalog_api($catalog_id);
             break;
             case 5:
-            return $this->_get_catalog_api($catalog_id);
+                return $this->_get_catalog_api($catalog_id);
             break;
             case 6://Business
-            return $this->_get_catalog_api($catalog_id);
+                return $this->_get_catalog_api($catalog_id);
             break;
             case 7://Reseller
+                return $this->_get_catalog_api($catalog_id);
+            case 8:
             return $this->_get_catalog_api($catalog_id);
             break;
         }
@@ -331,7 +333,7 @@ class Forms
                 $endpoint = HOST . GET_DESTINATIONS_ROUTE;
                 $value = 'destination_id';
                 $name  = 'destination_name';
-                break;
+                break;                
             case 5: 
                 $endpoint = HOST . GET_CHANNELS_ROUTE;
                 $value = 'channel_id';
@@ -346,6 +348,11 @@ class Forms
                 $endpoint = HOST . GET_RESELLERS_ROUTE;
                 $value = 'reseller_id';
                 $name  = 'reseller_name';
+                break;
+            case 8: 
+                $endpoint = HOST . GET_USERS_ROUTE;
+                $value = 'user_id';
+                $name  = 'email_addr';
                 break;
         }
 

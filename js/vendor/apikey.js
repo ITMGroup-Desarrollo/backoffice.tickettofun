@@ -3,9 +3,9 @@ var info
 var form
 var base = window.baseUrl
 var token = window.token
-var rolData = window.rol
+var apikeyData = window.apikey
 
-var rol= {
+var apikey= {
   add: function(response) {
     MicroModal.close('wait-modal')
 
@@ -22,14 +22,14 @@ var rol= {
       MicroModal.show('alert-modal')
     }
     else if (response.code == 200) {
-      _message = utils.createElement('p', '', '', 'Success!, rol added correctly')
+      _message = utils.createElement('p', '', '', 'Success!, apikey added correctly')
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
 
       MicroModal.show('alert-modal')
       
-      form = document.querySelector('#add-rol')
+      form = document.querySelector('#add-apikey')
       form.reset();
     }
   },
@@ -49,7 +49,7 @@ var rol= {
       MicroModal.show('alert-modal')
     }
     else if (response.code == 200) {
-      _message = utils.createElement('p', '', '', 'Success!, rol updated correctly')
+      _message = utils.createElement('p', '', '', 'Success!, apikey updated correctly')
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
@@ -82,7 +82,7 @@ var rol= {
       var label = utils.createElement('span', 'label label-danger', '', 'inactive');
       _status.appendChild(label)
 
-      _message = utils.createElement('p', '', '', 'Success!, rol inactivate correctly')
+      _message = utils.createElement('p', '', '', 'Success!, apikey inactivate correctly')
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
@@ -90,9 +90,10 @@ var rol= {
       MicroModal.show('alert-modal')
     }
   },
-  setData: function() {
-    document.querySelector('[name="rol_name"]').value = rolData.rol_name
-    document.querySelector('[name="status"]').value = rolData.active
+  setData: function(){
+    
+    document.querySelector('[name="key_description"]').value = apikeyData.description
+    document.querySelector('[name="status"]').value = apikeyData.active
   }
 }
 
@@ -101,7 +102,7 @@ if (cancel != null) {
   cancel.addEventListener('click', function(e) {
     e.preventDefault()
 
-    form = document.querySelector('#add-rol')
+    form = document.querySelector('#add-apikey')
     form.reset();
   });
 }
@@ -118,23 +119,26 @@ if (save != null) {
 
     if(valid) {
       info = {       
-        role_name: document.querySelector('[name="rol_name"]').value,       
+        app_name : document.querySelector('[name="key_description"]').value,       
       }
 
-      form = document.querySelector('#add-rol')
+      form = document.querySelector('#add-apikey')
 
       if (form != null) {
-        var url = apiHost + 'roles/add'
-        utils.api(JSON.stringify(info), url, 'POST', rol.add)
+        if(document.querySelector('[name="user_id"]').value !== '')
+          info.idUser = document.querySelector('[name="user_id"]').value
+
+        var url = apiHost + 'apikeys/add'
+        utils.api(JSON.stringify(info), url, 'POST', apikey.add)
       }
 
-      form = document.querySelector('#update-rol')
+      form = document.querySelector('#update-apikey')
 
       if (form != null) {
         info.active_status = document.querySelector('[name="status"]').value
 
-        var url = apiHost + `roles/edit/${rolData.id}`
-        utils.api(JSON.stringify(info), url, 'PUT', rol.update)
+        var url = apiHost + `apikeys/edit/${apikeyData.id}`
+        utils.api(JSON.stringify(info), url, 'PUT', apikey.update)
       }
     }
   })
@@ -151,25 +155,32 @@ for (var i = 0, l = options.length; i < l; i++) {
       element = e.target.parentElement
 
     var id = element.getAttribute('data-id')
-    var url = apiHost +  `roles/del/${id}`
-      utils.api(JSON.stringify({}), url, 'DELETE', rol.delete, element)
+    var url = apiHost + `apikeys/del/${id}`
+      utils.api(JSON.stringify({}), url, 'DELETE', apikey.delete, element)
   })
 }
 
-form = document.querySelector('#add-rol')
+form = document.querySelector('#add-apikey')
 if (form != null) {
   var status_combo = form.querySelector('[name="status"]')
   status_combo.parentElement.parentElement.remove()
 }
 
-form = document.querySelector('#update-rol')
-if (form != null)
-  rol.setData();
+form = document.querySelector('#update-apikey')
+if (form != null){
+  var description = form.querySelector('[name="key_description"]')
+  description.setAttribute('readonly','readonly')
 
-var servicesTable = document.querySelector('#roles-registers')
+  var user_id = form.querySelector('[name="user_id"]');
+  user_id.parentElement.parentElement.remove();
+  apikey.setData();
+}
+  
+
+var servicesTable = document.querySelector('#apikeys-registers')
 if (servicesTable !== null) {
   $(function() {
-    $('#roles-registers').dataTable({
+    $('#apikeys-registers').dataTable({
         "sPaginationType": "full_numbers",
         "iDisplayLength": 20,
         "aLengthMenu": [[20, 50, 100, -1], [20, 50, 100, "All"]]

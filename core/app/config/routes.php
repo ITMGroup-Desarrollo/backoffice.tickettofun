@@ -97,3 +97,9 @@ $route["locations/(:num)"]   = "locations/update/$1";
 $route["ships/list"] = "ships/index/$1";
 $route["ships/new"]   = "ships/index/$1";
 $route["ships/(:num)"]   = "ships/update/$1";
+
+// Api_keys
+$route["apikeys/list"] = "apikeys/index/$1";
+$route["apikeys/new"]   = "apikeys/index/$1";
+$route["apikeys/(:num)"]   = "apikeys/update/$1";
+
