@@ -114,13 +114,13 @@ if (save != null) {
 
     if(valid) {
       info = {       
-        rol_name: document.querySelector('[name="rol_name"]').value,       
+        role_name: document.querySelector('[name="rol_name"]').value,       
       }
 
       form = document.querySelector('#add-rol')
 
       if (form != null) {
-        var url = 'http://localhost:8181/api/v1/roles/add'
+        var url = apiHost + 'roles/add'
         utils.api(JSON.stringify(info), url, 'POST', rol.add)
       }
 
@@ -129,7 +129,7 @@ if (save != null) {
       if (form != null) {
         info.active_status = document.querySelector('[name="status"]').value
 
-        var url = `http://localhost:8181/api/v1/roles/edit/${rolData.id}`
+        var url = apiHost + `roles/edit/${rolData.id}`
         utils.api(JSON.stringify(info), url, 'PUT', rol.update)
       }
     }
@@ -147,7 +147,7 @@ for (var i = 0, l = options.length; i < l; i++) {
       element = e.target.parentElement
 
     var id = element.getAttribute('data-id')
-    var url = `http://localhost:8181/api/v1/rol/del/${id}`
+    var url = apiHost +  `roles/del/${id}`
       utils.api(JSON.stringify({}), url, 'DELETE', rol.delete, element)
   })
 }

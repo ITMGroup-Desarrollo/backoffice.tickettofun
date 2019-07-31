@@ -3,7 +3,7 @@ var menu
 var info
 var base = window.baseUrl
 var token = window.token
-var apiHost = 'http://localhost:8181'
+var apiHost = 'http://localhost:8181/api/v1/'
 
 var app = {
   signin: function(response) {
