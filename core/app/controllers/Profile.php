@@ -1,0 +1,88 @@
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+class Profile extends CI_Controller
+{
+    /**
+    *Index page for this controller
+    */
+    public function index()
+    {
+        $this->load->library('user_session', NULL, 'user');
+
+        if ( ! $this->user->active_session())
+            redirect(base_url('signin'));
+
+        $view   = $this->uri->segment(1);
+
+        $this->load->Model('Page');
+        $this->Page->page_name = $view;
+
+        $data = $this->Page->get_contents();
+        $this->load->Model('AccountProfile');
+
+        $form = $this->AccountProfile->get_form();  
+
+        $data['contents'] = str_replace(
+            '{title}', 'Account Profle settings', $data['contents']
+        );
+
+        $image = '<div id="panel" class="container"><h3>Profile settings</h3><p class="intro">Change your account information, avatar, login credentials, etc.</p><form class="pt-20 pb-20"><div class="form-group avatar-field clearfix"><div class="col-sm-3"><img src="http://localhost/itm-backoffice/img/avatars/10.jpg" class="img-responsive img-circle"></div><div class="col-sm-9"><label>Set up your avatar picture</label><input type="file"></div></div></form></div>';
+
+        $data['contents'] = str_replace(
+            '{content}', $image . $form, $data['contents']
+        );
+
+        $profile = $this->AccountProfile->get_data($this->session->userdata('user_id'));
+
+        $profile = 'window.profile = ' . json_encode($profile);
+
+        $script = custom('script', '', $profile);
+
+        $data['scripts'] = $script .  $data['scripts'];
+
+        $this->load->view('Master', $data);
+    }
+
+    /**
+    *Update page for this controller
+    */
+    public function update()
+    {
+        $this->load->library('user_session', NULL, 'user');
+
+        if ( ! $this->user->active_session())
+            redirect(base_url('signin'));
+
+        $view   = $this->uri->segment(1);
+        $option = $this->uri->segment(2);
+
+        $this->load->Model('Page');
+        $this->Page->page_name = $view;
+        $this->Page->menu_active = $view;
+        $this->Page->submenu_active = $option;
+
+        $data = $this->Page->get_contents();
+
+        $this->load->Model('User');
+
+        $form = $this->User->get_form();
+        $form = str_replace('{id}', 'update-user', $form);
+
+        $data['contents'] = str_replace(
+            '{title}', 'Edit user', $data['contents']
+        );
+
+        $data['contents'] = str_replace(
+            '{content}', $form, $data['contents']
+        );
+
+        $user = $this->User->get_data($option);
+        $user = 'window.user = ' . json_encode($user);
+
+        $script = custom('script', '', $user);
+        $data['scripts'] = $script .  $data['scripts'];
+
+        $this->load->view('Master', $data);
+    }
+}
