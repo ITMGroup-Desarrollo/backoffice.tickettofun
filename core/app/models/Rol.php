@@ -95,7 +95,7 @@ class Rol extends CI_Model
         else
         {
             $aux = '';
-            for ($i = 0; $i < 7; $i++)
+            for ($i = 0; $i < 3; $i++)
                 $aux .= custom('td', '', '');
 
             $this->model = custom('tr', '', $aux);
