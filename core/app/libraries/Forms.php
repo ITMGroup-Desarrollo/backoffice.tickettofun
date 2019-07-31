@@ -177,10 +177,16 @@ class Forms
             case 3:
             return $this->_get_catalog_api($catalog_id);
             break;
-            case 4:
+            case 4://Destination
             return $this->_get_catalog_api($catalog_id);
             break;
             case 5:
+            return $this->_get_catalog_api($catalog_id);
+            break;
+            case 6://Business
+            return $this->_get_catalog_api($catalog_id);
+            break;
+            case 7://Reseller
             return $this->_get_catalog_api($catalog_id);
             break;
         }
@@ -330,6 +336,17 @@ class Forms
                 $endpoint = HOST . GET_CHANNELS_ROUTE;
                 $value = 'channel_id';
                 $name  = 'channel_name';
+                break;
+            case 6:
+                $endpoint = HOST . GET_BUSINESS_ROUTE;
+                $value = 'unity_id';
+                $name  = 'unity_name';
+                break;
+            case 7: 
+                $endpoint = HOST . GET_RESELLERS_ROUTE;
+                $value = 'reseller_id';
+                $name  = 'reseller_name';
+                break;
         }
 
         $params = new stdClass();

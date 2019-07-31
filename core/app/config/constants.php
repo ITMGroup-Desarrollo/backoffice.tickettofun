@@ -105,5 +105,6 @@ defined('GET_COUNTRIES_ROUTE') OR define('GET_COUNTRIES_ROUTE', 'api/v1/countrie
 
 defined('GET_RESELLERS_ROUTE') OR define('GET_RESELLERS_ROUTE', 'api/v1/resellers');
 defined('GET_BUSINESS_ROUTE') OR define('GET_BUSINESS_ROUTE', 'api/v1/unities');
+defined('GET_SHIPS_ROUTE') OR define('GET_SHIPS_ROUTE', 'api/v1/ships');
 
 defined('API_KEY') OR define('API_KEY', 'mvS80TiF0G9VStnUE0jYwUXrMIDYuTYkcBauSPxYEvC');

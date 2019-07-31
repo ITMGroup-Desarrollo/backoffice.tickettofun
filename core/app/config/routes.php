@@ -83,8 +83,17 @@ $route["business/list"] = "business/index/$1";
 $route["business/new"]   = "business/index/$1";
 $route["business/(:num)"]   = "business/update/$1";
 
-// Roles
+//Roles
 $route["roles/list"] = "roles/index/$1";
 $route["roles/new"]   = "roles/index/$1";
 $route["roles/(:num)"]   = "roles/update/$1";
 
+//locations
+$route["locations/list"] = "locations/index/$1";
+$route["locations/new"]   = "locations/index/$1";
+$route["locations/(:num)"]   = "locations/update/$1";
+
+//chips
+$route["ships/list"] = "ships/index/$1";
+$route["ships/new"]   = "ships/index/$1";
+$route["ships/(:num)"]   = "ships/update/$1";
