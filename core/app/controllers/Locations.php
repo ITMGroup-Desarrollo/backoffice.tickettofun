@@ -28,7 +28,7 @@ class Locations extends CI_Controller
             $table = $this->Location->get_list();
 
             $data['contents'] = str_replace(
-                '{title}', 'List of Locations Unity', $data['contents']
+                '{title}', 'List of Locations', $data['contents']
             );
 
             $data['contents'] = str_replace(
