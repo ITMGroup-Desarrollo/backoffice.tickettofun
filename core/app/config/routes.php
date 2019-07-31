@@ -82,3 +82,9 @@ $route["resellers/(:num)"]   = "resellers/update/$1";
 $route["business/list"] = "business/index/$1";
 $route["business/new"]   = "business/index/$1";
 $route["business/(:num)"]   = "business/update/$1";
+
+// Roles
+$route["roles/list"] = "roles/index/$1";
+$route["roles/new"]   = "roles/index/$1";
+$route["roles/(:num)"]   = "roles/update/$1";
+

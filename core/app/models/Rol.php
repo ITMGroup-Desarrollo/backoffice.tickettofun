@@ -8,7 +8,7 @@
 * @Author ITM Dev Team
 * @Since Version 1.0.0
 */
-class Reseller extends CI_Model
+class Rol extends CI_Model
 {
     public $model;
     public $active;
@@ -29,14 +29,14 @@ class Reseller extends CI_Model
     public function get_list()
     {
         $this->db->close();
-        $table_content = $this->Page->get_settings('resellers');
+        $table_content = $this->Page->get_settings('roles');
         $table_content = $this->build->build_components(
-            $table_content['RESELLERS_TABLE']
+            $table_content['ROLES_TABLE']
         );
 
         // Call API here!
         $params = new stdClass();
-        $endpoint = HOST . GET_RESELLERS_ROUTE;
+        $endpoint = HOST . GET_ROLES_ROUTE;
 
         $this->load->library('session');
         $token = $this->session->userdata('token');
@@ -54,10 +54,8 @@ class Reseller extends CI_Model
                 $aux = '';
                 $this->anchor_attrib = array();
 
-                $aux .= custom('td', '', $row->reseller_name);
-                $aux .= custom('td', '', $row->channel_name);
-                               
-
+                $aux .= custom('td', '', $row->rol_name);
+        
                 $status = '';
                 $delete = '';
                 if ($row->active_status == 1)
@@ -70,10 +68,10 @@ class Reseller extends CI_Model
                 }
 
                 $status_attrib = $this->attrib;
-                $status_attrib['data-status'] =  $row->reseller_id;
+                $status_attrib['data-status'] =  $row->rol_id;
                 $aux .= custom('td', $status_attrib, $status);
 
-                $path = 'resellers/' . $row->reseller_id;
+                $path = 'roles/' . $row->rol_id;
                 $this->anchor_attrib['class'] = 'edit';
                 $this->anchor_attrib['href'] = base_url($path);
                 $edit = custom('i', array('class' => 'ion-edit'), '');
@@ -83,7 +81,7 @@ class Reseller extends CI_Model
                 if ($row->active_status == 1) {
                     $this->anchor_attrib['href'] = '#';
                     $this->anchor_attrib['class'] = 'delete';
-                    $this->anchor_attrib['data-id'] = $row->reseller_id;
+                    $this->anchor_attrib['data-id'] = $row->rol_id;
                     $delete = custom('i', array('class' => 'ion-close'), '');
 
                     $delete = custom('a', $this->anchor_attrib, $delete);
@@ -111,10 +109,10 @@ class Reseller extends CI_Model
     public function get_form()
     {
         $this->db->close();
-        $contents = $this->Page->get_settings('resellers');
+        $contents = $this->Page->get_settings('roles');
 
         $this->model = $this->build->build_components(
-            $contents['RESELLERS_FORM']
+            $contents['ROLES_FORM']
         );
 
         return $this->model;
@@ -122,7 +120,7 @@ class Reseller extends CI_Model
 
     public function get_data($id)
     {
-        $endpoint = HOST . GET_RESELLERS_ROUTE . '/' . $id;
+        $endpoint = HOST . GET_ROLES_ROUTE . '/' . $id;
 
         $params = new stdClass();
         $this->load->library('session');
@@ -132,22 +130,20 @@ class Reseller extends CI_Model
             $this->api->request_api('GET', $endpoint, $params, $token)
         );
 
-        $reseller = new stdClass();
+        $rol = new stdClass();
 
         if ($response->code == 200)
         {
-            $reseller->id               = $response->message->reseller_id;
-            $reseller->channel_id       = $response->message->channel_id;
-            $reseller->channel_name     = $response->message->channel_name;
-            $reseller->reseller_name    = $response->message->reseller_name;
-            $reseller->active           = $response->message->active_status;
+            $rol->id               = $response->message->rol_id;            
+            $rol->rol_name         = $response->message->rol_name;
+            $rol->active           = $response->message->active_status;
             
         }
         else
         {
-            redirect('/resellers/list');
+            redirect('/roles/list');
         }
 
-        return $reseller;
+        return $rol;
     }
 }
