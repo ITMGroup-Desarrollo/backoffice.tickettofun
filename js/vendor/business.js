@@ -5,7 +5,7 @@ var base = window.baseUrl
 var token = window.token
 var businessData = window.business
 
-var bussines = {
+var business = {
   add: function(response) {
     MicroModal.close('wait-modal')
 
@@ -59,7 +59,6 @@ var bussines = {
   },
   delete: function(response, element) {
     MicroModal.close('wait-modal')
-
     response = JSON.parse(response)
     var id = element.getAttribute('data-id')
     element.style.display = 'none'
@@ -131,7 +130,7 @@ if (save != null) {
       form = document.querySelector('#add-business')
 
       if (form != null) {
-        var url = `${apiHost}/api/v1/unities/add`
+        var url = `${apiHost}unities/add`
         utils.api(JSON.stringify(info), url, 'POST', business.add)
       }
 
@@ -140,7 +139,7 @@ if (save != null) {
       if (form != null) {
         info.status = document.querySelector('[name="status"]').value
         
-        var url = `${apiHost}/api/v1/unities/edit/${businessData.id}`
+        var url = `${apiHost}unities/edit/${businessData.id}`
         utils.api(JSON.stringify(info), url, 'PUT', business.update)
       }
     }
@@ -158,8 +157,7 @@ for (var i = 0, l = options.length; i < l; i++) {
       element = e.target.parentElement
 
     var id = element.getAttribute('data-id')
-    var url = `${apiHost}/api/v1/unities/del/${id}`
-    
+    var url = `${apiHost}unities/del/${id}`
       utils.api(JSON.stringify({}), url, 'DELETE', business.delete, element)
   })
 }
@@ -172,7 +170,8 @@ if (form != null) {
 
 form = document.querySelector('#update-business')
 if (form != null)
-  bussines.setData()
+  business.setData()
+  
 
 var servicesTable = document.querySelector('#services-registers')
 if (servicesTable !== null) {
