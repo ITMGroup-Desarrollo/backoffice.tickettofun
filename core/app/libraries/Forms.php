@@ -35,6 +35,7 @@ class Forms
 
     public function get($params = '')
     {
+        $this->content_form = '';
         $this->CI->load->database();
 
         $query        = 'CALL get_form(?)';
@@ -141,17 +142,21 @@ class Forms
                 'class' => 'form-horizontal'
             );
 
+            $this->button_attrib = array('class' => 'btn btn-default cancel');
+
             // Add buttons form
             $this->CI->load->Model('Page');
             $this->CI->load->library('Build');
 
             $this->CI->db->close();
+
             $content = $this->CI->Page->get_settings('');
             $content = $this->CI->build->build_components(
                 $content['BUTTONS_FORM']
             );
 
             $buttons = custom('BUTTON', $this->button_attrib, 'Cancel');
+            
             $this->button_attrib['class'] = 'btn btn-success save';
             $buttons .= custom('BUTTON', $this->button_attrib, 'Save');
 

@@ -7455,3 +7455,20 @@ body {
   .micromodal-slide .modal__overlay {
     will-change: transform;
   }
+
+
+#form-account-pwd {
+  margin-top: 40px;
+  border-top: 1px solid #ccc;
+  padding-top: 40px
+}
+
+
+/* Helpers */
+.pt-20 {
+  padding-top: 20px
+}
+
+.pb-20 {
+  padding-bottom: 20px
+}

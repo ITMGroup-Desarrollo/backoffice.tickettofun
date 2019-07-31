@@ -73,6 +73,9 @@ $route["users/list"] = "users/index/$1";
 $route["users/new"]   = "users/index/$1";
 $route["users/(:num)"]   = "users/update/$1";
 
+//Settings
+$route["profile"] = "profile/index/$1";
+
 // Resellers
 $route["resellers/list"] = "resellers/index/$1";
 $route["resellers/new"]   = "resellers/index/$1";

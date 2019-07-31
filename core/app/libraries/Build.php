@@ -26,6 +26,7 @@ class Build {
     public function build_components($contents)
     {
         $content = '';
+        $this->component = '';
 
         // Validate object for correcty structure
         if ( ! is_object($contents))
