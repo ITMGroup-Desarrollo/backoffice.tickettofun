@@ -129,7 +129,7 @@ if (save != null) {
       form = document.querySelector('#add-channel')
 
       if (form != null) {
-        var url = `${apiHost}/api/v1/channels/add`
+        var url = `${apiHost}channels/add`
         utils.api(JSON.stringify(info), url, 'POST', channels.add)
       }
 
@@ -138,7 +138,7 @@ if (save != null) {
       if (form != null) {
         info.active_status = document.querySelector('[name="status"]').value
 
-        var url = `${apiHost}/api/v1/channels/edit/${channelData.id}`
+        var url = `${apiHost}channels/edit/${channelData.id}`
         utils.api(JSON.stringify(info), url, 'PUT', channel.update)
       }
     }
@@ -157,7 +157,7 @@ for (var i = 0, l = options.length; i < l; i++) {
 
     var id = element.getAttribute('data-id')
 
-    var url = `${apiHost}/api/v1/channels/del/${id}`
+    var url = `${apiHost}channels/del/${id}`
     utils.api(JSON.stringify({}), url, 'DELETE', channel.delete, element)
   })
 }

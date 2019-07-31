@@ -137,7 +137,7 @@ if (save != null) {
       if (form != null) {
         info.user_password = document.querySelector('[name="user_password"]').value
 
-        var url = `${apiHost}/api/v1/users/add`
+        var url = `${apiHost}users/add`
         utils.api(JSON.stringify(info), url, 'POST', user.add)
       }
 
@@ -146,7 +146,7 @@ if (save != null) {
       if (form != null) {
         info.active_status = document.querySelector('[name="status"]').value
 
-        var url = `${apiHost}/api/v1/users/edit/${userData.id}`
+        var url = `${apiHost}users/edit/${userData.id}`
         utils.api(JSON.stringify(info), url, 'PUT', user.update)
       }
     }
@@ -164,7 +164,7 @@ for (var i = 0, l = options.length; i < l; i++) {
       element = e.target.parentElement
 
     var id = element.getAttribute('data-id')
-    var url = `${apiHost}/api/v1/users/del/${id}`
+    var url = `${apiHost}users/del/${id}`
       utils.api(JSON.stringify({}), url, 'DELETE', user.delete, element)
   })
 }

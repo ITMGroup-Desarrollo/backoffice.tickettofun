@@ -131,7 +131,7 @@ if (save != null) {
       form = document.querySelector('#add-destination')
 
       if (form != null) {
-        var url = `${apiHost}/api/v1/destinations/add`
+        var url = `${apiHost}destinations/add`
         utils.api(JSON.stringify(info), url, 'POST', destination.add)
       }
 
@@ -140,7 +140,7 @@ if (save != null) {
       if (form != null) {
         info.status = document.querySelector('[name="status"]').value
 
-        var url = `${apiHost}/api/v1/destinations/edit/${destinationData.id}`
+        var url = `${apiHost}destinations/edit/${destinationData.id}`
         utils.api(JSON.stringify(info), url, 'PUT', destination.update)
       }
     }
@@ -159,7 +159,7 @@ for (var i = 0, l = options.length; i < l; i++) {
 
     var id = element.getAttribute('data-id')
 
-    var url = `${apiHost}/api/v1/destinations/del/${id}`
+    var url = `${apiHost}destinations/del/${id}`
     utils.api(JSON.stringify({}), url, 'DELETE', destination.delete, element)
   })
 }
