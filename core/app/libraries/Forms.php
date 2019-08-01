@@ -377,8 +377,13 @@ class Forms
         {
             $rows = $response->message;
 
-            foreach ($rows as $row)
-                $options[$row->$value] = $row->$name;
+            foreach ($rows as $row){
+
+                if((int)$row->active_status === 1)
+                    $options[$row->$value] = $row->$name;
+
+            }
+                
         }
 
         return $options;
