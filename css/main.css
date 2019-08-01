@@ -3683,20 +3683,14 @@ body {
 #users #content .sidebar-toggler {
   z-index: 9; }
 #users #content .page-title {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  padding: 20px 30px;
-  font-size: 16px;
-  color: #7e7e7e;
-  text-transform: uppercase;
-  font-weight: 600;
-  letter-spacing: .3px;
-  border-right: 1px solid #E6E6E6; }
+  float: left;
+position: relative;
+font-size: 17px;
+line-height: 26px;
+color: #333; }
   @media (max-width: 767px) {
     #users #content .page-title {
-      border-right: 0;
-      padding-left: 50px; } }
+      font-size: 15px; } }
 #users #content form.search {
   position: relative;
   float: left;
