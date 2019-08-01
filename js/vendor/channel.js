@@ -130,7 +130,7 @@ if (save != null) {
 
       if (form != null) {
         var url = `${apiHost}channels/add`
-        utils.api(JSON.stringify(info), url, 'POST', channels.add)
+        utils.api(JSON.stringify(info), url, 'POST', channel.add)
       }
 
       form = document.querySelector('#update-channel')
