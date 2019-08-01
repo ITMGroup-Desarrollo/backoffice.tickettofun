@@ -132,7 +132,7 @@ if (save != null) {
       form = document.querySelector('#add-reseller')
 
       if (form != null) {
-        var url = `${apiHost}/api/v1/resellers/add`
+        var url = `${apiHost}resellers/add`
         utils.api(JSON.stringify(info), url, 'POST', reseller.add)
       }
 
@@ -141,7 +141,7 @@ if (save != null) {
       if (form != null) {
         info.active_status = document.querySelector('[name="status"]').value
 
-        var url = `${apiHost}/api/v1/resellers/edit/${resellerData.id}`
+        var url = `${apiHost}resellers/edit/${resellerData.id}`
         utils.api(JSON.stringify(info), url, 'PUT', reseller.update)
       }
     }
@@ -159,7 +159,7 @@ for (var i = 0, l = options.length; i < l; i++) {
       element = e.target.parentElement
 
     var id = element.getAttribute('data-id')
-    var url = `${apiHost}/api/v1/resellers/del/${id}`
+    var url = `${apiHost}resellers/del/${id}`
       utils.api(JSON.stringify({}), url, 'DELETE', reseller.delete, element)
   })
 }
