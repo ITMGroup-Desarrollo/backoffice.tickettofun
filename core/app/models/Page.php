@@ -100,18 +100,28 @@ class Page extends CI_Model
         return $content;
     }
 
+    public function get_settings($name)
+    {
+        return $this->_get_settings($name);
+    }
+
     private function _get_meta()
     {
         $this->meta_tags = '';
         $this->load->database();
 
         $query = 'CALL get_meta(?)';
-
         $query_result = $this->db->query($query, $this->page_name);
 
-        if ($query_result->num_rows())
+        $num_rows = $query_result->num_rows();
+        $result   = $query_result->result();
+
+        $query_result->free_result();
+        $this->db->close();
+
+        if ($num_rows)
         {
-            foreach ($query_result->result() as $row)
+            foreach ($result as $row)
             {
                 $meta_array = array();
 
@@ -132,9 +142,6 @@ class Page extends CI_Model
             }
         }
 
-        $query_result->free_result();
-        $this->db->close();
-
         $this->meta_tags = trim($this->meta_tags);
 
         return $this->meta_tags;
@@ -147,14 +154,20 @@ class Page extends CI_Model
         $query = 'CALL get_scripts(?)';
         $query_result = $this->db->query($query, $this->page_name);
 
+        $num_rows = $query_result->num_rows();
+        $result   = $query_result->result();
+
+        $query_result->free_result();
+        $this->db->close();
+
         $this->scripts = array(
             'css' => '',
             'js' => ''
         );
 
-        if ($query_result->num_rows())
+        if ($num_rows)
         {
-            foreach ($query_result->result() as $row)
+            foreach ($result as $row)
             {
                 if ($row->script_type === 'CSS')
                 {
@@ -224,18 +237,10 @@ class Page extends CI_Model
             $this->scripts['js'] = $scripts;
         }
 
-        $query_result->free_result();
-        $this->db->close();
-
         $this->scripts['js']  = trim($this->scripts['js']);
         $this->scripts['css'] = trim($this->scripts['css']);
 
         return $this->scripts;
-    }
-
-    public function get_settings($name)
-    {
-        return $this->_get_settings($name);
     }
 
     private function _get_settings($name)
@@ -247,14 +252,17 @@ class Page extends CI_Model
 
         $query_result = $this->db->query($query, $name);
 
-        if ($query_result->num_rows())
-        {
-            foreach ($query_result->result() as $row)
-                $settings[$row->setting_name] = json_decode($row->setting_seq);
-        }
+        $num_rows = $query_result->num_rows();
+        $result   = $query_result->result();
 
         $query_result->free_result();
         $this->db->close();
+
+        if ($num_rows)
+        {
+            foreach ($result as $row)
+                $settings[$row->setting_name] = json_decode($row->setting_seq);
+        }
 
         return $settings;
     }
@@ -269,13 +277,14 @@ class Page extends CI_Model
 
         $query_result = $this->db->query($query, $data);
 
-        if ($query_result->num_rows())
+        $num_rows = $query_result->num_rows();
+        $result   = $query_result->result();
+
+        $query_result->free_result();
+        $this->db->close();
+
+        if ($num_rows)
         {
-            $result = $query_result->result();
-
-            $query_result->free_result();
-            $this->db->close();
-
             foreach ($result as $row)
             {
                 $description = json_decode($row->content_seq);

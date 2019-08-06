@@ -41,13 +41,14 @@ class Forms
         $query        = 'CALL get_form(?)';
         $query_result = $this->CI->db->query($query, $params);
 
-        if ($query_result->num_rows())
+        $num_rows = $query_result->num_rows();
+        $result   = $query_result->result();
+
+        $query_result->free_result();
+        $this->CI->db->close();
+
+        if ($num_rows)
         {
-            $result = $query_result->result();
-
-            $query_result->free_result();
-            $this->CI->db->close();
-
             foreach ($result as $row)
             {
                 $extra = '';
@@ -85,7 +86,7 @@ class Forms
                             $element . $row->label_name
                         );
                     }
-                    else if ($params[0] != 'signin') 
+                    else if ($params[0] != 'signin')
                     {
                         $label = form_label($row->label_name, '', $this->attrib);
                         $wrapper = custom('div', $this->wrapper_attrib, $element);
@@ -135,7 +136,7 @@ class Forms
             }
         }
 
-        if ($params[0] != 'signin') 
+        if ($params[0] != 'signin')
         {
             $this->form_attrib = array(
                 'id' => '{id}',
@@ -156,7 +157,7 @@ class Forms
             );
 
             $buttons = custom('BUTTON', $this->button_attrib, 'Cancel');
-            
+
             $this->button_attrib['class'] = 'btn btn-success save';
             $buttons .= custom('BUTTON', $this->button_attrib, 'Save');
 
@@ -271,13 +272,14 @@ class Forms
         $query = 'CALL get_catalog(?)';
         $query_result = $this->CI->db->query($query, $catalog_id);
 
-        if ($query_result->num_rows())
+        $num_rows = $query_result->num_rows();
+        $result   = $query_result->result();
+
+        $query_result->num_rows();
+        $this->CI->db->close();
+
+        if ($num_rows)
         {
-            $result  = $query_result->result();
-
-            $query_result->free_result();
-            $this->CI->db->close();
-
             foreach ($result as $row)
             {
                 // Valid if value is not a ranges values
@@ -324,22 +326,22 @@ class Forms
 
         switch ($catalog_id)
         {
-            case 1: 
+            case 1:
                 $endpoint = HOST . GET_LOCATIONS_ROUTE;
                 $value = 'location_id';
                 $name  = 'location_name';
                 break;
-            case 3: 
+            case 3:
                 $endpoint = HOST . GET_ROLES_ROUTE;
                 $value = 'rol_id';
                 $name  = 'rol_name';
                 break;
-            case 4: 
+            case 4:
                 $endpoint = HOST . GET_DESTINATIONS_ROUTE;
                 $value = 'destination_id';
                 $name  = 'destination_name';
-                break;                
-            case 5: 
+                break;
+            case 5:
                 $endpoint = HOST . GET_CHANNELS_ROUTE;
                 $value = 'channel_id';
                 $name  = 'channel_name';
@@ -349,12 +351,12 @@ class Forms
                 $value = 'unity_id';
                 $name  = 'unity_name';
                 break;
-            case 7: 
+            case 7:
                 $endpoint = HOST . GET_RESELLERS_ROUTE;
                 $value = 'reseller_id';
                 $name  = 'reseller_name';
                 break;
-            case 8: 
+            case 8:
                 $endpoint = HOST . GET_USERS_ROUTE;
                 $value = 'user_id';
                 $name  = 'email_addr';

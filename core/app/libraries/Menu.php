@@ -17,7 +17,7 @@ class Menu {
     public $menu;
     public $sub_menu;
     public $arrow_attrib;
-    public $anchor_attrib;    
+    public $anchor_attrib;
 
     public function __construct()
     {
@@ -36,7 +36,8 @@ class Menu {
 
     public function get($options)
     {
-        $menu = '';
+        $menu    = '';
+        $nav_bar = '';
 
         $this->CI->load->database();
         $this->CI->load->library('session');
@@ -47,14 +48,18 @@ class Menu {
 
         $query_result = $this->CI->db->query('CALL get_menu(?)', $values);
 
-        if ($query_result->num_rows())
-        {
-            $result = $query_result->result();
-            $this->CI->db->close();
+        $num_rows = $query_result->num_rows();
+        $result   = $query_result->result();
 
+        $query_result->free_result();
+        $this->CI->db->close();
+
+        if ($num_rows)
+        {
             $grouper = '';
             $grouper_title = '';
             $nav_bar = '{current_user}';
+
             foreach ($result as $row)
             {
                 if (empty($grouper_title))
