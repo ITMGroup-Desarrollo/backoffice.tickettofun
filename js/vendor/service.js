@@ -138,7 +138,7 @@ if (save != null) {
       form = document.querySelector('#add-service')
 
       if (form != null) {
-        var url = `${apiHost}/api/v1/products/add`
+        var url = `${apiHost}products/add`
         utils.api(JSON.stringify(info), url, 'POST', service.add)
       }
 
@@ -147,7 +147,7 @@ if (save != null) {
       if (form != null) {
         info.active_status = document.querySelector('[name="status"]').value
 
-        var url = `${apiHost}/api/v1/products/edit/${serviceData.id}`
+        var url = `${apiHost}products/edit/${serviceData.id}`
         utils.api(JSON.stringify(info), url, 'PUT', service.update)
       }
     }
@@ -165,7 +165,7 @@ for (var i = 0, l = options.length; i < l; i++) {
       element = e.target.parentElement
 
     var id = element.getAttribute('data-id')
-    var url = `${apiHost}/api/v1/products/del/${id}`
+    var url = `${apiHost}products/del/${id}`
       utils.api(JSON.stringify({}), url, 'DELETE', service.delete, element)
   })
 }
