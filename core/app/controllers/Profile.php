@@ -19,9 +19,9 @@ class Profile extends CI_Controller
         $this->Page->page_name = $view;
 
         $data = $this->Page->get_contents();
-        $this->load->Model('AccountProfile');
+        $this->load->Model('Account_profile');
 
-        $form = $this->AccountProfile->get_form();  
+        $form = $this->Account_profile->get_form();  
 
         $data['contents'] = str_replace(
             '{title}', 'Account Profle settings', $data['contents']
@@ -33,7 +33,7 @@ class Profile extends CI_Controller
             '{content}', $image . $form, $data['contents']
         );
 
-        $profile = $this->AccountProfile->get_data($this->session->userdata('user_id'));
+        $profile = $this->Account_profile->get_data($this->session->userdata('user_id'));
 
         $profile = 'window.profile = ' . json_encode($profile);
 
