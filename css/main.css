@@ -262,7 +262,7 @@ textarea.form-control {
     /*box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px rgba(166, 205, 236, 0.6);*/
     box-shadow: none; }
 
-/* 
+/*
 	Create a custom select by adding a [data-smart-select]
 	to any select. e.g. <select class="form-control" data-smart-select>
 	and it will automatically be converted into a customized select
@@ -3006,7 +3006,7 @@ body {
                 color: #000; }
 
 #sidebar-default {
-  background: #2a313a;
+  background: #252F38;
   border-right: 1px solid #3C434D;
   left: 0;
   top: 0;
@@ -3023,7 +3023,7 @@ body {
       width: 80px; } }
   #sidebar-default .current-user {
     position: relative;
-    background: linear-gradient(#3d4a5d, #3f4c5c), #686e78;
+    background: linear-gradient(#3d4a5d, #252F38), #686e78;
     -webkit-box-shadow: inset rgba(255, 255, 255, 0.16) 0 1px 0;
     -moz-box-shadow: inset rgba(255, 255, 255, 0.16) 0 1px 0;
     color: #fff;
@@ -6477,7 +6477,7 @@ color: #333; }
         color: #fff; }
 
 #signin {
-  background: #000;
+  background: #252F38 !important;
   background-image: -webkit-radial-gradient(circle farthest-side at right bottom, #494764, #323c53 80%, #2b3c53);
   background-image: -moz-radial-gradient(circle farthest-side at right bottom, #494764, #323c53 80%, #2b3c53);
   background-image: -o-radial-gradient(circle farthest-side at right bottom, #494764, #323c53 80%, #2b3c53);
@@ -7308,7 +7308,7 @@ color: #333; }
 .modal {
     font-family: -apple-system,BlinkMacSystemFont,avenir next,avenir,helvetica neue,helvetica,ubuntu,roboto,noto,segoe ui,arial,sans-serif;
   }
-  
+
   .modal__overlay {
     position: fixed;
     top: 0;
@@ -7320,7 +7320,7 @@ color: #333; }
     justify-content: center;
     align-items: center;
   }
-  
+
   .modal__container {
     background-color: #fff;
     padding: 30px;
@@ -7330,13 +7330,13 @@ color: #333; }
     overflow-y: auto;
     box-sizing: border-box;
   }
-  
+
   .modal__header {
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
-  
+
   .modal__title {
     margin-top: 0 !important;
     margin-bottom: 0;
@@ -7346,21 +7346,21 @@ color: #333; }
     color: #00449e !important;
     box-sizing: border-box;
   }
-  
+
   .modal__close {
     background: transparent;
     border: 0;
   }
-  
+
   .modal__header .modal__close:before { content: "\2715"; }
-  
+
   .modal__content {
     margin-top: 2rem;
     margin-bottom: 2rem;
     line-height: 1.5;
     color: rgba(0,0,0,.8);
   }
-  
+
   .modal__btn {
     font-size: .875rem;
     padding-left: 1rem;
@@ -7388,16 +7388,16 @@ color: #333; }
     transition: transform .25s ease-out;
     transition: transform .25s ease-out,-webkit-transform .25s ease-out;
   }
-  
+
   .modal__btn:focus, .modal__btn:hover {
     -webkit-transform: scale(1.05);
     transform: scale(1.05);
   }
-  
+
   .modal__btn-primary {
     background-color: #00449e;
     color: #fff;
-  }  
+  }
   /**************************\
     Demo Animation Style
   \**************************/
@@ -7405,46 +7405,46 @@ color: #333; }
       from { opacity: 0; }
         to { opacity: 1; }
   }
-  
+
   @keyframes mmfadeOut {
       from { opacity: 1; }
         to { opacity: 0; }
   }
-  
+
   @keyframes mmslideIn {
     from { transform: translateY(15%); }
       to { transform: translateY(0); }
   }
-  
+
   @keyframes mmslideOut {
       from { transform: translateY(0); }
       to { transform: translateY(-10%); }
   }
-  
+
   .micromodal-slide {
     display: none;
   }
-  
+
   .micromodal-slide.is-open {
     display: block;
   }
-  
+
   .micromodal-slide[aria-hidden="false"] .modal__overlay {
     animation: mmfadeIn .3s cubic-bezier(0.0, 0.0, 0.2, 1);
   }
-  
+
   .micromodal-slide[aria-hidden="false"] .modal__container {
     animation: mmslideIn .3s cubic-bezier(0, 0, .2, 1);
   }
-  
+
   .micromodal-slide[aria-hidden="true"] .modal__overlay {
     animation: mmfadeOut .3s cubic-bezier(0.0, 0.0, 0.2, 1);
   }
-  
+
   .micromodal-slide[aria-hidden="true"] .modal__container {
     animation: mmslideOut .3s cubic-bezier(0, 0, .2, 1);
   }
-  
+
   .micromodal-slide .modal__container,
   .micromodal-slide .modal__overlay {
     will-change: transform;
