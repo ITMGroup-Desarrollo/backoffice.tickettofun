@@ -53,14 +53,9 @@ class Ship extends CI_Model
                 $this->anchor_attrib = array();
 
                 $aux .= custom('td', '', $row->ship_name);
-                $aux .= custom('td', '', $row->ship_code);
                 $aux .= custom('td', '', $row->reseller_name);
                 $aux .= custom('td', '', $row->ship_capacity);
                 $aux .= custom('td', '', $row->ship_weight);
-                $aux .= custom('td', '', $row->ship_eslora_mts);
-                $aux .= custom('td', '', $row->ship_eslora_feet);
-                $aux .= custom('td', '', $row->ship_manga_mts);
-                $aux .= custom('td', '', $row->ship_calado);
 
                 $status = '';
                 $delete = '';
@@ -101,7 +96,7 @@ class Ship extends CI_Model
         else
         {
             $aux = '';
-            for ($i = 0; $i < 11; $i++)
+            for ($i = 0; $i < 6; $i++)
                 $aux .= custom('td', '', '');
 
             $this->model = custom('tr', '', $aux);
@@ -141,14 +136,9 @@ class Ship extends CI_Model
         {
             $ship->id = $response->message->ship_id;
             $ship->name = $response->message->ship_name;
-            $ship->code = $response->message->ship_code;
             $ship->reseller = $response->message->reseller_id;
             $ship->capacity = $response->message->ship_capacity;
             $ship->weight = $response->message->ship_weight;
-            $ship->eslora_mts = $response->message->ship_eslora_mts;
-            $ship->eslora_feet = $response->message->ship_eslora_feet;
-            $ship->manga = $response->message->ship_manga_mts;
-            $ship->calado = $response->message->ship_calado;
             $ship->active = $response->message->active_status;
         }else{
             redirect('/ships/list');

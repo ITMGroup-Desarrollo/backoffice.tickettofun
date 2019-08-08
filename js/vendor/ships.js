@@ -92,14 +92,9 @@ var ships= {
   },
   setData: function(){
     document.querySelector('[name="name"]').value = shipsData.name
-    document.querySelector('[name="code"]').value = shipsData.code
     document.querySelector('[name="reseller"]').value = shipsData.reseller
     document.querySelector('[name="capacity"]').value = shipsData.capacity
     document.querySelector('[name="weight"]').value = shipsData.weight
-    document.querySelector('[name="eslora_mts"]').value = shipsData.eslora_mts
-    document.querySelector('[name="eslora_feet"]').value = shipsData.eslora_feet
-    document.querySelector('[name="manga"]').value = shipsData.manga
-    document.querySelector('[name="calado"]').value = shipsData.calado
     document.querySelector('[name="status"]').value = shipsData.active
   }
 }
@@ -131,14 +126,9 @@ if (save != null) {
     if(valid) {
       info = {
         reseller_id: document.querySelector('[name="reseller"]').value,
-        ship_code: document.querySelector('[name="code"]').value,
         ship_name: document.querySelector('[name="name"]').value,
         ship_capacity: document.querySelector('[name="capacity"]').value,
-        ship_weight: document.querySelector('[name="weight"]').value,
-        ship_eslora_mts: document.querySelector('[name="eslora_mts"]').value,
-        ship_eslora_feet: document.querySelector('[name="eslora_feet"]').value,
-        ship_manga_mts: document.querySelector('[name="manga"]').value,
-        ship_calado: document.querySelector('[name="calado"]').value,
+        ship_weight: document.querySelector('[name="weight"]').value
       }
 
       form = document.querySelector('#add-ship')
