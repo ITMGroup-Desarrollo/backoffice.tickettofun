@@ -31,7 +31,7 @@ class Menu {
             'class'  => ''
         );
 
-        $this->arrow_attrib = array('class' => 'fa fa-chevron-down');
+        $this->arrow_attrib = array('class' => 'fas fa-chevron-down');
     }
 
     public function get($options)
