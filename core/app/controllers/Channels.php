@@ -18,7 +18,7 @@ class Channels extends CI_Controller
 
         $this->load->Model('Page');
         $this->Page->page_name = $view;
-        $this->Page->menu_active = $view;
+        $this->Page->menu_active = 'sales channels';
         $this->Page->submenu_active = $option;
 
         $data = $this->Page->get_contents();

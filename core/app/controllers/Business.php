@@ -18,6 +18,8 @@ class Business extends CI_Controller
 
         $this->load->Model('Page');
         $this->Page->page_name = $view;
+        $this->Page->menu_active = 'business unities';
+        $this->Page->submenu_active = $option;
 
         $data = $this->Page->get_contents();
 
