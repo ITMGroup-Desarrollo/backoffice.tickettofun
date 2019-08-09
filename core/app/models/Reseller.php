@@ -56,7 +56,6 @@ class Reseller extends CI_Model
 
                 $aux .= custom('td', '', $row->reseller_name);
                 $aux .= custom('td', '', $row->channel_name);
-                               
 
                 $status = '';
                 $delete = '';
@@ -141,7 +140,6 @@ class Reseller extends CI_Model
             $reseller->channel_name     = $response->message->channel_name;
             $reseller->reseller_name    = $response->message->reseller_name;
             $reseller->active           = $response->message->active_status;
-            
         }
         else
         {

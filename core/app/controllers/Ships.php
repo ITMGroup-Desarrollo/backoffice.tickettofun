@@ -15,15 +15,15 @@ class Ships extends CI_Controller
 
         $view   = $this->uri->segment(1);
         $option = $this->uri->segment(2);
-        
+
         $this->load->Model('Page');
         $this->Page->page_name = $view;
 
         $data = $this->Page->get_contents();
 
         $this->load->Model('Ship');
-        
-        if ($option == 'list') 
+
+        if ($option == 'list')
         {
             $table = $this->Ship->get_list();
 

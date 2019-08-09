@@ -40,11 +40,11 @@ class Business_unity extends CI_Model
 
         $this->load->library('session');
         $token = $this->session->userdata('token');
-        
+
         $response = json_decode(
             $this->api->request_api('GET', $endpoint, $params, $token)
         );
-        
+
         if ($response->code == 200)
         {
             $rows = $response->message;
@@ -66,7 +66,7 @@ class Business_unity extends CI_Model
                 {
                     $status = custom('span', $this->inactive, 'Inactive');
                 }
-                
+
                 $status_attrib = $this->attrib;
                 $status_attrib['data-status'] =  $row->unity_id;
                 $aux .= custom('td', $status_attrib, $status);

@@ -385,7 +385,6 @@ class Forms
                     $options[$row->$value] = $row->$name;
 
             }
-                
         }
 
         return $options;

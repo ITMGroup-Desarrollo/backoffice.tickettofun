@@ -23,7 +23,7 @@ class Apikeys extends CI_Controller
 
         $this->load->Model('Apikey');
 
-        if ($option == 'list') 
+        if ($option == 'list')
         {
             $table = $this->Apikey->get_list();
 
@@ -84,7 +84,6 @@ class Apikeys extends CI_Controller
         );
 
         $apikey = $this->Apikey->get_data($option);
-       
         $apikey = 'window.apikey = ' . json_encode($apikey);
 
         $script = custom('script', '', $apikey);

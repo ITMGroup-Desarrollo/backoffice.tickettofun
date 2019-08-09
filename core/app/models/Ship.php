@@ -43,7 +43,7 @@ class Ship extends CI_Model
         $response = json_decode(
             $this->api->request_api('GET', $endpoint, $params, $token)
         );
-        
+
         if ($response->code == 200)
         {
             $rows = $response->message;
@@ -67,7 +67,7 @@ class Ship extends CI_Model
                 {
                     $status = custom('span', $this->inactive, 'Inactive');
                 }
-                
+
                 $status_attrib = $this->attrib;
                 $status_attrib['data-status'] =  $row->ship_id;
                 $aux .= custom('td', $status_attrib, $status);
@@ -143,7 +143,7 @@ class Ship extends CI_Model
         }else{
             redirect('/ships/list');
         }
-        
+
         return $ship;
     }
 }

@@ -69,7 +69,6 @@ class Api
             $response->message = "Not found data";
 
             $response = json_encode($response);
-           
         }
 
         return $response;
