@@ -55,7 +55,6 @@ class Ship extends CI_Model
                 $aux .= custom('td', '', $row->ship_name);
                 $aux .= custom('td', '', $row->reseller_name);
                 $aux .= custom('td', '', $row->ship_capacity);
-                $aux .= custom('td', '', $row->ship_weight);
 
                 $status = '';
                 $delete = '';
@@ -96,7 +95,7 @@ class Ship extends CI_Model
         else
         {
             $aux = '';
-            for ($i = 0; $i < 6; $i++)
+            for ($i = 0; $i < 5; $i++)
                 $aux .= custom('td', '', '');
 
             $this->model = custom('tr', '', $aux);
@@ -138,7 +137,6 @@ class Ship extends CI_Model
             $ship->name = $response->message->ship_name;
             $ship->reseller = $response->message->reseller_id;
             $ship->capacity = $response->message->ship_capacity;
-            $ship->weight = $response->message->ship_weight;
             $ship->active = $response->message->active_status;
         }else{
             redirect('/ships/list');

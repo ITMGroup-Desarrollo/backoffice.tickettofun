@@ -94,7 +94,6 @@ var ships= {
     document.querySelector('[name="name"]').value = shipsData.name
     document.querySelector('[name="reseller"]').value = shipsData.reseller
     document.querySelector('[name="capacity"]').value = shipsData.capacity
-    document.querySelector('[name="weight"]').value = shipsData.weight
     document.querySelector('[name="status"]').value = shipsData.active
   }
 }
@@ -127,8 +126,7 @@ if (save != null) {
       info = {
         reseller_id: document.querySelector('[name="reseller"]').value,
         ship_name: document.querySelector('[name="name"]').value,
-        ship_capacity: document.querySelector('[name="capacity"]').value,
-        ship_weight: document.querySelector('[name="weight"]').value
+        ship_capacity: document.querySelector('[name="capacity"]').value
       }
 
       form = document.querySelector('#add-ship')
