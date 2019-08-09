@@ -30,7 +30,7 @@ class Ships extends CI_Controller
             $table = $this->Ship->get_list();
 
             $data['contents'] = str_replace(
-                '{title}', 'List of Ships Unity', $data['contents']
+                '{title}', 'List of Crusiers', $data['contents']
             );
 
             $data['contents'] = str_replace(
@@ -43,7 +43,7 @@ class Ships extends CI_Controller
             $form = str_replace('{id}', 'add-ship', $form);
 
             $data['contents'] = str_replace(
-                '{title}', 'New Ship', $data['contents']
+                '{title}', 'New Crusier', $data['contents']
             );
 
             $data['contents'] = str_replace(
@@ -78,7 +78,7 @@ class Ships extends CI_Controller
         $form = str_replace('{id}', 'update-ship', $form);
 
         $data['contents'] = str_replace(
-            '{title}', 'Edit Ship', $data['contents']
+            '{title}', 'Edit Crusier', $data['contents']
         );
 
         $data['contents'] = str_replace(
