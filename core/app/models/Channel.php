@@ -74,7 +74,7 @@ class Channel extends CI_Model
                 $path = 'channels/' . $row->channel_id;
                 $this->anchor_attrib['class'] = 'edit';
                 $this->anchor_attrib['href'] = base_url($path);
-                $edit = custom('i', array('class' => 'ion-edit'), '');
+                $edit = custom('i', array('class' => 'fas fa-edit'), '');
 
                 $edit = custom('a', $this->anchor_attrib, $edit);
 
@@ -82,7 +82,7 @@ class Channel extends CI_Model
                     $this->anchor_attrib['href'] = '#';
                     $this->anchor_attrib['class'] = 'delete';
                     $this->anchor_attrib['data-id'] = $row->channel_id;
-                    $delete = custom('i', array('class' => 'ion-close'), '');
+                    $delete = custom('i', array('class' => 'fas fa-trash'), '');
 
                     $delete = custom('a', $this->anchor_attrib, $delete);
                 }
