@@ -28,7 +28,7 @@ var apikey= {
       _alertModal.appendChild(_message)
 
       MicroModal.show('alert-modal')
-      
+
       form = document.querySelector('#add-apikey')
       form.reset();
     }
@@ -91,7 +91,6 @@ var apikey= {
     }
   },
   setData: function(){
-    
     document.querySelector('[name="key_description"]').value = apikeyData.description
     document.querySelector('[name="status"]').value = apikeyData.active
   }
@@ -118,8 +117,8 @@ if (save != null) {
     valid = utils.dataValidator(fields)
 
     if(valid) {
-      info = {       
-        app_name : document.querySelector('[name="key_description"]').value,       
+      info = {
+        app_name : document.querySelector('[name="key_description"]').value,
       }
 
       form = document.querySelector('#add-apikey')
@@ -175,7 +174,7 @@ if (form != null){
   user_id.parentElement.parentElement.remove();
   apikey.setData();
 }
-  
+
 
 var servicesTable = document.querySelector('#apikeys-registers')
 if (servicesTable !== null) {

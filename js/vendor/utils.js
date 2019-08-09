@@ -72,7 +72,7 @@ var utils = {
     var header = this.createElement('header', 'modal__header')
 
     if (cnHeader === true) {
-      title = this.createElement('h3', 'modal__title', title, 'Aviso')
+      title = this.createElement('h3', 'modal__title', title, '')
 
       header.appendChild(title)
 

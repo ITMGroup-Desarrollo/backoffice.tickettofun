@@ -28,7 +28,7 @@ var business = {
       _alertModal.appendChild(_message)
 
       MicroModal.show('alert-modal')
-      
+
       form = document.querySelector('#add-business')
       form.reset();
     }
@@ -100,7 +100,7 @@ var cancel = document.querySelector('.cancel')
 if (cancel != null) {
   cancel.addEventListener('click', function(e) {
     e.preventDefault()
-    
+
     form = document.querySelector('#add-business')
     if(form != null)
       form.reset()
@@ -120,7 +120,7 @@ if (save != null) {
     var fields = document.querySelectorAll('[data-validator]')
 
     valid = utils.dataValidator(fields)
-    
+
     if(valid) {
       info = {
         name: document.querySelector('[name="name"]').value,
@@ -138,7 +138,7 @@ if (save != null) {
 
       if (form != null) {
         info.status = document.querySelector('[name="status"]').value
-        
+
         var url = `${apiHost}unities/edit/${businessData.id}`
         utils.api(JSON.stringify(info), url, 'PUT', business.update)
       }
@@ -171,7 +171,7 @@ if (form != null) {
 form = document.querySelector('#update-business')
 if (form != null)
   business.setData()
-  
+
 
 var servicesTable = document.querySelector('#services-registers')
 if (servicesTable !== null) {

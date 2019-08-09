@@ -28,7 +28,7 @@ var ships= {
       _alertModal.appendChild(_message)
 
       MicroModal.show('alert-modal')
-      
+
       form = document.querySelector('#add-ship')
       form.reset();
     }
@@ -102,7 +102,7 @@ var cancel = document.querySelector('.cancel')
 if (cancel != null) {
   cancel.addEventListener('click', function(e) {
     e.preventDefault()
-    
+
     form = document.querySelector('#add-ship')
     if(form != null){
 
@@ -121,7 +121,7 @@ if (save != null) {
     var fields = document.querySelectorAll('[data-validator]')
 
     valid = utils.dataValidator(fields)
-    
+
     if(valid) {
       info = {
         reseller_id: document.querySelector('[name="reseller"]').value,
@@ -140,7 +140,7 @@ if (save != null) {
 
       if (form != null) {
         info.active_status = document.querySelector('[name="status"]').value
-        
+
         var url = `${apiHost}ships/edit/${shipsData.id}`
         utils.api(JSON.stringify(info), url, 'PUT', ships.update)
       }
@@ -160,8 +160,8 @@ for (var i = 0, l = options.length; i < l; i++) {
 
     var id = element.getAttribute('data-id')
     var url = `${apiHost}ships/del/${id}`
-    
-      utils.api(JSON.stringify({}), url, 'DELETE', ships.delete, element)
+
+    utils.api(JSON.stringify({}), url, 'DELETE', ships.delete, element)
   })
 }
 
@@ -173,7 +173,7 @@ if (form != null) {
 
 form = document.querySelector('#update-ship')
 
-if (form != null) 
+if (form != null)
   ships.setData();
 
 var servicesTable = document.querySelector('#ships-registers')

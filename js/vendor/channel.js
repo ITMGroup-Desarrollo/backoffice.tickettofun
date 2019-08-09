@@ -28,7 +28,7 @@ var channel = {
       _alertModal.appendChild(_message)
 
       MicroModal.show('alert-modal')
-      
+
       form = document.querySelector('#add-channel')
       form.reset();
     }

@@ -28,7 +28,7 @@ var reseller= {
       _alertModal.appendChild(_message)
 
       MicroModal.show('alert-modal')
-      
+
       form = document.querySelector('#add-reseller')
       form.reset();
     }
@@ -123,10 +123,9 @@ if (save != null) {
     valid = utils.dataValidator(fields)
 
     if(valid) {
-      info = {        
+      info = {
         channel_id: document.querySelector('[name="channel"]').value,
         reseller_name: document.querySelector('[name="reseller_name"]').value,
-        
       }
 
       form = document.querySelector('#add-reseller')

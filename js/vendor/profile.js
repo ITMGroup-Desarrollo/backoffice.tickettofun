@@ -122,19 +122,14 @@ if (savepwd != null) {
           _alertModal.appendChild(_message)
 
           MicroModal.show('alert-modal')
-
         }
       }
     }
-
   })
-
 }
 
 form = document.querySelector('#account-profile')
 
-if (form != null) {
-
+if (form != null)
   profile.setData()
 
-}

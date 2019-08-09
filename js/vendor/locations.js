@@ -28,7 +28,7 @@ var locations= {
       _alertModal.appendChild(_message)
 
       MicroModal.show('alert-modal')
-      
+
       form = document.querySelector('#add-location')
       form.reset();
     }
@@ -102,7 +102,7 @@ var cancel = document.querySelector('.cancel')
 if (cancel != null) {
   cancel.addEventListener('click', function(e) {
     e.preventDefault()
-    
+
     form = document.querySelector('#add-location')
     if(form != null){
 
@@ -121,7 +121,7 @@ if (save != null) {
     var fields = document.querySelectorAll('[data-validator]')
 
     valid = utils.dataValidator(fields)
-    
+
     if(valid) {
       info = {
         unity: document.querySelector('[name="unity"]').value,
@@ -140,7 +140,7 @@ if (save != null) {
 
       if (form != null) {
         info.status = document.querySelector('[name="status"]').value
-        
+
         var url = apiHost+`locations/edit/${locationsData.id}`
         utils.api(JSON.stringify(info), url, 'PUT', locations.update)
       }
@@ -160,7 +160,7 @@ for (var i = 0, l = options.length; i < l; i++) {
 
     var id = element.getAttribute('data-id')
     var url = apiHost+`locations/del/${id}`
-    
+
       utils.api(JSON.stringify({}), url, 'DELETE', locations.delete, element)
   })
 }

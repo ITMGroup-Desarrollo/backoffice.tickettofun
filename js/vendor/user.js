@@ -28,7 +28,7 @@ var user= {
       _alertModal.appendChild(_message)
 
       MicroModal.show('alert-modal')
-      
+
       form = document.querySelector('#add-user')
       form.reset();
     }

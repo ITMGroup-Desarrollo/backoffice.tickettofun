@@ -28,7 +28,7 @@ var rol= {
       _alertModal.appendChild(_message)
 
       MicroModal.show('alert-modal')
-      
+
       form = document.querySelector('#add-rol')
       form.reset();
     }
@@ -117,8 +117,8 @@ if (save != null) {
     valid = utils.dataValidator(fields)
 
     if(valid) {
-      info = {       
-        role_name: document.querySelector('[name="rol_name"]').value,       
+      info = {
+        role_name: document.querySelector('[name="rol_name"]').value,
       }
 
       form = document.querySelector('#add-rol')
