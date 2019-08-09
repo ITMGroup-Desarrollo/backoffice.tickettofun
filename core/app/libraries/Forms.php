@@ -373,7 +373,7 @@ class Forms
             $this->CI->api->request_api('GET', $endpoint, $params, $token)
         );
 
-        $options[''] = '-- Choice option --';
+        $options[''] = '-- Choose option --';
 
         if ($response->code == 200)
         {
