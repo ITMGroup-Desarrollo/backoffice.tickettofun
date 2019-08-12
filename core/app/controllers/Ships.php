@@ -18,7 +18,7 @@ class Ships extends CI_Controller
 
         $this->load->Model('Page');
         $this->Page->page_name = $view;
-        $this->Page->menu_active = 'crusiers';
+        $this->Page->menu_active = 'cruisie';
         $this->Page->submenu_active = $option;
 
         $data = $this->Page->get_contents();
@@ -30,7 +30,7 @@ class Ships extends CI_Controller
             $table = $this->Ship->get_list();
 
             $data['contents'] = str_replace(
-                '{title}', 'List of Crusiers', $data['contents']
+                '{title}', 'List of Cruises', $data['contents']
             );
 
             $data['contents'] = str_replace(
@@ -43,7 +43,7 @@ class Ships extends CI_Controller
             $form = str_replace('{id}', 'add-ship', $form);
 
             $data['contents'] = str_replace(
-                '{title}', 'New Crusier', $data['contents']
+                '{title}', 'New Cruise', $data['contents']
             );
 
             $data['contents'] = str_replace(
@@ -78,7 +78,7 @@ class Ships extends CI_Controller
         $form = str_replace('{id}', 'update-ship', $form);
 
         $data['contents'] = str_replace(
-            '{title}', 'Edit Crusier', $data['contents']
+            '{title}', 'Edit Cruise', $data['contents']
         );
 
         $data['contents'] = str_replace(
