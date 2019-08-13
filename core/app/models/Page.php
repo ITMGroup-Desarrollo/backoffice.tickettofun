@@ -86,6 +86,12 @@ class Page extends CI_Model
         else
         {
             $body = $this->_get_components();
+
+            $str_aux = '';
+            if ($this->input->cookie('mail') != '')
+                $str_aux = get_cookie('mail');
+
+            $body = str_replace('{mail}', $str_aux, $body);
         }
 
         $contents = array();

@@ -38,6 +38,16 @@ class User_session
             'token'     => $credentials->token
         );
 
+        $this->CI->load->helper('cookie');
+        if ($credentials->remember == 1)
+        {
+          set_cookie('mail', $credentials->email, strtotime('+30 days'));
+        }
+        else
+        {
+          delete_cookie('mail');
+        }
+
         $this->CI->session->set_userdata($user_data);
 
         return 200;
