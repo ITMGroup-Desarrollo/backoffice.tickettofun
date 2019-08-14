@@ -18,7 +18,7 @@ class Ships extends CI_Controller
 
         $this->load->Model('Page');
         $this->Page->page_name = $view;
-        $this->Page->menu_active = 'cruisie';
+        $this->Page->menu_active = 'cruise';
         $this->Page->submenu_active = $option;
 
         $data = $this->Page->get_contents();
