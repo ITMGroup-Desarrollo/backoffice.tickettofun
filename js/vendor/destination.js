@@ -13,7 +13,7 @@ var destination = {
     var _message = ''
     var _alertModal = document.getElementById('alert-modal-content')
 
-    if (response.code == 400) {
+    if (codes.hasOwnProperty(response.code)) {
       _message = utils.createElement('p', '', '', response.message)
 
       _alertModal.innerHTML = ''
@@ -21,14 +21,14 @@ var destination = {
 
       MicroModal.show('alert-modal')
     }
-    else if (response.code == 200) {
-      _message = utils.createElement('p', '', '', 'Success!, destination added correctly')
+    else if (response.code == 201) {
+      _message = utils.createElement('p', '', '', 'Success! Destination added correctly')
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
 
       MicroModal.show('alert-modal')
-      
+
       form = document.querySelector('#add-destination')
       form.reset();
     }
@@ -40,7 +40,7 @@ var destination = {
     var _message = ''
     var _alertModal = document.getElementById('alert-modal-content')
 
-    if (response.code == 400) {
+    if (codes.hasOwnProperty(response.code)) {
       _message = utils.createElement('p', '', '', response.message)
 
       _alertModal.innerHTML = ''
@@ -48,7 +48,7 @@ var destination = {
 
       MicroModal.show('alert-modal')
     }
-    else if (response.code == 200) {
+    else if (response.code == 204) {
       _message = utils.createElement('p', '', '', 'Success!, destination updated correctly')
 
       _alertModal.innerHTML = ''
@@ -67,7 +67,7 @@ var destination = {
     var _message = ''
     var _alertModal = document.getElementById('alert-modal-content')
 
-    if (response.code == 400) {
+    if (codes.hasOwnProperty(response.code)) {
       _message = utils.createElement('p', '', '', response.message)
 
       _alertModal.innerHTML = ''
@@ -92,7 +92,7 @@ var destination = {
   },
   setData: function() {
     document.querySelector('[name="name"]').value = destinationData.name
-    document.querySelector('[name="status"]').value = destinationData.active    
+    document.querySelector('[name="status"]').value = destinationData.active
     document.querySelector('[name="country"]').value = destinationData.country
   }
 }

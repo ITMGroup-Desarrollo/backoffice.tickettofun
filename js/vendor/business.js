@@ -13,7 +13,7 @@ var business = {
     var _message = ''
     var _alertModal = document.getElementById('alert-modal-content')
 
-    if (response.code == 400) {
+    if (codes.hasOwnProperty(response.code)) {
       _message = utils.createElement('p', '', '', response.message)
 
       _alertModal.innerHTML = ''
@@ -21,8 +21,8 @@ var business = {
 
       MicroModal.show('alert-modal')
     }
-    else if (response.code == 200) {
-      _message = utils.createElement('p', '', '', 'Success!, business added correctly')
+    else if (response.code == 201) {
+      _message = utils.createElement('p', '', '', 'Success! Business added correctly')
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
@@ -40,7 +40,7 @@ var business = {
     var _message = ''
     var _alertModal = document.getElementById('alert-modal-content')
 
-    if (response.code == 400) {
+    if (codes.hasOwnProperty(response.code)) {
       _message = utils.createElement('p', '', '', response.message)
 
       _alertModal.innerHTML = ''
@@ -48,8 +48,8 @@ var business = {
 
       MicroModal.show('alert-modal')
     }
-    else if (response.code == 200) {
-      _message = utils.createElement('p', '', '', 'Success!, business updated correctly')
+    else if (response.code == 204) {
+      _message = utils.createElement('p', '', '', 'Success! Business updated correctly')
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
@@ -66,7 +66,7 @@ var business = {
     var _message = ''
     var _alertModal = document.getElementById('alert-modal-content')
 
-    if (response.code == 400) {
+    if (codes.hasOwnProperty(response.code)) {
       _message = utils.createElement('p', '', '', response.message)
 
       _alertModal.innerHTML = ''

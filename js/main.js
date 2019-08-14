@@ -5,6 +5,13 @@ var base = window.baseUrl
 var token = window.token
 var apiHost = 'http://localhost:8181/api/v1/'
 
+var codes = {
+  400: 1,
+  404: 1,
+  422: 1,
+  500: 1
+}
+
 var app = {
   signin: function(response) {
     MicroModal.close('wait-modal')
@@ -33,7 +40,7 @@ var app = {
 
       info.user = user
       info.token = window.token
-      
+
       var url = `${base}signin/set_data`
       utils.post(JSON.stringify(info), url, app.access)
     }

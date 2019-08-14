@@ -22,9 +22,17 @@ var utils = {
 
     xHR.onreadystatechange = function () {
       if (xHR.readyState == 4) {
-        if (xHR.status == 200)
+        if (xHR.status == 204) {
+          var response = {
+            code: 204,
+            status: 'success'
+          }
+
           if (method !== null)
-            method(xHR.response, element)
+            method(JSON.stringify(response), element)
+        }
+        else if (method !== null)
+          method(xHR.response, element)
       }
     }
 
