@@ -9,7 +9,8 @@ var validator = {
     phone: /^(\d)(?!\1+$)\d*$/,
     fileFormat: /\.(jpg|jpeg|png|pdf)$/i,
     fileSize: /([^\s])/,
-    mail: /^[-\w.%+]{1,64}@(?:[A-Z0-9-]{1,63}\.){1,125}[A-Z]{2,63}$/i
+    mail: /^[-\w.%+]{1,64}@(?:[A-Z0-9-]{1,63}\.){1,125}[A-Z]{2,63}$/i,
+    timeFormat: /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/
   },
   cssClass: {
     button: 'btn btn-outline-warning'

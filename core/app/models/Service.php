@@ -54,9 +54,10 @@ class Service extends CI_Model
                 $aux = '';
                 $this->anchor_attrib = array();
 
-                $aux .= custom('td', '', $row->service_name);
                 $aux .= custom('td', '', $row->code);
+                $aux .= custom('td', '', $row->service_name);
                 $aux .= custom('td', '', $row->location_name);
+                $aux .= custom('td', '', $row->duration);
                 $aux .= custom('td', $this->attrib, $row->min_available_num);
                 $aux .= custom('td', $this->attrib, $row->max_available_num);
 
@@ -143,6 +144,7 @@ class Service extends CI_Model
             $service->location = $response->message->location_id;
             $service->name     = $response->message->service_name;
             $service->active   = $response->message->active_status;
+            $service->duration   = $response->message->duration;
             $service->max      = $response->message->min_available_num;
             $service->min      = $response->message->max_available_num;
         }
