@@ -22,7 +22,7 @@ var locations= {
       MicroModal.show('alert-modal')
     }
     else if (response.code == 201) {
-      _message = utils.createElement('p', '', '', 'Success!, location added correctly')
+      _message = utils.createElement('p', '', '', 'Success! Location added correctly')
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
@@ -49,7 +49,7 @@ var locations= {
       MicroModal.show('alert-modal')
     }
     else if (response.code == 204) {
-      _message = utils.createElement('p', '', '', 'Success!, location updated correctly')
+      _message = utils.createElement('p', '', '', 'Success! Location updated correctly')
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
@@ -82,7 +82,7 @@ var locations= {
       var label = utils.createElement('span', 'label label-danger', '', 'inactive');
       _status.appendChild(label)
 
-      _message = utils.createElement('p', '', '', 'Success!, location inactivate correctly')
+      _message = utils.createElement('p', '', '', 'Success! Location inactivate correctly')
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)

@@ -6,7 +6,7 @@ var token = window.token
 var equivalencesData = window.equivalences
 var user = window.user;
 
-var equivalences= {
+var equivalences = {
   add: function(response) {
     MicroModal.close('wait-modal')
 
@@ -23,7 +23,7 @@ var equivalences= {
       MicroModal.show('alert-modal')
     }
     else if (response.code == 201) {
-      _message = utils.createElement('p', '', '', 'Success!, equivalence added correctly')
+      _message = utils.createElement('p', '', '', 'Success! Equivalence added correctly')
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
@@ -50,7 +50,7 @@ var equivalences= {
       MicroModal.show('alert-modal')
     }
     else if (response.code == 204) {
-      _message = utils.createElement('p', '', '', 'Success!, equivalence updated correctly')
+      _message = utils.createElement('p', '', '', 'Success! Equivalence updated correctly')
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
@@ -58,7 +58,7 @@ var equivalences= {
       MicroModal.show('alert-modal')
     }
   },
-  delete: function(response, element) {
+  delete: function(response Element) {
     MicroModal.close('wait-modal')
 
     response = JSON.parse(response)
@@ -83,7 +83,7 @@ var equivalences= {
       var label = utils.createElement('span', 'label label-danger', '', 'inactive');
       _status.appendChild(label)
 
-      _message = utils.createElement('p', '', '', 'Success!, equivalence inactivate correctly')
+      _message = utils.createElement('p', '', '', 'Success! Equivalence inactivate correctly')
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)

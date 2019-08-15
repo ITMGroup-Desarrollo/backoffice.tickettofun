@@ -22,7 +22,7 @@ var apikey= {
       MicroModal.show('alert-modal')
     }
     else if (response.code == 201) {
-      _message = utils.createElement('p', '', '', 'Success!, apikey added correctly')
+      _message = utils.createElement('p', '', '', 'Success! API key added correctly')
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
@@ -49,7 +49,7 @@ var apikey= {
       MicroModal.show('alert-modal')
     }
     else if (response.code == 204) {
-      _message = utils.createElement('p', '', '', 'Success!, apikey updated correctly')
+      _message = utils.createElement('p', '', '', 'Success! API key updated correctly')
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
@@ -82,7 +82,7 @@ var apikey= {
       var label = utils.createElement('span', 'label label-danger', '', 'inactive');
       _status.appendChild(label)
 
-      _message = utils.createElement('p', '', '', 'Success!, apikey inactivate correctly')
+      _message = utils.createElement('p', '', '', 'Success! API key inactivate correctly')
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)

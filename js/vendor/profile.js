@@ -23,7 +23,7 @@ var profile = {
       MicroModal.show('alert-modal')
     }
     else if (response.code == 204) {
-      _message = utils.createElement('p', '', '', 'Success!, profile updated correctly')
+      _message = utils.createElement('p', '', '', 'Success! Profile updated correctly')
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
@@ -116,7 +116,7 @@ if (savepwd != null) {
            var _message = ''
            var _alertModal = document.getElementById('alert-modal-content')
 
-          _message = utils.createElement('p', '', '', 'Error!, The password and the password confirmation do not match. Try again.')
+          _message = utils.createElement('p', '', '', 'Error! The password and the password confirmation do not match. Try again.')
 
           _alertModal.innerHTML = ''
           _alertModal.appendChild(_message)

@@ -22,7 +22,7 @@ var channel = {
       MicroModal.show('alert-modal')
     }
     else if (response.code == 201) {
-      _message = utils.createElement('p', '', '', 'Success!, channel added correctly')
+      _message = utils.createElement('p', '', '', 'Success! Channel added correctly')
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
@@ -49,7 +49,7 @@ var channel = {
       MicroModal.show('alert-modal')
     }
     else if (response.code == 204) {
-      _message = utils.createElement('p', '', '', 'Success!, channel updated correctly')
+      _message = utils.createElement('p', '', '', 'Success! Channel updated correctly')
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
@@ -82,7 +82,7 @@ var channel = {
       var label = utils.createElement('span', 'label label-danger', '', 'inactive');
       _status.appendChild(label)
 
-      _message = utils.createElement('p', '', '', 'Success!, channel inactivate correctly')
+      _message = utils.createElement('p', '', '', 'Success! Channel inactivate correctly')
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)

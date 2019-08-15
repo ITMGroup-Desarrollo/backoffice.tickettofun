@@ -49,7 +49,7 @@ var destination = {
       MicroModal.show('alert-modal')
     }
     else if (response.code == 204) {
-      _message = utils.createElement('p', '', '', 'Success!, destination updated correctly')
+      _message = utils.createElement('p', '', '', 'Success! Destination updated correctly')
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
@@ -82,7 +82,7 @@ var destination = {
       var label = utils.createElement('span', 'label label-danger', '', 'inactive');
       _status.appendChild(label)
 
-      _message = utils.createElement('p', '', '', 'Success!, destination inactivate correctly')
+      _message = utils.createElement('p', '', '', 'Success! Destination inactivate correctly')
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)

@@ -22,7 +22,7 @@ var user= {
       MicroModal.show('alert-modal')
     }
     else if (response.code == 201) {
-      _message = utils.createElement('p', '', '', 'Success!, user added correctly')
+      _message = utils.createElement('p', '', '', 'Success! User added correctly')
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
@@ -49,7 +49,7 @@ var user= {
       MicroModal.show('alert-modal')
     }
     else if (response.code == 204) {
-      _message = utils.createElement('p', '', '', 'Success!, user updated correctly')
+      _message = utils.createElement('p', '', '', 'Success! User updated correctly')
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
@@ -82,7 +82,7 @@ var user= {
       var label = utils.createElement('span', 'label label-danger', '', 'inactive');
       _status.appendChild(label)
 
-      _message = utils.createElement('p', '', '', 'Success!, user inactivate correctly')
+      _message = utils.createElement('p', '', '', 'Success! User inactivate correctly')
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)

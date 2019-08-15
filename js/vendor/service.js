@@ -22,7 +22,7 @@ var service = {
       MicroModal.show('alert-modal')
     }
     else if (response.code == 201) {
-      _message = utils.createElement('p', '', '', 'Success!, service added correctly')
+      _message = utils.createElement('p', '', '', 'Success! Service added correctly')
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
@@ -49,7 +49,7 @@ var service = {
       MicroModal.show('alert-modal')
     }
     else if (response.code == 204) {
-      _message = utils.createElement('p', '', '', 'Success!, service updated correctly')
+      _message = utils.createElement('p', '', '', 'Success! Service updated correctly')
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
@@ -82,7 +82,7 @@ var service = {
       var label = utils.createElement('span', 'label label-danger', '', 'inactive');
       _status.appendChild(label)
 
-      _message = utils.createElement('p', '', '', 'Success!, service inactivate correctly')
+      _message = utils.createElement('p', '', '', 'Success! Service inactivate correctly')
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)

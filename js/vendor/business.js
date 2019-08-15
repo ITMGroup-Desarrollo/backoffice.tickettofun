@@ -81,7 +81,7 @@ var business = {
       var label = utils.createElement('span', 'label label-danger', '', 'inactive');
       _status.appendChild(label)
 
-      _message = utils.createElement('p', '', '', 'Success!, business inactivate correctly')
+      _message = utils.createElement('p', '', '', 'Success! Business inactivate correctly')
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
