@@ -30,7 +30,7 @@ class Resellers extends CI_Controller
             $table = $this->Reseller->get_list();
 
             $data['contents'] = str_replace(
-                '{title}', 'List of resellers', $data['contents']
+                '{title}', 'List of vendors', $data['contents']
             );
 
             $data['contents'] = str_replace(
@@ -43,7 +43,7 @@ class Resellers extends CI_Controller
             $form = str_replace('{id}', 'add-reseller', $form);
 
             $data['contents'] = str_replace(
-                '{title}', 'New reseller', $data['contents']
+                '{title}', 'New vendor', $data['contents']
             );
 
             $data['contents'] = str_replace(
@@ -78,7 +78,7 @@ class Resellers extends CI_Controller
         $form = str_replace('{id}', 'update-reseller', $form);
 
         $data['contents'] = str_replace(
-            '{title}', 'Edit reseller', $data['contents']
+            '{title}', 'Edit vendor', $data['contents']
         );
 
         $data['contents'] = str_replace(

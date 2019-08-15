@@ -30,7 +30,7 @@ class Locations extends CI_Controller
             $table = $this->Location->get_list();
 
             $data['contents'] = str_replace(
-                '{title}', 'List of Locations', $data['contents']
+                '{title}', 'List of locations', $data['contents']
             );
 
             $data['contents'] = str_replace(
@@ -43,7 +43,7 @@ class Locations extends CI_Controller
             $form = str_replace('{id}', 'add-location', $form);
 
             $data['contents'] = str_replace(
-                '{title}', 'New Location', $data['contents']
+                '{title}', 'New location', $data['contents']
             );
 
             $data['contents'] = str_replace(
@@ -78,7 +78,7 @@ class Locations extends CI_Controller
         $form = str_replace('{id}', 'update-location', $form);
 
         $data['contents'] = str_replace(
-            '{title}', 'Edit Location', $data['contents']
+            '{title}', 'Edit location', $data['contents']
         );
 
         $data['contents'] = str_replace(

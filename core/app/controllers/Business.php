@@ -30,7 +30,7 @@ class Business extends CI_Controller
             $table = $this->Business_unity->get_list();
 
             $data['contents'] = str_replace(
-                '{title}', 'List of Business Unity', $data['contents']
+                '{title}', 'List of business unities', $data['contents']
             );
 
             $data['contents'] = str_replace(
@@ -43,7 +43,7 @@ class Business extends CI_Controller
             $form = str_replace('{id}', 'add-business', $form);
 
             $data['contents'] = str_replace(
-                '{title}', 'New Business Unity', $data['contents']
+                '{title}', 'New business unity', $data['contents']
             );
 
             $data['contents'] = str_replace(
@@ -78,7 +78,7 @@ class Business extends CI_Controller
         $form = str_replace('{id}', 'update-business', $form);
 
         $data['contents'] = str_replace(
-            '{title}', 'Edit business', $data['contents']
+            '{title}', 'Edit business unity', $data['contents']
         );
 
         $data['contents'] = str_replace(
