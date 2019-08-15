@@ -107,5 +107,6 @@ defined('GET_RESELLERS_ROUTE') OR define('GET_RESELLERS_ROUTE', 'api/v1/reseller
 defined('GET_BUSINESS_ROUTE') OR define('GET_BUSINESS_ROUTE', 'api/v1/unities');
 defined('GET_SHIPS_ROUTE') OR define('GET_SHIPS_ROUTE', 'api/v1/ships');
 defined('GET_APIKEYS_ROUTE') OR define('GET_APIKEYS_ROUTE', 'api/v1/apikeys');
+defined('GET_EQUIVALENCES_ROUTE') OR define('GET_EQUIVALENCES_ROUTE', 'api/v1/equivalences');
 
 defined('API_KEY') OR define('API_KEY', 'mvS80TiF0G9VStnUE0jYwUXrMIDYuTYkcBauSPxYEvC');

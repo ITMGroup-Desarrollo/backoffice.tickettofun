@@ -80,7 +80,7 @@ $database = 'itm_core';
 
 $db['default'] = array(
     'dsn'   => '',
-    'hostname' => 'localhost',
+    'hostname' => '104.219.42.26',
     'username' => $user,
     'password' => $password,
     'database' => $database,
