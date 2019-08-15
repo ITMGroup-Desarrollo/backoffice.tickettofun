@@ -30,7 +30,7 @@ class Equivalences extends CI_Controller
             $table = $this->Equivalence->get_list();
 
             $data['contents'] = str_replace(
-                '{title}', 'List of Equivalences', $data['contents']
+                '{title}', 'List of equivalences', $data['contents']
             );
 
             $data['contents'] = str_replace(
@@ -43,7 +43,7 @@ class Equivalences extends CI_Controller
             $form = str_replace('{id}', 'add-equivalence', $form);
 
             $data['contents'] = str_replace(
-                '{title}', 'New Equivalence', $data['contents']
+                '{title}', 'New equivalence', $data['contents']
             );
 
             $data['contents'] = str_replace(
@@ -82,7 +82,7 @@ class Equivalences extends CI_Controller
         $form = str_replace('{id}', 'update-equivalence', $form);
 
         $data['contents'] = str_replace(
-            '{title}', 'Edit Equivalence', $data['contents']
+            '{title}', 'Edit equivalence', $data['contents']
         );
 
         $data['contents'] = str_replace(
