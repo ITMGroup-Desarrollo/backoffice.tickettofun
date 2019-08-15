@@ -14,7 +14,7 @@ var equivalences= {
     var _message = ''
     var _alertModal = document.getElementById('alert-modal-content')
 
-    if (response.code == 400) {
+    if (codes.hasOwnProperty(response.code)) {
       _message = utils.createElement('p', '', '', response.message)
 
       _alertModal.innerHTML = ''
@@ -22,7 +22,7 @@ var equivalences= {
 
       MicroModal.show('alert-modal')
     }
-    else if (response.code == 200) {
+    else if (response.code == 201) {
       _message = utils.createElement('p', '', '', 'Success!, equivalence added correctly')
 
       _alertModal.innerHTML = ''
@@ -41,7 +41,7 @@ var equivalences= {
     var _message = ''
     var _alertModal = document.getElementById('alert-modal-content')
 
-    if (response.code == 400) {
+    if (codes.hasOwnProperty(response.code)) {
       _message = utils.createElement('p', '', '', response.message)
 
       _alertModal.innerHTML = ''
@@ -49,7 +49,7 @@ var equivalences= {
 
       MicroModal.show('alert-modal')
     }
-    else if (response.code == 200) {
+    else if (response.code == 204) {
       _message = utils.createElement('p', '', '', 'Success!, equivalence updated correctly')
 
       _alertModal.innerHTML = ''
@@ -68,7 +68,7 @@ var equivalences= {
     var _message = ''
     var _alertModal = document.getElementById('alert-modal-content')
 
-    if (response.code == 400) {
+    if (codes.hasOwnProperty(response.code)) {
       _message = utils.createElement('p', '', '', response.message)
 
       _alertModal.innerHTML = ''
