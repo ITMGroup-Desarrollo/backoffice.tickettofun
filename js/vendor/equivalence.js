@@ -58,7 +58,7 @@ var equivalences = {
       MicroModal.show('alert-modal')
     }
   },
-  delete: function(response Element) {
+  delete: function(response, element) {
     MicroModal.close('wait-modal')
 
     response = JSON.parse(response)
