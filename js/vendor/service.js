@@ -91,8 +91,7 @@ var service = {
     }
   },
   setData: function() {
-    document.querySelector('[name="code"]').value = serviceData .code
-    document.querySelector('[name="status"]').value = serviceData .active
+    document.querySelector('[name="status"]').value = serviceData.active
     document.querySelector('[name="service_name"]').value = serviceData.name
     document.querySelector('[name="duration"]').value = serviceData.duration
     document.querySelector('[name="min_available"]').value = serviceData.max
@@ -129,7 +128,6 @@ if (save != null) {
 
     if(valid) {
       info = {
-        code: document.querySelector('[name="code"]').value,
         location_id: document.querySelector('[name="location"]').value,
         service_name: document.querySelector('[name="service_name"]').value,
         duration: document.querySelector('[name="duration"]').value,

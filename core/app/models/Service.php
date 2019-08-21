@@ -54,7 +54,6 @@ class Service extends CI_Model
                 $aux = '';
                 $this->anchor_attrib = array();
 
-                $aux .= custom('td', '', $row->code);
                 $aux .= custom('td', '', $row->service_name);
                 $aux .= custom('td', '', $row->location_name);
                 $aux .= custom('td', '', $row->duration);
@@ -139,7 +138,6 @@ class Service extends CI_Model
 
         if ($response->code == 200)
         {
-            $service->code     = $response->message->code;
             $service->id       = $response->message->service_id;
             $service->location = $response->message->location_id;
             $service->name     = $response->message->service_name;
