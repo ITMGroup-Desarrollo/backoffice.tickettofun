@@ -53,7 +53,6 @@ class Equivalence extends CI_Model
                 $aux = '';
                 $this->anchor_attrib = array();
 
-                $aux .= custom('td', '', $row->service_code);
                 $aux .= custom('td', '', $row->service_name);
                 $aux .= custom('td', '', $row->reseller_name);
                 $aux .= custom('td', '', $row->code);
@@ -98,7 +97,7 @@ class Equivalence extends CI_Model
         else
         {
             $aux = '';
-            for ($i = 0; $i < 7; $i++)
+            for ($i = 0; $i < 6; $i++)
                 $aux .= custom('td', '', '');
 
             $this->model = custom('tr', '', $aux);
