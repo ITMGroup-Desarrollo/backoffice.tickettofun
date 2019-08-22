@@ -67,7 +67,12 @@ class Forms
                     $extra = $row->catalog_id;
                 }
 
-                $element = $this->_get_element($row->element_type, $extra);
+                $element = $this->_get_element(
+                    $row->element_type,
+                    $extra,
+                    $row->api_endpoint,
+                    $row->keyvalue_pair
+                );
 
                 if ( ! empty($row->label_name))
                 {
@@ -173,35 +178,10 @@ class Forms
         return $this->form;
     }
 
-    public function get_catalog($catalog_id)
+    public function get_catalog($catalog_id, $api_endpoint, $keyvalue_pair)
     {
-        switch ($catalog_id)
-        {
-            case 1://locations
-                return $this->_get_catalog_api($catalog_id);
-            break;
-            case 3://roles
-                return $this->_get_catalog_api($catalog_id);
-            break;
-            case 4://Destination
-                return $this->_get_catalog_api($catalog_id);
-            break;
-            case 5://chanels
-                return $this->_get_catalog_api($catalog_id);
-            break;
-            case 6://Business
-                return $this->_get_catalog_api($catalog_id);
-            break;
-            case 7://Reseller
-                return $this->_get_catalog_api($catalog_id);
-            break;
-            case 8://users
-                return $this->_get_catalog_api($catalog_id);
-            break;
-            case 9://Service
-                return $this->_get_catalog_api($catalog_id);
-            break;
-        }
+        if ( ! empty($api_endpoint))
+            return $this->_get_catalog_api($api_endpoint, $keyvalue_pair);
 
         return $this->_get_catalog($catalog_id);
     }
@@ -239,7 +219,7 @@ class Forms
         return $attributes;
     }
 
-    private function _get_element($form_element, $extra = '')
+    private function _get_element($form_element, $extra = '', $api_endpoint = '', $keyvalue_pair = '')
     {
         $element = '';
 
@@ -255,7 +235,7 @@ class Forms
                 $element = custom('BUTTON', $this->attrib, $extra);
                 break;
             case 'COMBOBOX':
-                $options = $this->get_catalog($extra);
+                $options = $this->get_catalog($extra, $api_endpoint, $keyvalue_pair);
                 $element = form_dropdown('', $options, '', $this->attrib);
                 break;
         }
@@ -321,58 +301,17 @@ class Forms
         return $options;
     }
 
-    private function _get_catalog_api($catalog_id)
+    private function _get_catalog_api($api_endpoint, $keyvalue_pair)
     {
         $catalog = array();
         $options = array();
-
-        $endpoint = '';
-
-        switch ($catalog_id)
-        {
-            case 1:
-                $endpoint = HOST . GET_LOCATIONS_ROUTE;
-                $value = 'location_id';
-                $name  = 'location_name';
-                break;
-            case 3:
-                $endpoint = HOST . GET_ROLES_ROUTE;
-                $value = 'rol_id';
-                $name  = 'rol_name';
-                break;
-            case 4:
-                $endpoint = HOST . GET_DESTINATIONS_ROUTE;
-                $value = 'destination_id';
-                $name  = 'destination_name';
-                break;
-            case 5:
-                $endpoint = HOST . GET_CHANNELS_ROUTE;
-                $value = 'channel_id';
-                $name  = 'channel_name';
-                break;
-            case 6:
-                $endpoint = HOST . GET_BUSINESS_ROUTE;
-                $value = 'unity_id';
-                $name  = 'unity_name';
-                break;
-            case 7:
-                $endpoint = HOST . GET_RESELLERS_ROUTE;
-                $value = 'reseller_id';
-                $name  = 'reseller_name';
-                break;
-            case 8:
-                $endpoint = HOST . GET_USERS_ROUTE;
-                $value = 'user_id';
-                $name  = 'email_addr';
-                break;
-            case 9:
-                $endpoint = HOST . GET_SERVICES_ROUTE;
-                $value = 'service_id';
-                $name  = 'service_name';
-                break;
-        }
-
         $params = new stdClass();
+
+        $key_value = explode(',', $keyvalue_pair);
+        $name = $key_value[1];
+        $value = $key_value[0];
+
+        $endpoint = HOST . $api_endpoint;
 
         $this->CI->load->library('api');
         $this->CI->load->library('session');
