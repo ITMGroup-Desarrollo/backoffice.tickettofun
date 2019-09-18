@@ -124,13 +124,14 @@ class Menu {
                 $sub_menu = $this->_get_submenu($options, $submenu_active);
                 $this->anchor_attrib['href'] = '#';
                 $this->anchor_attrib['data-toggle'] = "sidebar";
+
+                $menu .= custom('i', $this->arrow_attrib, '');
             }
             else
             {
                 $this->anchor_attrib['href'] = base_url($links[$i]);
             }
 
-            $menu .= custom('i', $this->arrow_attrib, '');
             $menu = custom('a', $this->anchor_attrib, $glyph . $menu);
 
             $menu .= $sub_menu;
