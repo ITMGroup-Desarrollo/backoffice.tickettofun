@@ -26,6 +26,10 @@ class Calendar extends CI_Controller
             '{title}', 'Ship calendar', $data['contents']
         );
 
+        $this->load->Model('Arrives');
+        $events = $this->Arrives->get_arrives();
+
+        $data['scripts'] = $events . $data['scripts'];
 
         $this->load->view('Master', $data);
     }

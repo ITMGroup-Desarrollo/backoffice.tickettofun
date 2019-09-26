@@ -109,4 +109,6 @@ defined('GET_SHIPS_ROUTE') OR define('GET_SHIPS_ROUTE', 'api/v1/ships');
 defined('GET_APIKEYS_ROUTE') OR define('GET_APIKEYS_ROUTE', 'api/v1/apikeys');
 defined('GET_EQUIVALENCES_ROUTE') OR define('GET_EQUIVALENCES_ROUTE', 'api/v1/equivalences');
 
+defined('GET_ARRIVES_ROUTE') OR define('GET_ARRIVES_ROUTE', 'api/v1/arrives');
+
 defined('API_KEY') OR define('API_KEY', 'mvS80TiF0G9VStnUE0jYwUXrMIDYuTYkcBauSPxYEvC');
