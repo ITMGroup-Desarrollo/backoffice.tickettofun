@@ -140,17 +140,18 @@ class Forms
                 $this->attrib = array();
             }
         }
-
+        
         if ($params[0] != 'signin')
         {
+            $typeForm = explode('_', $params[0]);
+            
             $this->form_attrib = array(
                 'id' => '{id}',
                 'class' => 'form-horizontal'
             );
-
+            
             $this->button_attrib = array('class' => 'btn btn-default cancel');
 
-            // Add buttons form
             $this->CI->load->Model('Page');
             $this->CI->load->library('Build');
 
@@ -161,17 +162,31 @@ class Forms
                 $content['BUTTONS_FORM']
             );
 
-            $buttons = custom('BUTTON', $this->button_attrib, 'Cancel');
+            if (in_array('search', $typeForm))
+            {
+                $this->form_attrib = array(
+                    'id' => '{id}',
+                    'class' => 'form-inline',
+                    'method' => 'post',
+                );
 
-            $this->button_attrib['class'] = 'btn btn-success save';
-            $buttons .= custom('BUTTON', $this->button_attrib, 'Save');
-
+                $this->button_attrib['class'] = 'btn btn-success search';
+                $buttons = custom('BUTTON', $this->button_attrib, 'Search');
+            }
+            else {
+                $buttons = custom('BUTTON', $this->button_attrib, 'Cancel');
+    
+                $this->button_attrib['class'] = 'btn btn-success save';
+                $buttons .= custom('BUTTON', $this->button_attrib, 'Save');
+            }
+            
             $content = str_replace('{buttons}', $buttons, $content);
-
+    
             $this->content_form .= $content;
             $this->form = custom('form', $this->form_attrib, $this->content_form);
         }
-        else {
+        else 
+        {
             $this->form = $this->content_form;
         }
 
