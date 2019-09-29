@@ -110,3 +110,10 @@ $route["apikeys/(:num)"]   = "apikeys/update/$1";
 $route["equivalences/list"] = "equivalences/index/$1";
 $route["equivalences/new"]   = "equivalences/index/$1";
 $route["equivalences/(:num)"]   = "equivalences/update/$1";
+
+//arrives
+$route["arrives/list"] = "arrives/index/$1";
+$route["arrives/new"] = "arrives/index/$1";
+$route["arrives/(:num)"] = "arrives/update/$1";
+$route["arrives/listjson"] = "arrives/dataJson/$1";
+$route["arrives/shiplist"] = "arrives/shipList/$1";
