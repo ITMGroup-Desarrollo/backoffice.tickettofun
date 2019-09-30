@@ -114,6 +114,7 @@ class Arrives extends CI_Controller
         $this->load->view('Master', $data);
     }
 
+
     public function dataJson()
     {
         $this->load->library('user_session', NULL, 'user');
@@ -125,7 +126,7 @@ class Arrives extends CI_Controller
 
         $this->Arrive->get_data_json($_POST);
     }
-
+    
     public function shipList()
     {   
         $id = @$_POST['id'];

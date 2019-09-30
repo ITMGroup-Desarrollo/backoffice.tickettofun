@@ -268,4 +268,5 @@ class Arrive extends CI_Model
 
         echo json_encode($arriveJson);
     }
+    
 }
