@@ -26,7 +26,7 @@ class Arrive extends CI_Model
         $this->inactive = array('class' => 'label label-danger');
     }
 
-    public function get_list($data)
+    public function get_list()
     {
         $this->db->close();
         $table_content = $this->Page->get_settings('arrives');
@@ -37,30 +37,7 @@ class Arrive extends CI_Model
 
         // Call API here!
         $params = new stdClass();
-        $endPointOpt = "";
-
-        if(!empty($data['start_date']))
-        {
-            $date = explode('to', $data['start_date']);
-
-            if(count($date)==2)
-                $params = array("start_date" => trim($date[0]),
-                                "end_date" => trim($date[1]));
-            else
-                $params = array("start_date" => trim($date[0]),
-                                "end_date" => trim($date[0]));
-        }
-
-        if(!empty($data['reseller']) && empty($data['ship']))
-        {
-            $endPointOpt = "/reseller/".$data['reseller'];
-        }
-        else if(!empty($data['ships']))
-        {
-            $endPointOpt = "/ship/".$data['ships'];
-        }
-
-        $endpoint = HOST . GET_ARRIVES_ROUTE . $endPointOpt;
+        $endpoint = HOST . GET_ARRIVES_ROUTE;
 
         $this->load->library('session');
         $token = $this->session->userdata('token');

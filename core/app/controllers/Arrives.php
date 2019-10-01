@@ -8,7 +8,7 @@ class Arrives extends CI_Controller
     */
     public function index()
     {
-        
+
         $this->load->library('user_session', NULL, 'user');
 
         if ( ! $this->user->active_session())
@@ -18,8 +18,8 @@ class Arrives extends CI_Controller
         $option = $this->uri->segment(2);
         
         $this->load->Model('Page');
-        $this->Page->page_name = 'arrives';
-        $this->Page->menu_active = 'allotments';
+        $this->Page->page_name = $view;
+        $this->Page->menu_active = 'arrives';
         $this->Page->submenu_active = $option;
         
         $data = $this->Page->get_contents();
@@ -27,7 +27,7 @@ class Arrives extends CI_Controller
         
         if ($option == 'list')
         {
-            $table = $this->Arrive->get_list($_POST);
+            $table = $this->Arrive->get_list();
 
             $data['contents'] = str_replace(
                 '{title}', 'List of ship arrives', $data['contents']

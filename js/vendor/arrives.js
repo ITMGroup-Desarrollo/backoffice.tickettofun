@@ -107,6 +107,39 @@ var arrives = {
       utils.api(JSON.stringify({}), url, 'DELETE', arrives.delete, element)  
     }
   },
+  loadData: function(data, dtable){
+    dtable.dataTable().fnClearTable()
+    
+    for (i in data){
+      dtable.dataTable().fnAddData([
+        data[i].reseller,
+        data[i].ship,
+        data[i].arrival_date,
+        data[i].arrival_time,
+        data[i].departure_time,
+        data[i].markup_start,
+        data[i].markup_end,
+        data[i].status,
+        data[i].action
+      ])
+    }
+    
+    var options = document.querySelectorAll('.delete')
+    for (var i = 0, l = options.length; i < l; i++) {
+      options[i].addEventListener('click', function(e) {
+        e.preventDefault()
+    
+        var element = e.target
+        if (! e.target.getAttribute('data-id'))
+          element = e.target.parentElement
+        
+        var id = element.getAttribute('data-id')
+        var url = `${apiHost}arrives/arrival/${id}`
+    
+        utils.api(JSON.stringify({}), url, 'GET', arrives.confirmArriveConfig, element)
+      })
+    }
+  },
   setData: function(){
     document.querySelector('[name="ships"]').value = arrivesData.ships
     document.querySelector('[name="arrival_date"]').value = arrivesData.arrival_date
@@ -203,6 +236,32 @@ if (form != null)
 
 var servicesTable = document.querySelector('#arrives-registers')
 if (servicesTable !== null) {
+  
+  var vendor = document.querySelector('[name="reseller"]')
+  
+  vendor.addEventListener('change', function(e){
+    var id = $(this).val()
+    
+    for (var i = ship.options.length-1;i>0;i--){
+      ship.remove(i)
+    }
+    
+    $.ajax({
+      data: {'id': id},
+      type: 'POST',
+      datatype: 'json',
+      url: 'shiplist',
+      success: function(data){
+        data = JSON.parse(data)
+    
+        for(i in data){
+          ship.append(new Option(data[i].ship, data[i].id, "selected"))
+        }
+        
+      }
+    })
+  });
+
   $(function() {
     var dtable = $('#arrives-registers').dataTable({
         "sPaginationType": "full_numbers",
@@ -214,62 +273,35 @@ if (servicesTable !== null) {
 
     search.addEventListener('click', function(e) {
       e.preventDefault()
+      
       var dataForm = {"reseller":document.querySelector('[name="reseller"]').value,
                       "ship":document.querySelector('[name="ship"]').value,
                       "dates": document.querySelector('[name="dates"]').value}
-                  
+      
       $.ajax({
         data: dataForm,
         type: "POST",
         dataType: "json",
         url: `listjson`,
+        beforeSend: function(){
+          MicroModal.show('wait-modal');
+        },
+        complete: function(){
+          MicroModal.close('wait-modal');
+        },
         success: function(data){
           if (parseInt(data.length) > 0){
-            loadData(data);
+            arrives.loadData(data, dtable);
           } else {
             dtable.dataTable().fnClearTable()
           }
+
         }
       });
       
     })
 
-    function loadData(data){
-      dtable.dataTable().fnClearTable()
-      
-      for (i in data){
-        dtable.dataTable().fnAddData([
-          data[i].reseller,
-          data[i].ship,
-          data[i].arrival_date,
-          data[i].arrival_time,
-          data[i].departure_time,
-          data[i].markup_start,
-          data[i].markup_end,
-          data[i].status,
-          data[i].action
-        ])
-      }
-      
-      var options = document.querySelectorAll('.delete')
-      for (var i = 0, l = options.length; i < l; i++) {
-        options[i].addEventListener('click', function(e) {
-          e.preventDefault()
-      
-          var element = e.target
-          if (! e.target.getAttribute('data-id'))
-            element = e.target.parentElement
-          
-          var id = element.getAttribute('data-id')
-          var url = `${apiHost}arrives/arrival/${id}`
-      
-          utils.api(JSON.stringify({}), url, 'GET', arrives.confirmArriveConfig, element)
-        })
-      }
-      //      
-    }
   });
-
 
 }
 
@@ -303,31 +335,4 @@ $(function(){
   ship.options.length = 0
   ship.append(new Option('-- Choose option --', ''))
 
-  var vendor = document.querySelector('[name="reseller"]')
-  
-  vendor.addEventListener('change', function(e){
-    var id = $(this).val()
-    
-    for (var i = ship.options.length-1;i>0;i--){
-      ship.remove(i)
-    }
-    
-    $.ajax({
-      data: {'id': id},
-      type: 'POST',
-      datatype: 'json',
-      url: 'shiplist',
-      success: function(data){
-        data = JSON.parse(data)
-    
-        for(i in data){
-          ship.append(new Option(data[i].ship, data[i].id, "selected"))
-        }
-        
-      }
-    })
-  });
-  
-  
-  
 });
