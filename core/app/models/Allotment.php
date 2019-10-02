@@ -110,10 +110,10 @@ class Allotment extends CI_Model
     public function get_form()
     {
         $this->db->close();
-        $contents = $this->Page->get_settings('ships');
+        $contents = $this->Page->get_settings('allotment');
 
         $this->model = $this->build->build_components(
-            $contents['SHIPS_FORM']
+            $contents['ALLOTMENT_FORM']
         );
 
         return $this->model;

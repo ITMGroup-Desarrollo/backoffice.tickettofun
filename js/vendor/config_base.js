@@ -4,7 +4,9 @@ var form
 var base = window.baseUrl
 var token = window.token
 var configData = window.config
-
+var user = window.user
+// console.log(configData);
+// console.log(user);
 var config = {
   add: function(response) {
     MicroModal.close('wait-modal')
@@ -22,14 +24,14 @@ var config = {
       MicroModal.show('alert-modal')
     }
     else if (response.code == 201) {
-      _message = utils.createElement('p', '', '', 'Success! Channel added correctly')
+      _message = utils.createElement('p', '', '', 'Success! Schedule added correctly')
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
 
       MicroModal.show('alert-modal')
 
-      form = document.querySelector('#add-channel')
+      form = document.querySelector('#add-config')
       form.reset();
     }
   },
@@ -49,7 +51,7 @@ var config = {
       MicroModal.show('alert-modal')
     }
     else if (response.code == 204) {
-      _message = utils.createElement('p', '', '', 'Success! Channel updated correctly')
+      _message = utils.createElement('p', '', '', 'Success! Schedule updated correctly')
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
@@ -82,7 +84,7 @@ var config = {
       var label = utils.createElement('span', 'label label-danger', '', 'inactive');
       _status.appendChild(label)
 
-      _message = utils.createElement('p', '', '', 'Success! Channel inactivate correctly')
+      _message = utils.createElement('p', '', '', 'Success! Schedule inactivate correctly')
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
@@ -91,8 +93,20 @@ var config = {
     }
   },
   setData: function() {
-    document.querySelector('[name="status"]').value = channelData.active
-    document.querySelector('[name="channel_name"]').value = channelData.name
+    console.log(configData);
+    document.querySelector('[name="status"]').value = configData.active
+    document.querySelector('[name="channel"]').value = configData.channel
+    document.querySelector('[name="reseller"]').value = configData.reseller
+    document.querySelector('[name="service"]').value = configData.service
+    document.querySelector('[name="start_date"]').value = configData.start_date
+    document.querySelector('[name="end_date"]').value = configData.end_date
+    document.querySelector('[name="schedule_start"]').value = configData.schedule_start
+    document.querySelector('[name="schedule_end"]').value = configData.schedule_end
+    document.querySelector('[name="overlap"]').value = configData.overlap
+    document.querySelector('[name="min_available"]').value = configData.min_available
+    document.querySelector('[name="max_available"]').value = configData.max_available
+    // document.querySelector('[name="available"]').value = configData.available
+    document.querySelector('[name="shared"]').value = configData.shared
   }
 }
 
@@ -101,13 +115,13 @@ if (cancel != null) {
   cancel.addEventListener('click', function(e) {
     e.preventDefault()
 
-    form = document.querySelector('#add-channel')
+    form = document.querySelector('#add-config')
     if (form != null)
       form.reset()
 
-    form = document.querySelector('#update-channel')
+    form = document.querySelector('#update-config')
       if (form != null)
-        channel.setData()
+        config.setData()
   });
 }
 
@@ -123,23 +137,41 @@ if (save != null) {
 
     if(valid) {
       info = {
-        channel_name: document.querySelector('[name="channel_name"]').value
+        channel_id: document.querySelector('[name="channel"]').value,
+        reseller_id: document.querySelector('[name="reseller"]').value,
+        service_id: document.querySelector('[name="service"]').value,
+        start_date: document.querySelector('[name="start_date"]').value,
+        end_date: document.querySelector('[name="end_date"]').value,
+        schedule_start: document.querySelector('[name="schedule_start"]').value,
+        schedule_end: document.querySelector('[name="schedule_end"]').value,
+        overlap: document.querySelector('[name="overlap"]').value,
+        min_available: document.querySelector('[name="min_available"]').value,
+        max_available: document.querySelector('[name="max_available"]').value,
+        // available: document.querySelector('[name="available"]').value,
+        shared_schedule: document.querySelector('[name="shared"]').checked ? 1:0,
+        // channel_id: document.querySelector('[name="channel"]').value
+        user_id: user
       }
-
-      form = document.querySelector('#add-channel')
+console.log(info);
+      form = document.querySelector('#add-config')
 
       if (form != null) {
-        var url = `${apiHost}channels/add`
-        utils.api(JSON.stringify(info), url, 'POST', channel.add)
+        var url = `${apiHost}config_base/add`
+        info.user_id = user
+        info.type_movement = 'I'
+        utils.api(JSON.stringify(info), url, 'POST', config.add)
       }
 
-      form = document.querySelector('#update-channel')
+      form = document.querySelector('#update-config')
 
       if (form != null) {
         info.active_status = document.querySelector('[name="status"]').value
+        // base_id: configData.id,
+        info.arrive_id = configData.arrive_id;
+        // info.user_id = user
 
-        var url = `${apiHost}channels/edit/${channelData.id}`
-        utils.api(JSON.stringify(info), url, 'PUT', channel.update)
+        var url = `${apiHost}config_base/edit/${configData.id}`
+        utils.api(JSON.stringify(info), url, 'PUT', config.update)
       }
     }
   })
@@ -157,30 +189,52 @@ for (var i = 0, l = options.length; i < l; i++) {
 
     var id = element.getAttribute('data-id')
 
-    var url = `${apiHost}channels/del/${id}`
-    utils.api(JSON.stringify({}), url, 'DELETE', channel.delete, element)
+    var url = `${apiHost}config_base/del/${id}`
+    utils.api(JSON.stringify({}), url, 'DELETE', config.delete, element)
+    // console.log(url);
   })
 }
 
-form = document.querySelector('#add-channel')
+form = document.querySelector('#add-config')
 if (form != null) {
   var status_combo = form.querySelector('[name="status"]')
    status_combo.parentElement.parentElement.remove()
 }
 
-form = document.querySelector('#update-channel')
-if (form != null)
-  channel.setData()
+form = document.querySelector('#update-config')
 
-$( document ).ready(function() {
-    var configTable = document.querySelector('#config-base-registers')
-    if (configTable !== null) {
+if (form != null)
+  config.setData()
+  
+var configTable = document.querySelector('#config-base-registers')
+if (configTable !== null) {
     $(function() {
         $('#config-base-registers').dataTable({
             "sPaginationType": "full_numbers",
             "iDisplayLength": 20,
-            "aLengthMenu": [[20, 50, 100, -1], [20, 50, 100, "All"]]
+            "aLengthMenu": [
+                [20, 50, 100, -1], [20, 50, 100, "All"]
+            ]
         });
     });
-    }
+}
+
+$( document ).ready(function() {
+
+    document.querySelectorAll(".date-format").flatpickr({
+      dateFormat: "Y-m-d"
+    });
+  
+    document.querySelectorAll(".date-range").flatpickr({
+      dateFormat: "Y-m-d",
+      mode: "range"
+    });
+  
+    document.querySelectorAll(".time-format").flatpickr({
+      enableTime: true,
+      noCalendar: true,
+      dateFormat: "H:i",
+      time_24hr: true
+    });
+    
 });
