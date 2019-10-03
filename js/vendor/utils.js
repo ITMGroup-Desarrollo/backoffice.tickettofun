@@ -97,9 +97,23 @@ var utils = {
     content = this.createElement('div', 'modal__content', content)
 
     if(cnButton === true) {
+      if(id === 'confirm-modal'){
+        var cancelButton = this.createElement(
+          'button',
+          'btn btn-default',
+          '',
+          'Cancel'
+        )
+        
+        cancelButton.setAttribute('aria-label', 'Close modal')
+        cancelButton.setAttribute('data-micromodal-close', '')
+        cancelButton.setAttribute('style', 'margin-right: 20px');
+        footer.appendChild(cancelButton)
+      }
+
       var acceptButton = this.createElement(
         'button',
-        'btn btn-outline-warning',
+        'btn btn-outline-warning' + (id === 'confirm-modal'? ' confirm-delete': ''),
         '',
         'Aceptar'
       )
@@ -109,6 +123,7 @@ var utils = {
       acceptButton.setAttribute('data-micromodal-close', '')
 
       footer.appendChild(acceptButton)
+      
     }
 
     roleContent.appendChild(header)

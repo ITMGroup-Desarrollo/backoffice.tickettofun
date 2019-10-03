@@ -51,7 +51,7 @@ class Arrive extends CI_Model
             foreach ($rows as $row)
             {
                 
-                $aux = '';
+                $aux = $schedule = '';
                 $this->anchor_attrib = array();
 
                 $aux .= custom('td', '', $row->reseller_name);
@@ -77,6 +77,22 @@ class Arrive extends CI_Model
 
                 $status_attrib = $this->attrib;
                 $aux .= custom('td', $status_attrib, $status);
+                
+                $params = array();
+                $params['start_date'] = $row->arrival_date;
+
+                $responseValidate = json_decode(
+                    $this->api->request_api('POST', HOST.GET_CONFIG_BASE_ROUTE."/ship/".$row->ship_id, $params, $token)
+                );
+
+                if ($responseValidate->code == 200)
+                {
+                    $path = 'allotments/configuration?ship='.$row->ship_id.'&date='.$row->arrival_date;
+                    $this->anchor_attrib['class'] = 'schedule';
+                    $this->anchor_attrib['href'] = base_url($path);
+                    $schedule = custom('i', array('class' => 'fas fa-calendar-alt'), '');
+                    $schedule = custom('a', $this->anchor_attrib, $schedule);
+                }
 
                 $path = 'arrives/' . $row->arrive_id;
                 $this->anchor_attrib['class'] = 'edit';
@@ -93,7 +109,7 @@ class Arrive extends CI_Model
                     $delete = custom('a', $this->anchor_attrib, $delete);
                 }
 
-                $aux .= custom('td', $this->attrib, $edit . $delete);
+                $aux .= custom('td', $this->attrib, $schedule . $edit . $delete);
 
                 $this->model .= custom('tr', '', $aux);
             }

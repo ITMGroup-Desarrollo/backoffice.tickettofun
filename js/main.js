@@ -158,6 +158,7 @@ MicroModal.init()
 
 utils.buildModal('alert-modal', true, true)
 utils.buildModal('wait-modal', false, false)
+utils.buildModal('confirm-modal', true, true)
 
 var waitModal = document.getElementById('wait-modal-content')
 var waitMessage = utils.createElement(

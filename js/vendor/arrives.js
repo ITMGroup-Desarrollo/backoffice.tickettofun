@@ -90,18 +90,29 @@ var arrives = {
       MicroModal.show('alert-modal')
     }
   },
-  searchArrive: function(response, element){
+  arriveInConfig: function(response, element){
     response = JSON.parse(response)
+
     var id = element.getAttribute('data-id');
     var url = `http://localhost:8181/api/v1/arrives/del/${id}`
 
+    
     if (response.code == 200) {
-      var confirmArrive = confirm('The cruise have already configurations in use,  do you want to remove?');
+      MicroModal.close('wait-modal')
+      
+      var btnCanccel = document.querySelector('.confirm-delete')
+      btnCanccel.setAttribute('data-id', id)
+      btnCanccel.removeAttribute('style', 'display')
+      
+      var _message = ''
+      var _alertModal = document.getElementById('confirm-modal-content')
+      
+      _message = utils.createElement('p', '', '', 'The ship have already configurations in use,  do you want to remove?')
 
-      if(confirmArrive)
-        utils.api(JSON.stringify({}), url, 'DELETE', arrives.delete, element)  
-      else
-        MicroModal.close('wait-modal');
+      _alertModal.innerHTML = ''
+      _alertModal.appendChild(_message)
+
+      MicroModal.show('confirm-modal')
 
     }else{
       utils.api(JSON.stringify({}), url, 'DELETE', arrives.delete, element)  
@@ -165,6 +176,23 @@ if (cancel != null) {
   });
 }
 
+var confirmDelete = document.querySelector('.confirm-delete');
+
+if (confirmDelete != null) {
+  confirmDelete.addEventListener('click', function(e){
+      var element = e.target
+
+      if (! e.target.getAttribute('data-id'))
+        element = e.target.parentElement
+      
+      var id = element.getAttribute('data-id')
+      var url = `${apiHost}arrives/del/${id}`
+      
+      utils.api(JSON.stringify({}), url, 'DELETE', arrives.delete, element)  
+
+  })
+}
+
 var save = document.querySelector('.save')
 if (save != null) {
   save.addEventListener('click', function(e) {
@@ -219,7 +247,8 @@ for (var i = 0, l = options.length; i < l; i++) {
     var id = element.getAttribute('data-id')
     var url = `${apiHost}arrives/arrival/${id}`
 
-    utils.api(JSON.stringify({}), url, 'GET', arrives.searchArrive, element)
+    utils.api(JSON.stringify({}), url, 'GET', arrives.arriveInConfig, element)
+    
   })
 }
 
@@ -245,7 +274,7 @@ if (servicesTable !== null) {
     for (var i = ship.options.length-1;i>0;i--){
       ship.remove(i)
     }
-    
+ 
     $.ajax({
       data: {'id': id},
       type: 'POST',
@@ -307,7 +336,7 @@ if (servicesTable !== null) {
 
 $(function(){
 
-  $(".date-format").flatpickr({
+  document.getElementsByClassName("date-format").flatpickr({
     dateFormat: "Y-m-d"
   });
 
@@ -316,14 +345,14 @@ $(function(){
     mode: "range"
   });
 
-  $(".time-format").flatpickr({
+  document.getElementsByClassName("time-format").flatpickr({
     enableTime: true,
     noCalendar: true,
     dateFormat: "H:i",
     time_24hr: true
   });
 
-  $(".markup").flatpickr({
+  document.getElementsByClassName("markup").flatpickr({
     enableTime: true,
     noCalendar: true,
     dateFormat: "H:i",
