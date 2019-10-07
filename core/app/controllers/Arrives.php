@@ -16,15 +16,15 @@ class Arrives extends CI_Controller
 
         $view   = $this->uri->segment(1);
         $option = $this->uri->segment(2);
-        
+
         $this->load->Model('Page');
         $this->Page->page_name = $view;
         $this->Page->menu_active = 'arrives';
         $this->Page->submenu_active = $option;
-        
+
         $data = $this->Page->get_contents();
         $this->load->Model('Arrive');
-        
+
         if ($option == 'list')
         {
             $table = $this->Arrive->get_list();
@@ -32,7 +32,7 @@ class Arrives extends CI_Controller
             $data['contents'] = str_replace(
                 '{title}', 'List of ship arrives', $data['contents']
             );
-            
+
             $form = $this->Arrive->get_form('search');
             $form = str_replace('{id}', 'search', $form);
 
@@ -65,7 +65,7 @@ class Arrives extends CI_Controller
             $script = custom('script', '', $userId);
             $data['scripts'] = $script .  $data['scripts'];
         }
-        
+
         $this->load->view('Master', $data);
     }
 
@@ -104,7 +104,7 @@ class Arrives extends CI_Controller
         $data['contents'] = str_replace(
             '{content}', $form, $data['contents']
         );
-        
+
         $arrives = $this->Arrive->get_data($option);
         $arrives = 'window.arrives = ' . json_encode($arrives);
 
@@ -126,9 +126,9 @@ class Arrives extends CI_Controller
 
         $this->Arrive->get_data_json($_POST);
     }
-    
+
     public function shipList()
-    {   
+    {
         $id = @$_POST['id'];
 
         $this->load->library('user_session', NULL, 'user');
@@ -138,7 +138,7 @@ class Arrives extends CI_Controller
         if ( ! $this->user->active_session())
             redirect(base_url('signin'));
 
-        
+
         $this->Arrive->get_ships_list($id);
     }
 }

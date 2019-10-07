@@ -30,7 +30,7 @@ class Arrive extends CI_Model
     {
         $this->db->close();
         $table_content = $this->Page->get_settings('arrives');
-        
+
         $table_content = $this->build->build_components(
             $table_content['ARRIVES_TABLE']
         );
@@ -44,13 +44,13 @@ class Arrive extends CI_Model
         $response = json_decode(
             $this->api->request_api('POST', $endpoint, $params, $token)
         );
-        
+
         if ($response->code == 200)
         {
             $rows = $response->message;
             foreach ($rows as $row)
             {
-                
+
                 $aux = $schedule = '';
                 $this->anchor_attrib = array();
 
@@ -77,15 +77,11 @@ class Arrive extends CI_Model
 
                 $status_attrib = $this->attrib;
                 $aux .= custom('td', $status_attrib, $status);
-                
+
                 $params = array();
                 $params['start_date'] = $row->arrival_date;
 
-                $responseValidate = json_decode(
-                    $this->api->request_api('POST', HOST.GET_CONFIG_BASE_ROUTE."/ship/".$row->ship_id, $params, $token)
-                );
-
-                if ($responseValidate->code == 200)
+                if ($row->arrive_config === 1)
                 {
                     $path = 'allotments/configuration?ship='.$row->ship_id.'&date='.$row->arrival_date;
                     $this->anchor_attrib['class'] = 'schedule';
@@ -100,7 +96,8 @@ class Arrive extends CI_Model
                 $edit = custom('i', array('class' => 'fas fa-edit'), '');
                 $edit = custom('a', $this->anchor_attrib, $edit);
 
-                if ($row->active_status == 1) {
+                if ($row->active_status == 1)
+                {
                     $this->anchor_attrib['href'] = '#';
                     $this->anchor_attrib['class'] = 'delete';
                     $this->anchor_attrib['data-id'] = $row->arrive_id;
@@ -114,14 +111,7 @@ class Arrive extends CI_Model
                 $this->model .= custom('tr', '', $aux);
             }
         }
-        else
-        {
-            $aux = '';
-            for ($i = 0; $i < 9; $i++)
-                $aux .= custom('td', '', '');
 
-            $this->model = custom('tr', '', $aux);
-        }
         $this->model = str_replace('{rows}', $this->model, $table_content);
 
         return $this->model;
@@ -131,7 +121,7 @@ class Arrive extends CI_Model
     {
         $this->db->close();
         $contents = $this->Page->get_settings('arrives');
-        
+
         $form = 'ARRIVES_FORM';
         if ($option == 'search')
         {
@@ -172,7 +162,7 @@ class Arrive extends CI_Model
         }else{
             redirect('allotments/arrives');
         }
-        
+
         return $arrives;
     }
 
@@ -189,13 +179,13 @@ class Arrive extends CI_Model
         {
             $endpoint .= '/ship/' . $data['ship'];
         }
-        
+
         $dateArrive = explode('to', $data['dates']);
-        
+
         $params = new stdClass();
-        $params = array("start_date" => (empty($dateArrive[0])?null:trim($dateArrive[0])), 
+        $params = array("start_date" => (empty($dateArrive[0])?null:trim($dateArrive[0])),
                         "end_date" => (empty($dateArrive[1])?null:trim($dateArrive[1])));
-        
+
         $this->load->library('session');
         $token = $this->session->userdata('token');
 
@@ -209,17 +199,17 @@ class Arrive extends CI_Model
 
             foreach ($rows as $row)
             {
-                $status = '<span class="label label-' . ($row->active_status == 1?'success':'danger') . '" data-status="' . $row->arrive_id . '">' . ($row->active_status == 1?'Active':'Inactive') . '</span>'; 
+                $status = '<span class="label label-' . ($row->active_status == 1?'success':'danger') . '" data-status="' . $row->arrive_id . '">' . ($row->active_status == 1?'Active':'Inactive') . '</span>';
                 $action = '<a class="edit" href="' . $row->arrive_id . '">
                                 <i class="fas fa-edit"></i>
                            </a>';
-                
+
                 if ($row->active_status == 1) {
                     $action .= '<a class="delete" href="#" data-id="'. $row->arrive_id .'">
                                     <i class="fas fa-trash"></i>
                                 </a>';
                 }
-                
+
                 $arriveJson[] = array('reseller' => $row->reseller_name,
                                       'ship' => $row->ship_name,
                                       'arrival_date' =>  $row->arrival_date,
@@ -239,7 +229,7 @@ class Arrive extends CI_Model
     {
         $endpoint = HOST . GET_ARRIVES_ROUTE.'/shipsarrive/' . $id;
         $arriveJson = array();
-        
+
         $params = new stdClass();
         $this->load->library('session');
         $token = $this->session->userdata('token');
@@ -253,7 +243,7 @@ class Arrive extends CI_Model
             $rows = $response->message;
 
             foreach ($rows as $row)
-            {                
+            {
                 $arriveJson[] = array("id" => $row->ship_id,
                                       "ship" => $row->ship_name);
             }
@@ -261,5 +251,5 @@ class Arrive extends CI_Model
 
         echo json_encode($arriveJson);
     }
-    
+
 }
