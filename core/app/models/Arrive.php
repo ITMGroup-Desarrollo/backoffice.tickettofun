@@ -141,8 +141,8 @@ class Arrive extends CI_Model
 
         $params = new stdClass();
         $this->load->library('session');
-        $token = $this->session->userdata('token');
 
+        $token = $this->session->userdata('token');
         $response = json_decode(
             $this->api->request_api('GET', $endpoint, $params, $token)
         );

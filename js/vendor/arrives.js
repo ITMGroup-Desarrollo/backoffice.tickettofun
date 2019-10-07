@@ -67,7 +67,7 @@ var arrives = {
 
     var _message = ''
     var _alertModal = document.getElementById('alert-modal-content')
-    
+
     if (codes.hasOwnProperty(response.code)) {
       _message = utils.createElement('p', '', '', response.message)
 
@@ -78,7 +78,7 @@ var arrives = {
     }
     else if (response.code == 200) {
       var _status = document.querySelector(`[data-status="${id}"]`)
-      
+
       _status.className = "label label-danger";
       _status.innerHTML = 'inactive';
 
@@ -96,17 +96,17 @@ var arrives = {
     var id = element.getAttribute('data-id');
     var url = `http://localhost:8181/api/v1/arrives/del/${id}`
 
-    
+
     if (response.code == 200) {
       MicroModal.close('wait-modal')
-      
+
       var btnCanccel = document.querySelector('.confirm-delete')
       btnCanccel.setAttribute('data-id', id)
       btnCanccel.removeAttribute('style', 'display')
-      
+
       var _message = ''
       var _alertModal = document.getElementById('confirm-modal-content')
-      
+
       _message = utils.createElement('p', '', '', 'The ship have already configurations in use,  do you want to remove?')
 
       _alertModal.innerHTML = ''
@@ -115,12 +115,12 @@ var arrives = {
       MicroModal.show('confirm-modal')
 
     }else{
-      utils.api(JSON.stringify({}), url, 'DELETE', arrives.delete, element)  
+      utils.api(JSON.stringify({}), url, 'DELETE', arrives.delete, element)
     }
   },
   loadData: function(data, dtable){
     dtable.dataTable().fnClearTable()
-    
+
     for (i in data){
       dtable.dataTable().fnAddData([
         data[i].reseller,
@@ -134,19 +134,19 @@ var arrives = {
         data[i].action
       ])
     }
-    
+
     var options = document.querySelectorAll('.delete')
     for (var i = 0, l = options.length; i < l; i++) {
       options[i].addEventListener('click', function(e) {
         e.preventDefault()
-    
+
         var element = e.target
         if (! e.target.getAttribute('data-id'))
           element = e.target.parentElement
-        
+
         var id = element.getAttribute('data-id')
         var url = `${apiHost}arrives/arrival/${id}`
-    
+
         utils.api(JSON.stringify({}), url, 'GET', arrives.confirmArriveConfig, element)
       })
     }
@@ -184,11 +184,11 @@ if (confirmDelete != null) {
 
       if (! e.target.getAttribute('data-id'))
         element = e.target.parentElement
-      
+
       var id = element.getAttribute('data-id')
       var url = `${apiHost}arrives/del/${id}`
-      
-      utils.api(JSON.stringify({}), url, 'DELETE', arrives.delete, element)  
+
+      utils.api(JSON.stringify({}), url, 'DELETE', arrives.delete, element)
 
   })
 }
@@ -236,19 +236,19 @@ if (save != null) {
 var options = document.querySelectorAll('.delete')
 
 for (var i = 0, l = options.length; i < l; i++) {
-  
+
   options[i].addEventListener('click', function(e) {
     e.preventDefault()
 
     var element = e.target
     if (! e.target.getAttribute('data-id'))
       element = e.target.parentElement
-    
+
     var id = element.getAttribute('data-id')
     var url = `${apiHost}arrives/arrival/${id}`
 
     utils.api(JSON.stringify({}), url, 'GET', arrives.arriveInConfig, element)
-    
+
   })
 }
 
@@ -265,16 +265,16 @@ if (form != null)
 
 var servicesTable = document.querySelector('#arrives-registers')
 if (servicesTable !== null) {
-  
+
   var vendor = document.querySelector('[name="reseller"]')
-  
-  vendor.addEventListener('change', function(e){
+
+  vendor.addEventListener('change', function(e) {
     var id = $(this).val()
-    
-    for (var i = ship.options.length-1;i>0;i--){
+
+    for (var i = ship.options.length-1;i>0;i--) {
       ship.remove(i)
     }
- 
+
     $.ajax({
       data: {'id': id},
       type: 'POST',
@@ -282,11 +282,11 @@ if (servicesTable !== null) {
       url: 'shiplist',
       success: function(data){
         data = JSON.parse(data)
-    
+
         for(i in data){
           ship.append(new Option(data[i].ship, data[i].id, "selected"))
         }
-        
+
       }
     })
   });
@@ -302,11 +302,11 @@ if (servicesTable !== null) {
 
     search.addEventListener('click', function(e) {
       e.preventDefault()
-      
+
       var dataForm = {"reseller":document.querySelector('[name="reseller"]').value,
                       "ship":document.querySelector('[name="ship"]').value,
                       "dates": document.querySelector('[name="dates"]').value}
-      
+
       $.ajax({
         data: dataForm,
         type: "POST",
@@ -327,7 +327,7 @@ if (servicesTable !== null) {
 
         }
       });
-      
+
     })
 
   });
@@ -361,7 +361,8 @@ $(function(){
   });
 
   var ship = document.querySelector('[name="ship"]')
-  ship.options.length = 0
-  ship.append(new Option('-- Choose option --', ''))
-
+  if (ship != null) {
+    ship.options.length = 0
+    ship.append(new Option('-- Choose option --', ''))
+  }
 });
