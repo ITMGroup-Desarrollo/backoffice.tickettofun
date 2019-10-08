@@ -71,7 +71,8 @@ class Forms
                     $row->element_type,
                     $extra,
                     $row->api_endpoint,
-                    $row->keyvalue_pair
+                    $row->keyvalue_pair,
+                    $row->extra_name
                 );
 
                 if ( ! empty($row->label_name))
@@ -140,16 +141,16 @@ class Forms
                 $this->attrib = array();
             }
         }
-        
+
         if ($params[0] != 'signin')
         {
             $typeForm = explode('_', $params[0]);
-            
+
             $this->form_attrib = array(
                 'id' => '{id}',
                 'class' => 'form-horizontal'
             );
-            
+
             $this->button_attrib = array('class' => 'btn btn-default cancel');
 
             $this->CI->load->Model('Page');
@@ -175,17 +176,17 @@ class Forms
             }
             else {
                 $buttons = custom('BUTTON', $this->button_attrib, 'Cancel');
-    
+
                 $this->button_attrib['class'] = 'btn btn-success save';
                 $buttons .= custom('BUTTON', $this->button_attrib, 'Save');
             }
-            
+
             $content = str_replace('{buttons}', $buttons, $content);
-    
+
             $this->content_form .= $content;
             $this->form = custom('form', $this->form_attrib, $this->content_form);
         }
-        else 
+        else
         {
             $this->form = $this->content_form;
         }
@@ -193,10 +194,10 @@ class Forms
         return $this->form;
     }
 
-    public function get_catalog($catalog_id, $api_endpoint, $keyvalue_pair)
+    public function get_catalog($catalog_id, $api_endpoint, $keyvalue_pair, $extra_name)
     {
         if ( ! empty($api_endpoint))
-            return $this->_get_catalog_api($api_endpoint, $keyvalue_pair);
+            return $this->_get_catalog_api($api_endpoint, $keyvalue_pair, $extra_name);
 
         return $this->_get_catalog($catalog_id);
     }
@@ -234,7 +235,8 @@ class Forms
         return $attributes;
     }
 
-    private function _get_element($form_element, $extra = '', $api_endpoint = '', $keyvalue_pair = '')
+    private function _get_element($form_element, $extra = '', $api_endpoint = '',
+        $keyvalue_pair = '', $extra_name = '')
     {
         $element = '';
 
@@ -250,8 +252,21 @@ class Forms
                 $element = custom('BUTTON', $this->attrib, $extra);
                 break;
             case 'COMBOBOX':
-                $options = $this->get_catalog($extra, $api_endpoint, $keyvalue_pair);
-                $element = form_dropdown('', $options, '', $this->attrib);
+                $options = $this->get_catalog(
+                    $extra,
+                    $api_endpoint,
+                    $keyvalue_pair,
+                    $extra_name
+                );
+
+                if ( ! empty($extra_name))
+                {
+                    $element = custom('select', $this->attrib, $options);
+                }
+                else
+                {
+                    $element = form_dropdown('', $options, '', $this->attrib);
+                }
                 break;
         }
 
@@ -316,7 +331,7 @@ class Forms
         return $options;
     }
 
-    private function _get_catalog_api($api_endpoint, $keyvalue_pair)
+    private function _get_catalog_api($api_endpoint, $keyvalue_pair, $extra_name)
     {
         $catalog = array();
         $options = array();
@@ -342,11 +357,30 @@ class Forms
         {
             $rows = $response->message;
 
-            foreach ($rows as $row){
+            if ( ! empty($extra_name))
+            {
+                $options = '';
+                $options = custom('option', '', '-- Choose option --');
 
-                if((int)$row->active_status === 1)
-                    $options[$row->$value] = $row->$name;
+                foreach ($rows as $row) {
+                    $attrib = array();
+                    if((int)$row->active_status === 1)
+                    {
+                        $attrib['value'] = $row->$value;
+                        $attrib['data-value'] = $row->$extra_name;
 
+                        $options .= custom('option', $attrib, $row->$name);
+                    }
+                }
+            }
+            else
+            {
+                foreach ($rows as $row) {
+
+                    if((int)$row->active_status === 1)
+                        $options[$row->$value] = $row->$name;
+
+                }
             }
         }
 
