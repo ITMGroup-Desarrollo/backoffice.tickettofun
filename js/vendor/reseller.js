@@ -4,6 +4,7 @@ var form
 var base = window.baseUrl
 var token = window.token
 var resellerData = window.reseller
+var user_create_id = window.user_create_id
 
 var reseller= {
   add: function(response) {
@@ -131,6 +132,7 @@ if (save != null) {
       form = document.querySelector('#add-reseller')
 
       if (form != null) {
+        info.user_create_id = user_create_id
         var url = `${apiHost}resellers/add`
         utils.api(JSON.stringify(info), url, 'POST', reseller.add)
       }

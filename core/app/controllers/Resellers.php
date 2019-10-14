@@ -25,7 +25,7 @@ class Resellers extends CI_Controller
 
         $this->load->Model('Reseller');
 
-        if ($option == 'list') 
+        if ($option == 'list')
         {
             $table = $this->Reseller->get_list();
 
@@ -49,6 +49,10 @@ class Resellers extends CI_Controller
             $data['contents'] = str_replace(
                 '{content}', $form, $data['contents']
             );
+
+            $reseller = 'window.user_create_id = ' . $this->session->userdata('user_id');
+            $script = custom('script', '', $reseller);
+            $data['scripts'] = $script .  $data['scripts'];
         }
 
         $this->load->view('Master', $data);
