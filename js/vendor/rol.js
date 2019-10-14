@@ -4,6 +4,7 @@ var form
 var base = window.baseUrl
 var token = window.token
 var rolData = window.rol
+var user_create_id = window.user_create_id
 
 var rol= {
   add: function(response) {
@@ -124,6 +125,7 @@ if (save != null) {
       form = document.querySelector('#add-rol')
 
       if (form != null) {
+        info.user_create_id = user_create_id
         var url = apiHost + 'roles/add'
         utils.api(JSON.stringify(info), url, 'POST', rol.add)
       }

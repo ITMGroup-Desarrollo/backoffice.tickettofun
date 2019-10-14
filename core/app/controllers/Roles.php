@@ -25,7 +25,7 @@ class Roles extends CI_Controller
 
         $this->load->Model('Rol');
 
-        if ($option == 'list') 
+        if ($option == 'list')
         {
             $table = $this->Rol->get_list();
 
@@ -49,6 +49,10 @@ class Roles extends CI_Controller
             $data['contents'] = str_replace(
                 '{content}', $form, $data['contents']
             );
+
+            $rol = 'window.user_create_id = ' . $this->session->userdata('user_id');
+            $script = custom('script', '', $rol);
+            $data['scripts'] = $script .  $data['scripts'];
         }
 
         $this->load->view('Master', $data);
