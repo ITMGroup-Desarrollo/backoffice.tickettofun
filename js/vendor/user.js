@@ -4,6 +4,7 @@ var form
 var base = window.baseUrl
 var token = window.token
 var userData = window.user
+var user_create_id = window.user_create_id
 
 var user= {
   add: function(response) {
@@ -136,7 +137,7 @@ if (save != null) {
 
       if (form != null) {
         info.user_password = document.querySelector('[name="user_password"]').value
-
+        info.user_create_id = user_create_id
         var url = `${apiHost}users/add`
         utils.api(JSON.stringify(info), url, 'POST', user.add)
       }

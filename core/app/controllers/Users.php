@@ -25,7 +25,7 @@ class Users extends CI_Controller
 
         $this->load->Model('User');
 
-        if ($option == 'list') 
+        if ($option == 'list')
         {
             $table = $this->User->get_list();
 
@@ -49,6 +49,10 @@ class Users extends CI_Controller
             $data['contents'] = str_replace(
                 '{content}', $form, $data['contents']
             );
+
+            $user = 'window.user_create_id = ' . $this->session->userdata('user_id');
+            $script = custom('script', '', $user);
+            $data['scripts'] = $script .  $data['scripts'];
         }
 
         $this->load->view('Master', $data);
