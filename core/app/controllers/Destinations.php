@@ -25,7 +25,7 @@ class Destinations extends CI_Controller
 
         $this->load->Model('Destination');
 
-        if ($option == 'list') 
+        if ($option == 'list')
         {
             $table = $this->Destination->get_list();
 
@@ -49,6 +49,10 @@ class Destinations extends CI_Controller
             $data['contents'] = str_replace(
                 '{content}', $form, $data['contents']
             );
+
+            $destination = 'window.user_create_id = ' . $this->session->userdata('user_id');
+            $script = custom('script', '', $destination);
+            $data['scripts'] = $script .  $data['scripts'];
         }
 
         $this->load->view('Master', $data);
