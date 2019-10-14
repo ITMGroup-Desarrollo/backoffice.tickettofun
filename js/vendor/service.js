@@ -4,6 +4,7 @@ var form
 var base = window.baseUrl
 var token = window.token
 var serviceData = window.service
+var user_create_id = window.user_create_id
 
 var service = {
   add: function(response) {
@@ -138,6 +139,7 @@ if (save != null) {
       form = document.querySelector('#add-service')
 
       if (form != null) {
+        info.user_create_id = user_create_id
         var url = `${apiHost}products/add`
         utils.api(JSON.stringify(info), url, 'POST', service.add)
       }

@@ -25,7 +25,7 @@ class Services extends CI_Controller
 
         $this->load->Model('Service');
 
-        if ($option == 'list') 
+        if ($option == 'list')
         {
             $table = $this->Service->get_list();
 
@@ -49,6 +49,10 @@ class Services extends CI_Controller
             $data['contents'] = str_replace(
                 '{content}', $form, $data['contents']
             );
+
+            $service = 'window.user_create_id = ' . $this->session->userdata('user_id');
+            $script = custom('script', '', $service);
+            $data['scripts'] = $script .  $data['scripts'];
         }
 
         $this->load->view('Master', $data);
