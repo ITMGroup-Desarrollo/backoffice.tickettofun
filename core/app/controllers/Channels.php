@@ -25,7 +25,7 @@ class Channels extends CI_Controller
 
         $this->load->Model('Channel');
 
-        if ($option == 'list') 
+        if ($option == 'list')
         {
             $table = $this->Channel->get_list();
 
@@ -49,6 +49,10 @@ class Channels extends CI_Controller
             $data['contents'] = str_replace(
                 '{content}', $form, $data['contents']
             );
+
+            $channel = 'window.user_create_id = ' . $this->session->userdata('user_id');
+            $script = custom('script', '', $channel);
+            $data['scripts'] = $script .  $data['scripts'];
         }
 
         $this->load->view('Master', $data);

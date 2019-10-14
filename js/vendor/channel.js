@@ -4,6 +4,7 @@ var form
 var base = window.baseUrl
 var token = window.token
 var channelData = window.channel
+var user_create_id = window.user_create_id
 
 var channel = {
   add: function(response) {
@@ -129,6 +130,7 @@ if (save != null) {
       form = document.querySelector('#add-channel')
 
       if (form != null) {
+        info.user_create_id = user_create_id
         var url = `${apiHost}channels/add`
         utils.api(JSON.stringify(info), url, 'POST', channel.add)
       }
