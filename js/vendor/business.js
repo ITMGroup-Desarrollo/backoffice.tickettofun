@@ -4,6 +4,7 @@ var form
 var base = window.baseUrl
 var token = window.token
 var businessData = window.business
+var user_create_id = window.user_create_id
 
 var business = {
   add: function(response) {
@@ -130,6 +131,7 @@ if (save != null) {
       form = document.querySelector('#add-business')
 
       if (form != null) {
+        info.user_create_id = user_create_id
         var url = `${apiHost}unities/add`
         utils.api(JSON.stringify(info), url, 'POST', business.add)
       }
