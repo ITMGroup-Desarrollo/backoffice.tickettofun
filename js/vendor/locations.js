@@ -4,6 +4,7 @@ var form
 var base = window.baseUrl
 var token = window.token
 var locationsData = window.locations
+var user_create_id = window.user_create_id
 
 var locations= {
   add: function(response) {
@@ -132,6 +133,7 @@ if (save != null) {
       form = document.querySelector('#add-location')
 
       if (form != null) {
+        info.user_create_id = user_create_id
         var url = apiHost+'locations/add'
         utils.api(JSON.stringify(info), url, 'POST', locations.add)
       }
