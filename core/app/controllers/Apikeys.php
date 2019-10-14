@@ -49,6 +49,10 @@ class Apikeys extends CI_Controller
             $data['contents'] = str_replace(
                 '{content}', $form, $data['contents']
             );
+
+            $apikey = 'window.user_create_id = ' . $this->session->userdata('user_id');
+            $script = custom('script', '', $apikey);
+            $data['scripts'] = $script .  $data['scripts'];
         }
 
         $this->load->view('Master', $data);

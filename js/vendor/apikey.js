@@ -4,6 +4,7 @@ var form
 var base = window.baseUrl
 var token = window.token
 var apikeyData = window.apikey
+var user_create_id = window.user_create_id
 
 var apikey= {
   add: function(response) {
@@ -126,6 +127,8 @@ if (save != null) {
       if (form != null) {
         if(document.querySelector('[name="user_id"]').value !== '')
           info.idUser = document.querySelector('[name="user_id"]').value
+
+        info.user_create_id = user_create_id
 
         var url = apiHost + 'apikeys/add'
         utils.api(JSON.stringify(info), url, 'POST', apikey.add)
