@@ -49,6 +49,10 @@ class Ships extends CI_Controller
             $data['contents'] = str_replace(
                 '{content}', $form, $data['contents']
             );
+
+            $ship = 'window.user_create_id = ' . $this->session->userdata('user_id');
+            $script = custom('script', '', $ship);
+            $data['scripts'] = $script .  $data['scripts'];
         }
 
         $this->load->view('Master', $data);

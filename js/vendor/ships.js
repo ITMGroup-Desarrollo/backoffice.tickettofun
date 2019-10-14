@@ -4,6 +4,7 @@ var form
 var base = window.baseUrl
 var token = window.token
 var shipsData = window.ships
+var user_create_id = window.user_create_id
 
 var ships= {
   add: function(response) {
@@ -132,6 +133,7 @@ if (save != null) {
       form = document.querySelector('#add-ship')
 
       if (form != null) {
+        info.user_create_id = user_create_id
         var url = `${apiHost}ships/add`
         utils.api(JSON.stringify(info), url, 'POST', ships.add)
       }
