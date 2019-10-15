@@ -106,7 +106,7 @@ $route["apikeys/list"] = "apikeys/index/$1";
 $route["apikeys/new"]   = "apikeys/index/$1";
 $route["apikeys/(:num)"]   = "apikeys/update/$1";
 
-//Services_equivalence 
+//Services_equivalence
 $route["equivalences/list"] = "equivalences/index/$1";
 $route["equivalences/new"]   = "equivalences/index/$1";
 $route["equivalences/(:num)"]   = "equivalences/update/$1";
@@ -127,3 +127,4 @@ $route["allotments/(:num)"]   = "allotments/update/$1";
     $route["allotments/configuration"] = "allotments/configuration/$1";
     $route["allotments/configuration/new"] = "allotments/create_configuration/$1";
     $route["allotments/configuration/(:num)"] = "allotments/configuration_update/$1";
+    $route["allotments/itinerary/(:num)"] = "allotments/itinerary/$1";

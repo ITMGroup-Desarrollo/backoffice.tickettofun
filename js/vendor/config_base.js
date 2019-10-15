@@ -5,9 +5,103 @@ var base = window.baseUrl
 var token = window.token
 var configData = window.config
 var user = window.user
-// console.log(configData);
-// console.log(user);
+
+var editor;
 var config = {
+  buildOptions: function(response, extradata) {
+    const data = JSON.parse(response)
+    console.log(data.message);
+    for (var i = eval(extradata[0]).options.length-1;i>0;i--) {
+      eval(extradata[0]).remove(i)
+    }
+    if(Array.isArray(data.message)) {
+      for(i in data.message){
+        eval(extradata[0]).append(new Option(data.message[i][`${ extradata[1] }_name`], data.message[i][`${ extradata[1] }_id`], "selected"))
+      }
+    }
+  },
+  loadData: function(response) {
+    const data = JSON.parse(response)
+    // console.log(data);
+    let datatable = [];
+    if(Array.isArray(data.message)){
+      console.log(data.message)
+      datatable = data.message.map(data => {
+
+        const dataArray = [
+          data.start_date,
+          data.end_date,
+          data.schedule_start,
+          data.schedule_end,
+          data.min_available,
+          data.max_available,
+          data.available,
+          data.active_status,
+          data.allotment_id
+        ];
+
+        return dataArray;
+      })
+    }
+
+    if ($.fn.DataTable.isDataTable( editor ))
+      editor.destroy()
+
+    editor = $('#config-base-registers').DataTable({
+      retrieve: true,
+      data: datatable,
+      "columnDefs": [{
+        "targets": 7,
+        "data": "allotment_id",
+        "render": function ( data, type, row, meta ) {
+          if(row[7] === 0)
+            return '<span class="label label-danger" data-status="'+row[8]+'">Inactive</span>';
+          else
+            return '<span class="label label-success" data-status="'+row[8]+'">Active</span>';
+        }
+      },{
+        "targets": 8,
+        "data": "allotment_id",
+        "render": function ( data, type, row, meta ) {
+          if(row[7] === 0)
+            return '<a class="edit" href="configuration/'+row[8]+'"><i class="fas fa-edit"></i></a>';
+          else
+            return '<a class="edit" href="configuration/'+row[8]+'"><i class="fas fa-edit"></i></a>' +
+              '<a class="delete" data-id="'+row[8]+'"><i class="fas fa-trash"></i></a>';
+        }
+      }],
+      "processing": true,
+      stateSave: true,
+      "sPaginationType": "full_numbers",
+      "iDisplayLength": 20,
+      "aLengthMenu": [
+          [20, 50, 100, -1], [20, 50, 100, "All"]
+      ]
+    });
+    editor.draw();
+    editor.columns.adjust().draw();
+
+    var options = document.querySelectorAll('.delete')
+    if(options) {
+      for (var i = 0, l = options.length; i < l; i++) {
+        options[i].addEventListener('click', function(e) {
+          e.preventDefault()
+
+          var element = e.target
+          if (! e.target.getAttribute('data-id'))
+            element = e.target.parentElement
+
+          var id = element.getAttribute('data-id')
+
+          var url = `${apiHost}allotments/del/${id}`
+          utils.api(JSON.stringify({}), url, 'DELETE', config.delete, element)
+
+        })
+      }
+    }
+
+    MicroModal.close('wait-modal')
+  },
   add: function(response) {
     MicroModal.close('wait-modal')
 
@@ -93,7 +187,6 @@ var config = {
     }
   },
   setData: function() {
-    console.log(configData);
     document.querySelector('[name="status"]').value = configData.active
     document.querySelector('[name="channel"]').value = configData.channel
     document.querySelector('[name="reseller"]').value = configData.reseller
@@ -105,7 +198,6 @@ var config = {
     document.querySelector('[name="overlap"]').value = configData.overlap
     document.querySelector('[name="min_available"]').value = configData.min_available
     document.querySelector('[name="max_available"]').value = configData.max_available
-    // document.querySelector('[name="available"]').value = configData.available
     document.querySelector('[name="shared"]').value = configData.shared
   }
 }
@@ -120,8 +212,8 @@ if (cancel != null) {
       form.reset()
 
     form = document.querySelector('#update-config')
-      if (form != null)
-        config.setData()
+    if (form != null)
+      config.setData()
   });
 }
 
@@ -147,16 +239,14 @@ if (save != null) {
         overlap: document.querySelector('[name="overlap"]').value,
         min_available: document.querySelector('[name="min_available"]').value,
         max_available: document.querySelector('[name="max_available"]').value,
-        // available: document.querySelector('[name="available"]').value,
         shared_schedule: document.querySelector('[name="shared"]').checked ? 1:0,
-        // channel_id: document.querySelector('[name="channel"]').value
         user_id: user
       }
-console.log(info);
+
       form = document.querySelector('#add-config')
 
       if (form != null) {
-        var url = `${apiHost}config_base/add`
+        var url = `${apiHost}allotments/add`
         info.user_id = user
         info.type_movement = 'I'
         utils.api(JSON.stringify(info), url, 'POST', config.add)
@@ -166,33 +256,66 @@ console.log(info);
 
       if (form != null) {
         info.active_status = document.querySelector('[name="status"]').value
-        // base_id: configData.id,
         info.arrive_id = configData.arrive_id;
-        // info.user_id = user
 
-        var url = `${apiHost}config_base/edit/${configData.id}`
+        var url = `${apiHost}allotments/edit/${configData.id}`
         utils.api(JSON.stringify(info), url, 'PUT', config.update)
       }
     }
   })
 }
 
-var options = document.querySelectorAll('.delete')
+var search = document.querySelector('.search')
+if (search != null) {
 
-for (var i = 0, l = options.length; i < l; i++) {
-  options[i].addEventListener('click', function(e) {
+  search.addEventListener('click', function(e) {
     e.preventDefault()
+// console.log(document.querySelector('.date-range').value);
+    utils.api(JSON.stringify({"start_date": document.querySelector('.date-range').value}), `${apiHost}allotments`, 'POST', config.loadData);
 
-    var element = e.target
-    if (! e.target.getAttribute('data-id'))
-      element = e.target.parentElement
-
-    var id = element.getAttribute('data-id')
-
-    var url = `${apiHost}config_base/del/${id}`
-    utils.api(JSON.stringify({}), url, 'DELETE', config.delete, element)
-    // console.log(url);
   })
+}
+
+var channel = document.querySelector('[name="channel"]')
+
+if(channel != null) {
+  channel.addEventListener('change', function(e) {
+    var id = $(this).val()
+  console.log(id)
+    for (var i = reseller.options.length-1;i>0;i--) {
+      reseller.remove(i)
+    }
+
+    utils.api(JSON.stringify({
+      /* "start_date": document.querySelector(".date-range").value */
+    }), `${apiHost}resellers/channel/${id}`, 'GET', config.buildOptions, ['reseller','reseller']);
+  });
+}
+
+var reseller = document.querySelector('[name="reseller"]')
+if (reseller != null) {
+  reseller.options.length = 0
+  reseller.append(new Option('-- Choose option --', ''))
+}
+
+if(reseller != null) {
+  reseller.addEventListener('change', function(e) {
+    var id = $(this).val()
+    console.log(id)
+    for (var i = equivalences.options.length-1;i>0;i--) {
+      equivalences.remove(i)
+    }
+
+    utils.api(JSON.stringify({
+      /* "start_date": document.querySelector(".date-range").value */
+    }), `${apiHost}equivalences/reseller/${id}`, 'GET', config.buildOptions, ['equivalence','equivalence']);
+  });
+}
+
+var equivalence = document.querySelector('[name="service"]')
+if (equivalence != null) {
+  equivalence.options.length = 0
+  equivalence.append(new Option('-- Choose option --', ''))
 }
 
 form = document.querySelector('#add-config')
@@ -205,36 +328,38 @@ form = document.querySelector('#update-config')
 
 if (form != null)
   config.setData()
-  
-var configTable = document.querySelector('#config-base-registers')
-if (configTable !== null) {
-    $(function() {
-        $('#config-base-registers').dataTable({
-            "sPaginationType": "full_numbers",
-            "iDisplayLength": 20,
-            "aLengthMenu": [
-                [20, 50, 100, -1], [20, 50, 100, "All"]
-            ]
-        });
-    });
-}
+
+var configTable = document.querySelector('#config-base-registers');
+
 
 $( document ).ready(function() {
 
-    document.querySelectorAll(".date-format").flatpickr({
-      dateFormat: "Y-m-d"
-    });
-  
-    document.querySelectorAll(".date-range").flatpickr({
-      dateFormat: "Y-m-d",
-      mode: "range"
-    });
-  
-    document.querySelectorAll(".time-format").flatpickr({
-      enableTime: true,
-      noCalendar: true,
-      dateFormat: "H:i",
-      time_24hr: true
-    });
-    
+  if (configTable !== undefined && configTable !== null && configTable !== undefined && configTable != undefined) {
+    utils.api(JSON.stringify({
+        "start_date": document.querySelector(".date-range").value
+    }), `${apiHost}allotments`, 'POST', config.loadData);
+  }
+
+  document.querySelectorAll(".date-format").flatpickr({
+    dateFormat: "Y-m-d"
+  });
+
+  document.querySelectorAll(".date-range").flatpickr({
+    mode: "range",
+    altFormat: "F j, Y",
+    dateFormat: "Y-m-d",
+    // minDate: Date.now(),
+    defaultDate: "today",
+    altInput: true
+    // onReady: checkIfTodaySelected,
+    // onValueUpdate: checkIfTodaySelected
+  });
+
+  document.querySelectorAll(".time-format").flatpickr({
+    enableTime: true,
+    noCalendar: true,
+    dateFormat: "H:i",
+    time_24hr: true
+  });
+
 });
