@@ -302,8 +302,8 @@ if(reseller != null) {
   reseller.addEventListener('change', function(e) {
     var id = $(this).val()
     console.log(id)
-    for (var i = equivalences.options.length-1;i>0;i--) {
-      equivalences.remove(i)
+    for (var i = equivalence.options.length-1;i>0;i--) {
+      equivalence.remove(i)
     }
 
     utils.api(JSON.stringify({
