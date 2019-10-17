@@ -10,22 +10,27 @@ var editor;
 var config = {
   buildOptions: function(response, extradata) {
     const data = JSON.parse(response)
-    console.log(data.message);
+    // console.log(data.message)
     for (var i = eval(extradata[0]).options.length-1;i>0;i--) {
       eval(extradata[0]).remove(i)
     }
+
     if(Array.isArray(data.message)) {
       for(i in data.message){
-        eval(extradata[0]).append(new Option(data.message[i][`${ extradata[1] }_name`], data.message[i][`${ extradata[1] }_id`], "selected"))
+        eval(extradata[0]).append(
+          new Option(data.message[i][`${ extradata[1] }_name`], data.message[i][`${ extradata[1] }_id`], "selected")
+        )
       }
     }
+
+    MicroModal.close('wait-modal')
   },
   loadData: function(response) {
     const data = JSON.parse(response)
     // console.log(data);
     let datatable = [];
     if(Array.isArray(data.message)){
-      console.log(data.message)
+      // console.log(data.message)
       datatable = data.message.map(data => {
 
         const dataArray = [
@@ -47,10 +52,14 @@ var config = {
     if ($.fn.DataTable.isDataTable( editor ))
       editor.destroy()
 
-    editor = $('#config-base-registers').DataTable({
+    editor = $('#config-base-registers')
+      .on( 'order.dt',  function () { /* utilAjaxExecute(); */ } )
+      // .on( 'search.dt', function () { console.log( 'Search' ); } )
+      .on( 'page.dt',   function () { /* utilAjaxExecute(); */ } )
+      .DataTable({
       retrieve: true,
       data: datatable,
-      "columnDefs": [{
+      columnDefs: [{
         "targets": 7,
         "data": "allotment_id",
         "render": function ( data, type, row, meta ) {
@@ -60,9 +69,9 @@ var config = {
             return '<span class="label label-success" data-status="'+row[8]+'">Active</span>';
         }
       },{
-        "targets": 8,
-        "data": "allotment_id",
-        "render": function ( data, type, row, meta ) {
+        targets: 8,
+        data: "allotment_id",
+        render: function ( data, type, row, meta ) {
           if(row[7] === 0)
             return '<a class="edit" href="configuration/'+row[8]+'"><i class="fas fa-edit"></i></a>';
           else
@@ -70,14 +79,15 @@ var config = {
               '<a class="delete" data-id="'+row[8]+'"><i class="fas fa-trash"></i></a>';
         }
       }],
-      "processing": true,
+      processing: true,
       stateSave: true,
-      "sPaginationType": "full_numbers",
-      "iDisplayLength": 20,
-      "aLengthMenu": [
+      sPaginationType: "full_numbers",
+      iDisplayLength: 20,
+      aLengthMenu: [
           [20, 50, 100, -1], [20, 50, 100, "All"]
       ]
     });
+    // console.log(editor.draw());
     editor.draw();
     editor.columns.adjust().draw();
 
@@ -110,10 +120,22 @@ var config = {
     var _alertModal = document.getElementById('alert-modal-content')
 
     if (codes.hasOwnProperty(response.code)) {
-      _message = utils.createElement('p', '', '', response.message)
-
+      let decode = response
+      try {
+        // a = JSON.parse(response);
+        decode = JSON.parse( response.message )
+      } catch(e) {
+          // alert(e); // error in the above string (in this case, yes)!
+      }
+      _message = utils.createElement('p', '', '', decode.message)
+      // console.log(decode.available)
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
+
+      const maxInput = document.querySelector('[name="max_available"]')
+      if(maxInput != null)
+        maxInput.value = decode.available ? decode.available : 0
+
 
       MicroModal.show('alert-modal')
     }
@@ -137,10 +159,23 @@ var config = {
     var _alertModal = document.getElementById('alert-modal-content')
 
     if (codes.hasOwnProperty(response.code)) {
-      _message = utils.createElement('p', '', '', response.message)
+      let decode = response
+      try {
+        // a = JSON.parse(response);
+        decode = JSON.parse( response.message )
+      } catch(e) {
+          // alert(e); // error in the above string (in this case, yes)!
+      }
+      _message = utils.createElement('p', '', '', decode.message)
+      // _message = utils.createElement('p', '', '', response.message)
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
+
+      const maxInput = document.querySelector('[name="max_available"]')
+      console.log(maxInput.val);
+      // if(maxInput != null)
+        // maxInput.value = decode.available ? decode.available : 0
 
       MicroModal.show('alert-modal')
     }
@@ -265,13 +300,27 @@ if (save != null) {
   })
 }
 
-var search = document.querySelector('.search')
+if ($.fn.DataTable.isDataTable( editor )){
+  const dtEvents = document.querySelector('#config-base-registers')
+    .addEventListener( 'order.dt',  function () { console.log( 'Order' ); } )
+    // .addEventListener( 'search.dt', function () { console.log( 'Search' ); } )
+    .addEventListener( 'page.dt',   function () { console.log( 'Page' ); } )
+    .DataTable();
+} else {
+  console.log('no lo hizo')
+}
+
+
+const search = document.querySelector('.search')
 if (search != null) {
 
   search.addEventListener('click', function(e) {
     e.preventDefault()
-// console.log(document.querySelector('.date-range').value);
-    utils.api(JSON.stringify({"start_date": document.querySelector('.date-range').value}), `${apiHost}allotments`, 'POST', config.loadData);
+    // console.log(document.querySelector('.date-range').value);
+    /* utils.api(JSON.stringify({
+      "start_date": document.querySelector('.date-range').value
+    }), `${apiHost}allotments`, 'POST', config.loadData); */
+    utilAjaxExecute();
 
   })
 }
@@ -280,8 +329,9 @@ var channel = document.querySelector('[name="channel"]')
 
 if(channel != null) {
   channel.addEventListener('change', function(e) {
+    e.preventDefault()
     var id = $(this).val()
-  console.log(id)
+
     for (var i = reseller.options.length-1;i>0;i--) {
       reseller.remove(i)
     }
@@ -300,15 +350,14 @@ if (reseller != null) {
 
 if(reseller != null) {
   reseller.addEventListener('change', function(e) {
+    e.preventDefault()
     var id = $(this).val()
-    console.log(id)
+
     for (var i = equivalence.options.length-1;i>0;i--) {
       equivalence.remove(i)
     }
 
-    utils.api(JSON.stringify({
-      /* "start_date": document.querySelector(".date-range").value */
-    }), `${apiHost}equivalences/reseller/${id}`, 'GET', config.buildOptions, ['equivalence','equivalence']);
+    utils.api(JSON.stringify({}), `${apiHost}equivalences/reseller/${id}`, 'GET', config.buildOptions, ['equivalence','service']);
   });
 }
 
@@ -331,26 +380,45 @@ if (form != null)
 
 var configTable = document.querySelector('#config-base-registers');
 
-
-$( document ).ready(function() {
-
+const utilAjaxExecute = function(){
   if (configTable !== undefined && configTable !== null && configTable !== undefined && configTable != undefined) {
     utils.api(JSON.stringify({
         "start_date": document.querySelector(".date-range").value
     }), `${apiHost}allotments`, 'POST', config.loadData);
   }
+}
+
+$( document ).ready(function() {
+
+  utilAjaxExecute();
 
   document.querySelectorAll(".date-format").flatpickr({
     dateFormat: "Y-m-d"
   });
 
   document.querySelectorAll(".date-range").flatpickr({
-    mode: "range",
+    // mode: "range",
     altFormat: "F j, Y",
     dateFormat: "Y-m-d",
     // minDate: Date.now(),
     defaultDate: "today",
-    altInput: true
+    altInput: true,
+    /* plugins: [
+      require('shortcut-buttons-flatpickr')({
+          theme: 'dark',
+          button: [
+              { label: 'Сегодня' },
+              { label: 'Завтра' },
+              { label: 'Послезавтра' }
+          ],
+          onClick(index, fp) {
+              let date = index ? new Date(Date.now() + 24 * index * 60 * 60 * 1000) : new Date;
+
+              fp.setDate(date);
+              fp.close();
+          }
+      })
+    ] */
     // onReady: checkIfTodaySelected,
     // onValueUpdate: checkIfTodaySelected
   });
