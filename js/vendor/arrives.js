@@ -122,7 +122,7 @@ var arrives = {
   loadData: function(response){
     const data = JSON.parse(response);
     let dataTable = [];
-    console.log(data);
+
     if (Array.isArray(data.message)){
       dataTable = data.message.map(data=>{
         const dataArray = [
@@ -145,9 +145,8 @@ var arrives = {
       editor.destroy()
 
     editor = $('#arrives-registers')
-      .on( 'order.dt',  function () { /* utilAjaxExecute(); */ } )
-      // .on( 'search.dt', function () { console.log( 'Search' ); } )
-      .on( 'page.dt',   function () { /* utilAjaxExecute(); */ } )
+      .on( 'order.dt',  function () { } )
+      .on( 'page.dt',   function () { } )
       .DataTable({
       retrieve: true,
       data: dataTable,
@@ -282,21 +281,19 @@ if (save != null) {
   })
 }
 
-var options = document.querySelectorAll('.delete')
+var confirmDelete = document.querySelector('.confirm-delete');
 
-for (var i = 0, l = options.length; i < l; i++) {
+if (confirmDelete != null) {
+  confirmDelete.addEventListener('click', function(e){
+      var element = e.target
 
-  options[i].addEventListener('click', function(e) {
-    e.preventDefault()
+      if (! e.target.getAttribute('data-id'))
+        element = e.target.parentElement
 
-    var element = e.target
-    if (! e.target.getAttribute('data-id'))
-      element = e.target.parentElement
+      var id = element.getAttribute('data-id')
+      var url = `${apiHost}arrives/del/${id}`
 
-    var id = element.getAttribute('data-id')
-    var url = `${apiHost}arrives/arrival/${id}`
-
-    utils.api(JSON.stringify({}), url, 'GET', arrives.arriveInConfig, element)
+      utils.api(JSON.stringify({}), url, 'DELETE', arrives.delete, element)
 
   })
 }
@@ -359,7 +356,7 @@ if (configTable !== null) {
           info.end_date = arrayDates[1]
         }else{
           info.start_date = arrayDates[0]
-          info.end_date = null
+          info.end_date = arrayDates[0]
         }
       }
 
