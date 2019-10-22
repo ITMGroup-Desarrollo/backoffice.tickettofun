@@ -5,6 +5,7 @@ var base = window.baseUrl
 var token = window.token
 var arrivesData = window.arrives
 var user = window.user
+var editor;
 
 var arrives = {
   add: function(response) {
@@ -90,7 +91,7 @@ var arrives = {
       MicroModal.show('alert-modal')
     }
   },
-  arriveInConfig: function(response, element){
+  confirmArriveAllotment: function(response, element){
     response = JSON.parse(response)
 
     var id = element.getAttribute('data-id');
@@ -118,38 +119,103 @@ var arrives = {
       utils.api(JSON.stringify({}), url, 'DELETE', arrives.delete, element)
     }
   },
-  loadData: function(data, dtable){
-    dtable.dataTable().fnClearTable()
+  loadData: function(response){
+    const data = JSON.parse(response);
+    let dataTable = [];
+    console.log(data);
+    if (Array.isArray(data.message)){
+      dataTable = data.message.map(data=>{
+        const dataArray = [
+          data.reseller_name,
+          data.ship_name,
+          data.arrival_date,
+          data.arrival_time,
+          data.departure_time,
+          data.markup_start,
+          data.markup_end,
+          data.active_status,
+          data.arrive_id
+        ]
 
-    for (i in data){
-      dtable.dataTable().fnAddData([
-        data[i].reseller,
-        data[i].ship,
-        data[i].arrival_date,
-        data[i].arrival_time,
-        data[i].departure_time,
-        data[i].markup_start,
-        data[i].markup_end,
-        data[i].status,
-        data[i].action
-      ])
-    }
-
-    var options = document.querySelectorAll('.delete')
-    for (var i = 0, l = options.length; i < l; i++) {
-      options[i].addEventListener('click', function(e) {
-        e.preventDefault()
-
-        var element = e.target
-        if (! e.target.getAttribute('data-id'))
-          element = e.target.parentElement
-
-        var id = element.getAttribute('data-id')
-        var url = `${apiHost}arrives/arrival/${id}`
-
-        utils.api(JSON.stringify({}), url, 'GET', arrives.confirmArriveConfig, element)
+        return dataArray;
       })
     }
+
+    if ($.fn.DataTable.isDataTable( editor ))
+      editor.destroy()
+
+    editor = $('#arrives-registers')
+      .on( 'order.dt',  function () { /* utilAjaxExecute(); */ } )
+      // .on( 'search.dt', function () { console.log( 'Search' ); } )
+      .on( 'page.dt',   function () { /* utilAjaxExecute(); */ } )
+      .DataTable({
+      retrieve: true,
+      data: dataTable,
+      columnDefs: [{
+        targets: 7,
+        className: "center",
+        data: "arrive_id",
+        "render": function ( data, type, row, meta ) {
+          if(row[7] === 0)
+            return '<span class="label label-danger" data-status="'+row[8]+'">Inactive</span>';
+          else
+            return '<span class="label label-success" data-status="'+row[8]+'">Active</span>';
+        }
+      },{
+        targets: 8,
+        data: "allotment_id",
+        className: "center",
+        render: function ( data, type, row, meta ) {
+          if(row[7] === 0)
+            return '<a class="edit" href="'+row[8]+'"><i class="fas fa-edit"></i></a>';
+          else
+            return '<a class="edit" href="'+row[8]+'"><i class="fas fa-edit"></i></a>' +
+              '<a class="delete" data-id="'+row[8]+'"><i class="fas fa-trash"></i></a>';
+        }
+      }],
+      processing: true,
+      stateSave: true,
+      sPaginationType: "full_numbers",
+      iDisplayLength: 20,
+      aLengthMenu: [
+          [20, 50, 100, -1], [20, 50, 100, "All"]
+      ]
+    });
+    editor.draw();
+    editor.columns.adjust().draw();
+
+    var options = document.querySelectorAll('.delete')
+    if(options) {
+      for (var i = 0, l = options.length; i < l; i++) {
+        options[i].addEventListener('click', function(e) {
+          e.preventDefault()
+
+          var element = e.target
+          if (! e.target.getAttribute('data-id'))
+            element = e.target.parentElement
+
+          var id = element.getAttribute('data-id')
+          var url = `${apiHost}arrives/arriveintoallotment/${id}`
+
+          utils.api(JSON.stringify({}), url, 'GET', arrives.confirmArriveAllotment, element)
+        })
+      }
+    }
+
+    MicroModal.close('wait-modal')
+
+  },
+  buildOptions: function(response){
+    const data = JSON.parse(response);
+
+    if(Array.isArray(data.message)){
+      for(i in data.message){
+        ship.append(new Option(data.message[i].ship_name, data.message[i].ship_id, "selected"))
+      }
+
+    }
+
+    MicroModal.close('wait-modal')
   },
   setData: function(){
     document.querySelector('[name="ships"]').value = arrivesData.ships
@@ -174,23 +240,6 @@ if (cancel != null) {
 
     form.reset();
   });
-}
-
-var confirmDelete = document.querySelector('.confirm-delete');
-
-if (confirmDelete != null) {
-  confirmDelete.addEventListener('click', function(e){
-      var element = e.target
-
-      if (! e.target.getAttribute('data-id'))
-        element = e.target.parentElement
-
-      var id = element.getAttribute('data-id')
-      var url = `${apiHost}arrives/del/${id}`
-
-      utils.api(JSON.stringify({}), url, 'DELETE', arrives.delete, element)
-
-  })
 }
 
 var save = document.querySelector('.save')
@@ -263,8 +312,9 @@ form = document.querySelector('#update-arrives')
 if (form != null)
   arrives.setData();
 
-var servicesTable = document.querySelector('#arrives-registers')
-if (servicesTable !== null) {
+var configTable = document.querySelector('#arrives-registers')
+
+if (configTable !== null) {
 
   var vendor = document.querySelector('[name="reseller"]')
 
@@ -275,61 +325,56 @@ if (servicesTable !== null) {
       ship.remove(i)
     }
 
-    $.ajax({
-      data: {'id': id},
-      type: 'POST',
-      datatype: 'json',
-      url: 'shiplist',
-      success: function(data){
-        data = JSON.parse(data)
+    utils.api(JSON.stringify({}), `${apiHost}arrives/shipsarrive/${id}`, 'GET', arrives.buildOptions);
 
-        for(i in data){
-          ship.append(new Option(data[i].ship, data[i].id, "selected"))
-        }
-
-      }
-    })
   });
 
-  $(function() {
-    var dtable = $('#arrives-registers').dataTable({
-        "sPaginationType": "full_numbers",
-        "iDisplayLength": 20,
-        "aLengthMenu": [[20, 50, 100, -1], [20, 50, 100, "All"]]
-    });
+  var search = document.querySelector('.search');
 
-    var search = document.querySelector('.search');
+  search.addEventListener('click', function(e) {
+    e.preventDefault();
+    utilAjaxExecute();
 
-    search.addEventListener('click', function(e) {
-      e.preventDefault()
+  });
 
-      var dataForm = {"reseller":document.querySelector('[name="reseller"]').value,
-                      "ship":document.querySelector('[name="ship"]').value,
-                      "dates": document.querySelector('[name="dates"]').value}
+  var configTable = document.querySelector('#arrives-registers');
 
-      $.ajax({
-        data: dataForm,
-        type: "POST",
-        dataType: "json",
-        url: `listjson`,
-        beforeSend: function(){
-          MicroModal.show('wait-modal');
-        },
-        complete: function(){
-          MicroModal.close('wait-modal');
-        },
-        success: function(data){
-          if (parseInt(data.length) > 0){
-            arrives.loadData(data, dtable);
-          } else {
-            dtable.dataTable().fnClearTable()
-          }
+  const utilAjaxExecute = function(){
+    if (configTable !== undefined && configTable !== null && configTable !== undefined && configTable != undefined) {
 
+      var url = `${apiHost}arrives`;
+      let reseller = document.querySelector('[name="reseller"]').value;
+      let ship = document.querySelector('[name="ship"]').value;
+      var dates = document.querySelector('[name="dates"]').value;
+      var info = new Object();
+
+      info.start_date = null
+      info.end_date = null
+
+      if (dates.trim() !== ""){
+        var arrayDates = dates.split(' to ');
+
+        if (arrayDates.length === 2){
+          info.start_date = arrayDates[0]
+          info.end_date = arrayDates[1]
+        }else{
+          info.start_date = arrayDates[0]
+          info.end_date = null
         }
-      });
+      }
 
-    })
+      if (reseller !== '' && ship === ''){
+        url = url + `/reseller/${reseller}`;
+      } else if (reseller !== '' && ship !== ''){
+        url = url + `/ship/${ship}`;
+      }
 
+      utils.api(JSON.stringify(info), url, 'POST', arrives.loadData)
+    }
+  }
+
+  $(function() {
+    utilAjaxExecute();
   });
 
 }
@@ -365,4 +410,5 @@ $(function(){
     ship.options.length = 0
     ship.append(new Option('-- Choose option --', ''))
   }
+
 });

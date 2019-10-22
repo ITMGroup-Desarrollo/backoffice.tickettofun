@@ -41,7 +41,7 @@ class Arrives extends CI_Controller
             );
 
             $data['contents'] = str_replace(
-                '{content}', '<hr>'.$table, $data['contents']
+                '{content}', "<hr />".$table, $data['contents']
             );
         }
         else
@@ -114,31 +114,4 @@ class Arrives extends CI_Controller
         $this->load->view('Master', $data);
     }
 
-
-    public function dataJson()
-    {
-        $this->load->library('user_session', NULL, 'user');
-        $this->load->Model('Page');
-        $this->load->Model('Arrive');
-
-        if ( ! $this->user->active_session())
-            redirect(base_url('signin'));
-
-        $this->Arrive->get_data_json($_POST);
-    }
-
-    public function shipList()
-    {
-        $id = @$_POST['id'];
-
-        $this->load->library('user_session', NULL, 'user');
-        $this->load->Model('Page');
-        $this->load->Model('Arrive');
-
-        if ( ! $this->user->active_session())
-            redirect(base_url('signin'));
-
-
-        $this->Arrive->get_ships_list($id);
-    }
 }
