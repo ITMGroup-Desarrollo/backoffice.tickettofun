@@ -120,8 +120,8 @@ var arrives = {
     }
   },
   loadData: function(response){
-    const data = JSON.parse(response);
-    let dataTable = [];
+    const data = JSON.parse(response)
+    let dataTable = []
 
     if (Array.isArray(data.message)){
       dataTable = data.message.map(data=>{
@@ -137,7 +137,7 @@ var arrives = {
           data.arrive_id
         ]
 
-        return dataArray;
+        return dataArray
       })
     }
 
@@ -165,11 +165,13 @@ var arrives = {
         data: "allotment_id",
         className: "center",
         render: function ( data, type, row, meta ) {
+          let strAction = `<a class="schedule" href="${base}allotments/itinerary/${row[8]}"><i class="fas fa-calendar-alt"></i></a>`
+
           if(row[7] === 0)
-            return '<a class="edit" href="'+row[8]+'"><i class="fas fa-edit"></i></a>';
+            return `${strAction} <a class="edit" href="${row[8]}"><i class="fas fa-edit"></i></a>`
           else
-            return '<a class="edit" href="'+row[8]+'"><i class="fas fa-edit"></i></a>' +
-              '<a class="delete" data-id="'+row[8]+'"><i class="fas fa-trash"></i></a>';
+            return `${strAction} <a class="edit" href="${row[8]}"><i class="fas fa-edit"></i></a>
+                                <a class="delete" data-id="${row[8]}"><i class="fas fa-trash"></i></a>`
         }
       }],
       processing: true,
@@ -180,8 +182,8 @@ var arrives = {
           [20, 50, 100, -1], [20, 50, 100, "All"]
       ]
     });
-    editor.draw();
-    editor.columns.adjust().draw();
+    editor.draw()
+    editor.columns.adjust().draw()
 
     var options = document.querySelectorAll('.delete')
     if(options) {
@@ -205,7 +207,7 @@ var arrives = {
 
   },
   buildOptions: function(response){
-    const data = JSON.parse(response);
+    const data = JSON.parse(response)
 
     if(Array.isArray(data.message)){
       for(i in data.message){
@@ -307,7 +309,7 @@ if (form != null) {
 form = document.querySelector('#update-arrives')
 
 if (form != null)
-  arrives.setData();
+  arrives.setData()
 
 var configTable = document.querySelector('#arrives-registers')
 
@@ -322,16 +324,15 @@ if (configTable !== null) {
       ship.remove(i)
     }
 
-    utils.api(JSON.stringify({}), `${apiHost}arrives/shipsarrive/${id}`, 'GET', arrives.buildOptions);
+    utils.api(JSON.stringify({}), `${apiHost}arrives/shipsarrive/${id}`, 'GET', arrives.buildOptions)
 
   });
 
   var search = document.querySelector('.search');
 
   search.addEventListener('click', function(e) {
-    e.preventDefault();
-    utilAjaxExecute();
-
+    e.preventDefault()
+    utilAjaxExecute()
   });
 
   var configTable = document.querySelector('#arrives-registers');
@@ -339,11 +340,11 @@ if (configTable !== null) {
   const utilAjaxExecute = function(){
     if (configTable !== undefined && configTable !== null && configTable !== undefined && configTable != undefined) {
 
-      var url = `${apiHost}arrives`;
-      let reseller = document.querySelector('[name="reseller"]').value;
-      let ship = document.querySelector('[name="ship"]').value;
-      var dates = document.querySelector('[name="dates"]').value;
-      var info = new Object();
+      var url = `${apiHost}arrives`
+      let reseller = document.querySelector('[name="reseller"]').value
+      let ship = document.querySelector('[name="ship"]').value
+      var dates = document.querySelector('[name="dates"]').value
+      var info = new Object()
 
       info.start_date = null
       info.end_date = null
@@ -361,9 +362,9 @@ if (configTable !== null) {
       }
 
       if (reseller !== '' && ship === ''){
-        url = url + `/reseller/${reseller}`;
+        url = url + `/reseller/${reseller}`
       } else if (reseller !== '' && ship !== ''){
-        url = url + `/ship/${ship}`;
+        url = url + `/ship/${ship}`
       }
 
       utils.api(JSON.stringify(info), url, 'POST', arrives.loadData)
@@ -371,7 +372,7 @@ if (configTable !== null) {
   }
 
   $(function() {
-    utilAjaxExecute();
+    utilAjaxExecute()
   });
 
 }
