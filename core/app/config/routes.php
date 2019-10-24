@@ -119,9 +119,8 @@ $route["arrives/listjson"] = "arrives/dataJson/$1";
 $route["arrives/shiplist"] = "arrives/shipList/$1";
 
 //Allotment
-$route["allotments/list"] = "allotments/index/$1";
-$route["allotments/new"]   = "allotments/index/$1";
-$route["allotments/(:num)"]   = "allotments/update/$1";
+$route["allotments/list"] = "allotment_reservations/index/$1";
+$route["allotments/(:num)"]   = "allotment_reservations/update/$1";
 
     //Config_base
     $route["allotments/configuration"] = "allotments/configuration/$1";
