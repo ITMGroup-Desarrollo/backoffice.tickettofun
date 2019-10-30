@@ -58,31 +58,51 @@ class Arrive extends CI_Model
         return $this->model;
     }
 
-    public function get_data($id)
+    public function get_data($id, $slug = '')
     {
-        $endpoint = HOST . GET_ARRIVES_ROUTE . '/' . $id;
-
         $params = new stdClass();
+        switch($slug){
+            case 'arriveallotment':
+                $endpoint = HOST . GET_ARRIVES_ROUTE . '/' . $slug . '/' . $id;
+                $params->start_date = date('Y-m-d');
+                break;
+            default:
+                $endpoint = HOST . GET_ARRIVES_ROUTE . '/' . $id; break;
+        }
+
         $this->load->library('session');
         $token = $this->session->userdata('token');
 
         $response = json_decode(
             $this->api->request_api('GET', $endpoint, $params, $token)
         );
+
         $arrives = new stdClass();
 
         if ($response->code == 200)
         {
+            // echo "<pre>"; print_r($response->message); exit;
             $arrives->id = $response->message->arrive_id;
+
+            $arrives->channel_id = $response->message->channel_id;
+            $arrives->channel_name = $response->message->channel_name;
+            $arrives->reseller_id = $response->message->reseller_id;
+            $arrives->reseller_name = $response->message->reseller_name;
+            $arrives->ship_name = $response->message->ship_name;
+
             $arrives->ships = $response->message->ship_id;
             $arrives->arrival_date = $response->message->arrival_date;
             $arrives->arrival_time = $response->message->arrival_time;
+            $arrives->arrival_time_markup = $response->message->arrival_time_markup;
             $arrives->departure_time = $response->message->departure_time;
+            $arrives->departure_time_markup = $response->message->departure_time_markup;
             $arrives->markup_start = $response->message->markup_start;
             $arrives->markup_end = $response->message->markup_end;
             $arrives->active = $response->message->active_status;
 
-        }else{
+        }
+        else
+        {
             redirect('allotments/arrives');
         }
 

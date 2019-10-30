@@ -124,6 +124,7 @@ $route["allotments/(:num)"]   = "allotment_reservations/update/$1";
 
     //Config_base
     $route["allotments/configuration"] = "allotments/configuration/$1";
-    $route["allotments/configuration/new"] = "allotments/create_configuration/$1";
+    $route["allotments/(:any)"] = "allotments/create_configuration/$1";
     $route["allotments/configuration/(:num)"] = "allotments/configuration_update/$1";
     $route["allotments/itinerary/(:num)"] = "allotments/itinerary/$1";
+    $route["allotments/dynamic_html/(:num)"] = "allotments/get_dynamic_html/$1";

@@ -1,0 +1,489 @@
+'use strict'
+var info
+var form
+var base = window.baseUrl
+var token = window.token
+var scheduleData = window.config
+var user = window.user
+const arrive_data = window.arrive_data
+let cont = 1;
+let service;
+let scheduleTableinitialized = document.querySelector('.schedules-registers');
+// console.log(user)
+// console.log(arrive_data)
+const schedule = {
+  dataTableInitializer(parentElementParam, data = []){
+    // console.log('working very well!',parentElementParam)
+    const refillData = data;
+    const parentElementJS = document.querySelector(`${parentElementParam}`)
+    // console.log(parentElementJS)
+    const search = parentElementJS.querySelector('.search')
+    if (search != null) {
+
+        search.addEventListener('click', function(e) {
+          e.preventDefault()
+          // console.log(e)
+          utilAjaxExecute(e.target.closest('.content-wrapper').id);
+
+          e.stopPropagation();
+        })
+
+    }
+
+    service = parentElementJS.querySelector('[name="service"]')
+    console.log(service.value)
+    const preservServiceId = service.value
+    if (service != null) {
+      service.innerHTML = ""
+      for (var i = service.options.length-1;i>0;i--) {
+        // console.log(i)
+        service.remove(i)
+      }
+
+      service.options.length = 0
+      service.append( new Option('-- Choose option --', '') )
+      // console.log(`${apiHost}equivalences/ship/${shipId}`)
+      const equivalencesByShip = utils.api( JSON.stringify({}), `${apiHost}equivalences/ship/${arrive_data.ships}`, 'GET', schedule.buildOptions, ['service','service'] );
+      console.log(equivalencesByShip)
+      service.value = preservServiceId
+
+    }
+
+    if ($.fn.DataTable.isDataTable( scheduleTableinitialized )){
+      console.log('destroyed')
+      scheduleTableinitialized.destroy()
+    } else {
+      console.log('initialized')
+    }
+
+    // Dynamic column defs
+    // const colums = columns
+    const countableRow = 0;
+    scheduleTableinitialized = $(`${parentElementParam} .schedules-registers`).DataTable({
+      // responsive: true,
+      rowCallback: function (row, data) {
+        // console.log('row',row);
+        $(row).addClass('active success')
+        // $(row).attr('id',countableRow++)
+      },
+      retrieve: true,
+      data: data,
+      columnDefs: [
+        {
+          targets: 0,
+          render: function(data, type, row, meta){
+            // console.log('row',row);
+            // console.log('meta',meta.row);
+            return `<input name="schedule_start${meta.row}" class="form-control text-center time-format" value="${data}">`
+          }
+        },
+        {
+          targets: 1,
+          render: function(data, type, row, meta){
+            // console.log('data',data);
+            return `<input name="schedule_end${meta.row}" class="form-control text-center time-format" value="${data}">`
+          }
+        },
+        {
+          targets: 2,
+          render: function(data, type, row, meta){
+            return `<input name="min_available${meta.row}" class="form-control text-center" value="${data}">`
+          }
+        },
+        {
+          targets: 3,
+          render: function(data, type, row, meta){
+            return `<input name="max_available${meta.row}" class="form-control text-center" value="${data}">`
+          }
+        },
+        {
+          targets: 4,
+          data: "shared_schedule",
+          className: 'text-center',
+          render: function ( data, type, row, meta ) {
+            // console.log(row)
+            const checkbox_container = utils.createElement('div', 'checkbox'/* , `schedule${cont++}` */)
+            const checkbox_input = utils.createElement('input', ''/* , `schedule${cont++}` */)
+            const checkbox_label = utils.createElement('label', ''/* , `schedule${cont++}` */)
+            checkbox_input.setAttribute('type', 'checkbox')
+            checkbox_input.setAttribute('name', `shared${meta.row}`)
+            checkbox_input.setAttribute('id', meta.row)
+            checkbox_input.setAttribute('readonly', true)
+            checkbox_input.setAttribute('disabled', true)
+
+            if(row[4] === 0){
+              checkbox_input.setAttribute('checked', false)
+              checkbox_label.appendChild(checkbox_input)
+              checkbox_container.appendChild(checkbox_label)
+              return `<div>${checkbox_container.innerHTML}</div>`;
+            } else {
+              checkbox_input.setAttribute('checked', true)
+              checkbox_label.appendChild(checkbox_input)
+              checkbox_container.appendChild(checkbox_label)
+              return `<div>${checkbox_container.innerHTML}</div>`;
+            }
+            //   return '<a class="edit" href="configuration/'+row[5]+'"><i class="fas fa-edit"></i></a>' +
+            //     '<a class="delete" data-id="'+row[5]+'"><i class="fas fa-trash"></i></a>';
+          }
+        },{
+          targets: 5,
+          data: "arrive_id",
+          render: function ( data, type, row, meta ) {
+            // console.log(row)
+            // if(row[5] === 0)
+              return `<a class="btn btn-link save" id="${meta.row}" dataservice="${preservServiceId}"><i class="glyphicon glyphicon-plus" aria-hidden="true"></i> Add</a>`;
+            // else
+            //   return '<a class="edit" href="configuration/'+row[5]+'"><i class="fas fa-edit"></i></a>' +
+            //     '<a class="delete" data-id="'+row[5]+'"><i class="fas fa-trash"></i></a>';
+          }
+        }
+      ],
+      processing: true,
+      stateSave: true,
+      sPaginationType: "full_numbers",
+      iDisplayLength: 20,
+      aLengthMenu: [
+          [20, 50, 100, -1], [20, 50, 100, "All"]
+      ]
+    })
+
+    document.querySelectorAll(".time-format").flatpickr({
+      enableTime: true,
+      noCalendar: true,
+      dateFormat: "H:i",
+      time_24hr: true
+    });
+
+    var save = document.querySelectorAll('.save')
+    if (save != null) {
+      save.forEach(saveBtn => {
+        saveBtn.addEventListener('click', function(e) {
+          e.preventDefault()
+          // console.log('saving...!','saving...', saveBtn);
+          var valid = 'true'
+          var id = saveBtn.id;
+          var dataservice = saveBtn.dataservice;
+          // console.log(dataservice);
+          // var fields = document.querySelectorAll('[data-validator]')
+          // console.log('table', document.querySelectorAll('table') )
+          // console.log('tr javascript',e.target.closest('tr'));
+          // console.error(document.createRange().createContextualFragment(e.target.closest('tr')));
+
+          // const formData = new FormData(e.target.closest('tr'))
+          // console.log('serialize javascript',formData);
+
+          // valid = utils.dataValidator(fields)
+
+          // if(valid) {
+            info = {
+              channel_id: arrive_data.channel_id,//document.querySelector('[name="channel"]').value,
+              reseller_id: arrive_data.reseller_id, //document.querySelector('[name="reseller"]').value,
+              arrive_id: arrive_data.id,//document.querySelector('[name="arrive"]').value,
+              service_id: preservServiceId, // service.value,//document.querySelector('[name="service"]').value,
+              start_date: arrive_data.arrival_date,//document.querySelector('[name="start_date"]').value,
+              end_date: arrive_data.arrival_date, //document.querySelector('[name="end_date"]').value,
+              schedule_start: document.querySelector(`[name="schedule_start${id}"]`).value,
+              schedule_end: document.querySelector(`[name="schedule_end${id}"]`).value,
+              overlap: '00:00', //document.querySelector(`[name="overlap"]`).value,
+              min_available: document.querySelector(`[name="min_available${id}"]`).value,
+              max_available: document.querySelector(`[name="max_available${id}"]`).value,
+              shared_schedule: document.querySelector(`[name="shared${id}"]`).checked ? 1:0,
+              user_id: user
+            }
+            // console.log('info',info)
+          //   form = document.querySelector('#add-config')
+
+          //   if (form != null) {
+              var url = `${apiHost}allotments/add`
+              info.user_id = user
+              info.type_movement = 'I'
+              utils.api(JSON.stringify(info), url, 'POST', schedule.add)
+          //   }
+
+          //   form = document.querySelector('#update-config')
+
+          //   if (form != null) {
+          //     info.active_status = document.querySelector('[name="status"]').value
+          //     info.arrive_id = configData.arrive_id;
+
+          //     var url = `${apiHost}allotments/edit/${configData.id}`
+          //     utils.api(JSON.stringify(info), url, 'PUT', schedule.update)
+          //   }
+          // }
+        })
+      })
+    }
+
+    // MicroModal.close('wait-modal')
+  },
+  loadData: function(response, element) {
+    const data = JSON.parse(response)
+    // console.log(data);
+    let datatable = [];
+    if(Array.isArray(data.message)){
+      // console.log(data.message)
+      datatable = data.message.map(data => {
+
+        const dataArray = [
+          data.schedule_start,
+          data.schedule_end,
+          data.min_available,
+          data.max_available,
+          // data.available,
+          data.shared_schedule,
+          data.arrive_id
+        ];
+
+        return dataArray;
+      })
+    }
+
+    const tableId = element != undefined ? element:`schedule0`
+    // console.log(element)
+    // console.log($('.schedules-registers'));
+    schedule.dataTableInitializer(`#${tableId}`, datatable);
+
+    /* var options = document.querySelectorAll('.delete')
+    if(options) {
+      for (var i = 0, l = options.length; i < l; i++) {
+        options[i].addEventListener('click', function(e) {
+          e.preventDefault()
+
+          var element = e.target
+          if (! e.target.getAttribute('data-id'))
+            element = e.target.parentElement
+
+          var id = element.getAttribute('data-id')
+
+          var url = `${apiHost}allotments/del/${id}`
+          utils.api(JSON.stringify({}), url, 'DELETE', config.delete, element)
+
+        })
+      }
+    } */
+
+    MicroModal.close('wait-modal')
+  },
+  dynamicDataTable(response, extradata){
+    const html = JSON.parse(response)
+    const contentWrapper = document.querySelector('#content')
+    const content = utils.createElement('div', 'row content-wrapper', `schedule${cont++}`)
+    // content.setAttribute('id')
+
+    const filters = document.createRange().createContextualFragment(`${html.filters_form}<hr>`)
+    const table = document.createRange().createContextualFragment(html.table)
+
+    content.appendChild(filters);
+    content.appendChild(table);
+    // console.log(content);
+    contentWrapper.appendChild(content);
+
+    schedule.dataTableInitializer(`#schedule${cont-1}`); //parentELementParam ID
+
+    // MicroModal.close('wait-modal')
+  },
+  buildOptions: function(response, extradata) {
+    const data = JSON.parse(response)
+    // console.log('data',data);
+    if(Array.isArray(data.message)) {
+      for(i in data.message){
+        eval(extradata[0]).append(
+          new Option(data.message[i][`${ extradata[1] }_name`], data.message[i][`${ extradata[1] }_id`], "selected")
+        )
+      }
+    }
+
+    MicroModal.close('wait-modal')
+  },
+  add: function(response) {
+    MicroModal.close('wait-modal')
+
+    response = JSON.parse(response)
+    var _message = ''
+    var _alertModal = document.getElementById('alert-modal-content')
+
+    if (codes.hasOwnProperty(response.code)) {
+      let decode = response
+      try {
+        // a = JSON.parse(response);
+        decode = JSON.parse( response.message )
+      } catch(e) {
+          // alert(e); // error in the above string (in this case, yes)!
+      }
+      _message = utils.createElement('p', '', '', decode.message)
+      // console.log(decode.available)
+      _alertModal.innerHTML = ''
+      _alertModal.appendChild(_message)
+
+      const maxInput = document.querySelector('[name="max_available"]')
+      const minInput = document.querySelector('[name="min_available"]')
+      if(maxInput != null)
+        maxInput.value = decode.available ? decode.available : 0
+      if(minInput != null)
+        minInput.value = decode.available > minInput.value ? minInput.value : decode.available
+
+      MicroModal.show('alert-modal')
+    }
+    else if (response.code == 201) {
+      _message = utils.createElement('p', '', '', 'Success! Schedule added correctly')
+
+      _alertModal.innerHTML = ''
+      _alertModal.appendChild(_message)
+
+      MicroModal.show('alert-modal')
+
+      form = document.querySelector('#add-config')
+      form.reset();
+    }
+  },
+  update: function(response) {
+    MicroModal.close('wait-modal')
+
+    response = JSON.parse(response)
+    var _message = ''
+    var _alertModal = document.getElementById('alert-modal-content')
+
+    if (codes.hasOwnProperty(response.code)) {
+      let decode = response
+      try {
+        // a = JSON.parse(response);
+        decode = JSON.parse( response.message )
+      } catch(e) {
+          // alert(e); // error in the above string (in this case, yes)!
+      }
+      _message = utils.createElement('p', '', '', decode.message)
+      // _message = utils.createElement('p', '', '', response.message)
+
+      _alertModal.innerHTML = ''
+      _alertModal.appendChild(_message)
+
+      const maxInput = document.querySelector('[name="max_available"]')
+
+      MicroModal.show('alert-modal')
+    }
+    else if (response.code == 204) {
+      _message = utils.createElement('p', '', '', 'Success! Schedule updated correctly')
+
+      _alertModal.innerHTML = ''
+      _alertModal.appendChild(_message)
+
+      MicroModal.show('alert-modal')
+    }
+  },
+  delete: function(response, element) {
+    MicroModal.close('wait-modal')
+
+    response = JSON.parse(response)
+    var id = element.getAttribute('data-id')
+    element.style.display = 'none'
+
+    var _message = ''
+    var _alertModal = document.getElementById('alert-modal-content')
+
+    if (codes.hasOwnProperty(response.code)) {
+      _message = utils.createElement('p', '', '', response.message)
+
+      _alertModal.innerHTML = ''
+      _alertModal.appendChild(_message)
+
+      MicroModal.show('alert-modal')
+    }
+    else if (response.code == 200) {
+      var _status = document.querySelector(`[data-status="${id}"]`)
+      _status.innerHTML = ''
+
+      var label = utils.createElement('span', 'label label-danger', '', 'inactive');
+      _status.appendChild(label)
+
+      _message = utils.createElement('p', '', '', 'Success! Schedule inactivate correctly')
+
+      _alertModal.innerHTML = ''
+      _alertModal.appendChild(_message)
+
+      MicroModal.show('alert-modal')
+    }
+  },
+  setData: function() {
+    document.querySelector('[name="status"]').value = scheduleData.active
+    document.querySelector('[name="channel"]').value = scheduleData.channel
+    document.querySelector('[name="reseller"]').value = scheduleData.reseller
+    document.querySelector('[name="service"]').value = scheduleData.service
+    document.querySelector('[name="start_date"]').value = scheduleData.start_date
+    document.querySelector('[name="end_date"]').value = scheduleData.end_date
+    document.querySelector('[name="schedule_start"]').value = scheduleData.schedule_start
+    document.querySelector('[name="schedule_end"]').value = scheduleData.schedule_end
+    document.querySelector('[name="overlap"]').value = scheduleData.overlap
+    document.querySelector('[name="min_available"]').value = scheduleData.min_available
+    document.querySelector('[name="max_available"]').value = scheduleData.max_available
+    document.querySelector('[name="shared"]').value = scheduleData.shared
+  }
+}
+
+/* var cancel = document.querySelector('.cancel')
+if (cancel != null) {
+  cancel.addEventListener('click', function(e) {
+    e.preventDefault()
+
+    form = document.querySelector('#add-config')
+    if (form != null)
+      form.reset()
+
+    form = document.querySelector('#update-config')
+    if (form != null)
+      schedule.setData()
+  });
+} */
+
+//Initializer event listener for elements
+const readElements = function(){
+
+  const new_tour = document.querySelector('.new-tour')
+  if (new_tour != null) {
+
+    new_tour.addEventListener('click', function(e) {
+      e.preventDefault()
+      // console.log(base)
+      utils.post(JSON.stringify({
+        // "start_date": document.querySelector('.date-range').value
+      }), `${base}allotments/dynamic_html/${arrive_data.ships}`, schedule.dynamicDataTable, new_tour);
+
+    })
+  }
+
+}
+
+const utilAjaxExecute = function(element){
+  if (scheduleTableinitialized !== undefined && scheduleTableinitialized !== null && scheduleTableinitialized != undefined) {
+    const container = element != undefined ? document.querySelector(`#${element}`):document.querySelector(`#schedule0`)
+    const elem = element != undefined ? container.querySelector('[name="service"]'):document.querySelector('[name="service"]')
+
+    utils.api(JSON.stringify({
+      "arrive": /* JSON.parse( */arrive_data/* ) */,
+      "start_date": arrive_data.arrival_date,//'2019-10-22',//document.querySelector(".date-range").value
+      "service": elem.value,
+      'ship': arrive_data.ships
+    }), `${apiHost}allotments/shipservice`, 'POST', schedule.loadData, element/* .closest('.content-wrapper') */);
+  }
+}
+
+$( document ).ready(function() {
+
+  const content = document.querySelector('.menubar')
+  const masterContent = utils.createElement('div', 'row general-content')
+  const rowChild = utils.createElement('div', 'col-md-12')
+  const new_tour_btn = utils.createElement(
+    'button',
+    'btn btn-primary pull-right new-tour',
+    'new-tour',
+    'New tour'
+  )
+
+  rowChild.appendChild(new_tour_btn)
+  masterContent.appendChild(rowChild)
+  content.after(masterContent);
+
+  readElements();
+  // document.body.appendChild(masterContent)
+  utilAjaxExecute();
+
+});

@@ -60,18 +60,37 @@ class Allotment extends CI_Model
         }
 
         $this->model = str_replace('{rows}', $this->model, $table_content);
-        return array( $this->model, $data_headerbar );
+        return array(
+            'table-data' => $this->model,
+            'data-header' => $data_headerbar
+        );
     }
 
-    public function get_form($option = null)
+    public function get_table_html($id) //arrive_id of slug
     {
         $this->db->close();
-        $contents = $this->Page->get_settings('config');
+        $table_content = $this->Page->get_settings('schedules');
+        $table_content = $this->build->build_components(
+            $table_content['SCHEDULE_TABLE']
+        );
+
+        $this->model = str_replace('{rows}', $this->model, $table_content);
+        return /* array(  */$this->model /* ) */;
+    }
+
+    public function get_form($slug = null, $option = null)
+    {
+        $this->db->close();
+        $contents = $this->Page->get_settings($option);
 
         $form = 'CONFIG_FORM';
-        if ($option == 'filters')
+        if ($slug == 'filters')
         {
             $form = 'CONFIG_FORM_FILTERS';
+        }
+        else if ($slug == 'schedule_filters')
+        {
+            $form = 'SCHEDULE_FORM_FILTERS';
         }
 
         $this->model = $this->build->build_components(
@@ -81,8 +100,22 @@ class Allotment extends CI_Model
         return $this->model;
     }
 
-    public function get_data($id)
+    public function get_data($slug = '',$id)
     {
+        switch($slug)
+        {
+            case 'arrives':
+                $endpoint = HOST . GET_ALLOTMENTS_ROUTE . '/' . $slug . '/' . $id;
+            break;
+            case 'ship':
+                $endpoint = HOST . GET_ALLOTMENTS_ROUTE . '/' . $slug . '/' . $id;
+            break;
+            default:
+                $endpoint = HOST . GET_ALLOTMENTS_ROUTE . '/' . $id;
+            break;
+
+        }
+
         $endpoint = HOST . GET_ALLOTMENTS_ROUTE . '/' . $id;
 
         $params = new stdClass();

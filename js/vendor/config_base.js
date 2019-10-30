@@ -34,8 +34,9 @@ var config = {
       datatable = data.message.map(data => {
 
         const dataArray = [
-          data.start_date,
-          data.end_date,
+          data.channel_name,
+          data.reseller_name,
+          data.service_name,
           data.schedule_start,
           data.schedule_end,
           data.min_available,
@@ -60,23 +61,23 @@ var config = {
       retrieve: true,
       data: datatable,
       columnDefs: [{
-        "targets": 7,
+        "targets": 8,
         "data": "allotment_id",
         "render": function ( data, type, row, meta ) {
-          if(row[7] === 0)
+          if(row[8] === 0)
             return '<span class="label label-danger" data-status="'+row[8]+'">Inactive</span>';
           else
             return '<span class="label label-success" data-status="'+row[8]+'">Active</span>';
         }
       },{
-        targets: 8,
+        targets: 9,
         data: "allotment_id",
         render: function ( data, type, row, meta ) {
-          if(row[7] === 0)
-            return '<a class="edit" href="configuration/'+row[8]+'"><i class="fas fa-edit"></i></a>';
+          if(row[9] === 0)
+            return '<a class="edit" href="configuration/'+row[9]+'"><i class="fas fa-add"></i></a>';
           else
-            return '<a class="edit" href="configuration/'+row[8]+'"><i class="fas fa-edit"></i></a>' +
-              '<a class="delete" data-id="'+row[8]+'"><i class="fas fa-trash"></i></a>';
+            return '<a class="edit" href="configuration/'+row[9]+'"><i class="fas fa-edit"></i></a>' +
+              '<a class="delete" data-id="'+row[9]+'"><i class="fas fa-trash"></i></a>';
         }
       }],
       processing: true,
@@ -119,6 +120,7 @@ var config = {
     var _message = ''
     var _alertModal = document.getElementById('alert-modal-content')
 
+    console.log(response)
     if (codes.hasOwnProperty(response.code)) {
       let decode = response
       try {
@@ -128,13 +130,16 @@ var config = {
           // alert(e); // error in the above string (in this case, yes)!
       }
       _message = utils.createElement('p', '', '', decode.message)
-      // console.log(decode.available)
+      console.log(decode.available)
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
 
       const maxInput = document.querySelector('[name="max_available"]')
+      const minInput = document.querySelector('[name="min_available"]')
       if(maxInput != null)
         maxInput.value = decode.available ? decode.available : 0
+      if(minInput != null)
+        minInput.value = decode.available > minInput.value ? minInput.value : decode.available
 
 
       MicroModal.show('alert-modal')
@@ -173,7 +178,7 @@ var config = {
       _alertModal.appendChild(_message)
 
       const maxInput = document.querySelector('[name="max_available"]')
-      console.log(maxInput.val);
+      // console.log(maxInput.val);
       // if(maxInput != null)
         // maxInput.value = decode.available ? decode.available : 0
 
@@ -306,8 +311,6 @@ if ($.fn.DataTable.isDataTable( editor )){
     // .addEventListener( 'search.dt', function () { console.log( 'Search' ); } )
     .addEventListener( 'page.dt',   function () { console.log( 'Page' ); } )
     .DataTable();
-} else {
-  console.log('no lo hizo')
 }
 
 
