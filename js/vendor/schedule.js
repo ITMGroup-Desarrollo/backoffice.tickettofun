@@ -16,17 +16,18 @@ const schedule = {
     // console.log('working very well!',parentElementParam)
     const refillData = data;
     const parentElementJS = document.querySelector(`${parentElementParam}`)
-    // console.log(parentElementJS)
+
     const search = parentElementJS.querySelector('.search')
     if (search != null) {
+        if (search.getAttribute('data-event') !== 'true' || search.getAttribute('data-event') == null) {
+          search.setAttribute('data-event', 'true')
 
-        search.addEventListener('click', function(e) {
-          e.preventDefault()
-          // console.log(e)
-          utilAjaxExecute(e.target.closest('.content-wrapper').id);
+          search.addEventListener('click', function(e) {
+            e.preventDefault()
 
-          e.stopPropagation();
-        })
+            utilAjaxExecute(e.target.closest('.content-wrapper').id);
+          })
+        }
 
     }
 
@@ -43,8 +44,9 @@ const schedule = {
       service.options.length = 0
       service.append( new Option('-- Choose option --', '') )
       // console.log(`${apiHost}equivalences/ship/${shipId}`)
-      const equivalencesByShip = utils.api( JSON.stringify({}), `${apiHost}equivalences/ship/${arrive_data.ships}`, 'GET', schedule.buildOptions, ['service','service'] );
-      console.log(equivalencesByShip)
+      // const equivalencesByShip =
+      utils.api( JSON.stringify({}), `${apiHost}equivalences/ship/${arrive_data.ships}`, 'GET', schedule.buildOptions, ['service','service'] );
+      //console.log(equivalencesByShip)
       service.value = preservServiceId
 
     }
@@ -284,9 +286,14 @@ const schedule = {
   },
   buildOptions: function(response, extradata) {
     const data = JSON.parse(response)
-    // console.log('data',data);
+    console.log('data',extradata);
     if(Array.isArray(data.message)) {
-      for(i in data.message){
+      /*var total = eval(extradata[0]).options.length;
+
+      for (i = 0; i < total - 1; i++)
+        eval(extradata[0]).remove(i)*/
+
+      for(i in data.message) {
         eval(extradata[0]).append(
           new Option(data.message[i][`${ extradata[1] }_name`], data.message[i][`${ extradata[1] }_id`], "selected")
         )
@@ -451,9 +458,20 @@ const readElements = function(){
   }
 
 }
+/*
+const search = document.querySelector(`#schedule0`).querySelector('.search')
+if (search != null) {
 
-const utilAjaxExecute = function(element){
-  if (scheduleTableinitialized !== undefined && scheduleTableinitialized !== null && scheduleTableinitialized != undefined) {
+    search.addEventListener('click', function(e) {
+      e.preventDefault()
+
+      utilAjaxExecute('schedule0');
+    })
+}
+*/
+
+const utilAjaxExecute = function(element) {
+  if (scheduleTableinitialized !== undefined && scheduleTableinitialized !== null) {
     const container = element != undefined ? document.querySelector(`#${element}`):document.querySelector(`#schedule0`)
     const elem = element != undefined ? container.querySelector('[name="service"]'):document.querySelector('[name="service"]')
 
@@ -465,6 +483,8 @@ const utilAjaxExecute = function(element){
     }), `${apiHost}allotments/shipservice`, 'POST', schedule.loadData, element/* .closest('.content-wrapper') */);
   }
 }
+
+
 
 $( document ).ready(function() {
 
