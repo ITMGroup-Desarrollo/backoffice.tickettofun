@@ -161,13 +161,13 @@ const schedule = {
       dateFormat: "H:i",
       time_24hr: true
     })
-
+// console.log('originalData',originalData);
     document.querySelector(parentElementParam).querySelectorAll(".overlap-format").flatpickr({
       altInput: false,
       enableTime: true,
       noCalendar: true,
       dateFormat: "H:i",
-      defaultDate: originalData ? originalData[0].overlap:'00:30',
+      defaultDate: originalData.length > 0 ? originalData[0].overlap:'00:30',
       defaultHour: 0,
       defaultMinute: 30,
       maxTime: "05:00",
