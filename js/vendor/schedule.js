@@ -3,21 +3,20 @@ var info
 var form
 var base = window.baseUrl
 var token = window.token
-var scheduleData = window.config
+// var scheduleData = window.config
 var user = window.user
 const arrive_data = window.arrive_data
 let cont = 1;
 let service;
-let scheduleTableinitialized = document.querySelector('.schedules-registers');
-// console.log(user)
-// console.log(arrive_data)
+let scheduleTableinitialized = $('#schedule0 #schedules-registers');//$('#schedule0 #schedules-registers')
+
 const schedule = {
-  dataTableInitializer(parentElementParam, data = []){
-    // console.log('working very well!',parentElementParam)
-    const refillData = data;
+  dataTableInitializer(parentElementParam, data = [], originalData = []){
+    // console.log('parentElementParam',parentElementParam)
     const parentElementJS = document.querySelector(`${parentElementParam}`)
 
     const search = parentElementJS.querySelector('.search')
+
     if (search != null) {
         if (search.getAttribute('data-event') !== 'true' || search.getAttribute('data-event') == null) {
           search.setAttribute('data-event', 'true')
@@ -32,57 +31,64 @@ const schedule = {
     }
 
     service = parentElementJS.querySelector('[name="service"]')
-    console.log(service.value)
+
     const preservServiceId = service.value
+
     if (service != null) {
       service.innerHTML = ""
       for (var i = service.options.length-1;i>0;i--) {
-        // console.log(i)
         service.remove(i)
       }
 
       service.options.length = 0
       service.append( new Option('-- Choose option --', '') )
-      // console.log(`${apiHost}equivalences/ship/${shipId}`)
-      // const equivalencesByShip =
-      utils.api( JSON.stringify({}), `${apiHost}equivalences/ship/${arrive_data.ships}`, 'GET', schedule.buildOptions, ['service','service'] );
-      //console.log(equivalencesByShip)
+
       service.value = preservServiceId
-
+      const equivalencesByShip = utils.api( JSON.stringify({}), `${apiHost}equivalences/ship/${arrive_data.ships}`, 'GET', schedule.buildOptions, {
+        'element': 'service',
+        'name': 'service',
+        'id': originalData[0] ? originalData[0].service_id:0
+      });
+      service.value = originalData[0] ? originalData[0].service_id:0
     }
 
-    if ($.fn.DataTable.isDataTable( scheduleTableinitialized )){
-      console.log('destroyed')
-      scheduleTableinitialized.destroy()
-    } else {
-      console.log('initialized')
+    scheduleTableinitialized = parentElementParam == '#schedule0' ? $(`#schedule0 #schedules-registers`):$(`${parentElementParam} #schedules-registers`)
+    // console.log('scheduleTableinitialized',scheduleTableinitialized);
+    if (scheduleTableinitialized != null) {
+      if (scheduleTableinitialized.attr('data-isdatatable') == 'true'/*  || scheduleTableinitialized.attr('data-isdatatable') == null */) {
+        scheduleTableinitialized.attr('data-isdatatable', 'true')
+
+        // console.log($.fn.DataTable.isDataTable(scheduleTableinitialized))
+        // console.log($.fn.DataTable.isDataTable(`${parentElementParam} #schedules-registers`))
+        // console.log(`${parentElementParam} #schedules-registers`)
+        // scheduleTableinitialized.destroy();
+        $(scheduleTableinitialized).DataTable().destroy()
+      }
     }
 
-    // Dynamic column defs
-    // const colums = columns
-    const countableRow = 0;
-    scheduleTableinitialized = $(`${parentElementParam} .schedules-registers`).DataTable({
+    scheduleTableinitialized.attr('data-isdatatable', 'true')
+    // scheduleTableinitialized =
+    $(scheduleTableinitialized).DataTable({
       // responsive: true,
-      rowCallback: function (row, data) {
-        // console.log('row',row);
-        $(row).addClass('active success')
-        // $(row).attr('id',countableRow++)
-      },
+      // rowCallback: function (row, data) {
+      //   // console.log('row',row);
+      //   $(row).addClass('active success')
+      //   // $(row).attr('id',countableRow++)
+      // },
       retrieve: true,
       data: data,
       columnDefs: [
         {
           targets: 0,
           render: function(data, type, row, meta){
-            // console.log('row',row);
-            // console.log('meta',meta.row);
+
             return `<input name="schedule_start${meta.row}" class="form-control text-center time-format" value="${data}">`
           }
         },
         {
           targets: 1,
           render: function(data, type, row, meta){
-            // console.log('data',data);
+
             return `<input name="schedule_end${meta.row}" class="form-control text-center time-format" value="${data}">`
           }
         },
@@ -133,7 +139,7 @@ const schedule = {
           render: function ( data, type, row, meta ) {
             // console.log(row)
             // if(row[5] === 0)
-              return `<a class="btn btn-link save" id="${meta.row}" dataservice="${preservServiceId}"><i class="glyphicon glyphicon-plus" aria-hidden="true"></i> Add</a>`;
+              return `<a class="btn btn-link save" data-toggle="tooltip" data-placement="left" title="Save allotment" id="${meta.row}" dataservice="${originalData[0].service_id}"><i class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></i></a><a class="btn btn-link delete" data-toggle="tooltip" data-placement="left" title="Remove this schedule" id="${meta.row}" dataservice="${originalData[0].service_id}"><i class="glyphicon glyphicon-minus-sign" aria-hidden="true"></i></a>`;
             // else
             //   return '<a class="edit" href="configuration/'+row[5]+'"><i class="fas fa-edit"></i></a>' +
             //     '<a class="delete" data-id="'+row[5]+'"><i class="fas fa-trash"></i></a>';
@@ -149,57 +155,64 @@ const schedule = {
       ]
     })
 
-    document.querySelectorAll(".time-format").flatpickr({
+    document.querySelector(parentElementParam).querySelectorAll(".time-format").flatpickr({
       enableTime: true,
       noCalendar: true,
       dateFormat: "H:i",
       time_24hr: true
-    });
+    })
 
-    var save = document.querySelectorAll('.save')
+    document.querySelector(parentElementParam).querySelectorAll(".overlap-format").flatpickr({
+      altInput: false,
+      enableTime: true,
+      noCalendar: true,
+      dateFormat: "H:i",
+      defaultDate: originalData ? originalData[0].overlap:'00:30',
+      defaultHour: 0,
+      defaultMinute: 30,
+      maxTime: "05:00",
+      minuteIncrement: 30,
+      time_24hr: true
+    })
+
+    var save = document.querySelector(parentElementParam).querySelectorAll('.save')
     if (save != null) {
+      let contadordeeventossave = 0
       save.forEach(saveBtn => {
+        // console.log('eventos save: ',contadordeeventossave++);
         saveBtn.addEventListener('click', function(e) {
           e.preventDefault()
           // console.log('saving...!','saving...', saveBtn);
           var valid = 'true'
-          var id = saveBtn.id;
-          var dataservice = saveBtn.dataservice;
-          // console.log(dataservice);
-          // var fields = document.querySelectorAll('[data-validator]')
-          // console.log('table', document.querySelectorAll('table') )
-          // console.log('tr javascript',e.target.closest('tr'));
-          // console.error(document.createRange().createContextualFragment(e.target.closest('tr')));
-
-          // const formData = new FormData(e.target.closest('tr'))
-          // console.log('serialize javascript',formData);
+          var id = saveBtn.id
+          var dataservice = saveBtn.dataservice
 
           // valid = utils.dataValidator(fields)
-
+          const container = document.querySelector(parentElementParam)
           // if(valid) {
             info = {
-              channel_id: arrive_data.channel_id,//document.querySelector('[name="channel"]').value,
-              reseller_id: arrive_data.reseller_id, //document.querySelector('[name="reseller"]').value,
-              arrive_id: arrive_data.id,//document.querySelector('[name="arrive"]').value,
-              service_id: preservServiceId, // service.value,//document.querySelector('[name="service"]').value,
-              start_date: arrive_data.arrival_date,//document.querySelector('[name="start_date"]').value,
-              end_date: arrive_data.arrival_date, //document.querySelector('[name="end_date"]').value,
-              schedule_start: document.querySelector(`[name="schedule_start${id}"]`).value,
-              schedule_end: document.querySelector(`[name="schedule_end${id}"]`).value,
-              overlap: '00:00', //document.querySelector(`[name="overlap"]`).value,
-              min_available: document.querySelector(`[name="min_available${id}"]`).value,
-              max_available: document.querySelector(`[name="max_available${id}"]`).value,
-              shared_schedule: document.querySelector(`[name="shared${id}"]`).checked ? 1:0,
+              channel_id: arrive_data.channel_id,
+              reseller_id: arrive_data.reseller_id,
+              arrive_id: arrive_data.id,
+              service_id: preservServiceId,
+              start_date: arrive_data.arrival_date,
+              end_date: arrive_data.arrival_date,
+              schedule_start: container.querySelector(`[name="schedule_start${id}"]`).value,
+              schedule_end: container.querySelector(`[name="schedule_end${id}"]`).value,
+              overlap: container.querySelector(`[name="overlap"]`).value,
+              min_available: container.querySelector(`[name="min_available${id}"]`).value,
+              max_available: container.querySelector(`[name="max_available${id}"]`).value,
+              shared_schedule: container.querySelector(`[name="shared${id}"]`).checked ? 1:0,
               user_id: user
             }
-            // console.log('info',info)
-          //   form = document.querySelector('#add-config')
 
           //   if (form != null) {
               var url = `${apiHost}allotments/add`
               info.user_id = user
               info.type_movement = 'I'
-              utils.api(JSON.stringify(info), url, 'POST', schedule.add)
+
+              info.row = id
+              utils.api(JSON.stringify(info), url, 'POST', schedule.add, info, id)
           //   }
 
           //   form = document.querySelector('#update-config')
@@ -212,6 +225,18 @@ const schedule = {
           //     utils.api(JSON.stringify(info), url, 'PUT', schedule.update)
           //   }
           // }
+        })
+      })
+    }
+
+    var remove = document.querySelector(parentElementParam).querySelectorAll('.delete')
+    if(remove) {
+      remove.forEach(removeBtn => {
+        // console.log('eventos save: ',contadordeeventossave++);
+        removeBtn.addEventListener('click', function(e) {
+          e.preventDefault()
+
+          removeBtn.closest('tr').remove()
         })
       })
     }
@@ -231,38 +256,17 @@ const schedule = {
           data.schedule_end,
           data.min_available,
           data.max_available,
-          // data.available,
           data.shared_schedule,
           data.arrive_id
-        ];
+        ]
 
-        return dataArray;
+        return dataArray
       })
     }
 
     const tableId = element != undefined ? element:`schedule0`
-    // console.log(element)
-    // console.log($('.schedules-registers'));
-    schedule.dataTableInitializer(`#${tableId}`, datatable);
 
-    /* var options = document.querySelectorAll('.delete')
-    if(options) {
-      for (var i = 0, l = options.length; i < l; i++) {
-        options[i].addEventListener('click', function(e) {
-          e.preventDefault()
-
-          var element = e.target
-          if (! e.target.getAttribute('data-id'))
-            element = e.target.parentElement
-
-          var id = element.getAttribute('data-id')
-
-          var url = `${apiHost}allotments/del/${id}`
-          utils.api(JSON.stringify({}), url, 'DELETE', config.delete, element)
-
-        })
-      }
-    } */
+    schedule.dataTableInitializer(`#${tableId}`, datatable, data.message) // last param for recovery serviceId
 
     MicroModal.close('wait-modal')
   },
@@ -275,34 +279,33 @@ const schedule = {
     const filters = document.createRange().createContextualFragment(`${html.filters_form}<hr>`)
     const table = document.createRange().createContextualFragment(html.table)
 
-    content.appendChild(filters);
-    content.appendChild(table);
+    content.appendChild(filters)
+    content.appendChild(table)
     // console.log(content);
-    contentWrapper.appendChild(content);
-
-    schedule.dataTableInitializer(`#schedule${cont-1}`); //parentELementParam ID
+    contentWrapper.appendChild(content)
+    // console.log('datatableInitializer',`#schedule${cont-1}`);
+    schedule.dataTableInitializer(`#schedule${cont-1}`) //parentELementParam ID
 
     // MicroModal.close('wait-modal')
   },
   buildOptions: function(response, extradata) {
     const data = JSON.parse(response)
-    console.log('data',extradata);
+    // console.log('data',extradata);
     if(Array.isArray(data.message)) {
-      /*var total = eval(extradata[0]).options.length;
-
-      for (i = 0; i < total - 1; i++)
-        eval(extradata[0]).remove(i)*/
-
       for(i in data.message) {
-        eval(extradata[0]).append(
-          new Option(data.message[i][`${ extradata[1] }_name`], data.message[i][`${ extradata[1] }_id`], "selected")
+        eval(extradata.element).append(
+          new Option(data.message[i][`${ extradata.name }_name`], data.message[i][`${ extradata.name }_id`], "selected")
         )
       }
     }
 
+    eval(extradata.element).value = extradata.id != undefined && extradata.id != 0 ? extradata.id:''
     MicroModal.close('wait-modal')
+
   },
-  add: function(response) {
+  add: function(response, data, id) {
+    console.log('data from add',data);
+    console.log('ID from add',id);
     MicroModal.close('wait-modal')
 
     response = JSON.parse(response)
@@ -322,8 +325,8 @@ const schedule = {
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
 
-      const maxInput = document.querySelector('[name="max_available"]')
-      const minInput = document.querySelector('[name="min_available"]')
+      const maxInput = document.querySelector(`[name="max_available${data.row}"]`)
+      const minInput = document.querySelector(`[name="min_available${data.row}"]`)
       if(maxInput != null)
         maxInput.value = decode.available ? decode.available : 0
       if(minInput != null)
@@ -458,29 +461,23 @@ const readElements = function(){
   }
 
 }
-/*
-const search = document.querySelector(`#schedule0`).querySelector('.search')
-if (search != null) {
-
-    search.addEventListener('click', function(e) {
-      e.preventDefault()
-
-      utilAjaxExecute('schedule0');
-    })
-}
-*/
 
 const utilAjaxExecute = function(element) {
+  // console.log('element',element);
   if (scheduleTableinitialized !== undefined && scheduleTableinitialized !== null) {
     const container = element != undefined ? document.querySelector(`#${element}`):document.querySelector(`#schedule0`)
     const elem = element != undefined ? container.querySelector('[name="service"]'):document.querySelector('[name="service"]')
+    const overlap = element != undefined ? container.querySelector('[name="overlap"]'):document.querySelector('[name="overlap"]')
 
-    utils.api(JSON.stringify({
-      "arrive": /* JSON.parse( */arrive_data/* ) */,
-      "start_date": arrive_data.arrival_date,//'2019-10-22',//document.querySelector(".date-range").value
-      "service": elem.value,
-      'ship': arrive_data.ships
-    }), `${apiHost}allotments/shipservice`, 'POST', schedule.loadData, element/* .closest('.content-wrapper') */);
+    // console.log(elem.value)
+    // if(elem.value != '')
+      utils.api(JSON.stringify({
+        "arrive": arrive_data,
+        "start_date": arrive_data.arrival_date,
+        "service": elem.value,
+        'ship': arrive_data.ships,
+        'overlap': overlap.value
+      }), `${apiHost}allotments/shipservice`, 'POST', schedule.loadData, element);
   }
 }
 
@@ -493,7 +490,7 @@ $( document ).ready(function() {
   const rowChild = utils.createElement('div', 'col-md-12')
   const new_tour_btn = utils.createElement(
     'button',
-    'btn btn-primary pull-right new-tour',
+    'btn btn-primary new-tour',
     'new-tour',
     'New tour'
   )
