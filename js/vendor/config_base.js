@@ -423,18 +423,22 @@ const utilAjaxExecute = function(){
     }
   }
 
-  if(configData.reseller) {
-    console.log('reseller.value',reseller.value)
+  if(configData) {
     reseller.dispatchEvent(fireEvent)
 
     $( document ).ready(function() {
       setTimeout(function(){
         reseller.value = configData.reseller
-        reseller.selecttedIndex = configData.reseller
+        // reseller.selecttedIndex = configData.reseller
         equivalence.value = configData.service
-      }, 1000);
+      }, 2500);
 
-      console.log('reseller.value',reseller.value)
+      setTimeout(function(){
+        // reseller.value = configData.reseller
+        // reseller.selecttedIndex = configData.reseller
+        equivalence.value = configData.service
+      }, 3500);
+
     })
   }
 }
