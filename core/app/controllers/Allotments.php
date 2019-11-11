@@ -114,17 +114,6 @@ class Allotments extends CI_Controller
 
         $dynamic_element = $this->_get_dynamic_html($id);
 
-        // $start_time = strtotime($arrive_data->arrival_time_markup);
-        // $end_time = strtotime($arrive_data->departure_time_markup);
-        // // exit;
-        // $arrival_time = new DateTime($arrive_data->arrival_date.' '.date('H:i',$start_time));//fecha inicial
-        // $departure_time = new DateTime($arrive_data->arrival_date.' '.date('H:i',$end_time));//fecha de cierre
-        // $ship_docking = $arrival_time->diff($departure_time);
-        // $atrack_time = $ship_docking->format('%H');
-
-        // Obetener duracion del servicio (Tour) que se requiere
-        // $total_atrack_time = $arrival_parts[1] + $arrival_parts[0]*60;
-
         $header_keys = [
             '{title}',
             '{content}'

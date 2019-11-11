@@ -5,7 +5,8 @@ var base = window.baseUrl
 var token = window.token
 var configData = window.config
 var user = window.user
-
+let fireEvent = new Event('change')
+console.log('config',configData);
 var editor;
 var config = {
   buildOptions: function(response, extradata) {
@@ -27,7 +28,7 @@ var config = {
   },
   loadData: function(response) {
     const data = JSON.parse(response)
-    // console.log(data);
+    // console.log(response);
     let datatable = [];
     if(Array.isArray(data.message)){
       // console.log(data.message)
@@ -230,6 +231,15 @@ var config = {
     document.querySelector('[name="status"]').value = configData.active
     document.querySelector('[name="channel"]').value = configData.channel
     document.querySelector('[name="reseller"]').value = configData.reseller
+    if(document.querySelector('[name="reseller"]') != null && configData){
+      // document.querySelector('[name="reseller"]').append(
+        //   new Option(configData.reseller, configData.reseller, "selected")
+        // )
+      $( document ).ready(function() {
+        console.log(configData.reseller)
+        document.querySelector('[name="reseller"]').value = configData.reseller
+      })
+    }
     document.querySelector('[name="service"]').value = configData.service
     document.querySelector('[name="start_date"]').value = configData.start_date
     document.querySelector('[name="end_date"]').value = configData.end_date
@@ -323,7 +333,7 @@ if (search != null) {
     /* utils.api(JSON.stringify({
       "start_date": document.querySelector('.date-range').value
     }), `${apiHost}allotments`, 'POST', config.loadData); */
-    utilAjaxExecute();
+    utilAjaxExecute()
 
   })
 }
@@ -334,15 +344,18 @@ if(channel != null) {
   channel.addEventListener('change', function(e) {
     e.preventDefault()
     var id = $(this).val()
-
+    console.log('channel id',id);
     for (var i = reseller.options.length-1;i>0;i--) {
       reseller.remove(i)
     }
-
+    // var respuestaUtils =
     utils.api(JSON.stringify({
       /* "start_date": document.querySelector(".date-range").value */
-    }), `${apiHost}resellers/channel/${id}`, 'GET', config.buildOptions, ['reseller','reseller']);
-  });
+    }), `${apiHost}resellers/channel/${id}`, 'GET', config.buildOptions, ['reseller','reseller'])
+    // console.log('utils response',respuestaUtils);
+  })
+  // $(channel).trigger("change")
+  // $(reseller).change()
 }
 
 var reseller = document.querySelector('[name="reseller"]')
@@ -354,20 +367,32 @@ if (reseller != null) {
 if(reseller != null) {
   reseller.addEventListener('change', function(e) {
     e.preventDefault()
-    var id = $(this).val()
+    var id = $(this).val() ? $(this).val():configData.reseller
+    // console.log('resellerid',id)
+    // for (var i = equivalence.options.length-1;i>0;i--) {
+    //   equivalence.remove(i)
+    // }
 
-    for (var i = equivalence.options.length-1;i>0;i--) {
-      equivalence.remove(i)
-    }
+    utils.api(JSON.stringify({}), `${apiHost}equivalences/reseller/${id}`, 'GET', config.buildOptions, ['equivalence','service'])
+  })
 
-    utils.api(JSON.stringify({}), `${apiHost}equivalences/reseller/${id}`, 'GET', config.buildOptions, ['equivalence','service']);
-  });
+  // console.log('configData.reseller',configData.reseller)
+  // console.log('reseller.options.length',reseller.options.length)
+  // console.log('reseller',$(reseller), 'options.length', reseller.options)
+  // console.log('options lenght',reseller.length);
+
 }
 
 var equivalence = document.querySelector('[name="service"]')
 if (equivalence != null) {
   equivalence.options.length = 0
   equivalence.append(new Option('-- Choose option --', ''))
+
+  // if(equivalence.value != '') {
+  //   equivalence.dispatchEvent(fireEvent)
+  //   console.log('equivalence.value',equivalence.value)
+  //   equivalence.value = configData.service
+  // }
 }
 
 form = document.querySelector('#add-config')
@@ -388,6 +413,29 @@ const utilAjaxExecute = function(){
     utils.api(JSON.stringify({
         "start_date": document.querySelector(".date-range").value
     }), `${apiHost}allotments`, 'POST', config.loadData);
+  }
+
+  if(configData != undefined)
+  {
+    if(channel != null && channel.value != '')
+    {
+      channel.dispatchEvent(fireEvent)
+    }
+  }
+
+  if(configData.reseller) {
+    console.log('reseller.value',reseller.value)
+    reseller.dispatchEvent(fireEvent)
+
+    $( document ).ready(function() {
+      setTimeout(function(){
+        reseller.value = configData.reseller
+        reseller.selecttedIndex = configData.reseller
+        equivalence.value = configData.service
+      }, 1000);
+
+      console.log('reseller.value',reseller.value)
+    })
   }
 }
 
