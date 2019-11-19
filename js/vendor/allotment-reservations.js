@@ -8,6 +8,7 @@ var allotmentData = window.allotments
 var user = window.user;
 var editor;
 
+
 var allotment= {
   update: function(response) {
     MicroModal.close('wait-modal')
@@ -18,21 +19,31 @@ var allotment= {
     var _alertModal = document.getElementById('alert-modal-content')
 
     if (codes.hasOwnProperty(response.code)) {
-      var response2 = JSON.parse(response.message)
-      console.log(response2)
+
+      var action = utils.isJson(response.message)
+      var response2 = ''
+      if (action == true){
+        response2 = JSON.parse(response.message)
+
+        var _fieldPax = document.querySelector('[name="pax"]')
+        var _fieldProcess = document.querySelector('[name="process_status"]')
+          if(response2.pax == 0 && response2.process_status == 3){
+            _fieldPax.value=1;
+            _fieldProcess.value = 6;
+          }else{
+            _fieldPax.value = response2.pax
+            _fieldProcess.value = response2.process_status
+          }
+      }else{
+        response2 = response
+      }
+
+
       _message = utils.createElement('p', '', '', response2.message)
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
 
-      var _fieldPax = document.querySelector('[name="pax"]')
-      var _fieldProcess = document.querySelector('[name="process_status"]')
-      if(pax == 0 && process == 3){
-        _fieldPax.value=1;
-        _fieldProcess.value = 6;
-      }else{
-        _fieldPax.value = response2.pax
-        _fieldProcess.value = response2.process_status
-      }
+
       MicroModal.show('alert-modal')
     }
     else if (response.code == 204) {

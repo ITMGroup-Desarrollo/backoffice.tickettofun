@@ -104,7 +104,7 @@ var utils = {
           '',
           'Cancel'
         )
-        
+
         cancelButton.setAttribute('aria-label', 'Close modal')
         cancelButton.setAttribute('data-micromodal-close', '')
         cancelButton.setAttribute('style', 'margin-right: 20px');
@@ -123,7 +123,7 @@ var utils = {
       acceptButton.setAttribute('data-micromodal-close', '')
 
       footer.appendChild(acceptButton)
-      
+
     }
 
     roleContent.appendChild(header)
@@ -174,5 +174,13 @@ var utils = {
       }
     }
     return valid
+  },
+  isJson: function(str) {
+    try {
+        JSON.parse(str);
+    } catch (e) {
+        return false;
+    }
+    return true;
   }
 }
