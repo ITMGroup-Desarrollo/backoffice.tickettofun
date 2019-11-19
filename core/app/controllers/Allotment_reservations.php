@@ -26,7 +26,7 @@ class Allotment_reservations extends CI_Controller
 
         $this->load->Model('Allotment_reservation');
 
-        if ($option == 'list')
+        if ($option == 'reservation')
         {
 
             $table = $this->Allotment_reservation->get_list();
