@@ -64,14 +64,12 @@ class Allotment_reservations extends CI_Controller
             redirect(base_url('signin'));
 
         $view   = $this->uri->segment(1);
-        $option = $this->uri->segment(2);
-
+        $option = $this->uri->segment(3);
 
         $this->load->Model('Page');
         $this->Page->page_name = $view;
 
         $data = $this->Page->get_contents();
-
         $this->load->Model('Allotment_reservation');
 
         $form = $this->Allotment_reservation->get_form();
