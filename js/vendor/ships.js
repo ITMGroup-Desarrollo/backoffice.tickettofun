@@ -176,15 +176,15 @@ if (form != null) {
 form = document.querySelector('#update-ship')
 
 if (form != null)
-  ships.setData();
+  ships.setData()
 
 var servicesTable = document.querySelector('#ships-registers')
 if (servicesTable !== null) {
-  $(function() {
+  $(function () {
     $('#ships-registers').dataTable({
-        "sPaginationType": "full_numbers",
-        "iDisplayLength": 20,
-        "aLengthMenu": [[20, 50, 100, -1], [20, 50, 100, "All"]]
-    });
-  });
+      'sPaginationType': 'full_numbers',
+      'iDisplayLength': 20,
+      'aLengthMenu': [[20, 50, 100, -1], [20, 50, 100, "All"]]
+    })
+  })
 }

@@ -13,7 +13,7 @@ var codes = {
 }
 
 var app = {
-  signin: function(response) {
+  signin: function (response) {
     MicroModal.close('wait-modal')
 
     response = JSON.parse(response)
@@ -31,11 +31,11 @@ var app = {
       document.querySelector('[name="user_password"]').value = ''
     }
 
-    if(response.code === 200) {
+    if (response.code === 200) {
       var user = JSON.parse(response.message)
 
       info.remember = 0
-      if(document.querySelector('[name="remember"]').checked)
+      if (document.querySelector('[name="remember"]').checked)
         info.remember =  1
 
       info.user = user
@@ -45,10 +45,10 @@ var app = {
       utils.post(JSON.stringify(info), url, app.access)
     }
   },
-  access: function() {
+  access: function () {
     location.href = 'users'
   },
-  logout: function() {
+  logout: function () {
     location.href = `${base}signin`
   },
   resetMenu: function (elements) {
@@ -56,12 +56,12 @@ var app = {
       elements[i].classList.remove('toggled')
     }
   },
-  hiddenMenu: function(elements) {
+  hiddenMenu: function (elements) {
     for (var i = 0, l = elements.length; i < l; i++) {
       elements[i].style.display = 'none'
     }
   },
-  sidebar: function(menu) {
+  sidebar: function (menu) {
     var dropdownTriggers = menu.querySelectorAll('[data-toggle="sidebar"]')
     for (var i = 0, l = dropdownTriggers.length; i < l; i++) {
       dropdownTriggers[i].classList.add('menu-item')
@@ -69,7 +69,7 @@ var app = {
         e.preventDefault()
 
         var element = e.target
-        if (! e.target.getAttribute('data-toggle'))
+        if (!e.target.getAttribute('data-toggle'))
           element = e.target.parentElement
 
         // collapse himself
@@ -77,7 +77,7 @@ var app = {
           element.classList.remove('toggled')
 
           var submenu = element.parentElement.querySelector('.submenu')
-            submenu.style.display = 'none'
+          submenu.style.display = 'none'
         }
         else {
           // reset other menus
@@ -94,14 +94,14 @@ var app = {
 
     // mobile sidebar toggler
     var mobileMenu = document.querySelector('#content .sidebar-toggler')
-    mobileMenu.addEventListener('click', function(e) {
+    mobileMenu.addEventListener('click', function (e) {
       e.stopPropagation()
 
       document.body.classList.add('open-sidebar')
     })
 
     var content = document.querySelector('#content')
-    content.addEventListener('click', function(e) {
+    content.addEventListener('click', function (e) {
       document.body.classList.remove('open-sidebar')
     })
   }
@@ -117,10 +117,10 @@ if (login !== null) {
 
     valid = utils.dataValidator(fields)
 
-    if(valid) {
+    if (valid) {
       info = {
         email: document.querySelector('[name="user_mail"]').value,
-        password: document.querySelector('[name="user_password"]').value,
+        password: document.querySelector('[name="user_password"]').value
       }
 
       var url = 'http://localhost:8181/auth/login'
@@ -149,7 +149,7 @@ if (account !== null) {
     menu.classList.add('active')
   })
 
-  document.body.addEventListener('click', function(e) {
+  document.body.addEventListener('click', function (e) {
     document.querySelector('.menu').classList.remove('active')
   })
 }
@@ -170,6 +170,7 @@ var waitMessage = utils.createElement(
 
 waitModal.appendChild(waitMessage)
 
-var menu = document.querySelector('.main-sidebar')
-if (menu !== null)
+menu = document.querySelector('.main-sidebar')
+if (menu !== null) {
   app.sidebar(menu)
+}

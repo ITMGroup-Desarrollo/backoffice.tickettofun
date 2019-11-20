@@ -6,13 +6,12 @@ for (var i = 0, l = events.length; i < l; i++) {
   events[i].start = new Date(events[i].start)
 }
 
-$(document).ready(function(){
-
+$(document).ready(function () {
   $('#full-calendar').fullCalendar({
     header: {
-        left: 'month,agendaWeek,agendaDay',
-        center: 'title',
-        right: 'today prev,next'
+      left: 'month,agendaWeek,agendaDay',
+      center: 'title',
+      right: 'today prev,next'
     },
     selectable: false,
     selectHelper: false,
