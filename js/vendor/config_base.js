@@ -65,6 +65,7 @@ var config = {
         "targets": 8,
         "data": "allotment_id",
         "render": function ( data, type, row, meta ) {
+          console.log(row)
           if(row[8] === 0)
             return '<span class="label label-danger" data-status="'+row[8]+'">Inactive</span>';
           else
@@ -74,7 +75,7 @@ var config = {
         targets: 9,
         data: "allotment_id",
         render: function ( data, type, row, meta ) {
-          if(row[9] === 0)
+          if(row[8] === 0)
             return '<a class="edit" href="configuration/'+row[9]+'"><i class="fas fa-add"></i></a>';
           else
             return '<a class="edit" href="configuration/'+row[9]+'"><i class="fas fa-edit"></i></a>' +

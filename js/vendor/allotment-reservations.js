@@ -189,14 +189,14 @@ var allotment= {
                 let _tagAction='';
                   if(row[11] === 3){
                   let _tagAction = utils.createElement('a', 'edit')
-                  _tagAction.setAttribute('href', row[12])
+                  _tagAction.setAttribute('href', `reservation/${row[12]}`)
                   _tagAction.appendChild(utils.createElement('i', 'fas fa-plus'))
 
                   return _tagAction.outerHTML;
                   }
                   else{
                       let _tagAction = utils.createElement('a', 'edit')
-                      _tagAction.setAttribute('href', row[12])
+                      _tagAction.setAttribute('href', `reservation/${row[12]}`)
                       _tagAction.appendChild(utils.createElement('i', 'fas fa-edit'))
 
                       let _tagTrash = utils.createElement('a', 'delete')
@@ -322,7 +322,7 @@ if (cancel != null) {
   cancel.addEventListener('click', function(e) {
     e.preventDefault()
     form = document.querySelector('#update-allotment')
-    window.location.href = "/itm-backoffice/allotments/list";
+    window.location.href = "/itm-backoffice/allotments/reservation";
   });
 }
 
