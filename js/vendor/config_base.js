@@ -6,12 +6,12 @@ var token = window.token
 var configData = window.config
 var user = window.user
 let fireEvent = new Event('change')
-console.log('config',configData);
+
 var editor;
 var config = {
   buildOptions: function(response, extradata) {
     const data = JSON.parse(response)
-    // console.log(data.message)
+
     for (var i = eval(extradata[0]).options.length-1;i>0;i--) {
       eval(extradata[0]).remove(i)
     }
@@ -28,16 +28,17 @@ var config = {
   },
   loadData: function(response) {
     const data = JSON.parse(response)
-    // console.log(response);
+
     let datatable = [];
     if(Array.isArray(data.message)){
-      // console.log(data.message)
+
       datatable = data.message.map(data => {
 
         const dataArray = [
           data.channel_name,
           data.reseller_name,
           data.service_name,
+          data.ship_name,
           data.schedule_start,
           data.schedule_end,
           data.min_available,
@@ -62,24 +63,23 @@ var config = {
       retrieve: true,
       data: datatable,
       columnDefs: [{
-        "targets": 8,
+        "targets": 9,
         "data": "allotment_id",
         "render": function ( data, type, row, meta ) {
-          console.log(row)
-          if(row[8] === 0)
-            return '<span class="label label-danger" data-status="'+row[8]+'">Inactive</span>';
+          if(row[9] === 0)
+            return '<span class="label label-danger" data-status="'+row[9]+'">Inactive</span>';
           else
-            return '<span class="label label-success" data-status="'+row[8]+'">Active</span>';
+            return '<span class="label label-success" data-status="'+row[9]+'">Active</span>';
         }
       },{
-        targets: 9,
+        targets: 10,
         data: "allotment_id",
         render: function ( data, type, row, meta ) {
-          if(row[8] === 0)
-            return '<a class="edit" href="configuration/'+row[9]+'"><i class="fas fa-add"></i></a>';
+          if(row[9] === 0)
+            return '<a class="edit" href="configuration/'+row[10]+'"><i class="fas fa-add"></i></a>';
           else
-            return '<a class="edit" href="configuration/'+row[9]+'"><i class="fas fa-edit"></i></a>' +
-              '<a class="delete" data-id="'+row[9]+'"><i class="fas fa-trash"></i></a>';
+            return '<a class="edit" href="configuration/'+row[10]+'"><i class="fas fa-edit"></i></a>' +
+              '<a class="delete" data-id="'+row[10]+'"><i class="fas fa-trash"></i></a>';
         }
       }],
       processing: true,
@@ -90,7 +90,7 @@ var config = {
           [20, 50, 100, -1], [20, 50, 100, "All"]
       ]
     });
-    // console.log(editor.draw());
+
     editor.draw();
     editor.columns.adjust().draw();
 
@@ -233,11 +233,8 @@ var config = {
     document.querySelector('[name="channel"]').value = configData.channel
     document.querySelector('[name="reseller"]').value = configData.reseller
     if(document.querySelector('[name="reseller"]') != null && configData){
-      // document.querySelector('[name="reseller"]').append(
-        //   new Option(configData.reseller, configData.reseller, "selected")
-        // )
+
       $( document ).ready(function() {
-        console.log(configData.reseller)
         document.querySelector('[name="reseller"]').value = configData.reseller
       })
     }
@@ -319,7 +316,6 @@ if (save != null) {
 if ($.fn.DataTable.isDataTable( editor )){
   const dtEvents = document.querySelector('#config-base-registers')
     .addEventListener( 'order.dt',  function () { console.log( 'Order' ); } )
-    // .addEventListener( 'search.dt', function () { console.log( 'Search' ); } )
     .addEventListener( 'page.dt',   function () { console.log( 'Page' ); } )
     .DataTable();
 }
@@ -330,10 +326,7 @@ if (search != null) {
 
   search.addEventListener('click', function(e) {
     e.preventDefault()
-    // console.log(document.querySelector('.date-range').value);
-    /* utils.api(JSON.stringify({
-      "start_date": document.querySelector('.date-range').value
-    }), `${apiHost}allotments`, 'POST', config.loadData); */
+
     utilAjaxExecute()
 
   })
@@ -349,14 +342,13 @@ if(channel != null) {
     for (var i = reseller.options.length-1;i>0;i--) {
       reseller.remove(i)
     }
-    // var respuestaUtils =
+
     utils.api(JSON.stringify({
       /* "start_date": document.querySelector(".date-range").value */
     }), `${apiHost}resellers/channel/${id}`, 'GET', config.buildOptions, ['reseller','reseller'])
-    // console.log('utils response',respuestaUtils);
+
   })
-  // $(channel).trigger("change")
-  // $(reseller).change()
+
 }
 
 var reseller = document.querySelector('[name="reseller"]')
@@ -369,18 +361,9 @@ if(reseller != null) {
   reseller.addEventListener('change', function(e) {
     e.preventDefault()
     var id = $(this).val() ? $(this).val():configData.reseller
-    // console.log('resellerid',id)
-    // for (var i = equivalence.options.length-1;i>0;i--) {
-    //   equivalence.remove(i)
-    // }
 
     utils.api(JSON.stringify({}), `${apiHost}equivalences/reseller/${id}`, 'GET', config.buildOptions, ['equivalence','service'])
   })
-
-  // console.log('configData.reseller',configData.reseller)
-  // console.log('reseller.options.length',reseller.options.length)
-  // console.log('reseller',$(reseller), 'options.length', reseller.options)
-  // console.log('options lenght',reseller.length);
 
 }
 
@@ -389,11 +372,6 @@ if (equivalence != null) {
   equivalence.options.length = 0
   equivalence.append(new Option('-- Choose option --', ''))
 
-  // if(equivalence.value != '') {
-  //   equivalence.dispatchEvent(fireEvent)
-  //   console.log('equivalence.value',equivalence.value)
-  //   equivalence.value = configData.service
-  // }
 }
 
 form = document.querySelector('#add-config')
@@ -430,13 +408,10 @@ const utilAjaxExecute = function(){
     $( document ).ready(function() {
       setTimeout(function(){
         reseller.value = configData.reseller
-        // reseller.selecttedIndex = configData.reseller
         equivalence.value = configData.service
       }, 2500);
 
       setTimeout(function(){
-        // reseller.value = configData.reseller
-        // reseller.selecttedIndex = configData.reseller
         equivalence.value = configData.service
       }, 3500);
 
@@ -456,27 +431,8 @@ $( document ).ready(function() {
     // mode: "range",
     altFormat: "F j, Y",
     dateFormat: "Y-m-d",
-    // minDate: Date.now(),
     defaultDate: "today",
-    altInput: true,
-    /* plugins: [
-      require('shortcut-buttons-flatpickr')({
-          theme: 'dark',
-          button: [
-              { label: 'Сегодня' },
-              { label: 'Завтра' },
-              { label: 'Послезавтра' }
-          ],
-          onClick(index, fp) {
-              let date = index ? new Date(Date.now() + 24 * index * 60 * 60 * 1000) : new Date;
-
-              fp.setDate(date);
-              fp.close();
-          }
-      })
-    ] */
-    // onReady: checkIfTodaySelected,
-    // onValueUpdate: checkIfTodaySelected
+    altInput: true
   });
 
   document.querySelectorAll(".time-format").flatpickr({
