@@ -30,7 +30,7 @@ class Arrives extends CI_Controller
             $table = $this->Arrive->get_list();
 
             $data['contents'] = str_replace(
-                '{title}', 'List of ship arrives', $data['contents']
+                '{title}', 'List of calls', $data['contents']
             );
 
             $form = $this->Arrive->get_form('search');
@@ -50,7 +50,7 @@ class Arrives extends CI_Controller
             $form = str_replace('{id}', 'add-arrives', $form);
 
             $data['contents'] = str_replace(
-                '{title}', 'New cruise arrive', $data['contents']
+                '{title}', 'New call', $data['contents']
             );
 
             $data['contents'] = str_replace(
