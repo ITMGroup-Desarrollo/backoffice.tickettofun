@@ -37,8 +37,8 @@ var config = {
         const dataArray = [
           data.channel_name,
           data.reseller_name,
-          data.service_name,
           data.ship_name,
+          data.service_name,
           data.schedule_start,
           data.schedule_end,
           data.min_available,
