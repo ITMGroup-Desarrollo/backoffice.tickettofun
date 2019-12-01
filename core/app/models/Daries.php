@@ -50,15 +50,19 @@ class Daries extends CI_Model
         $num_rows = $query_result->num_rows();
         $result   = $query_result->result();
 
+
         $query_result->free_result();
         $this->db->close();
+
 
         $id = 0;
         $body = '';
         $details = '';
         $ship_name = '';
-        if ($num_rows)
+
+        if ($result[0]->response == 200)
         {
+
             foreach ($result as $row)
             {
                 if ($id == 0)
@@ -141,6 +145,22 @@ class Daries extends CI_Model
         }
 
         $this->model['total_tours'] = $total;
+
+        return $this->model;
+    }
+
+    public function get_form()
+    {
+
+        $this->db->close();
+        $contents = $this->Page->get_settings('dairy');
+
+        $form = 'DIARY_FORM';
+
+        $this->model = $this->build->build_components(
+            $contents[$form]
+        );
+
 
         return $this->model;
     }

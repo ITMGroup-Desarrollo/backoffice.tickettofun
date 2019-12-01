@@ -49,6 +49,13 @@ class Dairy extends CI_Controller
             '{details}', $locations['details'], $data['contents']
         );
 
+        $form = $this->Daries->get_form();
+        $data['contents'] = str_replace(
+            '{form}', "<hr />".$form, $data['contents']
+        );
+
+
+
         $this->load->view('Master', $data);
     }
 }
