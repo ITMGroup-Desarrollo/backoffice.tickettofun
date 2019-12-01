@@ -74,13 +74,13 @@ $active_group = 'default';
 $query_builder = TRUE;
 
 // Set database information for all develop environments
-$user = 'usr_itm';
-$password = 'Dk!eXXoSS4Ps';
+$user = 'usr_backoffice';
+$password = '@Xtl2Gd^xZG!';
 $database = 'itm_core';
 
 $db['default'] = array(
     'dsn'   => '',
-    'hostname' => '104.219.42.26',
+    'hostname' => 'localhost',
     'username' => $user,
     'password' => $password,
     'database' => $database,
