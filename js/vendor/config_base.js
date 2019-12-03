@@ -37,8 +37,8 @@ var config = {
         const dataArray = [
           data.channel_name,
           data.reseller_name,
-          data.ship_name,
           data.service_name,
+          data.ship_name,
           data.schedule_start,
           data.schedule_end,
           data.min_available,
@@ -67,19 +67,19 @@ var config = {
         "data": "allotment_id",
         "render": function ( data, type, row, meta ) {
           if(row[9] === 0)
-            return '<span class="label label-danger" data-status="'+row[9]+'">Inactive</span>';
+            return '<span class="label label-danger" data-status="'+row[10]+'">Inactive</span>';
           else
-            return '<span class="label label-success" data-status="'+row[9]+'">Active</span>';
+            return '<span class="label label-success" data-status="'+row[10]+'">Active</span>';
         }
       },{
         targets: 10,
         data: "allotment_id",
+        className: 'text-center',
         render: function ( data, type, row, meta ) {
           if(row[9] === 0)
-            return '<a class="edit" href="configuration/'+row[10]+'"><i class="fas fa-add"></i></a>';
+            return '<a class="btn-link edit" href="configuration/'+row[10]+'"><i class="fas fa-edit"></i></a>';
           else
-            return '<a class="edit" href="configuration/'+row[10]+'"><i class="fas fa-edit"></i></a>' +
-              '<a class="delete" data-id="'+row[10]+'"><i class="fas fa-trash"></i></a>';
+            return `<a class="btn-link" data-toggle="tooltip" data-placement="left" title="Transfer" href="configuration/${row[10]}"><i class="fas fa-exchange-alt"></i></a> <a class="btn-link edit" data-toggle="tooltip" data-placement="left" title="Edit allotment" href="configuration/${row[10]}"><i class="fas fa-edit"></i></a> <a class="btn-link delete" data-toggle="tooltip" data-placement="left" title="Delete allotment" data-id="${row[10]}"><i class="fas fa-trash"></i></a>`;
         }
       }],
       processing: true,
@@ -213,12 +213,16 @@ var config = {
 
       MicroModal.show('alert-modal')
     }
-    else if (response.code == 200) {
+    else if (response.code == 200)
+    {
       var _status = document.querySelector(`[data-status="${id}"]`)
-      _status.innerHTML = ''
+      var _parentELement = _status.parentElement
+      _status.parentElement.innerHTML = ''
+
+      element.parentElement.firstChild.style.display = 'none'
 
       var label = utils.createElement('span', 'label label-danger', '', 'inactive');
-      _status.appendChild(label)
+      _parentELement.appendChild(label)
 
       _message = utils.createElement('p', '', '', 'Success! Schedule inactivate correctly')
 

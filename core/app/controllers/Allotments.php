@@ -100,12 +100,13 @@ class Allotments extends CI_Controller
         if ( ! $this->user->active_session())
             redirect(base_url('signin'));
 
-        $view   = 'schedules'/* $this->uri->segment(1) */;
+        $view   = 'schedules';
         $option = $this->uri->segment(2);
         $id = $this->uri->segment(3);
 
         $this->load->Model('Page');
         $this->Page->page_name = $view;
+        $this->Page->menu_active = 'allotments';
 
         $data = $this->Page->get_contents();
 
@@ -119,7 +120,7 @@ class Allotments extends CI_Controller
             '{content}'
         ];
         $header_elements = [
-            'Schedules List', //."Ship docking " . $atrack_time . " horas"
+            'Schedules List',
             $dynamic_element['filters_form'] . '<hr>' . $dynamic_element['table']
         ];
 
@@ -128,7 +129,6 @@ class Allotments extends CI_Controller
         );
 
         $userId = 'window.user = ' . $this->session->userdata('user_id');
-        // echo $userId; exit;
         $script2 = custom('script', '', $userId);
 
         $arrive = 'window.arrive_data = ' . json_encode($arrive_data);
@@ -149,8 +149,6 @@ class Allotments extends CI_Controller
             redirect(base_url('signin'));
 
         $view   = 'schedules';
-        // echo "schedules".$id; exit;
-        // $option = $this->uri->segment(2);
         $id = $this->uri->segment(3);
 
         $this->load->Model('Page');
@@ -164,9 +162,8 @@ class Allotments extends CI_Controller
         $filters_form = str_replace('{id}', 'dynamic-filters', $filters_form);
 
         return array(
-            // 'ship_id' => $id,
-            'table' => $table,
-            'filters_form' => $filters_form
+            'filters_form' => $filters_form,
+            'table' => $table
         );
     }
 
@@ -180,12 +177,12 @@ class Allotments extends CI_Controller
         if ( ! $this->user->active_session())
             redirect(base_url('signin'));
 
-        $view   = 'config';// $this->uri->segment(1);
+        $view   = 'config';
         $option = $this->uri->segment(2);
 
         $this->load->Model('Page');
         $this->Page->page_name = $view;
-        $this->Page->menu_active = 'list';
+        $this->Page->menu_active = 'allotments';
         $this->Page->submenu_active = $option;
 
         $data = $this->Page->get_contents();
@@ -197,7 +194,6 @@ class Allotments extends CI_Controller
         $form = $this->Allotment->get_form('filters');
 
         $header_keys = [
-            // '{ship-name}',
             '{title}',
             '{channel-name}',
             '{reseller-name}',
@@ -207,15 +203,11 @@ class Allotments extends CI_Controller
         ];
 
         $date_today = !empty($table['data-header']) ? $table['data-header']->start_date:date('Y-m-d');
-        //  print_r($table); //
-        //  exit;
+
         $header_elements = [
             'Configuration schedules',
             'Start date: '.date_format(date_create($date_today), 'l jS F Y'),
-            // !$table['data-header'] ? $table['data-header']->channel_name:'',
-            // !($table['data-header']) ? $table['data-header']->reseller_name:'',
             '',
-            // !($table['data-header']) ? $table['data-header']->service_name:'',
             '',
             $form,
             '<hr>'.$table['table-data']
@@ -235,12 +227,12 @@ class Allotments extends CI_Controller
         if ( ! $this->user->active_session())
             redirect(base_url('signin'));
 
-        $view   = 'config';//$this->uri->segment(2);
-        $option = $this->uri->segment(3);
+        $view   = 'config';
+        $option = $this->uri->segment(2);
 
         $this->load->Model('Page');
         $this->Page->page_name = $view;
-        $this->Page->menu_active = 'new';
+        $this->Page->menu_active = 'allotments';
         $this->Page->submenu_active = $option;
 
         $data = $this->Page->get_contents();
@@ -267,8 +259,6 @@ class Allotments extends CI_Controller
         $data['contents'] = str_replace(
             '{service-name}', '', $data['contents']
         );
-
-        // $form = $this->Allotment->get_form('filters');
 
         $data['contents'] = str_replace(
             '{filters}', '', $data['contents']
@@ -297,6 +287,7 @@ class Allotments extends CI_Controller
 
         $this->load->Model('Page');
         $this->Page->page_name = $view;
+        $this->Page->menu_active = 'allotments';
 
         $data = $this->Page->get_contents();
 
@@ -322,8 +313,6 @@ class Allotments extends CI_Controller
         $data['contents'] = str_replace(
             '{service-name}', '', $data['contents']
         );
-
-        // $form = $this->Allotment->get_form('filters');
 
         $data['contents'] = str_replace(
             '{filters}', '', $data['contents']

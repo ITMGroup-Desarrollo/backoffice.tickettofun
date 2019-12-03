@@ -139,7 +139,7 @@ const schedule = {
           render: function ( data, type, row, meta ) {
             // console.log(row)
             // if(row[5] === 0)
-              return `<a class="btn btn-link save" data-toggle="tooltip" data-placement="left" title="Save allotment" id="${meta.row}" dataservice="${originalData[0].service_id}"><i class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></i></a><a class="btn btn-link delete" data-toggle="tooltip" data-placement="left" title="Remove this schedule" id="${meta.row}" dataservice="${originalData[0].service_id}"><i class="glyphicon glyphicon-minus-sign" aria-hidden="true"></i></a>`;
+              return `<a class="btn-link save" data-toggle="tooltip" data-placement="left" title="Save allotment" id="${meta.row}" dataservice="${originalData[0].service_id}"><i class="fas fa-save" aria-hidden="true"></i></a> <a class="btn-link delete" data-toggle="tooltip" data-placement="left" title="Remove this schedule" id="${meta.row}" dataservice="${originalData[0].service_id}"><i class="fas fa-trash" aria-hidden="true"></i></a>`;
             // else
             //   return '<a class="edit" href="configuration/'+row[5]+'"><i class="fas fa-edit"></i></a>' +
             //     '<a class="delete" data-id="'+row[5]+'"><i class="fas fa-trash"></i></a>';
@@ -469,14 +469,14 @@ const utilAjaxExecute = function(element) {
     const elem = element != undefined ? container.querySelector('[name="service"]'):document.querySelector('[name="service"]')
     const overlap = element != undefined ? container.querySelector('[name="overlap"]'):document.querySelector('[name="overlap"]')
 
-    // console.log(elem.value)
+    // console.log(overlap)
     // if(elem.value != '')
       utils.api(JSON.stringify({
         "arrive": arrive_data,
         "start_date": arrive_data.arrival_date,
         "service": elem.value,
         'ship': arrive_data.ships,
-        'overlap': overlap.value
+        'overlap': overlap == null ? '':overlap.value
       }), `${apiHost}allotments/shipservice`, 'POST', schedule.loadData, element);
   }
 }
