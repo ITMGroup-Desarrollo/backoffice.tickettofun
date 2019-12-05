@@ -18,9 +18,9 @@ var app = {
 
     response = JSON.parse(response)
 
-    if (response.code == 400) {
+    if (response.code !== 200) {
       var _alertModal = document.getElementById('alert-modal-content')
-      var _message = utils.createElement('p', '', '', response.message)
+      var _message = utils.createElement('p', '', '', 'Login failed: Email or password incorrect.')
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
