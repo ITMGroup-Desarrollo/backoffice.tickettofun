@@ -1,3 +1,13 @@
+var containerForm = document.querySelector('.content-form')
+containerForm.style.cssFloat="right";
+containerForm.style.margin="-10px";
+var rol = window.user;
+
+if (rol!=1 && rol!=3 ){
+  containerForm.style.display="none";
+}
+
+
 var diary= {
   sendmail: function(response){
      MicroModal.close('wait-modal')
