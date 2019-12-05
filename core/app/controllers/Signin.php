@@ -29,9 +29,12 @@ class Signin extends CI_Controller
         if ($response->code == 200)
         {
             $script = "window.token = '{$response->message}'";
-            $token = custom('script', '', $script);
 
-            $data['scripts'] .= $token;
+            $token = custom(
+                'script', array('type' => 'text/javascript'), $script
+            );
+
+            $data['scripts'] = $token . $data['scripts'];
         }
 
         $this->load->view('Master', $data);

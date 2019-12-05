@@ -234,10 +234,12 @@ class Page extends CI_Model
                 $this->load->library('session');
                 $token = $this->session->userdata('token');
 
+                $this->script_attrib = array('type' => 'text/javascript');
+
                 $script = "window.token = '{$token}'";
                 $token = custom('script', $this->script_attrib, $script);
 
-                $scripts .= $token;
+                $scripts = $token . $scripts;
             }
 
             $this->scripts['js'] = $scripts;
