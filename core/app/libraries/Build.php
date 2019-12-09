@@ -15,6 +15,7 @@ class Build {
     public $page;
     public $menu;
     public $submenu;
+    public $columns;
     public $component;
 
     public function __construct()
@@ -60,6 +61,9 @@ class Build {
                     , $attrib
                     , $li_elements
                 );
+            }
+            else if ($element == 'row') {
+                $content = $this->_get_row($attrib, $contents->contents);
             }
             else
             {
@@ -152,10 +156,24 @@ class Build {
             case 'br':
                 return br($attrib['count']);
                 break;
+            case 'row':
+                return custom('tr', '', $content);
+                break;
             default:
                 return custom($element, $attrib, $content);
                 break;
         }
+    }
+
+    private function _get_row($attrib, $content)
+    {
+        $this->columns = '';
+        $element = $attrib['column_tag'];
+
+        foreach ($content as $row)
+            $this->columns .= custom($element, '', $row);
+
+        return $this->columns;
     }
 
     private function _get_element($value)
