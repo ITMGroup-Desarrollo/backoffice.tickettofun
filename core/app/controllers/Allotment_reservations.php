@@ -28,7 +28,6 @@ class Allotment_reservations extends CI_Controller
 
         if ($option == 'reservation')
         {
-
             $table = $this->Allotment_reservation->get_list();
 
             $data['contents'] = str_replace(
@@ -43,9 +42,10 @@ class Allotment_reservations extends CI_Controller
             );
 
             $data['contents'] = str_replace(
-                '{content}', '<hr>'.$table, $data['contents']
+                '{content}', '<hr>' . $table, $data['contents']
             );
         }
+
         $userId = 'window.user = ' . $this->session->userdata('user_id');
         $script = custom('script', '', $userId);
         $data['scripts'] = $script .  $data['scripts'];
@@ -108,10 +108,8 @@ class Allotment_reservations extends CI_Controller
         if ( ! $this->user->active_session())
             redirect(base_url('signin'));
 
-        $view   = 'config';//$this->uri->segment(2);
+        $view   = 'config';
         $option = $this->uri->segment(3);
-
-        // echo $view; echo $option; exit;
 
         $this->load->Model('Page');
         $this->Page->page_name = $view;
@@ -134,7 +132,7 @@ class Allotment_reservations extends CI_Controller
         );
 
         $userId = 'window.user = ' . $this->session->userdata('user_id');
-        // $script = custom('script', '', $config);
+
         $script = custom('script', '', $userId);
         $data['scripts'] = $script . $data['scripts'];
 
@@ -151,9 +149,8 @@ class Allotment_reservations extends CI_Controller
         if ( ! $this->user->active_session())
             redirect(base_url('signin'));
 
-        $view   = 'config';// $this->uri->segment(1);
+        $view   = 'config';
         $option = $this->uri->segment(2);
-        // echo $option; exit;
 
         $this->load->Model('Page');
         $this->Page->page_name = $view;
@@ -187,7 +184,7 @@ class Allotment_reservations extends CI_Controller
         if ( ! $this->user->active_session())
             redirect(base_url('signin'));
 
-        $view   = 'config';// $this->uri->segment(1);
+        $view   = 'config';
         $option = $this->uri->segment(3);
 
         $this->load->Model('Page');

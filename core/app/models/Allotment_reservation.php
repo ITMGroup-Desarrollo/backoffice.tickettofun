@@ -34,11 +34,23 @@ class Allotment_reservation extends CI_Model
         $this->db->close();
         $table_content = $this->Page->get_settings('allotments');
 
+        $rol_id = $this->session->userdata('rol_id');
+
+        if ($rol_id != 1 && $rol_id != 2 && $rol_id != 3)
+        {
+            $table = $table_content['ALLOTMENT_RESERVATIONS_TABLE'];
+
+            array_splice($table->contents[0]->contents->contents, 10, 1);
+            array_splice($table->contents[2]->contents->contents, 10, 1);
+
+            $table_content['ALLOTMENT_RESERVATIONS_TABLE'] = $table;
+        }
+
         $table_content = $this->build->build_components(
             $table_content['ALLOTMENT_RESERVATIONS_TABLE']
         );
 
-         $this->model = str_replace('{rows}', '', $table_content);
+        $this->model = str_replace('{rows}', '', $table_content);
 
         return $this->model;
     }
@@ -64,32 +76,31 @@ class Allotment_reservation extends CI_Model
     public function get_data($id)
     {
 
-            $endpoint = HOST . GET_ALLOTMENT_RESERVATIONS_ROUTE . '/' . $id;
+        $endpoint = HOST . GET_ALLOTMENT_RESERVATIONS_ROUTE . '/' . $id;
 
-            $params = new stdClass();
-            $this->load->library('session');
-            $token = $this->session->userdata('token');
+        $params = new stdClass();
+        $this->load->library('session');
+        $token = $this->session->userdata('token');
 
-            $response = json_decode(
-                $this->api->request_api('GET', $endpoint, $params, $token)
-            );
-            $allotment_reservatoin = new stdClass();
+        $response = json_decode(
+            $this->api->request_api('GET', $endpoint, $params, $token)
+        );
 
-            if ($response->code == 200)
-            {
-                $allotment_reservatoin->id = $response->message->reservation_id;
-                $allotment_reservatoin->pax = $response->message->pax;
-                $allotment_reservatoin->start_date = $response->message->start_date;
-                $allotment_reservatoin->max_available = $response->message->max_available;
-                $allotment_reservatoin->process_status = $response->message->process_status;
-                $allotment_reservatoin->process_status_id = $response->message->process_status_id;
+        $allotment_reservatoin = new stdClass();
 
-
-            }else{
-
-                redirect('/allotments/list');
-
-            };
+        if ($response->code == 200)
+        {
+            $allotment_reservatoin->pax = $response->message->pax;
+            $allotment_reservatoin->id = $response->message->reservation_id;
+            $allotment_reservatoin->start_date = $response->message->start_date;
+            $allotment_reservatoin->max_available = $response->message->max_available;
+            $allotment_reservatoin->process_status = $response->message->process_status;
+            $allotment_reservatoin->process_status_id = $response->message->process_status_id;
+        }
+        else
+        {
+            redirect('/allotments/list');
+        };
 
         return $allotment_reservatoin;
     }
