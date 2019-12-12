@@ -97,7 +97,6 @@ class Menu {
     private function _get_menu($options, $actives)
     {
         $this->menu          ='';
-        $this->anchor_attrib = array();
 
         $links  = explode(',', trim($options->pages, ','));
         $menus  = explode(',', trim($options->menus, ','));
@@ -106,6 +105,8 @@ class Menu {
         for ($i = 0; $i < count($links); $i++)
         {
             $glyph = '';
+            $this->anchor_attrib = array();
+
             if ( ! empty($glyphs[$i]))
                 $glyph = custom('i', array('class' => $glyphs[$i]));
 
