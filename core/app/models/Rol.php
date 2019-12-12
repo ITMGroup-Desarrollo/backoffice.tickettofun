@@ -30,9 +30,19 @@ class Rol extends CI_Model
     {
         $this->db->close();
         $table_content = $this->Page->get_settings('roles');
-        $table_content = $this->build->build_components(
-            $table_content['ROLES_TABLE']
-        );
+
+        $rol_id = $this->session->userdata('rol_id');
+
+        $table = $table_content['ROLES_TABLE'];
+        if ($rol_id != 1 && $rol_id != 2 && $rol_id != 3)
+        {
+            $limit = count($table->contents[0]->contents->contents) - 1;
+
+            array_splice($table->contents[0]->contents->contents, $limit, 1);
+            array_splice($table->contents[2]->contents->contents, $limit, 1);
+        }
+
+        $table_content = $this->build->build_components($table);
 
         // Call API here!
         $params = new stdClass();
@@ -55,7 +65,7 @@ class Rol extends CI_Model
                 $this->anchor_attrib = array();
 
                 $aux .= custom('td', '', $row->rol_name);
-        
+
                 $status = '';
                 $delete = '';
                 if ($row->active_status == 1)
@@ -71,23 +81,26 @@ class Rol extends CI_Model
                 $status_attrib['data-status'] =  $row->rol_id;
                 $aux .= custom('td', $status_attrib, $status);
 
-                $path = 'roles/' . $row->rol_id;
-                $this->anchor_attrib['class'] = 'edit';
-                $this->anchor_attrib['href'] = base_url($path);
-                $edit = custom('i', array('class' => 'fas fa-edit'), '');
+                if ($rol_id == 1 || $rol_id == 2 && $rol_id == 3)
+                {
+                    $path = 'roles/' . $row->rol_id;
+                    $this->anchor_attrib['class'] = 'edit';
+                    $this->anchor_attrib['href'] = base_url($path);
+                    $edit = custom('i', array('class' => 'fas fa-edit'), '');
 
-                $edit = custom('a', $this->anchor_attrib, $edit);
+                    $edit = custom('a', $this->anchor_attrib, $edit);
 
-                if ($row->active_status == 1) {
-                    $this->anchor_attrib['href'] = '#';
-                    $this->anchor_attrib['class'] = 'delete';
-                    $this->anchor_attrib['data-id'] = $row->rol_id;
-                    $delete = custom('i', array('class' => 'fas fa-trash'), '');
+                    if ($row->active_status == 1) {
+                        $this->anchor_attrib['href'] = '#';
+                        $this->anchor_attrib['class'] = 'delete';
+                        $this->anchor_attrib['data-id'] = $row->rol_id;
+                        $delete = custom('i', array('class' => 'fas fa-trash'), '');
 
-                    $delete = custom('a', $this->anchor_attrib, $delete);
+                        $delete = custom('a', $this->anchor_attrib, $delete);
+                    }
+
+                    $aux .= custom('td', $this->attrib, $edit . $delete);
                 }
-
-                $aux .= custom('td', $this->attrib, $edit . $delete);
 
                 $this->model .= custom('tr', '', $aux);
             }
@@ -134,10 +147,10 @@ class Rol extends CI_Model
 
         if ($response->code == 200)
         {
-            $rol->id               = $response->message->rol_id;            
+            $rol->id               = $response->message->rol_id;
             $rol->rol_name         = $response->message->rol_name;
             $rol->active           = $response->message->active_status;
-            
+
         }
         else
         {
