@@ -1,44 +1,30 @@
 'use strict'
 var info
 var form
-var base = window.baseUrl
-var token = window.token
-var configData = window.config
 var user = window.user
-let fireEvent = new Event('change')
+var configData = window.config
 
-var editor;
+const fireEvent = new Event('change')
+
+var editor
 var config = {
-  buildOptions: function(response, extradata) {
+  loadOptions: function (response, extradata) {
     const data = JSON.parse(response)
 
-    for (var i = eval(extradata[0]).options.length-1;i>0;i--) {
-      eval(extradata[0]).remove(i)
-    }
-
-    if(Array.isArray(data.message)) {
-      for(i in data.message){
-        eval(extradata[0]).append(
-          new Option(data.message[i][`${ extradata[1] }_name`], data.message[i][`${ extradata[1] }_id`], "selected")
-        )
-      }
-    }
-
+    utils.buildOptions(extradata, data.message)
     MicroModal.close('wait-modal')
   },
-  loadData: function(response) {
+  loadData: function (response) {
     const data = JSON.parse(response)
 
-    let datatable = [];
-    if(Array.isArray(data.message)){
-
+    let datatable = []
+    if (Array.isArray(data.message)) {
       datatable = data.message.map(data => {
-
         const dataArray = [
           data.channel_name,
           data.reseller_name,
-          data.service_name,
           data.ship_name,
+          data.service_name,
           data.schedule_start,
           data.schedule_end,
           data.min_available,
@@ -46,107 +32,114 @@ var config = {
           data.available,
           data.active_status,
           data.allotment_id
-        ];
+        ]
 
-        return dataArray;
+        return dataArray
       })
     }
 
-    if ($.fn.DataTable.isDataTable( editor ))
+    if ($.fn.DataTable.isDataTable(editor)) {
       editor.destroy()
+    }
 
-    editor = $('#config-base-registers')
-      .on( 'order.dt',  function () { /* utilAjaxExecute(); */ } )
-      // .on( 'search.dt', function () { console.log( 'Search' ); } )
-      .on( 'page.dt',   function () { /* utilAjaxExecute(); */ } )
-      .DataTable({
+    // Get num cells
+    var configTable = document.getElementById('config-base-registers')
+    var columnsCount = configTable.rows[0].cells.length
+
+    const columns = [{
+      targets: 9,
+      data: 'allotment_id',
+      render: function (data, type, row, meta) {
+        if (row[9] === 0) {
+          return `<span class="label label-danger" data-status="${row[10]}">Inactive</span>`
+        } else {
+          return `<span class="label label-success" data-status="${row[10]}">Active</span>`
+        }
+      }
+    }]
+
+    if (columnsCount === 11) {
+      columns.push({
+        targets: 10,
+        data: 'allotment_id',
+        className: 'text-center',
+        render: function (data, type, row, meta) {
+          if (row[9] === 0) {
+            return `<a class="btn-link edit" href="configuration/${row[10]}"><i class="fas fa-edit"></i></a>`
+          }
+          else {
+            return `<a class="btn-link" data-toggle="tooltip" data-placement="left" title="Transfer" href="configuration/${row[10]}"><i class="fas fa-exchange-alt"></i></a> <a class="btn-link edit" data-toggle="tooltip" data-placement="left" title="Edit allotment" href="configuration/${row[10]}"><i class="fas fa-edit"></i></a> <a class="btn-link delete" data-toggle="tooltip" data-placement="left" title="Delete allotment" data-id="${row[10]}"><i class="fas fa-trash"></i></a>`
+          }
+        }
+      })
+    }
+
+    editor = $('#config-base-registers').DataTable({
       retrieve: true,
       data: datatable,
-      columnDefs: [{
-        "targets": 9,
-        "data": "allotment_id",
-        "render": function ( data, type, row, meta ) {
-          if(row[9] === 0)
-            return '<span class="label label-danger" data-status="'+row[10]+'">Inactive</span>';
-          else
-            return '<span class="label label-success" data-status="'+row[10]+'">Active</span>';
-        }
-      },{
-        targets: 10,
-        data: "allotment_id",
-        className: 'text-center',
-        render: function ( data, type, row, meta ) {
-          if(row[9] === 0)
-            return '<a class="btn-link edit" href="configuration/'+row[10]+'"><i class="fas fa-edit"></i></a>';
-          else
-            return `<a class="btn-link" data-toggle="tooltip" data-placement="left" title="Transfer" href="configuration/${row[10]}"><i class="fas fa-exchange-alt"></i></a> <a class="btn-link edit" data-toggle="tooltip" data-placement="left" title="Edit allotment" href="configuration/${row[10]}"><i class="fas fa-edit"></i></a> <a class="btn-link delete" data-toggle="tooltip" data-placement="left" title="Delete allotment" data-id="${row[10]}"><i class="fas fa-trash"></i></a>`;
-        }
-      }],
+      columnDefs: columns,
       processing: true,
       stateSave: true,
-      sPaginationType: "full_numbers",
+      sPaginationType: 'full_numbers',
       iDisplayLength: 20,
       aLengthMenu: [
-          [20, 50, 100, -1], [20, 50, 100, "All"]
+        [20, 50, 100, -1], [20, 50, 100, 'All']
       ]
-    });
+    })
 
-    editor.draw();
-    editor.columns.adjust().draw();
+    editor.draw()
+    editor.columns.adjust().draw()
 
     var options = document.querySelectorAll('.delete')
-    if(options) {
+    if (options) {
       for (var i = 0, l = options.length; i < l; i++) {
-        options[i].addEventListener('click', function(e) {
+        options[i].addEventListener('click', function (e) {
           e.preventDefault()
 
           var element = e.target
-          if (! e.target.getAttribute('data-id'))
+          if (!e.target.getAttribute('data-id')) {
             element = e.target.parentElement
+          }
 
           var id = element.getAttribute('data-id')
 
           var url = `${apiHost}allotments/del/${id}`
           utils.api(JSON.stringify({}), url, 'DELETE', config.delete, element)
-
         })
       }
     }
 
     MicroModal.close('wait-modal')
   },
-  add: function(response) {
+  add: function (response) {
     MicroModal.close('wait-modal')
 
     response = JSON.parse(response)
     var _message = ''
     var _alertModal = document.getElementById('alert-modal-content')
 
-    console.log(response)
     if (codes.hasOwnProperty(response.code)) {
-      let decode = response
-      try {
-        // a = JSON.parse(response);
-        decode = JSON.parse( response.message )
-      } catch(e) {
-          // alert(e); // error in the above string (in this case, yes)!
-      }
+      let decode = JSON.parse(response.message)
+
       _message = utils.createElement('p', '', '', decode.message)
-      console.log(decode.available)
+
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
 
       const maxInput = document.querySelector('[name="max_available"]')
       const minInput = document.querySelector('[name="min_available"]')
-      if(maxInput != null)
-        maxInput.value = decode.available ? decode.available : 0
-      if(minInput != null)
-        minInput.value = decode.available > minInput.value ? minInput.value : decode.available
 
+      if (maxInput != null) {
+        maxInput.value = (decode.available) ? decode.available : 0
+      }
+
+      if (minInput != null) {
+        minInput.value = (decode.available > minInput.value) ? minInput.value : decode.available
+      }
 
       MicroModal.show('alert-modal')
     }
-    else if (response.code == 201) {
+    else if (response.code === 201) {
       _message = utils.createElement('p', '', '', 'Success! Schedule added correctly')
 
       _alertModal.innerHTML = ''
@@ -155,10 +148,10 @@ var config = {
       MicroModal.show('alert-modal')
 
       form = document.querySelector('#add-config')
-      form.reset();
+      form.reset()
     }
   },
-  update: function(response) {
+  update: function (response) {
     MicroModal.close('wait-modal')
 
     response = JSON.parse(response)
@@ -166,27 +159,15 @@ var config = {
     var _alertModal = document.getElementById('alert-modal-content')
 
     if (codes.hasOwnProperty(response.code)) {
-      let decode = response
-      try {
-        // a = JSON.parse(response);
-        decode = JSON.parse( response.message )
-      } catch(e) {
-          // alert(e); // error in the above string (in this case, yes)!
-      }
+      let decode = JSON.parse(response.message)
+
       _message = utils.createElement('p', '', '', decode.message)
-      // _message = utils.createElement('p', '', '', response.message)
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
 
-      const maxInput = document.querySelector('[name="max_available"]')
-      // console.log(maxInput.val);
-      // if(maxInput != null)
-        // maxInput.value = decode.available ? decode.available : 0
-
       MicroModal.show('alert-modal')
-    }
-    else if (response.code == 204) {
+    } else if (response.code === 204) {
       _message = utils.createElement('p', '', '', 'Success! Schedule updated correctly')
 
       _alertModal.innerHTML = ''
@@ -195,7 +176,7 @@ var config = {
       MicroModal.show('alert-modal')
     }
   },
-  delete: function(response, element) {
+  delete: function (response, element) {
     MicroModal.close('wait-modal')
 
     response = JSON.parse(response)
@@ -232,16 +213,10 @@ var config = {
       MicroModal.show('alert-modal')
     }
   },
-  setData: function() {
+  setData: function () {
     document.querySelector('[name="status"]').value = configData.active
     document.querySelector('[name="channel"]').value = configData.channel
     document.querySelector('[name="reseller"]').value = configData.reseller
-    if(document.querySelector('[name="reseller"]') != null && configData){
-
-      $( document ).ready(function() {
-        document.querySelector('[name="reseller"]').value = configData.reseller
-      })
-    }
     document.querySelector('[name="service"]').value = configData.service
     document.querySelector('[name="start_date"]').value = configData.start_date
     document.querySelector('[name="end_date"]').value = configData.end_date
@@ -251,27 +226,35 @@ var config = {
     document.querySelector('[name="min_available"]').value = configData.min_available
     document.querySelector('[name="max_available"]').value = configData.max_available
     document.querySelector('[name="shared"]').value = configData.shared
+
+    if (document.querySelector('[name="reseller"]') != null && configData) {
+      $(document).ready(function () {
+        document.querySelector('[name="reseller"]').value = configData.reseller
+      })
+    }
   }
 }
 
 var cancel = document.querySelector('.cancel')
 if (cancel != null) {
-  cancel.addEventListener('click', function(e) {
+  cancel.addEventListener('click', function (e) {
     e.preventDefault()
 
     form = document.querySelector('#add-config')
-    if (form != null)
+    if (form != null) {
       form.reset()
+    }
 
     form = document.querySelector('#update-config')
-    if (form != null)
+    if (form != null) {
       config.setData()
-  });
+    }
+  })
 }
 
 var save = document.querySelector('.save')
 if (save != null) {
-  save.addEventListener('click', function(e) {
+  save.addEventListener('click', function (e) {
     e.preventDefault()
 
     var valid = 'true'
@@ -279,7 +262,7 @@ if (save != null) {
 
     valid = utils.dataValidator(fields)
 
-    if(valid) {
+    if (valid) {
       info = {
         channel_id: document.querySelector('[name="channel"]').value,
         reseller_id: document.querySelector('[name="reseller"]').value,
@@ -291,7 +274,7 @@ if (save != null) {
         overlap: document.querySelector('[name="overlap"]').value,
         min_available: document.querySelector('[name="min_available"]').value,
         max_available: document.querySelector('[name="max_available"]').value,
-        shared_schedule: document.querySelector('[name="shared"]').checked ? 1:0,
+        shared_schedule: document.querySelector('[name="shared"]').checked ? 1 : 0,
         user_id: user
       }
 
@@ -317,133 +300,124 @@ if (save != null) {
   })
 }
 
-if ($.fn.DataTable.isDataTable( editor )){
-  const dtEvents = document.querySelector('#config-base-registers')
-    .addEventListener( 'order.dt',  function () { console.log( 'Order' ); } )
-    .addEventListener( 'page.dt',   function () { console.log( 'Page' ); } )
-    .DataTable();
-}
-
-
 const search = document.querySelector('.search')
-if (search != null) {
-
-  search.addEventListener('click', function(e) {
+if (search !== null) {
+  search.addEventListener('click', function (e) {
     e.preventDefault()
 
     utilAjaxExecute()
-
   })
 }
 
 var channel = document.querySelector('[name="channel"]')
-
-if(channel != null) {
-  channel.addEventListener('change', function(e) {
+if (channel != null) {
+  channel.addEventListener('change', function (e) {
     e.preventDefault()
-    var id = $(this).val()
-    console.log('channel id',id);
-    for (var i = reseller.options.length-1;i>0;i--) {
+
+    var id = (e.target.value) ? e.target.value : configData.reseller
+
+    var dataElement = {
+      id: id,
+      key: 'reseller_name',
+      value: 'reseller_id',
+      element: document.querySelector('[name="reseller"]')
+    }
+
+    for (var i = reseller.options.length - 1; i > 0; i--) {
       reseller.remove(i)
     }
 
-    utils.api(JSON.stringify({
-      /* "start_date": document.querySelector(".date-range").value */
-    }), `${apiHost}resellers/channel/${id}`, 'GET', config.buildOptions, ['reseller','reseller'])
-
+    utils.api(JSON.stringify({}), `${apiHost}resellers/channel/${id}`, 'GET', config.loadOptions, dataElement)
   })
-
 }
 
 var reseller = document.querySelector('[name="reseller"]')
 if (reseller != null) {
   reseller.options.length = 0
   reseller.append(new Option('-- Choose option --', ''))
-}
 
-if(reseller != null) {
-  reseller.addEventListener('change', function(e) {
+  reseller.addEventListener('change', function (e) {
     e.preventDefault()
-    var id = $(this).val() ? $(this).val():configData.reseller
 
-    utils.api(JSON.stringify({}), `${apiHost}equivalences/reseller/${id}`, 'GET', config.buildOptions, ['equivalence','service'])
+    var id = (e.target.value) ? e.target.value : configData.reseller
+
+    var dataElement = {
+      id: id,
+      key: 'service_name',
+      value: 'service_id',
+      element: document.querySelector('[name="service"]')
+    }
+
+    utils.api(JSON.stringify({}), `${apiHost}equivalences/reseller/${id}`, 'GET', config.loadOptions, dataElement)
   })
-
 }
 
 var equivalence = document.querySelector('[name="service"]')
 if (equivalence != null) {
   equivalence.options.length = 0
   equivalence.append(new Option('-- Choose option --', ''))
-
 }
 
 form = document.querySelector('#add-config')
 if (form != null) {
-  var status_combo = form.querySelector('[name="status"]')
-   status_combo.parentElement.parentElement.remove()
+  var statusCombo = form.querySelector('[name="status"]')
+  statusCombo.parentElement.parentElement.remove()
 }
 
 form = document.querySelector('#update-config')
-
-if (form != null)
+if (form != null) {
   config.setData()
+}
 
 var configTable = document.querySelector('#config-base-registers');
 
-const utilAjaxExecute = function(){
-  if (configTable !== undefined && configTable !== null && configTable !== undefined && configTable != undefined) {
+const utilAjaxExecute = function () {
+  if (configTable !== undefined && configTable !== null && configTable !== undefined && configTable !== undefined) {
     utils.api(JSON.stringify({
-        "start_date": document.querySelector(".date-range").value
-    }), `${apiHost}allotments`, 'POST', config.loadData);
+      start_date: document.querySelector('.date-range').value
+    }), `${apiHost}allotments`, 'POST', config.loadData)
   }
 
-  if(configData != undefined)
-  {
-    if(channel != null && channel.value != '')
-    {
+  if (configData !== undefined) {
+    if (channel !== null && channel.value !== '') {
       channel.dispatchEvent(fireEvent)
     }
   }
 
-  if(configData) {
+  if (configData) {
     reseller.dispatchEvent(fireEvent)
 
-    $( document ).ready(function() {
-      setTimeout(function(){
+    $( document ).ready(function () {
+      setTimeout(function () {
         reseller.value = configData.reseller
         equivalence.value = configData.service
-      }, 2500);
+      }, 2500)
 
-      setTimeout(function(){
+      setTimeout(function () {
         equivalence.value = configData.service
-      }, 3500);
-
+      }, 3500)
     })
   }
 }
 
-$( document ).ready(function() {
+$(document).ready(function () {
+  utilAjaxExecute()
 
-  utilAjaxExecute();
+  document.querySelectorAll('.date-format').flatpickr({
+    dateFormat: 'Y-m-d'
+  })
 
-  document.querySelectorAll(".date-format").flatpickr({
-    dateFormat: "Y-m-d"
-  });
-
-  document.querySelectorAll(".date-range").flatpickr({
-    // mode: "range",
-    altFormat: "F j, Y",
-    dateFormat: "Y-m-d",
-    defaultDate: "today",
+  document.querySelectorAll('.date-range').flatpickr({
+    altFormat: 'F j, Y',
+    dateFormat: 'Y-m-d',
+    defaultDate: 'today',
     altInput: true
-  });
+  })
 
-  document.querySelectorAll(".time-format").flatpickr({
+  document.querySelectorAll('.time-format').flatpickr({
     enableTime: true,
     noCalendar: true,
-    dateFormat: "H:i",
+    dateFormat: 'H:i',
     time_24hr: true
-  });
-
-});
+  })
+})

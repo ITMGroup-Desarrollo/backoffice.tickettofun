@@ -30,13 +30,26 @@ class Allotment extends CI_Model
     {
         $this->db->close();
         $table_content = $this->Page->get_settings('config');
+
+        $rol_id = $this->session->userdata('rol_id');
+
+        if ($rol_id != 1 && $rol_id != 2 && $rol_id != 3)
+        {
+            $table = $table_content['CONFIG_BASE_TABLE'];
+
+            array_splice($table->contents[0]->contents->contents, 10, 1);
+            array_splice($table->contents[2]->contents->contents, 10, 1);
+
+            $table_content['CONFIG_BASE_TABLE'] = $table;
+        }
+
         $table_content = $this->build->build_components(
             $table_content['CONFIG_BASE_TABLE']
         );
 
         // Call API here!
         $params = new stdClass();
-        if( isset($_POST['dates']) && $_POST['dates'] != '' ) {
+        if (isset($_POST['dates']) && $_POST['dates'] != '') {
             $dates = explode('to',$_POST['dates']);
         } else {
             $dates[0] = date('Y-m-d');
