@@ -1,7 +1,7 @@
 'use strict'
 
 var utils = {
-  loadJs: function loadJs(file) {
+  loadJs: function loadJs (file) {
     (function (d, t) {
       var s = d.createElement(t)
       s.src = `./assets/js/${file}.js`
@@ -10,8 +10,8 @@ var utils = {
         if (rs) if (rs !== 'complete') if (rs !== 'loaded') return
       }
 
-      var src = d.getElementsByTagName(t)[0],
-          par = src.parentNode
+      var src = d.getElementsByTagName(t)[0]
+      var par = src.parentNode
       par.insertBefore(s, src)
     })(document, 'script')
   },
@@ -48,10 +48,12 @@ var utils = {
     var xHR = new XMLHttpRequest()
 
     xHR.onreadystatechange = function () {
-      if (xHR.readyState == 4) {
-        if (xHR.status == 200)
-          if (method !== null)
+      if (xHR.readyState === 4) {
+        if (xHR.status === 200) {
+          if (method !== null) {
             method(xHR.response, element)
+          }
+        }
       }
     }
 
@@ -59,7 +61,7 @@ var utils = {
     xHR.setRequestHeader('Content-Type', 'application/json')
     xHR.send(data)
   },
-  buildModal: function buildModal(id, cnHeader, cnButton) {
+  buildModal: function (id, cnHeader, cnButton) {
     var title = `${id}-title`
     var footer = `${id}-footer`
     var content = `${id}-content`
@@ -96,8 +98,8 @@ var utils = {
     footer = this.createElement('footer', 'modal_footer text-center', footer)
     content = this.createElement('div', 'modal__content', content)
 
-    if(cnButton === true) {
-      if(id === 'confirm-modal'){
+    if (cnButton === true) {
+      if (id === 'confirm-modal') {
         var cancelButton = this.createElement(
           'button',
           'btn btn-default',
@@ -123,7 +125,6 @@ var utils = {
       acceptButton.setAttribute('data-micromodal-close', '')
 
       footer.appendChild(acceptButton)
-
     }
 
     roleContent.appendChild(header)
@@ -144,6 +145,19 @@ var utils = {
     if (content !== undefined) e.innerHTML = content
 
     return e
+  },
+  buildOptions: function (data, options) {
+    const key = data.key
+    const value = data.value
+    const element = data.element
+
+    var index = 1
+    for (var i in options) {
+      element.append(new Option(options[i][key], options[i][value]))
+      element.options.item(index++).setAttribute('id', options[i][value])
+    }
+
+    element.options.namedItem(data.id).selected = true
   },
   dataValidator: function (fields) {
     var valid = 'true'
@@ -175,12 +189,12 @@ var utils = {
     }
     return valid
   },
-  isJson: function(str) {
+  isJson: function (str) {
     try {
-        JSON.parse(str);
+      JSON.parse(str)
     } catch (e) {
-        return false;
+      return false
     }
-    return true;
+    return true
   }
 }
