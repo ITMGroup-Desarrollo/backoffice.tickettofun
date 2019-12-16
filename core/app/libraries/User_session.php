@@ -36,7 +36,7 @@ class User_session
             'user_name' => $credentials->user->user_name,
             'rol_id'    => $credentials->user->rol_id,
             'token'     => $credentials->token,
-            'avatar'    => $credentials->avatar
+            'avatar'    => $credentials->user->avatar
         );
 
         $this->CI->load->helper('cookie');
