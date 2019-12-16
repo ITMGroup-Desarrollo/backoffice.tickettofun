@@ -31,17 +31,11 @@ class Account_profile extends CI_Model
         $this->db->close();
         $contents = $this->Page->get_settings('profile');
 
-        $this->model = $this->build->build_components(
+        $this->model .= $this->build->build_components(
             $contents['ACCOUNT_PROFILE_FORM']
         );
 
         $this->model = str_replace('{id}', 'account-profile', $this->model);
-
-        $this->model .= $this->build->build_components(
-            $contents['ACCOUNT_PWD_FORM']
-        );
-
-        $this->model = str_replace('{id}', 'account-pwd', $this->model);
 
         return $this->model;
     }
@@ -68,6 +62,7 @@ class Account_profile extends CI_Model
             $user->last_name     = $response->message->last_name;
             $user->email_addr    = $response->message->email_addr;
             $user->active        = $response->message->active_status;
+            $user->avatar        = $response->message->avatar;
         }
 
         return $user;

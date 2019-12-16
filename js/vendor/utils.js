@@ -15,7 +15,7 @@ var utils = {
       par.insertBefore(s, src)
     })(document, 'script')
   },
-  api: function (data, endpoint, httpverb, method, element) {
+  api: function (data, endpoint, httpverb, method, element,contentType) {
     if (method !== null) MicroModal.show('wait-modal')
 
     var xHR = new XMLHttpRequest()
@@ -37,7 +37,10 @@ var utils = {
     }
 
     xHR.open(httpverb, endpoint, true)
-    xHR.setRequestHeader('Content-Type', 'application/json')
+
+    if(typeof contentType === 'undefined')
+      xHR.setRequestHeader('Content-Type', 'application/json')
+
     xHR.setRequestHeader('Authorization', token)
     xHR.withCredentials = true
     xHR.send(data)

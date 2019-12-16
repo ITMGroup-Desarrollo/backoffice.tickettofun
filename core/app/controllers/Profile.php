@@ -21,23 +21,25 @@ class Profile extends CI_Controller
         $data = $this->Page->get_contents();
         $this->load->Model('Account_profile');
 
-        $form = $this->Account_profile->get_form();  
+        $form = $this->Account_profile->get_form();
 
         $data['contents'] = str_replace(
             '{title}', 'Account Profle settings', $data['contents']
         );
 
-        $image = '<div id="panel" class="container"><h3>Profile settings</h3><p class="intro">Change your account information, avatar, login credentials, etc.</p><form class="pt-20 pb-20"><div class="form-group avatar-field clearfix"><div class="col-sm-3"><img src="http://localhost/itm-backoffice/img/avatars/10.jpg" class="img-responsive img-circle"></div><div class="col-sm-9"><label>Set up your avatar picture</label><input type="file"></div></div></form></div>';
-
         $data['contents'] = str_replace(
-            '{content}', $image . $form, $data['contents']
+            '{content}', $form, $data['contents']
         );
 
         $profile = $this->Account_profile->get_data($this->session->userdata('user_id'));
 
         $profile = 'window.profile = ' . json_encode($profile);
-
         $script = custom('script', '', $profile);
+
+        $data['scripts'] = $script .  $data['scripts'];
+
+        $pathAvatar = 'window.pathAvatar = ' . '"'. AVATAR . '"';
+        $script = custom('script', '', $pathAvatar);
 
         $data['scripts'] = $script .  $data['scripts'];
 

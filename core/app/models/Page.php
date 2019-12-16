@@ -37,6 +37,7 @@ class Page extends CI_Model
         $this->db->close();
         $this->load->library('session');
         $user_name = $this->session->userdata('user_name');
+        $user_avatar = (empty($this->session->userdata('avatar')))? 'generic.jpg' : $this->session->userdata('avatar');
 
         // If page need an special settings
         $this->settings_values .=  ',' . $this->page_name;
@@ -76,11 +77,14 @@ class Page extends CI_Model
             $current_user = $build->build_components($this->settings['ACCOUNT']);
             $bottom_menu = $build->build_components($this->settings['BOTTOM-MENU']);
 
-            $current_user = str_replace('{user_name}', $user_name, $current_user);
+            $current_user = str_replace('{img_avatar}', $user_avatar, $current_user);
+            $current_user = str_replace('{user_name}',$user_name, $current_user);
+
             $body = str_replace('{current_user}', $current_user, $body);
             $body = str_replace('{bottom_menu}', $bottom_menu, $body);
 
             $components = $this->_get_components();
+
             $body = str_replace('{contents}', $components, $body);
         }
         else

@@ -180,36 +180,50 @@ if ( ! function_exists('img'))
 		if ( ! is_array($src) )
 		{
 			$src = array('src' => $src);
-		}
+        }
 
-		// If there is no alt attribute defined, set it to an empty string
-		if ( ! isset($src['alt']))
-		{
-			$src['alt'] = '';
-		}
+        if(isset($src['source']))
+        {
+            $img =  '<img';
+            $img.=  ' src="'. $src['source'] . $src['src'].'" ';
 
-		$img = '<img';
+            foreach ($src as $k => $v)
+            {
+                if($k !== 'src' && $k !== 'source')
+                $img .= ' '.$k.'="'.$v.'"';
+            }
 
-		foreach ($src as $k => $v)
-		{
-			if ($k === 'src' && ! preg_match('#^(data:[a-z,;])|(([a-z]+:)?(?<!data:)//)#i', $v))
-			{
-				if ($index_page === TRUE)
-				{
-					$img .= ' src="'.get_instance()->config->site_url($v).'"';
-				}
-				else
-				{
-					$img .= ' src="'.get_instance()->config->base_url($v).'"';
-				}
-			}
-			else
-			{
-				$img .= ' '.$k.'="'.$v.'"';
-			}
-		}
+            return $img._stringify_attributes($attributes).' />';
+        }
 
-		return $img._stringify_attributes($attributes).' />';
+        // If there is no alt attribute defined, set it to an empty string
+        if ( ! isset($src['alt']))
+        {
+            $src['alt'] = '';
+        }
+
+        $img = '<img';
+
+        foreach ($src as $k => $v)
+        {
+            if ($k === 'src' && ! preg_match('#^(data:[a-z,;])|(([a-z]+:)?(?<!data:)//)#i', $v))
+            {
+                if ($index_page === TRUE)
+                {
+                    $img .= ' src="'.get_instance()->config->site_url($v).'"';
+                }
+                else
+                {
+                    $img .= ' src="'.get_instance()->config->base_url($v).'"';
+                }
+            }
+            else
+            {
+                $img .= ' '.$k.'="'.$v.'"';
+            }
+        }
+
+        return $img._stringify_attributes($attributes).' />';
 	}
 }
 

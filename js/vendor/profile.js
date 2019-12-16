@@ -4,6 +4,7 @@ var form
 var base = window.baseUrl
 var token = window.token
 var profileData = window.profile
+var pathAvatar = window.pathAvatar
 
 var profile = {
 
@@ -38,6 +39,37 @@ var profile = {
     document.querySelector('[name="last_name"]').value = profileData.last_name
     document.querySelector('[name="first_name"]').value = profileData.first_name
     document.querySelector('[name="email_addr"]').value = profileData.email_addr
+    document.querySelector('[name="img-avatar"]').src = (profileData.avatar === '')? pathAvatar + 'generic.jpg' : pathAvatar + profileData.avatar
+    document.querySelector('[name="hidden-avatar"]').value = profileData.avatar
+  },
+
+  setAvatar: function(response){
+    MicroModal.close('wait-modal')
+
+    response = JSON.parse(response)
+    var _message = ''
+    var _alertModal = document.getElementById('alert-modal-content')
+
+    if (codes.hasOwnProperty(response.code)) {
+      _message = utils.createElement('p', '', '', response.message)
+
+      _alertModal.innerHTML = ''
+      _alertModal.appendChild(_message)
+
+      MicroModal.show('alert-modal')
+      document.querySelector('[name="avatar"]').value = ''
+    }
+    else if (response.code == 200) {
+      var _inputFile = document.querySelector('[name="avatar"]')
+      var _imgAvatar = document.querySelector('[name="img-avatar"]')
+      var _reader = new FileReader()
+      _reader.onloadend = function() {
+        _imgAvatar.src = _reader.result
+      }
+      _reader.readAsDataURL(_inputFile.files[0])
+      _inputFile.value =''
+      document.querySelector('[name="hidden-avatar"]').value = response.message
+    }
   }
 }
 
@@ -49,7 +81,7 @@ if (cancel != null) {
 
     form = document.querySelector('#account-profile')
     if (form != null)
-      user.setData()
+      profile.setData()
   });
 }
 
@@ -71,50 +103,18 @@ if (saveprofile != null) {
         first_name: document.querySelector('[name="first_name"]').value,
         last_name: document.querySelector('[name="last_name"]').value,
         email_addr: document.querySelector('[name="email_addr"]').value,
+        user_password: document.querySelector('[name="user_password"]').value,
+        confirm_password: document.querySelector('[name="confirm_password"]').value,
         active_status: document.querySelector('[name="status"]').value,
+        avatar: document.querySelector('[name="hidden-avatar"]').value
       }
 
       form = document.querySelector('#account-profile')
 
       if (form != null) {
-        var url = `${apiHost}users/edit/${profileData.id}`
-        utils.api(JSON.stringify(info), url, 'PUT', profile.update)
-      }
-    }
-  })
-}
-
-var savepwd = document.querySelector('#account-pwd .save')
-if (savepwd != null) {
-
-  savepwd.addEventListener('click', function(e) {
-    e.preventDefault()
-
-    var valid = 'true'
-    var fields = document.querySelectorAll('#account-pwd [data-validator]')
-
-    valid = utils.dataValidator(fields)
-
-    if(valid) {
-
-      info = {
-        user_password: document.querySelector('[name="user_password"]').value,
-        confirm_password: document.querySelector('[name="confirm_password"]').value,
-      }
-
-      form = document.querySelector('#account-pwd')
-
-      if (form != null) {
-
-        if(info.user_password === info.confirm_password) {
-
-          var url = `${apiHost}users/changepassword/${profileData.id}`
-          utils.api(JSON.stringify(info), url, 'PUT', profile.update)
-
-        } else {
-
-           var _message = ''
-           var _alertModal = document.getElementById('alert-modal-content')
+        if(info.user_password !== info.confirm_password) {
+          var _message = ''
+          var _alertModal = document.getElementById('alert-modal-content')
 
           _message = utils.createElement('p', '', '', 'Error! The password and the password confirmation do not match. Try again.')
 
@@ -122,6 +122,14 @@ if (savepwd != null) {
           _alertModal.appendChild(_message)
 
           MicroModal.show('alert-modal')
+        }
+        else {
+          var url = `${apiHost}users/edit/${profileData.id}`
+          utils.api(JSON.stringify(info), url, 'PUT', profile.update)
+
+          profileData.last_name = document.querySelector('[name="last_name"]').value
+          profileData.first_name = document.querySelector('[name="first_name"]').value
+          profileData.email_addr = document.querySelector('[name="email_addr"]').value
         }
       }
     }
@@ -132,4 +140,19 @@ form = document.querySelector('#account-profile')
 
 if (form != null)
   profile.setData()
+
+var avatar = document.querySelector('[name="avatar"]')
+
+avatar.addEventListener('change', function(e) {
+    e.preventDefault()
+
+    var url = `${apiHost}general/upload_avatar`
+    var formAvatar =  new FormData()
+    var inputFile = document.querySelector('[name="avatar"]')
+
+    formAvatar.append("user_id",profileData.id)
+    formAvatar.append("newfile",inputFile.files[0])
+    utils.api(formAvatar, url, 'POST', profile.setAvatar,null,1)
+
+});
 
