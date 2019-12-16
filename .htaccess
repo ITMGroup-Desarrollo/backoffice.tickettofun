@@ -1,3 +1,5 @@
+RewriteRule "^.well-known/acme-challenge" - [L]
+
 RewriteEngine on
 RewriteCond $1 !^(index\.php|resources|robots\.txt)
 RewriteCond %{REQUEST_FILENAME} !-f
