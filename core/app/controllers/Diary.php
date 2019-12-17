@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Dairy extends CI_Controller
+class Diary extends CI_Controller
 {
     /**
     *Index page for this controller
@@ -18,7 +18,7 @@ class Dairy extends CI_Controller
 
         $this->load->Model('Page');
         $this->Page->page_name = $view;
-        $this->Page->menu_active = 'dairy';
+        $this->Page->menu_active = 'diary';
         $this->Page->submenu_active = $option;
 
         $data = $this->Page->get_contents();
@@ -30,8 +30,8 @@ class Dairy extends CI_Controller
 
         $data['contents'] = str_replace('{date}', $next_date, $data['contents']);
 
-        $this->load->Model('Daries');
-        $locations = $this->Daries->get_location_distribution();
+        $this->load->Model('Diaries');
+        $locations = $this->Diaries->get_location_distribution();
 
         $data['contents'] = str_replace(
             '{spec}', $locations['tours'], $data['contents']
@@ -49,7 +49,7 @@ class Dairy extends CI_Controller
             '{details}', $locations['details'], $data['contents']
         );
 
-        $form = $this->Daries->get_form();
+        $form = $this->Diaries->get_form();
         $data['contents'] = str_replace(
             'form-send', $form, $data['contents']
         );

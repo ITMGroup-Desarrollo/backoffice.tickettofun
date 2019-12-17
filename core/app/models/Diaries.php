@@ -8,7 +8,7 @@
 * @Author ITM Dev Team
 * @Since Version 1.0.0
 */
-class Daries extends CI_Model
+class Diaries extends CI_Model
 {
     public $model;
     public $settings;
@@ -29,9 +29,10 @@ class Daries extends CI_Model
 
         $locations = array ();
 
-        $this->settings = $this->Page->get_settings('dairy');
+        $this->settings = $this->Page->get_settings('diary');
+
         $element = $this->build->build_components($this->settings['SPEC']);
-        $table = $this->build->build_components($this->settings['DAIRY_TABLE']);
+        $table = $this->build->build_components($this->settings['DIARY_TABLE']);
         $ship_details = $this->build->build_components($this->settings['SHIP_SPEC']);
 
         // Tours
@@ -153,7 +154,7 @@ class Daries extends CI_Model
     {
 
         $this->db->close();
-        $contents = $this->Page->get_settings('dairy');
+        $contents = $this->Page->get_settings('diary');
 
         $form = 'DIARY_FORM';
 
