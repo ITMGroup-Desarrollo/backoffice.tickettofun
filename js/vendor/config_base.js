@@ -3,7 +3,7 @@ var info
 var form
 var user = window.user
 var configData = window.config
-
+var objData
 const fireEvent = new Event('change')
 
 var editor
@@ -31,9 +31,9 @@ var config = {
           data.max_available,
           data.available,
           data.active_status,
-          data.allotment_id
+          data.allotment_id,
+          data.arrive_active_status
         ]
-
         return dataArray
       })
     }
@@ -64,11 +64,14 @@ var config = {
         data: 'allotment_id',
         className: 'text-center',
         render: function (data, type, row, meta) {
-          if (row[9] === 0) {
-            return `<a class="btn-link edit" href="configuration/${row[10]}"><i class="fas fa-edit"></i></a>`
-          }
-          else {
-            return `<a class="btn-link" data-toggle="tooltip" data-placement="left" title="Transfer" href="configuration/${row[10]}"><i class="fas fa-exchange-alt"></i></a> <a class="btn-link edit" data-toggle="tooltip" data-placement="left" title="Edit allotment" href="configuration/${row[10]}"><i class="fas fa-edit"></i></a> <a class="btn-link delete" data-toggle="tooltip" data-placement="left" title="Delete allotment" data-id="${row[10]}"><i class="fas fa-trash"></i></a>`
+          if (row[11] === 1) {
+            if (row[9] === 0) {
+              return `<a class="btn-link edit" href="configuration/${row[10]}"><i class="fas fa-edit"></i></a>`
+            } else {
+              return `<a class="btn-link" data-toggle="tooltip" data-placement="left" title="Transfer" href="configuration/${row[10]}"><i class="fas fa-exchange-alt"></i></a> <a class="btn-link edit" data-toggle="tooltip" data-placement="left" title="Edit allotment" href="configuration/${row[10]}"><i class="fas fa-edit"></i></a> <a class="btn-link delete" data-toggle="tooltip" data-placement="left" title="Delete allotment" data-id="${row[10]}"><i class="fas fa-trash"></i></a>`
+            }
+          } else {
+            return '';
           }
         }
       })
@@ -102,6 +105,8 @@ var config = {
           }
 
           var id = element.getAttribute('data-id')
+          config.confirm(element)
+
 
           var url = `${apiHost}allotments/del/${id}`
           utils.api(JSON.stringify({}), url, 'DELETE', config.delete, element)
@@ -110,6 +115,35 @@ var config = {
     }
 
     MicroModal.close('wait-modal')
+  },
+  confirm: function (element, option = null){
+
+    var _message = ''
+    var _confirmModal = document.getElementById('confirm-modal-content')
+    _message = utils.createElement('p', '', '', '¿Are you sure delete allotment?')
+
+    _confirmModal.innerHTML = ''
+    _confirmModal.appendChild(_message)
+
+    const btnConfirmDelete = document.querySelector('.confirm-delete')
+
+
+    btnConfirmDelete.addEventListener('click', function (e) {
+        e.preventDefault()
+        if (option === null) {
+          var info = { user_id: window.user }
+          var id = element.getAttribute('data-id')
+          var url = `${apiHost}allotments/del/${id}`
+
+          utils.api(JSON.stringify(info), url, 'DELETE', config.delete, element)
+        } else if (option === 'update') {
+          var url = `${apiHost}allotments/edit/${objData.allotment_id}`
+          utils.api(JSON.stringify(objData), url, 'PUT', config.update)
+        }
+    })
+
+    MicroModal.show('confirm-modal')
+
   },
   add: function (response) {
     MicroModal.close('wait-modal')
@@ -159,9 +193,7 @@ var config = {
     var _alertModal = document.getElementById('alert-modal-content')
 
     if (codes.hasOwnProperty(response.code)) {
-      let decode = JSON.parse(response.message)
-
-      _message = utils.createElement('p', '', '', decode.message)
+      _message = utils.createElement('p', '', '', response.message)
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
@@ -293,8 +325,16 @@ if (save != null) {
         info.active_status = document.querySelector('[name="status"]').value
         info.arrive_id = configData.arrive_id;
 
-        var url = `${apiHost}allotments/edit/${configData.id}`
-        utils.api(JSON.stringify(info), url, 'PUT', config.update)
+        if (parseInt(info.active_status) === 1) {
+          var url = `${apiHost}allotments/edit/${configData.id}`
+          utils.api(JSON.stringify(info), url, 'PUT', config.update)
+        }else{
+          info.allotment_id = configData.id;
+          objData = info;
+
+          config.confirm(null, 'update');
+        }
+
       }
     }
   })

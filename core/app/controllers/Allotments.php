@@ -51,6 +51,7 @@ class Allotments extends CI_Controller
                 '{content}', $form, $data['contents']
             );
         }
+
         $this->load->view('Master', $data);
     }
 
@@ -216,6 +217,11 @@ class Allotments extends CI_Controller
         $data['contents'] = str_replace(
             $header_keys, $header_elements, $data['contents']
         );
+
+        $userId = 'window.user = ' . $this->session->userdata('user_id');
+
+        $script = custom('script', '', $userId);
+        $data['scripts'] = $script . $data['scripts'];
 
         $this->load->view('Master', $data);
     }

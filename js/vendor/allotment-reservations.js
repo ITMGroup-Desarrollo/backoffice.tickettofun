@@ -94,7 +94,8 @@ var allotment = {
           data.available,
           data.pax,
           data.process_status_id,
-          data.reservation_id
+          data.reservation_id,
+          data.allotment_active_status
         ]
 
         return dataArray
@@ -177,7 +178,7 @@ var allotment = {
           data: 'reservation_id',
           className: 'center',
           render: function (data, type, row, meta) {
-            if (row[0] === 'Cruise') {
+            if (row[0] === 'Cruise' && row[13] === 1) {
 
               let _tagAction = ''
               if (row[11] === 3) {
