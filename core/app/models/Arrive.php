@@ -81,7 +81,6 @@ class Arrive extends CI_Model
 
         if ($response->code == 200)
         {
-            // echo "<pre>"; print_r($response->message); exit;
             $arrives->id = $response->message->arrive_id;
 
             $arrives->channel_id = $response->message->channel_id;
@@ -108,5 +107,35 @@ class Arrive extends CI_Model
 
         return $arrives;
     }
+
+    public function get_list_allotments()
+    {
+        $this->db->close();
+        $table_content = $this->Page->get_settings('arrives');
+
+        $table_content = $this->build->build_components(
+            $table_content['ALLOTMENTS_ON_ARRIVES_TABLE']
+        );
+
+        $this->model = str_replace('{rows}', '', $table_content);
+
+        return $this->model;
+    }
+
+
+    public function get_formbtn()
+    {
+        $this->db->close();
+        $contents = $this->Page->get_settings('arrives');
+
+        $form = 'ALLOTMENTS_FORM';
+
+        $this->model = $this->build->build_components(
+            $contents[$form]
+        );
+
+        return $this->model;
+    }
+
 
 }

@@ -6,7 +6,7 @@ var token = window.token
 var apikeyData = window.apikey
 var user_create_id = window.user_create_id
 
-var apikey= {
+var apikey = {
   add: function(response) {
     MicroModal.close('wait-modal')
 

@@ -43,6 +43,18 @@ class Arrives extends CI_Controller
             $data['contents'] = str_replace(
                 '{content}', "<hr />".$table, $data['contents']
             );
+
+            $data['contents'] = str_replace(
+                '{allotmentsTitle}', '', $data['contents']
+            );
+
+            $data['contents'] = str_replace(
+                '{allotments}', '', $data['contents']
+            );
+            $data['contents'] = str_replace(
+                '{contentbtn}', '', $data['contents']
+            );
+
         }
         else
         {
@@ -59,6 +71,16 @@ class Arrives extends CI_Controller
 
             $data['contents'] = str_replace(
                 '{content}', $form, $data['contents']
+            );
+            $data['contents'] = str_replace(
+                '{allotmentsTitle}', '', $data['contents']
+            );
+            $data['contents'] = str_replace(
+                '{allotments}', '', $data['contents']
+            );
+
+            $data['contents'] = str_replace(
+                '{contentbtn}', '', $data['contents']
             );
 
             $userId = 'window.user = ' . $this->session->userdata('user_id');
@@ -105,8 +127,33 @@ class Arrives extends CI_Controller
             '{content}', $form, $data['contents']
         );
 
+        $table = $this->Arrive->get_list_allotments();
+
+        $data['contents'] = str_replace(
+            '{allotmentsTitle}', 'Edit Allotments of Cruise', $data['contents']
+        );
+
+        $data['contents'] = str_replace(
+            '{allotments}', $table, $data['contents']
+        );
+
+        $formbtn = $this->Arrive->get_formbtn();
+        $formbtn = str_replace('{id}', 'allotmentsbtn', $formbtn);
+        $formbtn = str_replace('btn btn-success save', 'btn btn-info load-allotments', $formbtn);
+        $data['contents'] = str_replace(
+            '{contentbtn}', $formbtn, $data['contents']
+        );
+
         $arrives = $this->Arrive->get_data($option);
         $arrives = 'window.arrives = ' . json_encode($arrives);
+
+        $data['contents'] = str_replace(
+            '{classcontainererrors}', ' hidden', $data['contents']
+        );
+
+        $userId = 'window.user = ' . $this->session->userdata('user_id');
+        $script = custom('script', '', $userId);
+        $data['scripts'] = $script .  $data['scripts'];
 
         $script = custom('script', '', $arrives);
         $data['scripts'] = $script .  $data['scripts'];
