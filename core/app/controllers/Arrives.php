@@ -140,6 +140,8 @@ class Arrives extends CI_Controller
         $formbtn = $this->Arrive->get_formbtn();
         $formbtn = str_replace('{id}', 'allotmentsbtn', $formbtn);
         $formbtn = str_replace('btn btn-success save', 'btn btn-info load-allotments', $formbtn);
+        $formbtn = str_replace('Save', 'Load', $formbtn);
+
         $data['contents'] = str_replace(
             '{contentbtn}', $formbtn, $data['contents']
         );

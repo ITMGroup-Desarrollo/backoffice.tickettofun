@@ -6,9 +6,8 @@ var user = window.user
 var base = window.baseUrl
 var arrivesData = window.arrives
 
-var btnLoad = document.querySelector('.load-allotments')
-if (btnLoad != null) {
-  btnLoad.innerHTML = 'Load'
+var screenUpdate = document.getElementById('update-arrives')
+if (screenUpdate != null) {
   var changeBtnModal = document.querySelector('.confirm-delete')
   changeBtnModal.className = 'btn btn-outline-warning confirm-save-end'
 }
@@ -496,6 +495,12 @@ var arrives = {
         arrives.paintDivError(datajs.error)
       }
     }
+    if (type === 'firstCallBase') {
+      if (data.code !== 200) {
+        var btnLoad = document.querySelector('.load-allotments')
+        btnLoad.className = 'btn btn-info load-allotments hidden'
+      }
+    }
   },
   buildJson: function (type) {
     var valid = 'true'
@@ -787,5 +792,6 @@ $(function () {
 var allotmentsTable = document.querySelector('#allotments-registers')
 if (allotmentsTable !== null) {
   const id = arrivesData.id
-  utils.api(JSON.stringify({}), `${apiHost}allotments/arrive/${id}`, 'GET', arrives.buildRegistersAllotments)
+  utils.api(JSON.stringify({}), `${apiHost}allotments/arrive/${id}`, 'GET', arrives.buildRegistersAllotments, 'firstCallBase'
+  )
 }
