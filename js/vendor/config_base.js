@@ -104,12 +104,7 @@ var config = {
             element = e.target.parentElement
           }
 
-          var id = element.getAttribute('data-id')
           config.confirm(element)
-
-
-          var url = `${apiHost}allotments/del/${id}`
-          utils.api(JSON.stringify({}), url, 'DELETE', config.delete, element)
         })
       }
     }
@@ -130,6 +125,7 @@ var config = {
 
     btnConfirmDelete.addEventListener('click', function (e) {
         e.preventDefault()
+
         if (option === null) {
           var info = { user_id: window.user }
           var id = element.getAttribute('data-id')

@@ -82,11 +82,11 @@ class Arrives extends CI_Controller
             $data['contents'] = str_replace(
                 '{contentbtn}', '', $data['contents']
             );
-
-            $userId = 'window.user = ' . $this->session->userdata('user_id');
-            $script = custom('script', '', $userId);
-            $data['scripts'] = $script .  $data['scripts'];
         }
+
+        $userId = 'window.user = ' . $this->session->userdata('user_id');
+        $script = custom('script', '', $userId);
+        $data['scripts'] = $script .  $data['scripts'];
 
         $this->load->view('Master', $data);
     }

@@ -169,33 +169,28 @@ var arrives = {
       MicroModal.show('alert-modal')
     }
   },
-  confirmArriveAllotment: function (response, element) {
-    response = JSON.parse(response)
+  confirm: function (element) {
 
-    var id = element.getAttribute('data-id');
-    var url = `http://localhost:8181/api/v1/arrives/del/${id}`
+    var _message = ''
+    var _confirmModal = document.getElementById('confirm-modal-content')
+    _message = utils.createElement('p', '', '', '¿Are you sure delete calls?')
 
+    _confirmModal.innerHTML = ''
+    _confirmModal.appendChild(_message)
 
-    if (response.code === 200) {
-      MicroModal.close('wait-modal')
+    const btnConfirmDelete = document.querySelector('.confirm-delete')
 
-      var btnCanccel = document.querySelector('.confirm-delete')
-      btnCanccel.setAttribute('data-id', id)
-      btnCanccel.removeAttribute('style', 'display')
+    btnConfirmDelete.addEventListener('click', function (e) {
+      e.preventDefault()
 
-      var _message = ''
-      var _alertModal = document.getElementById('confirm-modal-content')
+      var id = element.getAttribute('data-id')
+      var url = `${apiHost}arrives/del/${id}`
 
-      _message = utils.createElement('p', '', '', 'The ship have already configurations in use,  do you want to remove?')
+      utils.api(JSON.stringify({"user": user}), url, 'DELETE', arrives.delete, element)
+    })
 
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
+    MicroModal.show('confirm-modal')
 
-      MicroModal.show('confirm-modal')
-
-    } else {
-      utils.api(JSON.stringify({}), url, 'DELETE', arrives.delete, element)
-    }
   },
   loadData: function (response) {
     const data = JSON.parse(response)
@@ -277,10 +272,7 @@ var arrives = {
             element = e.target.parentElement
           }
 
-          var id = element.getAttribute('data-id')
-          var url = `${apiHost}arrives/arriveintoallotment/${id}`
-
-          utils.api(JSON.stringify({}), url, 'GET', arrives.confirmArriveAllotment, element)
+          arrives.confirm(element);
         })
       }
     }
@@ -356,19 +348,6 @@ var arrives = {
 
         return dataArray
       })
-    }
-
-    if (type === 'saveEnd') {
-      if (data.code === 200) {
-        var _alertModal = document.getElementById('alert-modal-content')
-        var _message = ''
-        _message = utils.createElement('p', '', '', 'Success! Configuration added correctly')
-        _alertModal.innerHTML = ''
-        _alertModal.appendChild(_message)
-        MicroModal.show('alert-modal')
-      } else {
-        arrives.paintDivError(datajs.error)
-      }
     }
 
     if ($.fn.DataTable.isDataTable(editor)) {
@@ -500,6 +479,23 @@ var arrives = {
     containerinfo.style.display = 'none'
     containerpaginate.style.display = 'none'
     MicroModal.close('wait-modal')
+
+    if (type === 'saveEnd') {
+      if (data.code === 200) {
+        var _message = ''
+        var _alertModal = document.getElementById('alert-modal-content')
+
+        _message = utils.createElement('p', '', '', 'Success! Configuration added correctly')
+
+        _alertModal.innerHTML = ''
+        _alertModal.appendChild(_message)
+
+        MicroModal.show('alert-modal')
+
+      } else {
+        arrives.paintDivError(datajs.error)
+      }
+    }
   },
   buildJson: function (type) {
     var valid = 'true'
