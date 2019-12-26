@@ -385,7 +385,8 @@ var arrives = {
               _tag = utils.createElement('input', 'form-control hrStart', 'hrStart' + row[5], '')
               _tag.setAttribute('value', row[9])
               var statusArrive = parseInt(document.querySelector('[name="status"]').value)
-              if ( parseInt(row[7]) === 0 || statusArrive === 0) {
+              // if ( parseInt(row[7]) === 0 || statusArrive === 0) {
+              if (statusArrive === 0) {
                 _tag.setAttribute('disabled', 'disabled')
               }
               return _tag.outerHTML
@@ -400,7 +401,7 @@ var arrives = {
               _tag.setAttribute('type', 'number')
               _tag.setAttribute('value', row[11])
               var statusArrive = parseInt(document.querySelector('[name="status"]').value)
-              if (parseInt(row[7]) === 0 || statusArrive === 0) {
+              if (statusArrive === 0) {
                 _tag.setAttribute('disabled', 'disabled')
               }
               return _tag.outerHTML
@@ -420,7 +421,7 @@ var arrives = {
               _tag.setAttribute('type', 'number')
               _tag.setAttribute('data-service-name', row[0])
               var statusArrive = parseInt(document.querySelector('[name="status"]').value)
-              if (parseInt(row[7]) === 0 || statusArrive === 0) {
+              if (statusArrive === 0) {
                 _tag.setAttribute('disabled', 'disabled')
               }
               return _tag.outerHTML
