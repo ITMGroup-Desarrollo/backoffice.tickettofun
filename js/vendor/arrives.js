@@ -382,7 +382,7 @@ var arrives = {
             data: 'reservation_id',
             render: function ( data, type, row, meta) {
               var _tag = ''
-              _tag =  utils.createElement('input', 'form-control hrStart', 'hrStart' + row[5], '')
+              _tag = utils.createElement('input', 'form-control hrStart', 'hrStart' + row[5], '')
               _tag.setAttribute('value', row[9])
               var statusArrive = parseInt(document.querySelector('[name="status"]').value)
               if ( parseInt(row[7]) === 0 || statusArrive === 0) {
@@ -396,7 +396,7 @@ var arrives = {
             data: 'reservation_id',
             render: function ( data, type, row, meta ) {
               var _tag = ''
-              _tag =  utils.createElement('input', 'form-control capmin', '', '')
+              _tag = utils.createElement('input', 'form-control capmin', '', '')
               _tag.setAttribute('type', 'number')
               _tag.setAttribute('value', row[11])
               var statusArrive = parseInt(document.querySelector('[name="status"]').value)
@@ -411,7 +411,7 @@ var arrives = {
             data: 'reservation_id',
             render: function (data, type, row, meta) {
               var _tag = ''
-              _tag=  utils.createElement('input', 'form-control capmax', '', '')
+              _tag = utils.createElement('input', 'form-control capmax', '', '')
               _tag.setAttribute('value', row[10])
               _tag.setAttribute('data-allotment', row[5])
               _tag.setAttribute('data-service', row[6])
@@ -457,7 +457,7 @@ var arrives = {
         aLengthMenu: [
           [20, 50, 100, -1], [20, 50, 100, 'All']
         ]
-      });
+      })
     editor.draw()
     editor.columns.adjust().draw()
 
@@ -591,6 +591,9 @@ var arrives = {
       general.frm = frm
       general.frmOrg = frmOrg
       general.list = arr
+
+      console.log('json',JSON.stringify(general))
+
 
       if (flag && type === 'load') {
         utils.api(JSON.stringify(general), `${apiHost}arrives/simulator/`, 'POST', arrives.buildRegistersAllotments, type)
