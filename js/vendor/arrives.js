@@ -5,6 +5,7 @@ var editor
 var user = window.user
 var base = window.baseUrl
 var arrivesData = window.arrives
+var goout = false
 
 var screenUpdate = document.getElementById('update-arrives')
 if (screenUpdate != null) {
@@ -60,18 +61,17 @@ const confirm = function () {
   var _message = ''
   var _confirmModal = document.getElementById('confirm-modal-content')
   _message = utils.createElement('p', '', '', '¿Are you sure save this configuration?')
-
   _confirmModal.innerHTML = ''
   _confirmModal.appendChild(_message)
+  MicroModal.show('confirm-modal')
 
   const btnConfirmSave = document.querySelector('.confirm-save-end')
-
   btnConfirmSave.addEventListener('click', function (e) {
     e.preventDefault()
+    goout = false
+    MicroModal.close()
     arrives.buildJson('saveEnd')
   })
-
-  MicroModal.show('confirm-modal')
 }
 
 var _contentBtns = document.getElementById('allotmentsbtn')
@@ -83,6 +83,9 @@ if (_contentBtns != null) {
     confirm()
   })
   _contenInter[0].appendChild(_btnSaveDefinitive)
+  var _cotainerErrors = utils.createElement('div', 'content-wrapper hidden', 'container-error-arrives', '')
+  _cotainerErrors.setAttribute('style', 'display: inline-block; background: red; text-align: center; color: white; margin-left:5px; padding:7px 7px 0 7px; border-radius:5px; min-width:60%;')
+  _contenInter[0].appendChild(_cotainerErrors)
 }
 
 var arrives = {
@@ -126,8 +129,7 @@ var arrives = {
       _alertModal.appendChild(_message)
 
       MicroModal.show('alert-modal')
-    }
-    else if (response.code == 204) {
+    } else if (response.code == 204) {
       _message = utils.createElement('p', '', '', 'Success! Cruise call updated correctly')
 
       _alertModal.innerHTML = ''
@@ -153,8 +155,7 @@ var arrives = {
       _alertModal.appendChild(_message)
 
       MicroModal.show('alert-modal')
-    }
-    else if (response.code === 200) {
+    } else if (response.code === 200) {
       var _status = document.querySelector(`[data-status="${id}"]`)
 
       _status.className = 'label label-danger'
@@ -169,7 +170,6 @@ var arrives = {
     }
   },
   confirm: function (element) {
-
     var _message = ''
     var _confirmModal = document.getElementById('confirm-modal-content')
     _message = utils.createElement('p', '', '', '¿Are you sure delete calls?')
@@ -185,11 +185,10 @@ var arrives = {
       var id = element.getAttribute('data-id')
       var url = `${apiHost}arrives/del/${id}`
 
-      utils.api(JSON.stringify({"user": user}), url, 'DELETE', arrives.delete, element)
+      utils.api(JSON.stringify({ user: user }), url, 'DELETE', arrives.delete, element)
     })
 
     MicroModal.show('confirm-modal')
-
   },
   loadData: function (response) {
     const data = JSON.parse(response)
@@ -225,7 +224,7 @@ var arrives = {
           targets: 7,
           className: 'center',
           data: 'arrive_id',
-          render: function ( data, type, row, meta ) {
+          render: function (data, type, row, meta) {
             if (row[7] === 0) {
               return `<span class="label label-danger" data-status="${row[8]}">Inactive</span>`
             } else {
@@ -237,10 +236,10 @@ var arrives = {
           targets: 8,
           data: 'allotment_id',
           className: 'center',
-          render: function ( data, type, row, meta ) {
+          render: function (data, type, row, meta) {
             const strAction = `<a class="schedule" href="${base}allotments/itinerary/${row[8]}"><i class="fas fa-calendar-alt"></i></a>`
 
-            if(row[7] === 0) {
+            if (row[7] === 0) {
               return `${strAction} <a class="edit" href="${row[8]}"><i class="fas fa-edit"></i></a>`
             } else {
               return `${strAction} <a class="edit" href="${row[8]}"><i class="fas fa-edit"></i></a>
@@ -261,7 +260,7 @@ var arrives = {
     editor.columns.adjust().draw()
 
     var options = document.querySelectorAll('.delete')
-    if(options) {
+    if (options) {
       for (var i = 0, l = options.length; i < l; i++) {
         options[i].addEventListener('click', function (e) {
           e.preventDefault()
@@ -271,7 +270,7 @@ var arrives = {
             element = e.target.parentElement
           }
 
-          arrives.confirm(element);
+          arrives.confirm(element)
         })
       }
     }
@@ -300,6 +299,7 @@ var arrives = {
   buildRegistersAllotments: function (response, type) {
     var containerErrors = document.getElementById('container-error-arrives')
     containerErrors.innerHTML = ''
+    containerErrors.className = 'content-wrapper hidden'
     const data = JSON.parse(response)
     let dataTable = []
 
@@ -362,7 +362,7 @@ var arrives = {
             targets: 1,
             className: '',
             data: 'reservation_id',
-            render: function ( data, type, row, meta) {
+            render: function (data, type, row, meta) {
               var _span1 = utils.createElement('span', 'schedule-start-base', '', row[1])
               var _span2 = utils.createElement('span', 'schedule-end-base', '', row[2])
               return _span1.outerHTML + '-' + _span2.outerHTML
@@ -371,7 +371,7 @@ var arrives = {
             targets: 2,
             className: '',
             data: 'reservation_id',
-            render: function ( data, type, row, meta) {
+            render: function (data, type, row, meta) {
               var _span1 = utils.createElement('span', 'min-base', '', row[3])
               var _span2 = utils.createElement('span', 'max-base', '', row[4])
               return _span1.outerHTML + '-' + _span2.outerHTML
@@ -380,12 +380,11 @@ var arrives = {
             targets: 3,
             className: '',
             data: 'reservation_id',
-            render: function ( data, type, row, meta) {
+            render: function (data, type, row, meta) {
               var _tag = ''
               _tag = utils.createElement('input', 'form-control hrStart', 'hrStart' + row[5], '')
               _tag.setAttribute('value', row[9])
               var statusArrive = parseInt(document.querySelector('[name="status"]').value)
-              // if ( parseInt(row[7]) === 0 || statusArrive === 0) {
               if (statusArrive === 0) {
                 _tag.setAttribute('disabled', 'disabled')
               }
@@ -395,7 +394,7 @@ var arrives = {
             targets: 4,
             className: '',
             data: 'reservation_id',
-            render: function ( data, type, row, meta ) {
+            render: function (data, type, row, meta) {
               var _tag = ''
               _tag = utils.createElement('input', 'form-control capmin', '', '')
               _tag.setAttribute('type', 'number')
@@ -430,7 +429,7 @@ var arrives = {
             targets: 6,
             className: '',
             data: 'reservation_id',
-            render: function ( data, type, row, meta ) {
+            render: function (data, type, row, meta) {
               var _spanStatus = ''
               if (row[12] === 1) {
                 _spanStatus = utils.createElement('span', 'label label-success', '', 'Active')
@@ -443,7 +442,7 @@ var arrives = {
             targets: 7,
             className: '',
             data: 'reservation_id',
-            render: function ( data, type, row, meta) {
+            render: function (data, type, row, meta) {
               var _spanError = utils.createElement('span', 'msg-error', '', row[8])
               return _spanError.outerHTML
             }
@@ -484,14 +483,11 @@ var arrives = {
       if (data.code === 200) {
         var _message = ''
         var _alertModal = document.getElementById('alert-modal-content')
-
-        _message = utils.createElement('p', '', '', 'Success! Configuration added correctly')
-
+        _message = utils.createElement('p', '', '', 'Success! Configuration saved correctly')
         _alertModal.innerHTML = ''
         _alertModal.appendChild(_message)
-
+        goout = false
         MicroModal.show('alert-modal')
-
       } else {
         arrives.paintDivError(datajs.error)
       }
@@ -593,9 +589,6 @@ var arrives = {
       general.frmOrg = frmOrg
       general.list = arr
 
-      console.log('json',JSON.stringify(general))
-
-
       if (flag && type === 'load') {
         utils.api(JSON.stringify(general), `${apiHost}arrives/simulator/`, 'POST', arrives.buildRegistersAllotments, type)
       }
@@ -609,8 +602,10 @@ var arrives = {
     var containerErrors = document.getElementById('container-error-arrives')
     for (var i = 0; i < error.length; i++) {
       var content = utils.createElement('p', '', '', error[i])
+
       containerErrors.appendChild(content)
     }
+    goout = true
     containerErrors.classList.remove('hidden')
   }
 }
@@ -663,10 +658,14 @@ if (save != null) {
     }
   })
 }
-var saveallotments = document.querySelector('.load-allotments')
-if (saveallotments != null) {
-  saveallotments.addEventListener('click', function (e) {
+var simulatorallotments = document.querySelector('.load-allotments')
+if (simulatorallotments != null) {
+  simulatorallotments.addEventListener('click', function (e) {
     e.preventDefault()
+    var containerErrors = document.getElementById('container-error-arrives')
+    containerErrors.innerHTML = ''
+    containerErrors.className = 'content-wrapper hidden'
+    goout = true
     arrives.buildJson('load')
   })
 }
@@ -726,8 +725,8 @@ if (configTable !== null) {
   const utilAjaxExecute = function () {
     if (configTable !== undefined && configTable !== null && configTable !== undefined && configTable !== undefined) {
       var url = `${apiHost}arrives`
-      let reseller = document.querySelector('[name="reseller"]').value
-      let ship = document.querySelector('[name="ship"]').value
+      const reseller = document.querySelector('[name="reseller"]').value
+      const ship = document.querySelector('[name="ship"]').value
       var dates = document.querySelector('[name="dates"]').value
       var info = new Object()
 
@@ -798,4 +797,13 @@ if (allotmentsTable !== null) {
   const id = arrivesData.id
   utils.api(JSON.stringify({}), `${apiHost}allotments/arrive/${id}`, 'GET', arrives.buildRegistersAllotments, 'firstCallBase'
   )
+}
+
+if (screenUpdate != null) {
+  window.addEventListener('beforeunload', function (e) {
+    if (goout) {
+      e.preventDefault()
+      e.returnValue = ''
+    }
+  })
 }
