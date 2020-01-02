@@ -160,7 +160,10 @@ var utils = {
       element.options.item(index++).setAttribute('id', options[i][value])
     }
 
-    element.options.namedItem(data.id).selected = true
+    if (data.id !== null){
+      element.options.namedItem(data.id).selected = true
+    }
+
   },
   dataValidator: function (fields) {
     var valid = 'true'

@@ -147,6 +147,7 @@ class Allotment extends CI_Model
             $config->reseller = $response->message->reseller_id;
             $config->arrive_id = $response->message->arrive_id;
             $config->service = $response->message->service_id;
+            $config->cruise = $response->message->ship_id;
             $config->start_date = $response->message->start_date;
             $config->end_date = $response->message->end_date;
             $config->schedule_start = $response->message->schedule_start;

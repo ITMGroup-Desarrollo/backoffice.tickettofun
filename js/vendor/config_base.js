@@ -11,7 +11,10 @@ var config = {
   loadOptions: function (response, extradata) {
     const data = JSON.parse(response)
 
-    utils.buildOptions(extradata, data.message)
+    if (data.code === 200) {
+      utils.buildOptions(extradata, data.message)
+    }
+
     MicroModal.close('wait-modal')
   },
   loadData: function (response) {
@@ -110,6 +113,13 @@ var config = {
     }
 
     MicroModal.close('wait-modal')
+  },
+  loadSchedule: function (response){
+    var data = JSON.parse(response);
+
+    document.querySelector('[name="schedule_end"]').value = data.message.message;
+
+    MicroModal.close();
   },
   confirm: function (element, option = null){
 
@@ -246,6 +256,7 @@ var config = {
     document.querySelector('[name="channel"]').value = configData.channel
     document.querySelector('[name="reseller"]').value = configData.reseller
     document.querySelector('[name="service"]').value = configData.service
+    document.querySelector('[name="cruise"]').value = configData.cruise
     document.querySelector('[name="start_date"]').value = configData.start_date
     document.querySelector('[name="end_date"]').value = configData.end_date
     document.querySelector('[name="schedule_start"]').value = configData.schedule_start
@@ -260,7 +271,30 @@ var config = {
         document.querySelector('[name="reseller"]').value = configData.reseller
       })
     }
+
+    if (configData.channel === 1) {
+      document.querySelector('[name="channel"]').setAttribute('disabled', 'disabled');
+      document.querySelector('[name="reseller"]').setAttribute('disabled', 'disabled');
+      document.querySelector('[name="service"]').setAttribute('disabled', 'disabled');
+      document.querySelector('[name="cruise"]').setAttribute('disabled', 'disabled');
+      document.querySelector('[name="start_date"]').setAttribute('disabled', 'disabled');
+      document.querySelector('[name="end_date"]').setAttribute('disabled', 'disabled');
+      document.querySelector('[name="schedule_end"]').setAttribute('disabled', 'disabled');
+    }
+
   }
+}
+
+var cruise = document.querySelector('[name="cruise"]')
+if (cruise != null) {
+  cruise.options.length = 0
+  cruise.append(new Option('-- Choose option --', ''))
+}
+
+var equivalence = document.querySelector('[name="service"]')
+if (equivalence != null) {
+  equivalence.options.length = 0
+  equivalence.append(new Option('-- Choose option --', ''))
 }
 
 var cancel = document.querySelector('.cancel')
@@ -377,27 +411,61 @@ if (reseller != null) {
 
     var id = (e.target.value) ? e.target.value : configData.reseller
 
+    var shipId = (typeof(configData) === "object") ? configData.cruise : null
+    var dataElement2 = {
+      id: shipId,
+      key: 'ship_name',
+      value: 'ship_id',
+      element: document.querySelector('[name="cruise"]')
+    }
+
+    utils.api(JSON.stringify({}), `${apiHost}ships/reseller/${id}`, 'GET', config.loadOptions, dataElement2)
+
+    var serviceId = (typeof(configData) === "object") ? configData.service : null;
     var dataElement = {
-      id: id,
+      id: serviceId,
       key: 'service_name',
       value: 'service_id',
       element: document.querySelector('[name="service"]')
     }
 
     utils.api(JSON.stringify({}), `${apiHost}equivalences/reseller/${id}`, 'GET', config.loadOptions, dataElement)
+
   })
 }
 
-var equivalence = document.querySelector('[name="service"]')
-if (equivalence != null) {
-  equivalence.options.length = 0
-  equivalence.append(new Option('-- Choose option --', ''))
+var scheduleStart = document.querySelector('[name="schedule_start"]')
+
+if (scheduleStart != null) {
+
+  scheduleStart.addEventListener('change', function(e) {
+    e.preventDefault()
+
+    var service = document.querySelector('[name="service"]')
+
+    if (scheduleStart.value && service.value){
+
+      utils.api(JSON.stringify({"schedule_start": scheduleStart.value}), `${apiHost}allotments/servicescheduleend/${service.value}`, 'POST', config.loadSchedule)
+
+    }else{
+
+      document.querySelector('[name="schedule_end"]').value = "";
+
+    }
+
+
+  });
+
 }
 
 form = document.querySelector('#add-config')
 if (form != null) {
   var statusCombo = form.querySelector('[name="status"]')
   statusCombo.parentElement.parentElement.remove()
+  document.getElementById('cruise').setAttribute('class','hidden')
+
+  var channelSelect = form.querySelector('[name="channel"]')
+  channelSelect.remove(1)
 }
 
 form = document.querySelector('#update-config')
