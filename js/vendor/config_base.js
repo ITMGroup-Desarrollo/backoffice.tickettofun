@@ -385,9 +385,10 @@ if (channel != null) {
     e.preventDefault()
 
     var id = (e.target.value) ? e.target.value : configData.reseller
+    var channelId = (typeof(configData) === "object") ? configData.channel : null
 
     var dataElement = {
-      id: id,
+      id: channelId,
       key: 'reseller_name',
       value: 'reseller_id',
       element: document.querySelector('[name="reseller"]')
@@ -411,17 +412,21 @@ if (reseller != null) {
 
     var id = (e.target.value) ? e.target.value : configData.reseller
 
-    var shipId = (typeof(configData) === "object") ? configData.cruise : null
-    var dataElement2 = {
-      id: shipId,
-      key: 'ship_name',
-      value: 'ship_id',
-      element: document.querySelector('[name="cruise"]')
+    if (configData.channel === 1) {
+      var shipId = (typeof(configData) === "object") ? configData.cruise : null
+
+      var dataElement2 = {
+        id: shipId,
+        key: 'ship_name',
+        value: 'ship_id',
+        element: document.querySelector('[name="cruise"]')
+      }
+
+      utils.api(JSON.stringify({}), `${apiHost}ships/reseller/${id}`, 'GET', config.loadOptions, dataElement2)
     }
 
-    utils.api(JSON.stringify({}), `${apiHost}ships/reseller/${id}`, 'GET', config.loadOptions, dataElement2)
+    var serviceId = (typeof(configData) === "object") ? configData.service : null
 
-    var serviceId = (typeof(configData) === "object") ? configData.service : null;
     var dataElement = {
       id: serviceId,
       key: 'service_name',
@@ -442,6 +447,7 @@ if (scheduleStart != null) {
     e.preventDefault()
 
     var service = document.querySelector('[name="service"]')
+    document.querySelector('[name="schedule_end"]')
 
     if (scheduleStart.value && service.value){
 
