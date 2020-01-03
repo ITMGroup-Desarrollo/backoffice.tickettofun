@@ -480,16 +480,27 @@ var arrives = {
     MicroModal.close('wait-modal')
 
     if (type === 'saveEnd') {
+      var _message = ''
+      var _alertModal = document.getElementById('alert-modal-content')
+
       if (data.code === 200) {
-        var _message = ''
-        var _alertModal = document.getElementById('alert-modal-content')
         _message = utils.createElement('p', '', '', 'Success! Configuration saved correctly')
         _alertModal.innerHTML = ''
         _alertModal.appendChild(_message)
         goout = false
         MicroModal.show('alert-modal')
       } else {
-        arrives.paintDivError(datajs.error)
+        if (utils.isJson(datajs)) {
+            arrives.paintDivError(datajs.error)
+        } else {
+            _message = utils.createElement('p', '', '', data.message)
+
+            _alertModal.innerHTML = ''
+            _alertModal.appendChild(_message)
+
+            MicroModal.show('alert-modal')
+        }
+
       }
     }
     if (type === 'firstCallBase') {
@@ -762,7 +773,8 @@ if (configTable !== null) {
 
 $(function () {
   document.getElementsByClassName('date-format').flatpickr({
-    dateFormat: 'Y-m-d'
+    dateFormat: 'Y-m-d',
+    minDate: "today"
   })
 
   $('.date-range').flatpickr({
