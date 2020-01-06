@@ -41,7 +41,7 @@ var diary = {
 
     var _alertModal = document.getElementById('alert-modal-content')
 
-    _message = utils.createElement('p', '', '', response.message)
+    var _message = utils.createElement('p', '', '', response.message)
     _alertModal.innerHTML = ''
     _alertModal.appendChild(_message)
 
@@ -73,8 +73,11 @@ if (tourDetails !== null) {
 var send = document.querySelector('[name="send"]')
 send.addEventListener('click', function (e) {
   e.preventDefault()
+  var data = {
+    date: document.querySelector('[name="inputDate"]').value
+  }
 
-  utils.api(JSON.stringify({}), `${apiHost}general/sendmail`, 'GET', diary.sendmail)
+  utils.api(JSON.stringify(data), `${apiHost}general/sendmail`, 'POST', diary.sendmail)
 })
 
 var element = document.querySelector('.flatpickr')

@@ -15,7 +15,7 @@ var utils = {
       par.insertBefore(s, src)
     })(document, 'script')
   },
-  api: function (data, endpoint, httpverb, method, element,contentType) {
+  api: function (data, endpoint, httpverb, method, element, contentType) {
     if (method !== null) MicroModal.show('wait-modal')
 
     var xHR = new XMLHttpRequest()
