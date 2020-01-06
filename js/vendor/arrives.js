@@ -240,7 +240,7 @@ var arrives = {
             const strAction = `<a class="schedule" href="${base}allotments/itinerary/${row[8]}"><i class="fas fa-calendar-alt"></i></a>`
 
             if (row[7] === 0) {
-              return `${strAction} <a class="edit" href="${row[8]}"><i class="fas fa-edit"></i></a>`
+              return `<a class="edit" href="${row[8]}"><i class="fas fa-edit"></i></a>`
             } else {
               return `${strAction} <a class="edit" href="${row[8]}"><i class="fas fa-edit"></i></a>
                                   <a class="delete" data-id="${row[8]}"><i class="fas fa-trash"></i></a>`
