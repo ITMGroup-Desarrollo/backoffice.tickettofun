@@ -490,15 +490,15 @@ var arrives = {
         goout = false
         MicroModal.show('alert-modal')
       } else {
-        if (utils.isJson(datajs)) {
-            arrives.paintDivError(datajs.error)
+        if (typeof (datajs) === 'object') {
+          arrives.paintDivError(datajs.error)
         } else {
-            _message = utils.createElement('p', '', '', data.message)
+          _message = utils.createElement('p', '', '', data.message)
 
-            _alertModal.innerHTML = ''
-            _alertModal.appendChild(_message)
+          _alertModal.innerHTML = ''
+          _alertModal.appendChild(_message)
 
-            MicroModal.show('alert-modal')
+          MicroModal.show('alert-modal')
         }
 
       }
