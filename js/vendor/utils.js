@@ -1,7 +1,7 @@
 'use strict'
 
 var utils = {
-  loadJs: function loadJs (file) {
+  loadJs: function (file) {
     (function (d, t) {
       var s = d.createElement(t)
       s.src = `./assets/js/${file}.js`
@@ -202,5 +202,42 @@ var utils = {
       return false
     }
     return true
+  },
+  dateFormat: function (frmt, dateObj) {
+    const formats = {
+      // full year e.g. 2016
+      Y: function (date) {
+        return date.getFullYear()
+      },
+
+      // day in month, padded (01-30)
+      d: function (date) {
+        return formats.pad(formats.j(date))
+      },
+
+      // day in month (1-30)
+      j: function (date) {
+        return date.getDate()
+      },
+
+      // padded month number (01-12)
+      m: function (date) {
+        return formats.pad(formats.n(date))
+      },
+
+      // the month number (1-12)
+      n: function (date) {
+        return date.getMonth() + 1
+      },
+
+      pad: function (number) {
+        return ('0' + number).slice(-2)
+      }
+    }
+
+    var chars = frmt.split('')
+    return chars.map(function (c, i) {
+      return formats[c] && chars[i - 1] !== '\\' ? formats[c](dateObj) : c !== '\\' ? c : ''
+    }).join('')
   }
 }
