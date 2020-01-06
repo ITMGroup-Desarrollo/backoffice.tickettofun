@@ -23,13 +23,6 @@ class Diary extends CI_Controller
 
         $data = $this->Page->get_contents();
 
-        $date = new DateTime();
-        $date->modify('+1 day');
-
-        $next_date = $date->format('l jS F Y');
-
-        $data['contents'] = str_replace('{date}', $next_date, $data['contents']);
-
         $this->load->Model('Diaries');
         $locations = $this->Diaries->get_location_distribution();
 
@@ -59,5 +52,34 @@ class Diary extends CI_Controller
         $data['scripts'] = $script .  $data['scripts'];
 
         $this->load->view('Master', $data);
+    }
+
+    /**
+    * Get diary by date.
+    *
+    * @param  php://input JSON form information
+    * @return JSON        $response diary information
+    */
+    public function get_diary() {
+        $response = array(
+            'code' => 500,
+            'msg' => 'No podemos procesar su solicitud'
+        );
+
+        $this->load->Model('Page');
+        $this->Page->page_name = 'diary';
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST')
+        {
+            $data = json_decode(file_get_contents('php://input'));
+
+            $this->load->Model('Diaries');
+            $diary = $this->Diaries->get_location_distribution($data->date);
+
+            $response['code'] = 200;
+            $response['message'] = json_encode($diary);
+        }
+
+        echo json_encode($response);
     }
 }

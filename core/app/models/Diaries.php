@@ -23,7 +23,7 @@ class Diaries extends CI_Model
         $this->settings = '';
     }
 
-    public function get_location_distribution()
+    public function get_location_distribution($next_date = NULL)
     {
         $this->db->close();
 
@@ -35,11 +35,13 @@ class Diaries extends CI_Model
         $table = $this->build->build_components($this->settings['DIARY_TABLE']);
         $ship_details = $this->build->build_components($this->settings['SHIP_SPEC']);
 
-        // Tours
-        $date = new DateTime();
-        $date->modify('+1 day');
+        if ($next_date == NULL) {
+            // Tours
+            $date = new DateTime();
+            $date->modify('+1 day');
 
-        $next_date = $date->format('Y-m-d');
+            $next_date = $date->format('Y-m-d');
+        }
 
         $this->db->close();
         $this->load->database();
