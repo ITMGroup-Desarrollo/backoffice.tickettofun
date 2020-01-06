@@ -174,6 +174,10 @@ class Forms
                 $this->button_attrib['class'] = 'btn btn-success search';
                 $buttons = custom('BUTTON', $this->button_attrib, 'Search');
             }
+            else if ($params[0] == 'diary') {
+                $buttons = '';
+                $content = '';
+            }
             else {
                 $buttons = custom('BUTTON', $this->button_attrib, 'Cancel');
 
