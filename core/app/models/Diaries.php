@@ -59,13 +59,13 @@ class Diaries extends CI_Model
 
 
         $id = 0;
+        $total = 0;
         $body = '';
         $details = '';
         $ship_name = '';
 
         if ($result[0]->response == 200)
         {
-
             foreach ($result as $row)
             {
                 if ($id == 0)
@@ -100,6 +100,7 @@ class Diaries extends CI_Model
                 $aux .= custom('td', '', $row->max_available);
                 $aux .= custom('td', '', $row->available);
 
+                $total += $row->pax;
                 $body .=  custom('tr', '', $aux);
             }
         }
@@ -109,6 +110,7 @@ class Diaries extends CI_Model
                 $body .= custom('td', '', '');
         }
 
+        $this->model['total_tours'] = $total;
         $table = str_replace('{rows}', $body, $table);
         $details .= str_replace('{tours_details}', $table, $ship_details);
         $details =str_replace('{ship-cruise}', $ship_name, $details);
@@ -137,17 +139,13 @@ class Diaries extends CI_Model
             }
         }
 
-        $total = 0;
         foreach ($locations as $key => $value)
         {
             $items = str_replace('{count}', $value, $element);
             $items = str_replace('{location}', $key, $items);
 
-            $total += $value;
             $this->model['tours'] .= $items;
         }
-
-        $this->model['total_tours'] = $total;
 
         return $this->model;
     }
