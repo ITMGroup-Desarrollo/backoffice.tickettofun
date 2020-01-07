@@ -25,8 +25,8 @@ var allotment = {
         var _fieldPax = document.querySelector('[name="pax"]')
         var _fieldProcess = document.querySelector('[name="process_status"]')
         if (response2.pax === 0 && response2.process_status === 3) {
-          _fieldPax.value = 1
-          _fieldProcess.value = 6
+          _fieldPax.value = 0
+          _fieldProcess.value = 3
         } else {
           _fieldPax.value = response2.pax
           _fieldProcess.value = response2.process_status
@@ -181,23 +181,17 @@ var allotment = {
             if (row[0] === 'Cruise' && row[13] === 1) {
 
               let _tagAction = ''
-              if (row[11] === 3) {
-                _tagAction = utils.createElement('a', 'edit')
-                _tagAction.setAttribute('href', `reservation/${row[12]}`)
-                _tagAction.appendChild(utils.createElement('i', 'fas fa-plus'))
-
-                return _tagAction.outerHTML
-              } else {
+              if (row[11] === 6) {
                 _tagAction = utils.createElement('a', 'edit')
                 _tagAction.setAttribute('href', `reservation/${row[12]}`)
                 _tagAction.appendChild(utils.createElement('i', 'fas fa-edit'))
 
-                const _tagTrash = utils.createElement('a', 'delete')
-                _tagTrash.setAttribute('href', '#')
-                _tagTrash.setAttribute('data-id',row[12])
-                _tagTrash.appendChild(utils.createElement('i', 'fas fa-trash'))
+                return _tagAction.outerHTML
 
-                return _tagAction.outerHTML + _tagTrash.outerHTML
+              } else {
+
+                return '';
+
               }
             } else {
               return ''
@@ -281,8 +275,8 @@ var allotment = {
     var _fieldProcess = document.querySelector('[name="process_status"]')
 
     if (pax === 0 && process === 3) {
-      _fieldPax.value = 1
-      _fieldProcess.value = 6
+      _fieldPax.value = 0
+      _fieldProcess.value = 3
     } else {
       _fieldPax.value = allotmentData.pax
       _fieldProcess.value = allotmentData.process_status_id
