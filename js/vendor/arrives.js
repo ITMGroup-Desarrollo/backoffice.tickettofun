@@ -349,164 +349,169 @@ var arrives = {
       })
     }
 
-    if ($.fn.DataTable.isDataTable(editor)) {
-      editor.destroy()
-    }
-
-    editor = $('#allotments-registers')
-      .DataTable({
-        retrieve: true,
-        data: dataTable,
-        columnDefs: [
-          {
-            targets: 1,
-            className: '',
-            data: 'reservation_id',
-            render: function (data, type, row, meta) {
-              var _span1 = utils.createElement('span', 'schedule-start-base', '', row[1])
-              var _span2 = utils.createElement('span', 'schedule-end-base', '', row[2])
-              return _span1.outerHTML + '-' + _span2.outerHTML
-            }
-          }, {
-            targets: 2,
-            className: '',
-            data: 'reservation_id',
-            render: function (data, type, row, meta) {
-              var _span1 = utils.createElement('span', 'min-base', '', row[3])
-              var _span2 = utils.createElement('span', 'max-base', '', row[4])
-              return _span1.outerHTML + '-' + _span2.outerHTML
-            }
-          }, {
-            targets: 3,
-            className: '',
-            data: 'reservation_id',
-            render: function (data, type, row, meta) {
-              var _tag = ''
-              _tag = utils.createElement('input', 'form-control hrStart', 'hrStart' + row[5], '')
-              _tag.setAttribute('value', row[9])
-              var statusArrive = parseInt(document.querySelector('[name="status"]').value)
-              if (statusArrive === 0) {
-                _tag.setAttribute('disabled', 'disabled')
-              }
-              return _tag.outerHTML
-            }
-          }, {
-            targets: 4,
-            className: '',
-            data: 'reservation_id',
-            render: function (data, type, row, meta) {
-              var _tag = ''
-              _tag = utils.createElement('input', 'form-control capmin', '', '')
-              _tag.setAttribute('type', 'number')
-              _tag.setAttribute('value', row[11])
-              var statusArrive = parseInt(document.querySelector('[name="status"]').value)
-              if (statusArrive === 0) {
-                _tag.setAttribute('disabled', 'disabled')
-              }
-              return _tag.outerHTML
-            }
-          }, {
-            targets: 5,
-            className: '',
-            data: 'reservation_id',
-            render: function (data, type, row, meta) {
-              var _tag = ''
-              _tag = utils.createElement('input', 'form-control capmax', '', '')
-              _tag.setAttribute('value', row[10])
-              _tag.setAttribute('data-allotment', row[5])
-              _tag.setAttribute('data-service', row[6])
-              _tag.setAttribute('data-status-base', row[7])
-              _tag.setAttribute('data-status', row[12])
-              _tag.setAttribute('type', 'number')
-              _tag.setAttribute('data-service-name', row[0])
-              var statusArrive = parseInt(document.querySelector('[name="status"]').value)
-              if (statusArrive === 0) {
-                _tag.setAttribute('disabled', 'disabled')
-              }
-              return _tag.outerHTML
-            }
-          }, {
-            targets: 6,
-            className: '',
-            data: 'reservation_id',
-            render: function (data, type, row, meta) {
-              var _spanStatus = ''
-              if (row[12] === 1) {
-                _spanStatus = utils.createElement('span', 'label label-success', '', 'Active')
-              } else if (row[12] === 0) {
-                _spanStatus = utils.createElement('span', 'label label-danger', '', 'Inactive')
-              }
-              return _spanStatus.outerHTML
-            }
-          }, {
-            targets: 7,
-            className: '',
-            data: 'reservation_id',
-            render: function (data, type, row, meta) {
-              var _spanError = utils.createElement('span', 'msg-error', '', row[8])
-              return _spanError.outerHTML
-            }
-          }
-
-        ],
-
-        processing: true,
-        stateSave: true,
-        sPaginationType: 'full_numbers',
-        iDisplayLength: 20,
-        aLengthMenu: [
-          [20, 50, 100, -1], [20, 50, 100, 'All']
-        ]
-      })
-    editor.draw()
-    editor.columns.adjust().draw()
-
-    document.getElementsByClassName('hrStart').flatpickr({
-      enableTime: true,
-      noCalendar: true,
-      dateFormat: 'H:i',
-      time_24hr: true
-    })
-
-    var containerlength = document.getElementById('allotments-registers_length')
-    var containerfilter = document.getElementById('allotments-registers_filter')
-    var containerinfo = document.getElementById('allotments-registers_info')
-    var containerpaginate = document.getElementById('allotments-registers_paginate')
-
-    containerlength.style.display = 'none'
-    containerfilter.style.display = 'none'
-    containerinfo.style.display = 'none'
-    containerpaginate.style.display = 'none'
-    MicroModal.close('wait-modal')
-
-    if (type === 'saveEnd') {
+    if (type === 'saveEnd' && data.code !== 200 && typeof (datajs) !== 'object') {
+      MicroModal.close()
       var _message = ''
       var _alertModal = document.getElementById('alert-modal-content')
 
-      if (data.code === 200) {
-        _message = utils.createElement('p', '', '', 'Success! Configuration saved correctly')
-        _alertModal.innerHTML = ''
-        _alertModal.appendChild(_message)
-        goout = false
-        MicroModal.show('alert-modal')
-      } else {
-        if (typeof (datajs) === 'object') {
-          arrives.paintDivError(datajs.error)
-        } else {
-          _message = utils.createElement('p', '', '', data.message)
+      _message = utils.createElement('p', '', '', data.message)
 
+      _alertModal.innerHTML = ''
+      _alertModal.appendChild(_message)
+
+      MicroModal.show('alert-modal')
+    } else {
+      if ($.fn.DataTable.isDataTable(editor)) {
+        editor.destroy()
+      }
+
+      editor = $('#allotments-registers')
+        .DataTable({
+          retrieve: true,
+          data: dataTable,
+          columnDefs: [
+            {
+              targets: 1,
+              className: '',
+              data: 'reservation_id',
+              render: function (data, type, row, meta) {
+                var _span1 = utils.createElement('span', 'schedule-start-base', '', row[1])
+                var _span2 = utils.createElement('span', 'schedule-end-base', '', row[2])
+                return _span1.outerHTML + '-' + _span2.outerHTML
+              }
+            }, {
+              targets: 2,
+              className: '',
+              data: 'reservation_id',
+              render: function (data, type, row, meta) {
+                var _span1 = utils.createElement('span', 'min-base', '', row[3])
+                var _span2 = utils.createElement('span', 'max-base', '', row[4])
+                return _span1.outerHTML + '-' + _span2.outerHTML
+              }
+            }, {
+              targets: 3,
+              className: '',
+              data: 'reservation_id',
+              render: function (data, type, row, meta) {
+                var _tag = ''
+                _tag = utils.createElement('input', 'form-control hrStart', 'hrStart' + row[5], '')
+                _tag.setAttribute('value', row[9])
+                var statusArrive = parseInt(document.querySelector('[name="status"]').value)
+                if (statusArrive === 0) {
+                  _tag.setAttribute('disabled', 'disabled')
+                }
+                return _tag.outerHTML
+              }
+            }, {
+              targets: 4,
+              className: '',
+              data: 'reservation_id',
+              render: function (data, type, row, meta) {
+                var _tag = ''
+                _tag = utils.createElement('input', 'form-control capmin', '', '')
+                _tag.setAttribute('type', 'number')
+                _tag.setAttribute('value', row[11])
+                var statusArrive = parseInt(document.querySelector('[name="status"]').value)
+                if (statusArrive === 0) {
+                  _tag.setAttribute('disabled', 'disabled')
+                }
+                return _tag.outerHTML
+              }
+            }, {
+              targets: 5,
+              className: '',
+              data: 'reservation_id',
+              render: function (data, type, row, meta) {
+                var _tag = ''
+                _tag = utils.createElement('input', 'form-control capmax', '', '')
+                _tag.setAttribute('value', row[10])
+                _tag.setAttribute('data-allotment', row[5])
+                _tag.setAttribute('data-service', row[6])
+                _tag.setAttribute('data-status-base', row[7])
+                _tag.setAttribute('data-status', row[12])
+                _tag.setAttribute('type', 'number')
+                _tag.setAttribute('data-service-name', row[0])
+                var statusArrive = parseInt(document.querySelector('[name="status"]').value)
+                if (statusArrive === 0) {
+                  _tag.setAttribute('disabled', 'disabled')
+                }
+                return _tag.outerHTML
+              }
+            }, {
+              targets: 6,
+              className: '',
+              data: 'reservation_id',
+              render: function (data, type, row, meta) {
+                var _spanStatus = ''
+                if (row[12] === 1) {
+                  _spanStatus = utils.createElement('span', 'label label-success', '', 'Active')
+                } else if (row[12] === 0) {
+                  _spanStatus = utils.createElement('span', 'label label-danger', '', 'Inactive')
+                }
+                return _spanStatus.outerHTML
+              }
+            }, {
+              targets: 7,
+              className: '',
+              data: 'reservation_id',
+              render: function (data, type, row, meta) {
+                var _spanError = utils.createElement('span', 'msg-error', '', row[8])
+                return _spanError.outerHTML
+              }
+            }
+
+          ],
+
+          processing: true,
+          stateSave: true,
+          sPaginationType: 'full_numbers',
+          iDisplayLength: 20,
+          aLengthMenu: [
+            [20, 50, 100, -1], [20, 50, 100, 'All']
+          ]
+        })
+      editor.draw()
+      editor.columns.adjust().draw()
+
+      document.getElementsByClassName('hrStart').flatpickr({
+        enableTime: true,
+        noCalendar: true,
+        dateFormat: 'H:i',
+        time_24hr: true
+      })
+
+      var containerlength = document.getElementById('allotments-registers_length')
+      var containerfilter = document.getElementById('allotments-registers_filter')
+      var containerinfo = document.getElementById('allotments-registers_info')
+      var containerpaginate = document.getElementById('allotments-registers_paginate')
+
+      containerlength.style.display = 'none'
+      containerfilter.style.display = 'none'
+      containerinfo.style.display = 'none'
+      containerpaginate.style.display = 'none'
+      MicroModal.close('wait-modal')
+
+      if (type === 'saveEnd') {
+        var _message = ''
+        var _alertModal = document.getElementById('alert-modal-content')
+
+        if (data.code === 200) {
+          _message = utils.createElement('p', '', '', 'Success! Configuration saved correctly')
           _alertModal.innerHTML = ''
           _alertModal.appendChild(_message)
-
+          goout = false
           MicroModal.show('alert-modal')
+        } else {
+          if (typeof (datajs) === 'object') {
+            arrives.paintDivError(datajs.error)
+          }
         }
-
       }
-    }
-    if (type === 'firstCallBase') {
-      if (data.code !== 200) {
-        var btnLoad = document.querySelector('.load-allotments')
-        btnLoad.className = 'btn btn-info load-allotments hidden'
+      if (type === 'firstCallBase') {
+        if (data.code !== 200) {
+          var btnLoad = document.querySelector('.load-allotments')
+          btnLoad.className = 'btn btn-info load-allotments hidden'
+        }
       }
     }
   },
@@ -774,7 +779,7 @@ if (configTable !== null) {
 $(function () {
   document.getElementsByClassName('date-format').flatpickr({
     dateFormat: 'Y-m-d',
-    minDate: "today"
+    minDate: 'today'
   })
 
   $('.date-range').flatpickr({
