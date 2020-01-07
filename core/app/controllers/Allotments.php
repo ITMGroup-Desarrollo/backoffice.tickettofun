@@ -95,7 +95,7 @@ class Allotments extends CI_Controller
         $this->load->view('Master', $data);
     }
 
-    public function itinerary(){
+    public function itinerary() {
         $this->load->library('user_session', NULL, 'user');
 
         if ( ! $this->user->active_session())
@@ -114,12 +114,20 @@ class Allotments extends CI_Controller
         $this->load->Model('Arrive');
         $arrive_data = $this->Arrive->get_data($id);
 
+        $call = $arrive_data->reseller_name . ' / ';
+        $call .= $arrive_data->ship_name . ' / ';
+        $call .= $arrive_data->arrival_date . ' / ';
+        $call .= $arrive_data->arrival_time . '-' . $arrive_data->departure_time;
+
         $dynamic_element = $this->_get_dynamic_html($id);
+
+        $data['contents'] = str_replace('{call}', $call, $data['contents']);
 
         $header_keys = [
             '{title}',
             '{content}'
         ];
+
         $header_elements = [
             'Schedules List',
             $dynamic_element['filters_form'] . '<hr>' . $dynamic_element['table']
