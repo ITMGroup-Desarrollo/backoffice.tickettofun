@@ -510,9 +510,9 @@ const utilAjaxExecute = function () {
   }
 }
 
-$(document).ready(function () {
-  utilAjaxExecute()
+utilAjaxExecute()
 
+$(document).ready(function () {
   document.querySelectorAll('.date-format').flatpickr({
     dateFormat: 'Y-m-d'
   })
