@@ -251,12 +251,12 @@ var arrives = {
         stateSave: true,
         sPaginationType: 'full_numbers',
         iDisplayLength: 20,
-        order: [[ 2, 'asc' ]],
         aLengthMenu: [
           [20, 50, 100, -1], [20, 50, 100, 'All']
         ]
       })
 
+    editor.order([ 2, 'asc' ])
     editor.draw()
     editor.columns.adjust().draw()
 
