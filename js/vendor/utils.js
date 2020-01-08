@@ -120,7 +120,7 @@ var utils = {
         'button',
         'btn btn-outline-warning' + (id === 'confirm-modal'? ' confirm-delete': ''),
         '',
-        'Aceptar'
+        'Accept'
       )
 
       acceptButton.setAttribute('aria-controls', id)
