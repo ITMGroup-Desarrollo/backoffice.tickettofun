@@ -624,6 +624,20 @@ var arrives = {
     }
     goout = true
     containerErrors.classList.remove('hidden')
+  },
+  getDateArrive: function (day) {
+    var today = ''
+    var date = ''
+
+    today = new Date();
+
+    if (day !== "" && day > 0) {
+      today.setDate(today.getDate() + day)
+    }
+
+    date = today.getFullYear()+'-'+(today.getMonth() + 1)+'-'+today.getDate()
+
+    return date
   }
 }
 
@@ -747,8 +761,8 @@ if (configTable !== null) {
       var dates = document.querySelector('[name="dates"]').value
       var info = new Object()
 
-      info.start_date = null
-      info.end_date = null
+      info.start_date = arrives.getDateArrive()
+      info.end_date = arrives.getDateArrive(1)
 
       if (dates.trim() !== '') {
         var arrayDates = dates.split(' to ')
@@ -772,9 +786,7 @@ if (configTable !== null) {
     }
   }
 
-  $(function () {
-    utilAjaxExecute()
-  })
+  utilAjaxExecute()
 }
 
 $(function () {
@@ -785,7 +797,8 @@ $(function () {
 
   $('.date-range').flatpickr({
     dateFormat: 'Y-m-d',
-    mode: 'range'
+    mode: 'range',
+    defaultDate: [new Date(), new Date().fp_incr(1)]
   })
 
   document.getElementsByClassName('time-format').flatpickr({
