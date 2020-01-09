@@ -3,7 +3,6 @@ var info
 var form
 var base = window.baseUrl
 var token = window.token
-// var scheduleData = window.config
 var user = window.user
 const arrive_data = window.arrive_data
 let cont = 1;
@@ -12,9 +11,7 @@ let scheduleTableinitialized = $('#schedule0 #schedules-registers');//$('#schedu
 
 const schedule = {
   dataTableInitializer(parentElementParam, data = [], originalData = []){
-    // console.log('parentElementParam',parentElementParam)
     const parentElementJS = document.querySelector(`${parentElementParam}`)
-
     const search = parentElementJS.querySelector('.search')
 
     if (search != null) {
@@ -53,14 +50,10 @@ const schedule = {
     }
 
     scheduleTableinitialized = parentElementParam == '#schedule0' ? $(`#schedule0 #schedules-registers`):$(`${parentElementParam} #schedules-registers`)
-    // console.log('scheduleTableinitialized',scheduleTableinitialized);
+
     if (scheduleTableinitialized != null) {
       if (scheduleTableinitialized.attr('data-isdatatable') == 'true'/*  || scheduleTableinitialized.attr('data-isdatatable') == null */) {
         scheduleTableinitialized.attr('data-isdatatable', 'true')
-
-        // console.log($.fn.DataTable.isDataTable(scheduleTableinitialized))
-        // console.log($.fn.DataTable.isDataTable(`${parentElementParam} #schedules-registers`))
-        // console.log(`${parentElementParam} #schedules-registers`)
         // scheduleTableinitialized.destroy();
         $(scheduleTableinitialized).DataTable().destroy()
       }
@@ -109,7 +102,6 @@ const schedule = {
           data: "shared_schedule",
           className: 'text-center',
           render: function ( data, type, row, meta ) {
-            // console.log(row)
             const checkbox_container = utils.createElement('div', 'checkbox'/* , `schedule${cont++}` */)
             const checkbox_input = utils.createElement('input', ''/* , `schedule${cont++}` */)
             const checkbox_label = utils.createElement('label', ''/* , `schedule${cont++}` */)
@@ -137,7 +129,6 @@ const schedule = {
           targets: 5,
           data: "arrive_id",
           render: function ( data, type, row, meta ) {
-            // console.log(row)
             // if(row[5] === 0)
               return `<a class="btn-link save" data-toggle="tooltip" data-placement="left" title="Save allotment" id="${meta.row}" dataservice="${originalData[0].service_id}"><i class="fas fa-save" aria-hidden="true"></i></a> <a class="btn-link delete" data-toggle="tooltip" data-placement="left" title="Remove this schedule" id="${meta.row}" dataservice="${originalData[0].service_id}"><i class="fas fa-trash" aria-hidden="true"></i></a>`;
             // else
@@ -161,7 +152,7 @@ const schedule = {
       dateFormat: "H:i",
       time_24hr: true
     })
-// console.log('originalData',originalData);
+
     document.querySelector(parentElementParam).querySelectorAll(".overlap-format").flatpickr({
       altInput: false,
       enableTime: true,
@@ -179,10 +170,10 @@ const schedule = {
     if (save != null) {
       let contadordeeventossave = 0
       save.forEach(saveBtn => {
-        // console.log('eventos save: ',contadordeeventossave++);
+
         saveBtn.addEventListener('click', function(e) {
           e.preventDefault()
-          // console.log('saving...!','saving...', saveBtn);
+
           var valid = 'true'
           var id = saveBtn.id
           var dataservice = saveBtn.dataservice
@@ -212,19 +203,9 @@ const schedule = {
               info.type_movement = 'I'
 
               info.row = id
-              utils.api(JSON.stringify(info), url, 'POST', schedule.add, info, id)
-          //   }
+              info.container = container
+              utils.api(JSON.stringify(info), url, 'POST', schedule.add, info)
 
-          //   form = document.querySelector('#update-config')
-
-          //   if (form != null) {
-          //     info.active_status = document.querySelector('[name="status"]').value
-          //     info.arrive_id = configData.arrive_id;
-
-          //     var url = `${apiHost}allotments/edit/${configData.id}`
-          //     utils.api(JSON.stringify(info), url, 'PUT', schedule.update)
-          //   }
-          // }
         })
       })
     }
@@ -232,7 +213,7 @@ const schedule = {
     var remove = document.querySelector(parentElementParam).querySelectorAll('.delete')
     if(remove) {
       remove.forEach(removeBtn => {
-        // console.log('eventos save: ',contadordeeventossave++);
+
         removeBtn.addEventListener('click', function(e) {
           e.preventDefault()
 
@@ -245,10 +226,10 @@ const schedule = {
   },
   loadData: function(response, element) {
     const data = JSON.parse(response)
-    // console.log(data);
+
     let datatable = [];
     if(Array.isArray(data.message)){
-      // console.log(data.message)
+
       datatable = data.message.map(data => {
 
         const dataArray = [
@@ -274,23 +255,22 @@ const schedule = {
     const html = JSON.parse(response)
     const contentWrapper = document.querySelector('#content')
     const content = utils.createElement('div', 'row content-wrapper', `schedule${cont++}`)
-    // content.setAttribute('id')
 
     const filters = document.createRange().createContextualFragment(`${html.filters_form}<hr>`)
     const table = document.createRange().createContextualFragment(html.table)
 
     content.appendChild(filters)
     content.appendChild(table)
-    // console.log(content);
+
     contentWrapper.appendChild(content)
-    // console.log('datatableInitializer',`#schedule${cont-1}`);
+
     schedule.dataTableInitializer(`#schedule${cont-1}`) //parentELementParam ID
 
     // MicroModal.close('wait-modal')
   },
   buildOptions: function(response, extradata) {
     const data = JSON.parse(response)
-    // console.log('data',extradata);
+
     if(Array.isArray(data.message)) {
       for(i in data.message) {
         eval(extradata.element).append(
@@ -303,11 +283,8 @@ const schedule = {
     MicroModal.close('wait-modal')
 
   },
-  add: function(response, data, id) {
-    console.log('data from add',data);
-    console.log('ID from add',id);
+  add: function(response, data, element) {
     MicroModal.close('wait-modal')
-
     response = JSON.parse(response)
     var _message = ''
     var _alertModal = document.getElementById('alert-modal-content')
@@ -321,12 +298,12 @@ const schedule = {
           // alert(e); // error in the above string (in this case, yes)!
       }
       _message = utils.createElement('p', '', '', decode.message)
-      // console.log(decode.available)
+
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
 
-      const maxInput = document.querySelector(`[name="max_available${data.row}"]`)
-      const minInput = document.querySelector(`[name="min_available${data.row}"]`)
+      const maxInput = (data.container).querySelector(`[name="max_available${data.row}"]`)
+      const minInput = (data.container).querySelector(`[name="min_available${data.row}"]`)
       if(maxInput != null)
         maxInput.value = decode.available ? decode.available : 0
       if(minInput != null)
@@ -334,7 +311,8 @@ const schedule = {
 
       MicroModal.show('alert-modal')
     }
-    else if (response.code == 201) {
+    else if (response.code == 201)
+    {
       _message = utils.createElement('p', '', '', 'Success! Schedule added correctly')
 
       _alertModal.innerHTML = ''
@@ -342,8 +320,8 @@ const schedule = {
 
       MicroModal.show('alert-modal')
 
-      form = document.querySelector('#add-config')
-      form.reset();
+      form = (data.container).querySelector('#add-config')
+      // form.reset();
     }
   },
   update: function(response) {
@@ -429,21 +407,6 @@ const schedule = {
   }
 }
 
-/* var cancel = document.querySelector('.cancel')
-if (cancel != null) {
-  cancel.addEventListener('click', function(e) {
-    e.preventDefault()
-
-    form = document.querySelector('#add-config')
-    if (form != null)
-      form.reset()
-
-    form = document.querySelector('#update-config')
-    if (form != null)
-      schedule.setData()
-  });
-} */
-
 //Initializer event listener for elements
 const readElements = function(){
 
@@ -452,7 +415,7 @@ const readElements = function(){
 
     new_tour.addEventListener('click', function(e) {
       e.preventDefault()
-      // console.log(base)
+
       utils.post(JSON.stringify({
         // "start_date": document.querySelector('.date-range').value
       }), `${base}allotments/dynamic_html/${arrive_data.ships}`, schedule.dynamicDataTable, new_tour);
@@ -463,13 +426,11 @@ const readElements = function(){
 }
 
 const utilAjaxExecute = function(element) {
-  // console.log('element',element);
   if (scheduleTableinitialized !== undefined && scheduleTableinitialized !== null) {
     const container = element != undefined ? document.querySelector(`#${element}`):document.querySelector(`#schedule0`)
     const elem = element != undefined ? container.querySelector('[name="service"]'):document.querySelector('[name="service"]')
     const overlap = element != undefined ? container.querySelector('[name="overlap"]'):document.querySelector('[name="overlap"]')
 
-    // console.log(overlap)
     // if(elem.value != '')
       utils.api(JSON.stringify({
         "arrive": arrive_data,
