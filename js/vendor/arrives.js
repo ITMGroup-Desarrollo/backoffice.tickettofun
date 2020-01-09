@@ -76,7 +76,7 @@ const confirm = function () {
 
 var _contentBtns = document.getElementById('allotmentsbtn')
 if (_contentBtns != null) {
-  var _contenInter = _contentBtns.getElementsByClassName('col-sm-offset-2')
+  var _contenInter = _contentBtns.getElementsByClassName('error-simulator')
   var _btnSaveDefinitive = utils.createElement('Button', 'btn btn-success btn-save-definitive', '', 'Save')
   _btnSaveDefinitive.addEventListener('click', function (e) {
     e.preventDefault()
