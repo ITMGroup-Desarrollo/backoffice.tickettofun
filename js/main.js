@@ -42,11 +42,11 @@ var app = {
       info.token = window.token
 
       var url = `${base}signin/set_data`
-      utils.post(JSON.stringify(info), url, app.access)
+      utils.post(JSON.stringify(info), url, app.access, user.page_default)
     }
   },
-  access: function () {
-    location.href = 'users'
+  access: function(response, redirect) {
+    location.href = redirect
   },
   logout: function () {
     location.href = `${base}signin`
