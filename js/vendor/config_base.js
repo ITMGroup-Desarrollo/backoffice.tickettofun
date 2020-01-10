@@ -71,7 +71,7 @@ var config = {
             if (row[9] === 0) {
               return `<a class="btn-link edit" href="configuration/${row[10]}"><i class="fas fa-edit"></i></a>`
             } else {
-              return `<a class="btn-link" data-toggle="tooltip" data-placement="left" title="Transfer" href="configuration/${row[10]}"><i class="fas fa-exchange-alt"></i></a> <a class="btn-link edit" data-toggle="tooltip" data-placement="left" title="Edit allotment" href="configuration/${row[10]}"><i class="fas fa-edit"></i></a> <a class="btn-link delete" data-toggle="tooltip" data-placement="left" title="Delete allotment" data-id="${row[10]}"><i class="fas fa-trash"></i></a>`
+              return `<a class="btn-link edit" data-toggle="tooltip" data-placement="left" title="Edit allotment" href="configuration/${row[10]}"><i class="fas fa-edit"></i></a> <a class="btn-link delete" data-toggle="tooltip" data-placement="left" title="Delete allotment" data-id="${row[10]}"><i class="fas fa-trash"></i></a>`
             }
           } else {
             return '';
