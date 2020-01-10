@@ -7,7 +7,7 @@ var user = window.user
 const arrive_data = window.arrive_data
 let cont = 1;
 let service;
-let scheduleTableinitialized = $('#schedule0 #schedules-registers');//$('#schedule0 #schedules-registers')
+let scheduleTableinitialized = $('#schedule0 #schedules-registers');
 
 const schedule = {
   dataTableInitializer(parentElementParam, data = [], originalData = []){
@@ -52,22 +52,14 @@ const schedule = {
     scheduleTableinitialized = parentElementParam == '#schedule0' ? $(`#schedule0 #schedules-registers`):$(`${parentElementParam} #schedules-registers`)
 
     if (scheduleTableinitialized != null) {
-      if (scheduleTableinitialized.attr('data-isdatatable') == 'true'/*  || scheduleTableinitialized.attr('data-isdatatable') == null */) {
+      if (scheduleTableinitialized.attr('data-isdatatable') == 'true') {
         scheduleTableinitialized.attr('data-isdatatable', 'true')
-        // scheduleTableinitialized.destroy();
         $(scheduleTableinitialized).DataTable().destroy()
       }
     }
 
     scheduleTableinitialized.attr('data-isdatatable', 'true')
-    // scheduleTableinitialized =
     $(scheduleTableinitialized).DataTable({
-      // responsive: true,
-      // rowCallback: function (row, data) {
-      //   // console.log('row',row);
-      //   $(row).addClass('active success')
-      //   // $(row).attr('id',countableRow++)
-      // },
       retrieve: true,
       data: data,
       columnDefs: [
@@ -102,9 +94,9 @@ const schedule = {
           data: "shared_schedule",
           className: 'text-center',
           render: function ( data, type, row, meta ) {
-            const checkbox_container = utils.createElement('div', 'checkbox'/* , `schedule${cont++}` */)
-            const checkbox_input = utils.createElement('input', ''/* , `schedule${cont++}` */)
-            const checkbox_label = utils.createElement('label', ''/* , `schedule${cont++}` */)
+            const checkbox_container = utils.createElement('div', 'checkbox')
+            const checkbox_input = utils.createElement('input', '')
+            const checkbox_label = utils.createElement('label', '')
             checkbox_input.setAttribute('type', 'checkbox')
             checkbox_input.setAttribute('name', `shared${meta.row}`)
             checkbox_input.setAttribute('id', meta.row)
@@ -122,18 +114,12 @@ const schedule = {
               checkbox_container.appendChild(checkbox_label)
               return `<div>${checkbox_container.innerHTML}</div>`;
             }
-            //   return '<a class="edit" href="configuration/'+row[5]+'"><i class="fas fa-edit"></i></a>' +
-            //     '<a class="delete" data-id="'+row[5]+'"><i class="fas fa-trash"></i></a>';
           }
         },{
           targets: 5,
           data: "arrive_id",
           render: function ( data, type, row, meta ) {
-            // if(row[5] === 0)
-              return `<a class="btn-link save" data-toggle="tooltip" data-placement="left" title="Save allotment" id="${meta.row}" dataservice="${originalData[0].service_id}"><i class="fas fa-save" aria-hidden="true"></i></a> <a class="btn-link delete" data-toggle="tooltip" data-placement="left" title="Remove this schedule" id="${meta.row}" dataservice="${originalData[0].service_id}"><i class="fas fa-trash" aria-hidden="true"></i></a>`;
-            // else
-            //   return '<a class="edit" href="configuration/'+row[5]+'"><i class="fas fa-edit"></i></a>' +
-            //     '<a class="delete" data-id="'+row[5]+'"><i class="fas fa-trash"></i></a>';
+            return `<a class="btn-link save" data-toggle="tooltip" data-placement="left" title="Save allotment" id="${meta.row}" dataservice="${originalData[0].service_id}"><i class="fas fa-save" aria-hidden="true"></i></a> <a class="btn-link delete" data-toggle="tooltip" data-placement="left" title="Remove this schedule" id="${meta.row}" dataservice="${originalData[0].service_id}"><i class="fas fa-trash" aria-hidden="true"></i></a>`;
           }
         }
       ],
@@ -178,33 +164,31 @@ const schedule = {
           var id = saveBtn.id
           var dataservice = saveBtn.dataservice
 
-          // valid = utils.dataValidator(fields)
           const container = document.querySelector(parentElementParam)
-          // if(valid) {
-            info = {
-              channel_id: arrive_data.channel_id,
-              reseller_id: arrive_data.reseller_id,
-              arrive_id: arrive_data.id,
-              service_id: preservServiceId,
-              start_date: arrive_data.arrival_date,
-              end_date: arrive_data.arrival_date,
-              schedule_start: container.querySelector(`[name="schedule_start${id}"]`).value,
-              schedule_end: container.querySelector(`[name="schedule_end${id}"]`).value,
-              overlap: container.querySelector(`[name="overlap"]`).value,
-              min_available: container.querySelector(`[name="min_available${id}"]`).value,
-              max_available: container.querySelector(`[name="max_available${id}"]`).value,
-              shared_schedule: container.querySelector(`[name="shared${id}"]`).checked ? 1:0,
-              user_id: user
-            }
 
-          //   if (form != null) {
-              var url = `${apiHost}allotments/add`
-              info.user_id = user
-              info.type_movement = 'I'
+          info = {
+            channel_id: arrive_data.channel_id,
+            reseller_id: arrive_data.reseller_id,
+            arrive_id: arrive_data.id,
+            service_id: preservServiceId,
+            start_date: arrive_data.arrival_date,
+            end_date: arrive_data.arrival_date,
+            schedule_start: container.querySelector(`[name="schedule_start${id}"]`).value,
+            schedule_end: container.querySelector(`[name="schedule_end${id}"]`).value,
+            overlap: container.querySelector(`[name="overlap"]`).value,
+            min_available: container.querySelector(`[name="min_available${id}"]`).value,
+            max_available: container.querySelector(`[name="max_available${id}"]`).value,
+            shared_schedule: container.querySelector(`[name="shared${id}"]`).checked ? 1:0,
+            user_id: user
+          }
 
-              info.row = id
-              info.container = container
-              utils.api(JSON.stringify(info), url, 'POST', schedule.add, info)
+          var url = `${apiHost}allotments/add`
+          info.user_id = user
+          info.type_movement = 'I'
+
+          info.row = id
+          info.container = container
+          utils.api(JSON.stringify(info), url, 'POST', schedule.add, info)
 
         })
       })
@@ -221,8 +205,6 @@ const schedule = {
         })
       })
     }
-
-    // MicroModal.close('wait-modal')
   },
   loadData: function(response, element) {
     const data = JSON.parse(response)
@@ -265,8 +247,6 @@ const schedule = {
     contentWrapper.appendChild(content)
 
     schedule.dataTableInitializer(`#schedule${cont-1}`) //parentELementParam ID
-
-    // MicroModal.close('wait-modal')
   },
   buildOptions: function(response, extradata) {
     const data = JSON.parse(response)
@@ -291,12 +271,11 @@ const schedule = {
 
     if (codes.hasOwnProperty(response.code)) {
       let decode = response
-      try {
-        // a = JSON.parse(response);
-        decode = JSON.parse( response.message )
-      } catch(e) {
-          // alert(e); // error in the above string (in this case, yes)!
+
+      if (utils.isJson(response.message)) {
+        decode = JSON.parse(response.message)
       }
+
       _message = utils.createElement('p', '', '', decode.message)
 
       _alertModal.innerHTML = ''
@@ -304,10 +283,16 @@ const schedule = {
 
       const maxInput = (data.container).querySelector(`[name="max_available${data.row}"]`)
       const minInput = (data.container).querySelector(`[name="min_available${data.row}"]`)
+
       if(maxInput != null)
         maxInput.value = decode.available ? decode.available : 0
-      if(minInput != null)
-        minInput.value = decode.available > minInput.value ? minInput.value : decode.available
+
+      if(minInput != null){
+        if (decode.hasOwnProperty('available'))
+          minInput.value = (decode.available > minInput.value) ? minInput.value : decode.available
+        else
+          minInput.value = minInput.value
+      }
 
       MicroModal.show('alert-modal')
     }
@@ -321,7 +306,6 @@ const schedule = {
       MicroModal.show('alert-modal')
 
       form = (data.container).querySelector('#add-config')
-      // form.reset();
     }
   },
   update: function(response) {
@@ -333,14 +317,12 @@ const schedule = {
 
     if (codes.hasOwnProperty(response.code)) {
       let decode = response
-      try {
-        // a = JSON.parse(response);
+
+      if (utils.isJson(response.message)) {
         decode = JSON.parse( response.message )
-      } catch(e) {
-          // alert(e); // error in the above string (in this case, yes)!
       }
+
       _message = utils.createElement('p', '', '', decode.message)
-      // _message = utils.createElement('p', '', '', response.message)
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
@@ -417,7 +399,6 @@ const readElements = function(){
       e.preventDefault()
 
       utils.post(JSON.stringify({
-        // "start_date": document.querySelector('.date-range').value
       }), `${base}allotments/dynamic_html/${arrive_data.ships}`, schedule.dynamicDataTable, new_tour);
 
     })
@@ -431,14 +412,13 @@ const utilAjaxExecute = function(element) {
     const elem = element != undefined ? container.querySelector('[name="service"]'):document.querySelector('[name="service"]')
     const overlap = element != undefined ? container.querySelector('[name="overlap"]'):document.querySelector('[name="overlap"]')
 
-    // if(elem.value != '')
-      utils.api(JSON.stringify({
-        "arrive": arrive_data,
-        "start_date": arrive_data.arrival_date,
-        "service": elem.value,
-        'ship': arrive_data.ships,
-        'overlap': overlap == null ? '':overlap.value
-      }), `${apiHost}allotments/shipservice`, 'POST', schedule.loadData, element);
+    utils.api(JSON.stringify({
+      "arrive": arrive_data,
+      "start_date": arrive_data.arrival_date,
+      "service": elem.value,
+      'ship': arrive_data.ships,
+      'overlap': overlap == null ? '':overlap.value
+    }), `${apiHost}allotments/shipservice`, 'POST', schedule.loadData, element);
   }
 }
 
@@ -461,7 +441,6 @@ $( document ).ready(function() {
   content.after(masterContent);
 
   readElements();
-  // document.body.appendChild(masterContent)
   utilAjaxExecute();
 
 });
