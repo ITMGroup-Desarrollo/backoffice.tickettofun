@@ -8,7 +8,7 @@
 * @Author ITM Dev Team
 * @Since Version 1.0.0
 */
-class Arrives extends CI_Model
+class Calendar extends CI_Model
 {
     public $model;
 

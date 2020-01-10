@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Calendar extends CI_Controller
+class Calendars extends CI_Controller
 {
     /**
     *Index page for this controller
@@ -26,9 +26,9 @@ class Calendar extends CI_Controller
             '{title}', 'Ship calendar', $data['contents']
         );
 
-        $this->load->Model('Arrives');
-        $events = $this->Arrives->get_arrives();
+        $this->load->Model('Calendar');
 
+        $events = $this->Calendar->get_arrives();
         $data['scripts'] = $events . $data['scripts'];
 
         $this->load->view('Master', $data);
