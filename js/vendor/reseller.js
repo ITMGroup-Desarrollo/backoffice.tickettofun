@@ -23,7 +23,7 @@ var reseller= {
       MicroModal.show('alert-modal')
     }
     else if (response.code == 201) {
-      _message = utils.createElement('p', '', '', 'Success! Reseller added correctly')
+      _message = utils.createElement('p', '', '', 'Success! Vendor added correctly')
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
@@ -50,7 +50,7 @@ var reseller= {
       MicroModal.show('alert-modal')
     }
     else if (response.code == 204) {
-      _message = utils.createElement('p', '', '', 'Success! Reseller updated correctly')
+      _message = utils.createElement('p', '', '', 'Success! Vendor updated correctly')
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
@@ -83,7 +83,7 @@ var reseller= {
       var label = utils.createElement('span', 'label label-danger', '', 'inactive');
       _status.appendChild(label)
 
-      _message = utils.createElement('p', '', '', 'Success! Reseller inactivate correctly')
+      _message = utils.createElement('p', '', '', 'Success! Vendor inactivate correctly')
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
