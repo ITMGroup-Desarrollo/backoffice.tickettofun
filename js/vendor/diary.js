@@ -55,10 +55,6 @@ var containerForm = document.querySelector('.content-form')
 containerForm.style.cssFloat = 'right'
 containerForm.style.margin = '-10px'
 
-if (rol !== 1 && rol !== 3) {
-  containerForm.remove()
-}
-
 var tourDetails = document.querySelector('.details-registers')
 if (tourDetails !== null) {
   $(function () {
