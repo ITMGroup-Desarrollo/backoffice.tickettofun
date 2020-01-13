@@ -34,6 +34,7 @@ var allotment = {
       var capmax = inputPax.getAttribute('data-capmax')
       var newpax = inputPax.value
       var newavailable = capmax - newpax
+      inputPax.setAttribute('data-paxoriginal', newpax)
       var _inputavailable = document.querySelector(`[data-idavailable="${elementid}"]`)
       _inputavailable.innerHTML = newavailable
       _message = utils.createElement('p', '', '', 'Success! Allotment updated correctly')
@@ -122,6 +123,7 @@ var allotment = {
         _input.setAttribute('data-validator', 'number')
         _input.setAttribute('data-validator-msg', 'The pax is invalid!')
         _input.setAttribute('min', 0)
+        _input.setAttribute('data-paxoriginal', row[10])
         _input.setAttribute('data-capmax', row[8])
         _input.setAttribute('disabled', 'disabled')
         var _icon = utils.createElement('i', 'fas fa-edit spanicon', '', '')
@@ -223,12 +225,13 @@ var allotment = {
 
 const unlock = function (elementid) {
   var inputPax = document.getElementById(elementid)
-  var original = inputPax.value
+  var original = parseInt(inputPax.getAttribute('data-paxoriginal'))
   inputPax.removeAttribute('disabled')
   inputPax.focus()
 
   inputPax.addEventListener('blur', function (e) {
     e.preventDefault()
+    e.stopImmediatePropagation()
     inputPax.setAttribute('disabled', 'disabled')
     var valid = 'true'
     var newpax = inputPax.value
