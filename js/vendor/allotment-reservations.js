@@ -116,6 +116,7 @@ var allotment = {
       className: 'center',
       render: function (data, type, row, meta) {
         var _input = utils.createElement('input', 'form-control input-pax', row[12], '')
+        _input.setAttribute('style', 'border-radius:3px')
         _input.setAttribute('type', 'number')
         _input.setAttribute('value', row[10])
         _input.setAttribute('data-validator', 'number')
@@ -125,8 +126,10 @@ var allotment = {
         _input.setAttribute('disabled', 'disabled')
         var _icon = utils.createElement('i', 'fas fa-edit spanicon', '', '')
         _icon.setAttribute('data-inputpax', row[12])
-        var _spanIcon = utils.createElement('span', 'input-group-addon spanicon', '', _icon.outerHTML)
+        _icon.setAttribute('style', 'font-size:14px;')
+        var _spanIcon = utils.createElement('span', 'input-group-addon', '', _icon.outerHTML)
         _spanIcon.setAttribute('data-inputpax', row[12])
+        _spanIcon.setAttribute('style', 'border:none; background:transparent;')
         var _auxAll = `${_input.outerHTML}${_spanIcon.outerHTML}`
         var _divContainer = utils.createElement('div', 'input-group input-group-sm', '', _auxAll)
 
