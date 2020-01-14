@@ -83,7 +83,7 @@ class Equivalence extends CI_Model
                 $status_attrib['data-status'] =  $row->equivalence_id;
                 $aux .= custom('td', $status_attrib, $status);
 
-                if ($rol_id == 1 || $rol_id == 2 && $rol_id == 3)
+                if ($rol_id == 1 || $rol_id == 2 || $rol_id == 3)
                 {
                     $path = 'equivalences/' . $row->equivalence_id;
                     $this->anchor_attrib['class'] = 'edit';
