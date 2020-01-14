@@ -14,7 +14,7 @@ class Signin extends CI_Controller
         $view = (empty($view)) ? 'signin' : $view;
 
         if ($this->user->active_session())
-            redirect(base_url('services'));
+            redirect(base_url($this->session->userdata()['page_default']));
 
         $this->load->Model('Page');
         $this->Page->page_name = $view;
