@@ -23,7 +23,7 @@ var rol= {
       MicroModal.show('alert-modal')
     }
     else if (response.code == 201) {
-      _message = utils.createElement('p', '', '', 'Success! Rol added correctly')
+      _message = utils.createElement('p', '', '', 'Success! Role added correctly')
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
@@ -50,7 +50,7 @@ var rol= {
       MicroModal.show('alert-modal')
     }
     else if (response.code == 204) {
-      _message = utils.createElement('p', '', '', 'Success! Rol updated correctly')
+      _message = utils.createElement('p', '', '', 'Success! Role updated correctly')
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
@@ -83,7 +83,7 @@ var rol= {
       var label = utils.createElement('span', 'label label-danger', '', 'inactive');
       _status.appendChild(label)
 
-      _message = utils.createElement('p', '', '', 'Success! Rol inactivate correctly')
+      _message = utils.createElement('p', '', '', 'Success! Role inactivate correctly')
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)

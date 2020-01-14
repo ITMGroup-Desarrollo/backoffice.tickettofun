@@ -43,7 +43,7 @@ class Roles extends CI_Controller
             $form = str_replace('{id}', 'add-rol', $form);
 
             $data['contents'] = str_replace(
-                '{title}', 'New rol', $data['contents']
+                '{title}', 'New role', $data['contents']
             );
 
             $data['contents'] = str_replace(
@@ -82,7 +82,7 @@ class Roles extends CI_Controller
         $form = str_replace('{id}', 'update-rol', $form);
 
         $data['contents'] = str_replace(
-            '{title}', 'Edit rol', $data['contents']
+            '{title}', 'Edit role', $data['contents']
         );
 
         $data['contents'] = str_replace(
