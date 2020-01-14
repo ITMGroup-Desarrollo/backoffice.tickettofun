@@ -23,7 +23,7 @@ var ships= {
       MicroModal.show('alert-modal')
     }
     else if (response.code == 201) {
-      _message = utils.createElement('p', '', '', 'Success! Ship added correctly')
+      _message = utils.createElement('p', '', '', 'Success! Cruise added correctly')
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
@@ -50,7 +50,7 @@ var ships= {
       MicroModal.show('alert-modal')
     }
     else if (response.code == 204) {
-      _message = utils.createElement('p', '', '', 'Success! Ship updated correctly')
+      _message = utils.createElement('p', '', '', 'Success! Cruise updated correctly')
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
@@ -83,7 +83,7 @@ var ships= {
       var label = utils.createElement('span', 'label label-danger', '', 'inactive');
       _status.appendChild(label)
 
-      _message = utils.createElement('p', '', '', 'Success! Ship inactivate correctly')
+      _message = utils.createElement('p', '', '', 'Success! Cruise inactivate correctly')
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
