@@ -78,8 +78,7 @@ class Diaries extends CI_Model
 
                 if ($id != $row->ship_id)
                 {
-                    $aux = "<br/><hr><p>Total tours : {$total_tours}</p>";
-
+                    $aux = "<br/><hr><p>Total of tours : {$total_tours}</p>";
                     $ship_name .= $aux;
 
                     $id = $row->ship_id;
@@ -125,7 +124,8 @@ class Diaries extends CI_Model
                 $body .= custom('td', '', '');
         }
 
-        $aux = "<br/><hr><p>Total tours : {$total_tours}</p>";
+        $aux = "<br/><hr><p>Total of tours : {$total_tours}</p>";
+        $ship_name .= $aux;
 
         $this->model['total_tours'] = $total;
         $table = str_replace('{rows}', $body, $table);
