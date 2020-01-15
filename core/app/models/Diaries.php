@@ -63,6 +63,7 @@ class Diaries extends CI_Model
         $body = '';
         $details = '';
         $ship_name = '';
+        $total_tours = 0;
 
         if ($result[0]->response == 200)
         {
@@ -76,6 +77,10 @@ class Diaries extends CI_Model
 
                 if ($id != $row->ship_id)
                 {
+                    $aux = "<br/><hr><p>Total tours : {$total_tours}</p>";
+
+                    $ship_name .= $aux;
+
                     $id = $row->ship_id;
                     $schedules = str_replace('{rows}', $body, $table);
                     $details .= str_replace(
@@ -87,11 +92,14 @@ class Diaries extends CI_Model
                     );
 
                     $body = '';
-                    $ship_name = $row->ship_name;
+                    $total_tours = 0;
+                    $ship_name = $row->ship_name . ' | ';
+                    $ship_name .= $row->arrival_time . '-' . $row->departure_time;
                 }
 
                 $aux = '';
                 $aux .= custom('td', '', $row->service_name);
+                $aux .= custom('td', '', $row->service_equivalence_name);
                 $aux .= custom('td', '', $row->schedule_start);
                 $aux .= custom('td', '', $row->schedule_end);
                 $aux .= custom('td', '', $row->duration);
@@ -101,6 +109,7 @@ class Diaries extends CI_Model
                 $aux .= custom('td', '', $row->available);
 
                 $total += $row->pax;
+                $total_tours += $row->pax;
                 $body .=  custom('tr', '', $aux);
             }
         }
@@ -109,6 +118,8 @@ class Diaries extends CI_Model
             for ($i =0; $i < 8; $i++)
                 $body .= custom('td', '', '');
         }
+
+        $aux = "<br/><hr><p>Total tours : {$total_tours}</p>";
 
         $this->model['total_tours'] = $total;
         $table = str_replace('{rows}', $body, $table);
