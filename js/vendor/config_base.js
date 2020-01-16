@@ -110,7 +110,7 @@ var config = {
         data: 'allotment_id',
         className: 'text-center',
         render: function (data, type, row, meta) {
-          if (row[11] === 1) {
+          if (row[13] === 1) {
             if (row[11] === 0) {
               return `<a class="btn-link edit" href="configuration/${row[12]}"><i class="fas fa-edit"></i></a>`
             } else {
