@@ -103,6 +103,11 @@ class Diaries extends CI_Model
                 $aux .= custom('td', '', $row->schedule_start);
                 $aux .= custom('td', '', $row->schedule_end);
                 $aux .= custom('td', '', $row->duration);
+                if ($row->private_service === 1){
+                    $aux .= custom('td', '', 'Yes');
+                }else{
+                    $aux .= custom('td', '', 'No');
+                }
                 $aux .= custom('td', '', $row->pax);
                 $aux .= custom('td', '', $row->min_available);
                 $aux .= custom('td', '', $row->max_available);
