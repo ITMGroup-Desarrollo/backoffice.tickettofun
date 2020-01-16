@@ -154,6 +154,7 @@ class Allotment extends CI_Model
             $config->schedule_end = $response->message->schedule_end;
             $config->overlap = $response->message->overlap;
             $config->shared = $response->message->shared_schedule;
+            $config->private = $response->message->private_service;
             $config->min_available = $response->message->min_available;
             $config->max_available = $response->message->max_available;
             $config->available = $response->message->available;

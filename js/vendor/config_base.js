@@ -33,6 +33,8 @@ var config = {
           data.min_available,
           data.max_available,
           data.available,
+          data.shared_schedule,
+          data.private_service,
           data.active_status,
           data.allotment_id,
           data.arrive_active_status
@@ -51,27 +53,68 @@ var config = {
 
     const columns = [{
       targets: 9,
+      data: 'shared_schedule',
+      render: function (data, type, row, meta) {
+
+        const checkbox_container = utils.createElement('div', 'checkbox')
+        const checkbox_input = utils.createElement('input', '')
+        const checkbox_label = utils.createElement('label', '')
+        checkbox_input.setAttribute('type', 'checkbox')
+        checkbox_input.setAttribute('readonly', true)
+        checkbox_input.setAttribute('disabled', true)
+
+        if(parseInt(row[9]) === 1){
+          checkbox_input.setAttribute('checked', true)
+        }
+
+        checkbox_label.appendChild(checkbox_input)
+        checkbox_container.appendChild(checkbox_label)
+        return `<div>${checkbox_container.innerHTML}</div>`;
+      }
+    },{
+      targets: 10,
+      data: 'private_service',
+      render: function (data, type, row, meta) {
+
+        const checkbox_container = utils.createElement('div', 'checkbox')
+        const checkbox_input = utils.createElement('input', '')
+        const checkbox_label = utils.createElement('label', '')
+        checkbox_input.setAttribute('type', 'checkbox')
+        checkbox_input.setAttribute('readonly', true)
+        checkbox_input.setAttribute('disabled', true)
+
+        if(parseInt(row[10]) === 1){
+          checkbox_input.setAttribute('checked', true)
+        }
+
+        checkbox_label.appendChild(checkbox_input)
+        checkbox_container.appendChild(checkbox_label)
+        return `<div>${checkbox_container.innerHTML}</div>`;
+      }
+    },{
+      targets: 11,
       data: 'allotment_id',
       render: function (data, type, row, meta) {
-        if (row[9] === 0) {
-          return `<span class="label label-danger" data-status="${row[10]}">Inactive</span>`
+        if (row[11] === 0) {
+          return `<span class="label label-danger" data-status="${row[12]}">Inactive</span>`
         } else {
-          return `<span class="label label-success" data-status="${row[10]}">Active</span>`
+          return `<span class="label label-success" data-status="${row[12]}">Active</span>`
         }
       }
-    }]
+    }
+    ]
 
-    if (columnsCount === 11) {
+    if (columnsCount === 13) {
       columns.push({
-        targets: 10,
+        targets: 12,
         data: 'allotment_id',
         className: 'text-center',
         render: function (data, type, row, meta) {
           if (row[11] === 1) {
-            if (row[9] === 0) {
-              return `<a class="btn-link edit" href="configuration/${row[10]}"><i class="fas fa-edit"></i></a>`
+            if (row[11] === 0) {
+              return `<a class="btn-link edit" href="configuration/${row[12]}"><i class="fas fa-edit"></i></a>`
             } else {
-              return `<a class="btn-link edit" data-toggle="tooltip" data-placement="left" title="Edit allotment" href="configuration/${row[10]}"><i class="fas fa-edit"></i></a> <a class="btn-link delete" data-toggle="tooltip" data-placement="left" title="Delete allotment" data-id="${row[10]}"><i class="fas fa-trash"></i></a>`
+              return `<a class="btn-link edit" data-toggle="tooltip" data-placement="left" title="Edit allotment" href="configuration/${row[12]}"><i class="fas fa-edit"></i></a> <a class="btn-link delete" data-toggle="tooltip" data-placement="left" title="Delete allotment" data-id="${row[12]}"><i class="fas fa-trash"></i></a>`
             }
           } else {
             return '';
@@ -266,6 +309,11 @@ var config = {
     document.querySelector('[name="max_available"]').value = configData.max_available
     document.querySelector('[name="shared"]').value = configData.shared
 
+    var private_service =  document.querySelector('[name="private"]')
+    if (configData.private === 0){
+      private_service.removeAttribute('checked')
+    }
+
     if (document.querySelector('[name="reseller"]') != null && configData) {
       $(document).ready(function () {
         document.querySelector('[name="reseller"]').value = configData.reseller
@@ -337,6 +385,7 @@ if (save != null) {
         min_available: document.querySelector('[name="min_available"]').value,
         max_available: document.querySelector('[name="max_available"]').value,
         shared_schedule: document.querySelector('[name="shared"]').checked ? 1 : 0,
+        private_service: document.querySelector('[name="private"]').checked ? 1 : 0,
         user_id: user
       }
 

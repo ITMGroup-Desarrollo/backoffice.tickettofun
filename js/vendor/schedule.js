@@ -115,8 +115,33 @@ const schedule = {
               return `<div>${checkbox_container.innerHTML}</div>`;
             }
           }
-        },{
+        },
+        {
           targets: 5,
+          data: "private_service",
+          className: 'text-center',
+          render: function ( data, type, row, meta ) {
+
+            const checkbox_container = utils.createElement('div', 'checkbox')
+            const checkbox_input = utils.createElement('input', '')
+            const checkbox_label = utils.createElement('label', '')
+            checkbox_input.setAttribute('type', 'checkbox')
+            checkbox_input.setAttribute('name', `private${meta.row}`)
+            checkbox_input.setAttribute('id', meta.row)
+            checkbox_input.setAttribute('readonly', true)
+
+            if(parseInt(row[5]) === 1){
+              checkbox_input.setAttribute('checked', true)
+            }
+
+            checkbox_label.appendChild(checkbox_input)
+            checkbox_container.appendChild(checkbox_label)
+            return `<div>${checkbox_container.innerHTML}</div>`;
+
+          }
+        },
+        {
+          targets: 6,
           data: "arrive_id",
           render: function ( data, type, row, meta ) {
             return `<a class="btn-link save" data-toggle="tooltip" data-placement="left" title="Save allotment" id="${meta.row}" dataservice="${originalData[0].service_id}"><i class="fas fa-save" aria-hidden="true"></i></a> <a class="btn-link delete" data-toggle="tooltip" data-placement="left" title="Remove this schedule" id="${meta.row}" dataservice="${originalData[0].service_id}"><i class="fas fa-trash" aria-hidden="true"></i></a>`;
@@ -179,6 +204,7 @@ const schedule = {
             min_available: container.querySelector(`[name="min_available${id}"]`).value,
             max_available: container.querySelector(`[name="max_available${id}"]`).value,
             shared_schedule: container.querySelector(`[name="shared${id}"]`).checked ? 1:0,
+            private_service: container.querySelector(`[name="private${id}"]`).checked ? 1:0,
             user_id: user
           }
 
@@ -188,6 +214,7 @@ const schedule = {
 
           info.row = id
           info.container = container
+          console.log(info)
           utils.api(JSON.stringify(info), url, 'POST', schedule.add, info)
 
         })
@@ -220,6 +247,7 @@ const schedule = {
           data.min_available,
           data.max_available,
           data.shared_schedule,
+          data.private_service,
           data.arrive_id
         ]
 
@@ -421,8 +449,6 @@ const utilAjaxExecute = function(element) {
     }), `${apiHost}allotments/shipservice`, 'POST', schedule.loadData, element);
   }
 }
-
-
 
 $( document ).ready(function() {
 
