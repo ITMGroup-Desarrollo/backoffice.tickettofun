@@ -72,7 +72,8 @@ class Diaries extends CI_Model
                 if ($id == 0)
                 {
                     $id = $row->ship_id;
-                    $ship_name = $row->ship_name;
+                    $ship_name = $row->ship_name . ' | ';
+                    $ship_name .= $row->arrival_time . '-' . $row->departure_time;
                 }
 
                 if ($id != $row->ship_id)
