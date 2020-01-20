@@ -857,10 +857,24 @@ body {
   margin: 0 auto; }
 
 .main-sidebar {
-  bottom: 0px; }
+  bottom: inherit;
+  min-height:100%;
+  display:none;
+}
+.open-sidebar .main-sidebar {
+    display: block;
+}
+
+@media (min-width:  768px){
+  .main-sidebar {
+    display: block;
+  }
+}
   @media screen and (min-height: 901px) {
     .main-sidebar {
-      position: fixed !important; } }
+      position: fixed !important;
+    }
+  }
 
 #sidebar-dark {
   background: #2f343d;
@@ -4274,8 +4288,9 @@ color: #333; }
 #sidebar #wrapper {
   height: 100%; }
 #sidebar .main-sidebar {
-  overflow: hidden;
-  height: 100% !important; }
+  /* overflow: hidden;
+  height: 100% !important; */
+}
   @media (min-width: 768px) and (max-width: 991px) {
     #sidebar .main-sidebar {
       overflow: visible;
