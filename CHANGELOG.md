@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Added
 
+- [@Martin](https://bitbucket.org/%7B2ee175a5-2fc6-49ba-835f-4368509a8318%7D/) Allotment simulator of configuration on arrives edit section
 - [@Daniel](https://bitbucket.org/%7Bc9540667-c94f-4469-a3ee-a74e7e27b0bc%7D/) Complement information `Schedules`, `Service equivalence`, `Total tours` per cruise
 
 ### Fixed
