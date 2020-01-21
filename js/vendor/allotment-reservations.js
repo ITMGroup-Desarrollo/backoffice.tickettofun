@@ -114,6 +114,7 @@ var allotment = {
     },
     {
       targets: 8,
+      width: '160px',
       className: 'center',
       render: function (data, type, row, meta) {
         var _input = utils.createElement('input', 'form-control input-pax', row[12], '')
