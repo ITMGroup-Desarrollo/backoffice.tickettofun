@@ -128,3 +128,13 @@ $route["allotments/dynamic_html/(:num)"] = "allotments/get_dynamic_html/$1";
 //Allotment reservation
 $route["allotments/reservation"] = "allotment_reservations/index/$1";
 $route["allotments/reservation/(:num)"] = "allotment_reservations/update/$1";
+
+//Sales Reps
+$route["reps/list"] = "reps/index/$1";
+$route["reps/new"]   = "reps/index/$1";
+$route["reps/(:num)"]   = "reps/update/$1";
+
+//Booths
+$route["booths/list"] = "booths/index/$1";
+$route["booths/new"]   = "booths/index/$1";
+$route["booths/(:num)"]   = "booths/update/$1";

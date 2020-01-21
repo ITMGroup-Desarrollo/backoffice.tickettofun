@@ -99,6 +99,9 @@ defined('GET_SERVICES_ROUTE') OR define('GET_SERVICES_ROUTE', 'api/v1/products')
 defined('GET_LOCATIONS_ROUTE') OR define('GET_LOCATIONS_ROUTE', 'api/v1/locations');
 
 defined('GET_ROLES_ROUTE') OR define('GET_ROLES_ROUTE', 'api/v1/roles');
+defined('GET_REPS_ROUTE') OR define('GET_REPS_ROUTE', 'api/v1/sales');
+defined('GET_BOOTHS_ROUTE') OR define('GET_BOOTHS_ROUTE', 'api/v1/booths');
+defined('GET_REP_BOOTH_ROUTE') OR define('GET_REP_BOOTH_ROUTE', 'api/v1/rep_booth');
 defined('GET_CHANNELS_ROUTE') OR define('GET_CHANNELS_ROUTE', 'api/v1/channels');
 defined('GET_DESTINATIONS_ROUTE') OR define('GET_DESTINATIONS_ROUTE', 'api/v1/destinations');
 defined('GET_USERS_ROUTE') OR define('GET_USERS_ROUTE', 'api/v1/users');
