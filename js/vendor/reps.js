@@ -1,0 +1,360 @@
+'use strict'
+var info
+var form
+var base = window.baseUrl
+var token = window.token
+var repData = window.rep
+var user_create_id = window.user_create_id
+
+var rep = {
+  add: function(response) {
+    MicroModal.close('wait-modal')
+
+    response = JSON.parse(response)
+    var _message = ''
+    var _alertModal = document.getElementById('alert-modal-content')
+
+    if (codes.hasOwnProperty(response.code)) {
+      _message = utils.createElement('p', '', '', response.message)
+
+      _alertModal.innerHTML = ''
+      _alertModal.appendChild(_message)
+
+      MicroModal.show('alert-modal')
+    }
+    else if (response.code == 201) {
+      _message = utils.createElement('p', '', '', 'Success! Rep added correctly')
+
+      _alertModal.innerHTML = ''
+      _alertModal.appendChild(_message)
+
+      MicroModal.show('alert-modal')
+
+      form = document.querySelector('#add-rep')
+      form.reset();
+    }
+  },
+  update: function(response) {
+    MicroModal.close('wait-modal')
+
+    response = JSON.parse(response)
+    var _message = ''
+    var _alertModal = document.getElementById('alert-modal-content')
+
+    if (codes.hasOwnProperty(response.code)) {
+      _message = utils.createElement('p', '', '', response.message)
+
+      _alertModal.innerHTML = ''
+      _alertModal.appendChild(_message)
+
+      MicroModal.show('alert-modal')
+    }
+    else if (response.code == 204) {
+      _message = utils.createElement('p', '', '', 'Success! Rep updated correctly')
+
+      _alertModal.innerHTML = ''
+      _alertModal.appendChild(_message)
+
+      MicroModal.show('alert-modal')
+    }
+  },
+  delete: function(response, element) {
+    MicroModal.close('wait-modal')
+
+    response = JSON.parse(response)
+    var id = element.getAttribute('data-id')
+    element.style.display = 'none'
+
+    var _message = ''
+    var _alertModal = document.getElementById('alert-modal-content')
+
+    if (codes.hasOwnProperty(response.code)) {
+      _message = utils.createElement('p', '', '', response.message)
+
+      _alertModal.innerHTML = ''
+      _alertModal.appendChild(_message)
+
+      MicroModal.show('alert-modal')
+    }
+    else if (response.code == 200) {
+      var _status = document.querySelector(`[data-status="${id}"]`)
+      _status.innerHTML = ''
+
+      var label = utils.createElement('span', 'label label-danger', '', 'inactive');
+      _status.appendChild(label)
+
+      _message = utils.createElement('p', '', '', 'Success! Rep inactivate correctly')
+
+      _alertModal.innerHTML = ''
+      _alertModal.appendChild(_message)
+
+      MicroModal.show('alert-modal')
+    }
+  },
+  setData: function() {
+    document.querySelector('[name="status"]').value = repData.active
+    document.querySelector('[name="first_name"]').value = repData.name
+    document.querySelector('[name="code"]').value = repData.code
+    document.querySelector('[name="last_name"]').value = repData.last_name
+  },
+  setUserData: function(response){
+    MicroModal.close('wait-modal')
+
+    var _message = ''
+    var _alertModal = document.getElementById('alert-modal-content')
+    var repname = document.querySelector('[name="first_name"]')
+    var replastname = document.querySelector('[name="last_name"]')
+    var repcode = document.querySelector('[name="code"]')
+    var booths = document.querySelector('[name="booths"]')
+    var reppass = document.querySelector('[name="user_password"]')
+    var conpass = document.querySelector('[name="confirm_password"]')
+    var datepicker = document.querySelector('[name="dates"]')
+
+    response = JSON.parse(response)
+
+    if (codes.hasOwnProperty(response.code)) {
+      _message = utils.createElement('p', '', '', response.message)
+
+      _alertModal.innerHTML = ''
+      _alertModal.appendChild(_message)
+
+      MicroModal.show('alert-modal')
+
+      repname.parentElement.parentElement.classList.remove('hidden')
+      repname.value = ""
+      replastname.parentElement.parentElement.classList.remove('hidden')
+      replastname.value=""
+      repcode.parentElement.parentElement.classList.remove('hidden')
+      repcode.value = ""
+      booths.parentElement.parentElement.classList.remove('hidden')
+      repcode.value = ""
+      reppass.parentElement.parentElement.classList.remove('hidden')
+      reppass.value = ""
+      conpass.parentElement.parentElement.classList.remove('hidden')
+      conpass.value = ""
+      datepicker.parentElement.parentElement.classList.remove('hidden')
+
+    }
+    else if (response.code == 200) {
+      var user = new Object()
+      user = response.message[0]
+
+      repname.parentElement.parentElement.classList.remove('hidden')
+      repname.value = user["first_name"]
+
+      replastname.parentElement.parentElement.classList.remove('hidden')
+      replastname.value = user["last_name"]
+
+      repcode.parentElement.parentElement.classList.remove('hidden')
+
+      booths.parentElement.parentElement.classList.remove('hidden')
+
+      datepicker.parentElement.parentElement.classList.remove('hidden')
+
+      reppass.parentElement.parentElement.classList.add('hidden')
+
+      conpass.parentElement.parentElement.classList.add('hidden')
+    }
+  }
+}
+
+var form = document.querySelector('form')
+if(form){
+  var searchEmail = utils.createElement('div', 'form-group')
+  var labeltext = utils.createElement('label', 'col-sm-2 col-md-2 control-label', '','Email')
+  searchEmail.appendChild(labeltext)
+  var divgroup = utils.createElement('div', 'input-group')
+  var inputEmail = document.createElement('input')
+  inputEmail.setAttribute("type", "text")
+  inputEmail.setAttribute("name", "email")
+  inputEmail.setAttribute("class", "form-control")
+  inputEmail.setAttribute("data-validator", "empty")
+  inputEmail.setAttribute("data-validator-msg", "The email is required!")
+  inputEmail.setAttribute("maxlength", "45")
+  var span = utils.createElement('span', 'input-group-btn')
+  var searchbtn = document.createElement('button')
+  searchbtn.setAttribute("class", "btn btn-default")
+  searchbtn.setAttribute("type", "button")
+  searchbtn.setAttribute("name", "searchbtn")
+  searchbtn.innerHTML = "Check"
+  span.appendChild(searchbtn)
+  divgroup.appendChild(inputEmail)
+  divgroup.appendChild(span)
+  var inputArea = utils.createElement('div', 'col-sm-10 col-md-8')
+  inputArea.appendChild(divgroup)
+  searchEmail.appendChild(inputArea)
+  form.insertBefore(searchEmail, form.firstChild)
+}
+
+var cancel = document.querySelector('.cancel')
+if (cancel != null) {
+  cancel.addEventListener('click', function(e) {
+    e.preventDefault()
+
+    form = document.querySelector('#add-rep')
+    if (form != null)
+      form.reset()
+
+    form = document.querySelector('#update-rep')
+      if (form != null)
+        rep.setData()
+  });
+}
+
+var save = document.querySelector('.save')
+if (save != null) {
+  save.addEventListener('click', function(e) {
+    e.preventDefault()
+
+    var valid = 'true'
+    var fields = document.querySelectorAll('[data-validator]')
+
+    valid = utils.dataValidator(fields)
+
+    if(valid) {
+      info = {
+        reseller_id: 1,
+        code: document.querySelector('[name="code"]').value,
+        user_create_id: user_create_id,
+        booth : document.querySelector('[name="booths"]').value,
+        user: {
+          first_name: document.querySelector('[name="first_name"]').value,
+          last_name: document.querySelector('[name="last_name"]').value,
+          email_addr: document.querySelector('[name="email"]').value,
+          user_password: document.querySelector('[name="user_password"]').value,
+          confirm_password: document.querySelector('[name="confirm_password"]').value,
+          user_create_id: user_create_id
+        },
+        booth_id: (document.querySelector('[name="booths"]').value != "" ? document.querySelector('[name="booths"]').value : 0),
+      }
+
+      if(document.querySelector('[name="dates"]').value.split(" to "))
+      {
+        info.user.start_date =  document.querySelector('[name="dates"]').value.split(" to ")[0]
+        info.user.end_date =  document.querySelector('[name="dates"]').value.split(" to ")[1]
+      }
+      else if(document.querySelector('[name="dates"]').value)
+      {
+        info.user.start_date = document.querySelector('[name="dates"]').value
+        info.user.end_date = null
+      }
+      else
+      {
+        info.user.start_date = null
+        info.user.end_date = null
+      }
+
+      var _message = ''
+      var _alertModal = document.getElementById('alert-modal-content')
+
+      if( info.user.user_password.length < 5){
+        _message = utils.createElement('p', '', '', 'You have a wrong password, you need to create a password with more than 5 characters')
+        _alertModal.innerHTML = ''
+        _alertModal.appendChild(_message)
+        MicroModal.show('alert-modal')
+        return false
+      }
+
+      if( info.user.user_password != info.user.confirm_password){
+        _message = utils.createElement('p', '', '', 'You have a wrong password, the password and password confirm not are same')
+        _alertModal.innerHTML = ''
+        _alertModal.appendChild(_message)
+        MicroModal.show('alert-modal')
+        return false
+      }
+
+      form = document.querySelector('#add-rep')
+
+      if (form != null) {
+        var url = `${apiHost}sales/add`
+        utils.api(JSON.stringify(info), url, 'POST', rep.add)
+      }
+
+      form = document.querySelector('#update-rep')
+
+      if (form != null) {
+        info.active_status = document.querySelector('[name="status"]').value
+
+        var url = `${apiHost}sales/edit/${repData.id}`
+        utils.api(JSON.stringify(info), url, 'PUT', rep.update)
+      }
+    }
+  })
+}
+
+var datepicker = (document.querySelector('[name="dates"]') ? document.querySelector('[name="dates"]') : "")
+if(datepicker != ""){
+  datepicker.parentElement.parentElement.classList.add('disable')
+  datepicker.flatpickr({
+    altFormat: 'F j, Y',
+    dateFormat: 'Y-m-d',
+    defaultDate: 'today',
+    altInput: true,
+    mode : "range",
+    minDate : "today"
+  })
+}
+
+var booths = (document.querySelector('[name="booths"]') ? document.querySelector('[name="booths"]') : "" )
+if(booths != ""){
+  booths.addEventListener('change', function(e){
+    if(this.value != ""){
+      datepicker.disabled = true
+    }else{
+      datepicker.disabled = false
+    }
+  })
+}
+
+var options = document.querySelectorAll('.delete')
+
+for (var i = 0, l = options.length; i < l; i++) {
+  options[i].addEventListener('click', function(e) {
+    e.preventDefault()
+
+    var element = e.target
+    if (! e.target.getAttribute('data-id'))
+      element = e.target.parentElement
+
+    var id = element.getAttribute('data-id')
+
+    var url = `${apiHost}sales/del/${id}`
+    utils.api(JSON.stringify({}), url, 'DELETE', rep.delete, element)
+  })
+}
+
+var btnemail = (document.querySelector('[name="searchbtn"]') ? document.querySelector('[name="searchbtn"]') : "")
+
+if(btnemail != "")
+btnemail.addEventListener('click', function(e){
+
+    var valid = 'true'
+    var emailField = document.querySelector('[name="email"]')
+
+    valid = utils.dataValidator(emailField)
+    if(valid)
+      utils.api(JSON.stringify({}), `${apiHost}users/email/${emailField.value}`, 'GET', rep.setUserData)
+  })
+
+
+form = document.querySelector('#add-rep')
+if (form != null) {
+  var status_combo = form.querySelector('[name="status"]')
+   status_combo.parentElement.parentElement.remove()
+}
+
+form = document.querySelector('#update-rep')
+if (form != null)
+  rep.setData()
+
+var repsTable = document.querySelector('#sales-rep')
+if (repsTable !== null) {
+  $(function() {
+    $('#sales-rep').dataTable({
+        "sPaginationType": "full_numbers",
+        "iDisplayLength": 20,
+        "aLengthMenu": [[20, 50, 100, -1], [20, 50, 100, "All"]]
+    });
+  });
+}
+
