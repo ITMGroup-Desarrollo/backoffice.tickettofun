@@ -198,10 +198,10 @@ class Forms
         return $this->form;
     }
 
-    public function get_catalog($catalog_id, $api_endpoint, $keyvalue_pair, $extra_name)
+    public function get_catalog($catalog_id, $api_endpoint, $keyvalue_pair, $extra_name, $type = 'normal')
     {
         if ( ! empty($api_endpoint))
-            return $this->_get_catalog_api($api_endpoint, $keyvalue_pair, $extra_name);
+            return $this->_get_catalog_api($api_endpoint, $keyvalue_pair, $extra_name, $type);
 
         return $this->_get_catalog($catalog_id);
     }
@@ -261,6 +261,24 @@ class Forms
                     $api_endpoint,
                     $keyvalue_pair,
                     $extra_name
+                );
+
+                if ( ! empty($extra_name))
+                {
+                    $element = custom('select', $this->attrib, $options);
+                }
+                else
+                {
+                    $element = form_dropdown('', $options, '', $this->attrib);
+                }
+                break;
+            case 'MULTIPLE':
+                $options = $this->get_catalog(
+                    $extra,
+                    $api_endpoint,
+                    $keyvalue_pair,
+                    $extra_name,
+                    'multiple'
                 );
 
                 if ( ! empty($extra_name))
@@ -335,7 +353,7 @@ class Forms
         return $options;
     }
 
-    private function _get_catalog_api($api_endpoint, $keyvalue_pair, $extra_name)
+    private function _get_catalog_api($api_endpoint, $keyvalue_pair, $extra_name, $type)
     {
         $catalog = array();
         $options = array();
@@ -355,16 +373,21 @@ class Forms
             $this->CI->api->request_api('GET', $endpoint, $params, $token)
         );
 
-        $options[''] = '-- Choose option --';
+        $options[''] = ($type === 'normal' ? '-- Choose option --' : '');
 
         if ($response->code == 200)
         {
             $rows = $response->message;
 
             if ( ! empty($extra_name))
-            {
-                $options = '';
-                $options = custom('option', '', '-- Choose option --');
+            {   
+                if($type === 'normal')
+                { 
+                    $options = "";
+                    $options = custom('option', '', '-- Choose option --');
+                }else{
+                    $options = "";
+                }
 
                 foreach ($rows as $row) {
                     $attrib = array();
