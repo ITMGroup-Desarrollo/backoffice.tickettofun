@@ -64,7 +64,7 @@ class Diaries extends CI_Model
         $details = '';
         $ship_name = '';
         $total_tours = 0;
-
+        $arrive_id = 0;
         if ($result[0]->response == 200)
         {
             foreach ($result as $row)
@@ -74,6 +74,18 @@ class Diaries extends CI_Model
                     $id = $row->ship_id;
                     $ship_name = $row->ship_name . ' | ';
                     $ship_name .= $row->arrival_time . '-' . $row->departure_time;
+
+                    $extradata1 = array (
+                        'allaboard' => $row->all_aboard_time,
+                        'shorex' => $row->shorex_name,
+                        'assistant' => $row->assistant_name,
+                        'ship' => $row->ship_time,
+                        'origin' => $row->origin_port_name,
+                        'destiny' => $row->destiny_port_name,
+                        'next' => $row->next_port_name,
+                        'idarrive' => $row->arrive_id
+                    );
+
                 }
 
                 if ($id != $row->ship_id)
@@ -86,10 +98,22 @@ class Diaries extends CI_Model
                     $details .= str_replace(
                         '{tours_details}', $schedules, $ship_details
                     );
-
-                    $details =str_replace(
+                    $details = str_replace(
                         '{ship-cruise}', $ship_name, $details
                     );
+
+                    $extradata = array (
+                        'allaboard' => $row->all_aboard_time,
+                        'shorex' => $row->shorex_name,
+                        'assistant' => $row->assistant_name,
+                        'ship' => $row->ship_time,
+                        'origin' => $row->origin_port_name,
+                        'destiny' => $row->destiny_port_name,
+                        'next' => $row->next_port_name,
+                        'idarrive' => $row->arrive_id
+                    );
+
+                    $details = $this->_set_values_headship($extradata, $details);
 
                     $body = '';
                     $total_tours = 0;
@@ -130,7 +154,14 @@ class Diaries extends CI_Model
         $this->model['total_tours'] = $total;
         $table = str_replace('{rows}', $body, $table);
         $details .= str_replace('{tours_details}', $table, $ship_details);
-        $details =str_replace('{ship-cruise}', $ship_name, $details);
+        $details = str_replace('{ship-cruise}', $ship_name, $details);
+        if ($result[0]->response == 200)
+        {
+            $details = $this->_set_values_headship($extradata1, $details);
+        }
+        else {
+            $details = str_replace('btn btn-primary btn-md', 'btn btn-primary btn-md hidden', $details);
+        }
 
         $this->model['details'] = $details;
 
@@ -165,6 +196,31 @@ class Diaries extends CI_Model
         }
 
         return $this->model;
+    }
+
+    private function _set_values_headship(array $extradata, string $details){
+
+            $details = str_replace('{h-name}', $extradata['allaboard'], $details);
+            $details = str_replace('{s-name}', $extradata['shorex'], $details);
+            $details = str_replace('{a-name}', $extradata['assistant'], $details);
+            $details = str_replace('{sh-time}',$extradata['ship'], $details);
+            $details = str_replace('{o-port}', $extradata['origin'] , $details);
+            $details = str_replace('{d-port}', $extradata ['destiny'], $details);
+            $details = str_replace('{n-port}', $extradata ['next'], $details);
+
+            $details = str_replace('{data-idarrive}', $extradata ['idarrive'], $details);
+            $details = str_replace('{data-allaboard}', $extradata ['allaboard'], $details);
+            $details = str_replace('{data-shorex}', $extradata ['shorex'], $details);
+            $details = str_replace('{data-assistant}', $extradata ['assistant'], $details);
+            $details = str_replace('{data-ship}', $extradata ['ship'], $details);
+            $details = str_replace('{data-origin}', $extradata ['origin'], $details);
+            $details = str_replace('{data-destiny}', $extradata ['destiny'], $details);
+            $details = str_replace('{data-next}', $extradata ['next'], $details);
+
+            $details = str_replace('{idarriveList1}', $extradata ['idarrive'], $details);
+            $details = str_replace('{idarriveList2}', $extradata ['idarrive'], $details);
+
+        return $details;
     }
 
     public function get_form()
