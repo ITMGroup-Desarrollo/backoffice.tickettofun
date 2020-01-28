@@ -321,17 +321,44 @@ var config = {
     }
 
     if (configData.channel === 1) {
-      document.querySelector('[name="channel"]').setAttribute('disabled', 'disabled');
-      document.querySelector('[name="reseller"]').setAttribute('disabled', 'disabled');
-      document.querySelector('[name="service"]').setAttribute('disabled', 'disabled');
-      document.querySelector('[name="cruise"]').setAttribute('disabled', 'disabled');
-      document.querySelector('[name="start_date"]').setAttribute('disabled', 'disabled');
-      document.querySelector('[name="end_date"]').setAttribute('disabled', 'disabled');
-      document.querySelector('[name="schedule_end"]').setAttribute('disabled', 'disabled');
+      document.querySelector('[name="channel"]').setAttribute('disabled', 'disabled')
+      document.querySelector('[name="reseller"]').setAttribute('disabled', 'disabled')
+      document.querySelector('[name="service"]').setAttribute('disabled', 'disabled')
+      document.querySelector('[name="cruise"]').setAttribute('disabled', 'disabled')
+      document.querySelector('[name="start_date"]').setAttribute('disabled', 'disabled')
+      document.querySelector('[name="end_date"]').setAttribute('disabled', 'disabled')
+    } else {
+      var cruise = document.getElementById('cruise')
+      cruise.setAttribute('class','hidden')
+
+      document.querySelector('[name="cruise"]').setAttribute('data-validator','')
+      document.querySelector('[name="start_date"]').removeAttribute('readonly')
+      document.querySelector('[name="end_date"]').removeAttribute('readonly')
     }
 
+    document.querySelector('[name="overlap"]').removeAttribute('readonly')
+    document.querySelector('[name="schedule_start"]').removeAttribute('readonly')
+    document.querySelector('[name="schedule_end"]').setAttribute('disabled', 'disabled')
   }
 }
+
+document.querySelectorAll('.date-format').flatpickr({
+  dateFormat: 'Y-m-d'
+})
+
+document.querySelectorAll('.date-range').flatpickr({
+  altFormat: 'F j, Y',
+  dateFormat: 'Y-m-d',
+  defaultDate: 'today',
+  altInput: true
+})
+
+document.querySelectorAll('.time-format').flatpickr({
+  enableTime: true,
+  noCalendar: true,
+  dateFormat: 'H:i',
+  time_24hr: true
+})
 
 var cruise = document.querySelector('[name="cruise"]')
 if (cruise != null) {
@@ -461,7 +488,13 @@ if (reseller != null) {
 
     var id = (e.target.value) ? e.target.value : configData.reseller
 
-    if (configData.channel === 1) {
+    if (typeof(configData) === "object") {
+      channel = configData.channel;
+    } else {
+      channel = document.querySelector('[name="channel"]');
+    }
+
+    if (channel === 1) {
       var shipId = (typeof(configData) === "object") ? configData.cruise : null
 
       var dataElement2 = {
@@ -517,7 +550,16 @@ form = document.querySelector('#add-config')
 if (form != null) {
   var statusCombo = form.querySelector('[name="status"]')
   statusCombo.parentElement.parentElement.remove()
-  document.getElementById('cruise').setAttribute('class','hidden')
+
+  var cruise = document.getElementById('cruise')
+  cruise.setAttribute('class','hidden')
+  document.querySelector('[name="cruise"]').setAttribute('data-validator','')
+
+  document.querySelector('[name="schedule_end"]').setAttribute('disabled', 'disabled')
+  document.querySelector('[name="start_date"]').removeAttribute('readonly')
+  document.querySelector('[name="end_date"]').removeAttribute('readonly')
+  document.querySelector('[name="schedule_start"]').removeAttribute('readonly')
+  document.querySelector('[name="overlap"]').removeAttribute('readonly')
 
   var channelSelect = form.querySelector('[name="channel"]')
   channelSelect.remove(1)
@@ -560,23 +602,3 @@ const utilAjaxExecute = function () {
 }
 
 utilAjaxExecute()
-
-$(document).ready(function () {
-  document.querySelectorAll('.date-format').flatpickr({
-    dateFormat: 'Y-m-d'
-  })
-
-  document.querySelectorAll('.date-range').flatpickr({
-    altFormat: 'F j, Y',
-    dateFormat: 'Y-m-d',
-    defaultDate: 'today',
-    altInput: true
-  })
-
-  document.querySelectorAll('.time-format').flatpickr({
-    enableTime: true,
-    noCalendar: true,
-    dateFormat: 'H:i',
-    time_24hr: true
-  })
-})
