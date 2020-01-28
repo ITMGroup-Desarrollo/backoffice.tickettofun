@@ -35,6 +35,7 @@ var allotment = {
       var newpax = inputPax.value
       var newavailable = capmax - newpax
       inputPax.setAttribute('data-paxoriginal', newpax)
+      inputPax.setAttribute('value', newpax)
       var _inputavailable = document.querySelector(`[data-idavailable="${elementid}"]`)
       _inputavailable.innerHTML = newavailable
       _message = utils.createElement('p', '', '', 'Success! Allotment updated correctly')
@@ -226,21 +227,22 @@ var allotment = {
 
 const unlock = function (elementid) {
   var inputPax = document.getElementById(elementid)
-  var original = parseInt(inputPax.getAttribute('data-paxoriginal'))
   inputPax.removeAttribute('disabled')
   inputPax.focus()
 
   inputPax.addEventListener('blur', function (e) {
     e.preventDefault()
     e.stopImmediatePropagation()
+
+    var original = parseInt(inputPax.getAttribute('data-paxoriginal'))
     inputPax.setAttribute('disabled', 'disabled')
     var valid = 'true'
-    var newpax = inputPax.value
+    var newpax = parseInt(inputPax.value)
 
-    if (original !== newpax) {
-      valid = utils.dataValidator(inputPax)
+    valid = utils.dataValidator(inputPax)
 
-      if (valid) {
+    if (valid) {
+      if (original !== newpax) {
         var info = {
           type_channel: 1,
           pax: parseInt(inputPax.value),
