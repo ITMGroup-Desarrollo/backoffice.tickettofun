@@ -44,7 +44,7 @@ var diary = {
         $('.details-registers').dataTable({
           paging: false,
           searching: false,
-          order: ([1, 'asc'])
+          order: ([2, 'asc'])
         })
       })
 
@@ -144,7 +144,7 @@ if (tourDetails !== null) {
     $('.details-registers').dataTable({
       paging: false,
       searching: false,
-      order: ([1, 'asc'])
+      order: ([2, 'asc'])
     })
   })
 }
