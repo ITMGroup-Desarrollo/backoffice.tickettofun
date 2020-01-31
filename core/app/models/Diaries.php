@@ -23,17 +23,28 @@ class Diaries extends CI_Model
         $this->settings = '';
     }
 
-    public function get_location_distribution($next_date = NULL)
+    public function get_location_distribution($next_date = NULL, $view = NULL)
     {
         $this->db->close();
 
-        $locations = array ();
+        $locations = array();
 
         $this->settings = $this->Page->get_settings('diary');
 
         $element = $this->build->build_components($this->settings['SPEC']);
-        $table = $this->build->build_components($this->settings['DIARY_TABLE']);
-        $ship_details = $this->build->build_components($this->settings['SHIP_SPEC']);
+
+        $table = '';
+        $ship_details = '';
+        if ($view == NULL)
+        {
+            $table = $this->build->build_components($this->settings['DIARY_TABLE']);
+            $ship_details = $this->build->build_components($this->settings['SHIP_SPEC']);
+        }
+        else
+        {
+            $table = $this->build->build_components($this->settings['DIARY_TABLE_PDF']);
+            $ship_details = $this->build->build_components($this->settings['SHIP_SPEC_PDF']);
+        }
 
         if ($next_date == NULL) {
             // Tours
@@ -53,18 +64,17 @@ class Diaries extends CI_Model
         $num_rows = $query_result->num_rows();
         $result   = $query_result->result();
 
-
         $query_result->free_result();
         $this->db->close();
-
 
         $id = 0;
         $total = 0;
         $body = '';
         $details = '';
+        $arrive_id = 0;
         $ship_name = '';
         $total_tours = 0;
-        $arrive_id = 0;
+
         if ($result[0]->response == 200)
         {
             foreach ($result as $row)
@@ -98,6 +108,7 @@ class Diaries extends CI_Model
                     $details .= str_replace(
                         '{tours_details}', $schedules, $ship_details
                     );
+
                     $details = str_replace(
                         '{ship-cruise}', $ship_name, $details
                     );
@@ -155,77 +166,81 @@ class Diaries extends CI_Model
         $table = str_replace('{rows}', $body, $table);
         $details .= str_replace('{tours_details}', $table, $ship_details);
         $details = str_replace('{ship-cruise}', $ship_name, $details);
+
         if ($result[0]->response == 200)
         {
             $details = $this->_set_values_headship($extradata1, $details);
         }
-        else {
+        else
+        {
             $details = str_replace('btn btn-primary btn-md', 'btn btn-primary btn-md hidden', $details);
         }
 
         $this->model['details'] = $details;
 
-        // Locations distribution
-        $this->load->database();
-        $query = 'CALL get_sales_tours(?)';
-        $data = array($next_date);
+        // If is a print option don't build this secction
+        if ($view == null) {
+            // Locations distribution
+            $this->load->database();
+            $query = 'CALL get_sales_tours(?)';
+            $data = array($next_date);
 
-        $query_result = $this->db->query($query, $data);
+            $query_result = $this->db->query($query, $data);
 
-        $num_rows = $query_result->num_rows();
-        $result   = $query_result->result();
+            $num_rows = $query_result->num_rows();
+            $result   = $query_result->result();
 
-        $query_result->free_result();
-        $this->db->close();
+            $query_result->free_result();
+            $this->db->close();
 
-        if ($num_rows)
-        {
-            foreach ($result as $row)
+            if ($num_rows)
             {
-                if ($row->response == 200)
-                    $locations[$row->location_name] = $row->total;
+                foreach ($result as $row)
+                {
+                    if ($row->response == 200)
+                        $locations[$row->location_name] = $row->total;
+                }
             }
-        }
 
-        foreach ($locations as $key => $value)
-        {
-            $items = str_replace('{count}', $value, $element);
-            $items = str_replace('{location}', $key, $items);
+            foreach ($locations as $key => $value)
+            {
+                $items = str_replace('{count}', $value, $element);
+                $items = str_replace('{location}', $key, $items);
 
-            $this->model['tours'] .= $items;
+                $this->model['tours'] .= $items;
+            }
         }
 
         return $this->model;
     }
 
-    private function _set_values_headship(array $extradata, string $details){
+    private function _set_values_headship(array $extradata, string $details)
+    {
+        $details = str_replace('{h-name}', $extradata['allaboard'], $details);
+        $details = str_replace('{s-name}', $extradata['shorex'], $details);
+        $details = str_replace('{a-name}', $extradata['assistant'], $details);
+        $details = str_replace('{sh-time}',$extradata['ship'], $details);
+        $details = str_replace('{o-port}', $extradata['origin'] , $details);
+        $details = str_replace('{d-port}', $extradata ['destiny'], $details);
+        $details = str_replace('{n-port}', $extradata ['next'], $details);
 
-            $details = str_replace('{h-name}', $extradata['allaboard'], $details);
-            $details = str_replace('{s-name}', $extradata['shorex'], $details);
-            $details = str_replace('{a-name}', $extradata['assistant'], $details);
-            $details = str_replace('{sh-time}',$extradata['ship'], $details);
-            $details = str_replace('{o-port}', $extradata['origin'] , $details);
-            $details = str_replace('{d-port}', $extradata ['destiny'], $details);
-            $details = str_replace('{n-port}', $extradata ['next'], $details);
+        $details = str_replace('{data-idarrive}', $extradata ['idarrive'], $details);
+        $details = str_replace('{data-allaboard}', $extradata ['allaboard'], $details);
+        $details = str_replace('{data-shorex}', $extradata ['shorex'], $details);
+        $details = str_replace('{data-assistant}', $extradata ['assistant'], $details);
+        $details = str_replace('{data-ship}', $extradata ['ship'], $details);
+        $details = str_replace('{data-origin}', $extradata ['origin'], $details);
+        $details = str_replace('{data-destiny}', $extradata ['destiny'], $details);
+        $details = str_replace('{data-next}', $extradata ['next'], $details);
 
-            $details = str_replace('{data-idarrive}', $extradata ['idarrive'], $details);
-            $details = str_replace('{data-allaboard}', $extradata ['allaboard'], $details);
-            $details = str_replace('{data-shorex}', $extradata ['shorex'], $details);
-            $details = str_replace('{data-assistant}', $extradata ['assistant'], $details);
-            $details = str_replace('{data-ship}', $extradata ['ship'], $details);
-            $details = str_replace('{data-origin}', $extradata ['origin'], $details);
-            $details = str_replace('{data-destiny}', $extradata ['destiny'], $details);
-            $details = str_replace('{data-next}', $extradata ['next'], $details);
-
-            $details = str_replace('{idarriveList1}', $extradata ['idarrive'], $details);
-            $details = str_replace('{idarriveList2}', $extradata ['idarrive'], $details);
+        $details = str_replace('{idarriveList1}', $extradata ['idarrive'], $details);
+        $details = str_replace('{idarriveList2}', $extradata ['idarrive'], $details);
 
         return $details;
     }
 
     public function get_form()
     {
-
         $this->db->close();
         $contents = $this->Page->get_settings('diary');
 
@@ -234,7 +249,6 @@ class Diaries extends CI_Model
         $this->model = $this->build->build_components(
             $contents[$form]
         );
-
 
         return $this->model;
     }
