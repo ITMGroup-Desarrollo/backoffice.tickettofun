@@ -169,7 +169,7 @@ if (element != null) {
   var month = date.getMonth()
   var year = date.getFullYear()
 
-  var maxDate = utils.dateFormat('Y-m-d', new Date(year, month + 1, 0))
+  var maxDate = utils.dateFormat('Y-m-d', new Date(year, month + 1, 7))
 
   flatpickr(element, {
     altInput: true,
