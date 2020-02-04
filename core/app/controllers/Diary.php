@@ -82,4 +82,33 @@ class Diary extends CI_Controller
 
         echo json_encode($response);
     }
+
+    public function buil_pdf() {
+
+    $this->load->library('pdfgenerator');
+
+       $date = $_GET['date'];
+
+      $this->load->Model('Page');
+      $this->load->Model('Diaries');
+      $html = $this->Diaries->get_location_distribution($date, 'DIARY_TABLE_PDF');
+      $html= $html['details'];
+      $formatdate = date('d-m-Y', strtotime($date));
+
+         $htmlend = '<!DOCTYPE html>
+             <html>
+             <head>
+             <title>Diary '.$formatdate.'</title>
+             </head>
+
+             <h1 align="center">Daily operation journal</h1>
+             <p align="center" style="font-family: sans-serif">Port of Costa Maya '. $formatdate .'</p>
+
+            </br>
+            </br>'. $html.'</body>
+            </html>';
+
+          $filename = 'DiaryPruebaPDF';
+          $this->pdfgenerator->generate($htmlend, $filename, true, 'A4', 'portrait');
+    }
 }

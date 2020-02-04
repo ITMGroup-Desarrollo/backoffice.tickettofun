@@ -335,6 +335,18 @@ const saveExtradatafcn = function () {
   }
 }
 
+var _print = document.querySelector('[name="print"]')
+if (_print !== null) {
+  var _iconprint = utils.createElement('i', 'fa fa-print', '', '')
+  _print.appendChild(_iconprint)
+
+  _print.addEventListener('click', function (e) {
+    var date = document.querySelector('[name="inputDate"]').value
+    var url = '/itm-backoffice/diary/buil_pdf?date=' + date
+    window.open(url, '_blank')
+  })
+}
+
 if (rol !== 1 && rol !== 3) {
   containerForm.parentElement.removeChild(containerForm)
 }
