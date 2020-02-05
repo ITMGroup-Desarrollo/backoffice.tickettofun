@@ -100,8 +100,15 @@ class Diaries extends CI_Model
 
                 if ($id != $row->ship_id)
                 {
-                    $aux = "<br/><hr><p>Total of tours : {$total_tours}</p>";
-                    $ship_name .= $aux;
+                    if ($view == 'DIARY_TABLE_PDF')
+                    {
+                        $aux = "<span> | Total of tours : {$total_tours}</span>";
+                        $ship_name .= $aux;
+                    }else{
+
+                        $aux = "<br/><hr><p>Total of tours : {$total_tours}</p>";
+                        $ship_name .= $aux;
+                    }
 
                     $id = $row->ship_id;
                     $schedules = str_replace('{rows}', $body, $table);
@@ -159,8 +166,15 @@ class Diaries extends CI_Model
                 $body .= custom('td', '', '');
         }
 
-        $aux = "<br/><hr><p>Total of tours : {$total_tours}</p>";
-        $ship_name .= $aux;
+        if ($view == 'DIARY_TABLE_PDF')
+        {
+            $aux = "<span> | Total of tours : {$total_tours}</span>";
+            $ship_name .= $aux;
+
+        }else{
+            $aux = "<br/><hr><p>Total of tours : {$total_tours}</p>";
+            $ship_name .= $aux;
+        }
 
         $this->model['total_tours'] = $total;
         $table = str_replace('{rows}', $body, $table);
