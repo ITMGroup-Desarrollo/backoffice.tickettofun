@@ -349,4 +349,5 @@ if (_print !== null) {
 
 if (rol !== 1 && rol !== 3) {
   containerForm.parentElement.removeChild(containerForm)
+  document.querySelector('[name="btn_modal_update"]').remove()
 }
