@@ -342,7 +342,7 @@ if (_print !== null) {
 
   _print.addEventListener('click', function (e) {
     var date = document.querySelector('[name="inputDate"]').value
-    var url = '/itm-backoffice/diary/buil_pdf?date=' + date
+    var url = `${base}/diary/buil_pdf?date=${date}`
     window.open(url, '_blank')
   })
 }
@@ -350,5 +350,3 @@ if (_print !== null) {
 if (rol !== 1 && rol !== 3) {
   containerForm.parentElement.removeChild(containerForm)
 }
-
-// diary.setAction()
