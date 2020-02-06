@@ -100,13 +100,16 @@ class Diary extends CI_Controller
              <head>
              <title>Diary '.$formatdate.'</title>
              </head>
-
-             <h1 align="center" style="font-size:18px">Daily operation journal</h1>
-             <p align="center" style="font-family: sans-serif">Port of Costa Maya '. $formatdate .'</p>
-            </br>'. $html.'</body>
-            </html>';
+             <body style="margin:0px;">
+             <h1 align="center" style="font-family: sans-serif; font-size:12px; margin:0px; font-weight:bold;">
+                Daily operation journal
+             </h1>
+             <p align="center" style="font-family: sans-serif; font-size:10px; margin:0 0 5px 0;">Port of Costa Maya '. $formatdate .'</p>'
+             . $html.
+            '</body>
+             </html>';
 
           $filename = 'DiaryPruebaPDF';
-          $this->pdfgenerator->generate($htmlend, $filename, true, 'A4', 'landscape');
+          $this->pdfgenerator->generate($htmlend, $filename, true, 'A4', 'portrait');
     }
 }

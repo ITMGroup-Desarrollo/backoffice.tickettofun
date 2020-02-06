@@ -4,7 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 require_once APPPATH."/third_party/dompdf/autoload.inc.php";
 use Dompdf\Dompdf;
 class Pdfgenerator {
-// por defecto, usaremos papel A4 en vertical, salvo que digamos otra cosa al momento de generar un PDF
+// por defecto, usaremos papel A4 en vertical, salvo que digamos otra cosa al momento de generar un PDF //landscape
 public function generate($html, $filename='', $stream=TRUE, $paper = 'A4', $orientation = "portrait")
   {
     $dompdf = new DOMPDF();

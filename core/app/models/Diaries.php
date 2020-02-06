@@ -141,14 +141,20 @@ class Diaries extends CI_Model
 
                 $aux = '';
                 $aux .= custom('td', '', $row->service_name);
-                $aux .= custom('td', '', $row->service_equivalence_name);
+                if ($view != 'DIARY_TABLE_PDF')
+                {
+                    $aux .= custom('td', '', $row->service_equivalence_name);
+                }
                 $aux .= custom('td', '', $row->schedule_start);
                 $aux .= custom('td', '', $row->schedule_end);
                 $aux .= custom('td', '', $row->duration);
-                if ($row->private_service == 1){
-                    $aux .= custom('td', '', 'Yes');
-                }else{
-                    $aux .= custom('td', '', 'No');
+                if ($view != 'DIARY_TABLE_PDF')
+                {
+                    if ($row->private_service == 1){
+                        $aux .= custom('td', '', 'Yes');
+                    }else{
+                        $aux .= custom('td', '', 'No');
+                    }
                 }
                 $aux .= custom('td', '', $row->pax);
                 $aux .= custom('td', '', $row->min_available);
