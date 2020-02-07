@@ -220,50 +220,43 @@ const buildModal = function () {
           defaultDate: valueallaboard,
           time_24hr: true
         })
-        _inputAllaboard.setAttribute('data-validator', 'empty')
-        _inputAllaboard.setAttribute('data-validator-msg', 'The Allaboard is required!')
+        _inputAllaboard.setAttribute('maxlength', '5')
         _inputAllaboard.setAttribute('readonly', 'readonly')
         var _labelShorex = utils.createElement('span', 'control-label', '', 'Shorex mgr:')
         var _inputShorex = utils.createElement('input', 'form-control shorex', '', '')
         _inputShorex.setAttribute('name', 'shorex')
         _inputShorex.setAttribute('style', 'margin-bottom:15px;')
-        _inputShorex.setAttribute('data-validator', 'empty')
-        _inputShorex.setAttribute('data-validator-msg', 'The Shorex is required!')
+        _inputShorex.setAttribute('maxlength', '45')
         _inputShorex.setAttribute('value', valueshorex)
         var _labelAssist = utils.createElement('span', 'control-label', '', 'Assist:')
         var _inputAssist = utils.createElement('input', 'form-control assistant', '', '')
         _inputAssist.setAttribute('name', 'assistant')
         _inputAssist.setAttribute('style', 'margin-bottom:15px;')
-        _inputAssist.setAttribute('data-validator', 'empty')
-        _inputAssist.setAttribute('data-validator-msg', 'The Assistant is required!')
+        _inputAssist.setAttribute('maxlength', '45')
         _inputAssist.setAttribute('value', valueassistant)
         var _labelShiptime = utils.createElement('span', 'control-label', '', 'Ship time:')
         var _inputShiptime = utils.createElement('input', 'form-control shiptime', '', '')
         _inputShiptime.setAttribute('name', 'shiptime')
         _inputShiptime.setAttribute('style', 'margin-bottom:15px;')
-        _inputShiptime.setAttribute('data-validator', 'empty')
-        _inputShiptime.setAttribute('data-validator-msg', 'The Ship time is required!')
+        _inputShiptime.setAttribute('maxlength', '45')
         _inputShiptime.setAttribute('value', valueshiptime)
         var _labelOrigin = utils.createElement('span', 'control-label', '', 'Origin:')
         var _inputOrigin = utils.createElement('input', 'form-control origin', '', '')
         _inputOrigin.setAttribute('name', 'origin')
         _inputOrigin.setAttribute('style', 'margin-bottom:15px;')
-        _inputOrigin.setAttribute('data-validator', 'empty')
-        _inputOrigin.setAttribute('data-validator-msg', 'The Origin is required!')
+        _inputOrigin.setAttribute('maxlength', '45')
         _inputOrigin.setAttribute('value', valueorigin)
         var _labelDestiny = utils.createElement('span', 'control-label', '', 'Destiny:')
         var _inputDestiny = utils.createElement('input', 'form-control destiny', 'destiny', '')
         _inputDestiny.setAttribute('name', 'destiny')
         _inputDestiny.setAttribute('style', 'margin-bottom:15px;')
-        _inputDestiny.setAttribute('data-validator', 'empty')
-        _inputDestiny.setAttribute('data-validator-msg', 'The Destiny is required!')
-        _inputDestiny.setAttribute('value', valuedestiny)
+        _inputDestiny.setAttribute('readonly', 'readonly')
+        _inputDestiny.setAttribute('value', 'Costa Maya')
         var _labelNextPort = utils.createElement('span', 'control-label', '', 'Next Port:')
         var _inputNextPort = utils.createElement('input', 'form-control nextport', '', '')
         _inputNextPort.setAttribute('name', 'nextport')
         _inputNextPort.setAttribute('style', 'margin-bottom:15px;')
-        _inputNextPort.setAttribute('data-validator', 'empty')
-        _inputNextPort.setAttribute('data-validator-msg', 'The Next port is required!')
+        _inputNextPort.setAttribute('maxlength', '45')
         _inputNextPort.setAttribute('value', valuenextport)
 
         _alertModal.innerHTML = ''
@@ -324,10 +317,10 @@ const saveExtradatafcn = function () {
       all_aboard_time: valueallaboard,
       shorex_name: valueshorex,
       assistant_name: valueassistant,
-      origin_port_name: valueshiptime,
-      destiny_port_name: valueorigin,
-      next_port_name: valuedestiny,
-      ship_time: valuenextport
+      origin_port_name: valueorigin,
+      destiny_port_name: valuedestiny,
+      next_port_name: valuenextport,
+      ship_time: valueshiptime
     }
 
     var url = `${apiHost}arrives/edit/extra_data/${idarrive}`

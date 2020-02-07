@@ -95,14 +95,13 @@ class Diaries extends CI_Model
                         'next' => $row->next_port_name,
                         'idarrive' => $row->arrive_id
                     );
-
                 }
 
                 if ($id != $row->ship_id)
                 {
                     if ($view == 'DIARY_TABLE_PDF')
                     {
-                        $aux = "<span> | Total of tours : {$total_tours}</span>";
+                        $aux = "<span> | Total of tours : {$total_tours}</span> <span> | Ship time : {$row->ship_time}</span>";
                         $ship_name .= $aux;
                     }else{
 
@@ -174,7 +173,7 @@ class Diaries extends CI_Model
 
         if ($view == 'DIARY_TABLE_PDF')
         {
-            $aux = "<span> | Total of tours : {$total_tours}</span>";
+            $aux = "<span> | Total of tours : {$total_tours}</span> <span> | Ship time : {$row->ship_time}</span>";
             $ship_name .= $aux;
 
         }else{
