@@ -3,7 +3,7 @@ var menu
 var info
 var base = window.baseUrl
 var token = window.token
-var apiHost = 'https://core.itmgroup.mx/api/v1/'
+var apiHost = 'http://core.itmgroup.mx/api/v1/'
 
 var codes = {
   400: 1,
@@ -123,7 +123,7 @@ if (login !== null) {
         password: document.querySelector('[name="user_password"]').value
       }
 
-      var url = 'https://core.itmgroup.mx/auth/login'
+      var url = 'http://core.itmgroup.mx/auth/login'
       utils.api(JSON.stringify(info), url, 'POST', app.signin)
     }
   })
