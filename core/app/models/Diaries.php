@@ -74,9 +74,21 @@ class Diaries extends CI_Model
         $arrive_id = 0;
         $ship_name = '';
         $total_tours = 0;
+        $extradata = array (
+            'allaboard' => '',
+            'shorex' => '',
+            'assistant' => '',
+            'ship' => '',
+            'origin' => '',
+            'destiny' => '',
+            'next' => '',
+            'idarrive' => ''
+        );
+        $ship_time = '';
 
         if ($result[0]->response == 200)
         {
+
             foreach ($result as $row)
             {
                 if ($id == 0)
@@ -85,7 +97,7 @@ class Diaries extends CI_Model
                     $ship_name = $row->ship_name . ' | ';
                     $ship_name .= $row->arrival_time . '-' . $row->departure_time;
 
-                    $extradata1 = array (
+                    $extradata = array (
                         'allaboard' => $row->all_aboard_time,
                         'shorex' => $row->shorex_name,
                         'assistant' => $row->assistant_name,
@@ -95,19 +107,21 @@ class Diaries extends CI_Model
                         'next' => $row->next_port_name,
                         'idarrive' => $row->arrive_id
                     );
+                    $ship_time = $row->ship_time;
                 }
 
                 if ($id != $row->ship_id)
                 {
                     if ($view == 'DIARY_TABLE_PDF')
                     {
-                        $aux = "<span> | Total of tours : {$total_tours}</span> <span> | Ship time : {$row->ship_time}</span>";
-                        $ship_name .= $aux;
-                    }else{
-
-                        $aux = "<br/><hr><p>Total of tours : {$total_tours}</p>";
-                        $ship_name .= $aux;
+                        $aux = "<span> | Total of tours : {$total_tours}</span> <span> | Ship time : {$ship_time}</span>";
                     }
+                    else
+                    {
+                        $aux = "<br/><hr><p>Total of tours : {$total_tours}</p>";
+                    }
+
+                    $ship_name .= $aux;
 
                     $id = $row->ship_id;
                     $schedules = str_replace('{rows}', $body, $table);
@@ -118,6 +132,13 @@ class Diaries extends CI_Model
                     $details = str_replace(
                         '{ship-cruise}', $ship_name, $details
                     );
+
+                    $details = $this->_set_values_headship($extradata, $details);
+
+                    $body = '';
+                    $total_tours = 0;
+                    $ship_name = $row->ship_name . ' | ';
+                    $ship_name .= $row->arrival_time . '-' . $row->departure_time;
 
                     $extradata = array (
                         'allaboard' => $row->all_aboard_time,
@@ -130,12 +151,7 @@ class Diaries extends CI_Model
                         'idarrive' => $row->arrive_id
                     );
 
-                    $details = $this->_set_values_headship($extradata, $details);
-
-                    $body = '';
-                    $total_tours = 0;
-                    $ship_name = $row->ship_name . ' | ';
-                    $ship_name .= $row->arrival_time . '-' . $row->departure_time;
+                    $ship_time = $row->ship_time;
                 }
 
                 $aux = '';
@@ -167,33 +183,30 @@ class Diaries extends CI_Model
         }
         else
         {
-            for ($i =0; $i < 8; $i++)
+            for ($i =0; $i < 8; $i++) {
                 $body .= custom('td', '', '');
+            }
         }
 
         if ($view == 'DIARY_TABLE_PDF')
         {
-            $aux = "<span> | Total of tours : {$total_tours}</span> <span> | Ship time : {$row->ship_time}</span>";
-            $ship_name .= $aux;
-
-        }else{
-            $aux = "<br/><hr><p>Total of tours : {$total_tours}</p>";
-            $ship_name .= $aux;
+            $aux = "<span> | Total of tours : {$total_tours}</span> <span> | Ship time : {$ship_time}</span>";
         }
+        else
+        {
+            $aux = "<br/><hr><p>Total of tours : {$total_tours}</p>";
+        }
+
+        $ship_name .= $aux;
 
         $this->model['total_tours'] = $total;
         $table = str_replace('{rows}', $body, $table);
         $details .= str_replace('{tours_details}', $table, $ship_details);
         $details = str_replace('{ship-cruise}', $ship_name, $details);
+        $details = $this->_set_values_headship($extradata, $details);
 
-        if ($result[0]->response == 200)
-        {
-            $details = $this->_set_values_headship($extradata1, $details);
-        }
-        else
-        {
+        if ($id == 0)
             $details = str_replace('btn btn-primary btn-md', 'btn btn-primary btn-md hidden', $details);
-        }
 
         $this->model['details'] = $details;
 
