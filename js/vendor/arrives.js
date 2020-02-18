@@ -256,7 +256,7 @@ var arrives = {
         ]
       })
 
-    editor.order([ 2, 'asc' ])
+    editor.order([2, 'asc'])
     editor.draw()
     editor.columns.adjust().draw()
 
@@ -629,13 +629,13 @@ var arrives = {
     var today = ''
     var date = ''
 
-    today = new Date();
+    today = new Date()
 
-    if (day !== "" && day > 0) {
+    if (day !== '' && day > 0) {
       today.setDate(today.getDate() + day)
     }
 
-    date = today.getFullYear()+'-'+(today.getMonth() + 1)+'-'+today.getDate()
+    date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()
 
     return date
   }
@@ -836,5 +836,14 @@ if (screenUpdate != null) {
       e.preventDefault()
       e.returnValue = ''
     }
+  })
+}
+
+var _excel = document.querySelector('[name="btn_export_excel"]')
+if (_excel !== null) {
+  _excel.addEventListener('click', function (e) {
+    const id = arrivesData.id
+    var url = `${base}/arrives/buil_excel?id=${id}`
+    window.open(url)
   })
 }
