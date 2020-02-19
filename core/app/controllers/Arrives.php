@@ -203,7 +203,7 @@ class Arrives extends CI_Controller
 
             $styletableArrive = array(
                 "borders" => array(
-                    "outline" => array(
+                    "allBorders" => array(
                         "borderStyle" => Border::BORDER_THIN,
                         "color" => array("argb" => "517094"),
                     ),
@@ -212,24 +212,34 @@ class Arrives extends CI_Controller
 
             $sheet ->getStyle("B2:C7")->applyFromArray($styletableArrive);
 
-            $sheet->getStyle('B2:B7')->getFill()->applyFromArray(
+            $sheet->getStyle('B2:C7')->getFill()->applyFromArray(
                 [
                     'fillType' => Fill::FILL_GRADIENT_LINEAR,
                     'rotation' => 0,
                     'startColor' => [
-                        'rgb' => '517094'
+                        'rgb' => 'DCE6F2'
                     ],
                     'endColor' => [
-                        'argb' => 'FFFFFFFF'
+                        'argb' => 'DCE6F2'
                     ]
                 ]
             );
 
+            $darkrow = array(
+                'fillType' => Fill::FILL_GRADIENT_LINEAR,
+                'rotation' => 0,
+                'color' => array('argb' => '8EABCC')
+            );
+
+            $sheet->getStyle('B2:C2')->getFill()->applyFromArray($darkrow);
+            $sheet->getStyle('B4:C4')->getFill()->applyFromArray($darkrow);
+            $sheet->getStyle('B6:C6')->getFill()->applyFromArray($darkrow);
+
             $sheet->getStyle('B2:B7')->getFont()->applyFromArray(
                 [
-                   'bold' => TRUE,
+                   'bold' => False,
                     'color' => [
-                        'rgb' => 'FBFCFC'
+                        'rgb' => '17202A'
                    ]
                ]
             );
