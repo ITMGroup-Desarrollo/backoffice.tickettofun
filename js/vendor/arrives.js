@@ -847,3 +847,10 @@ if (_excel !== null) {
     window.open(url)
   })
 }
+var rol = window.roluser
+if (rol !== 1 && rol !== 3) {
+  var _excelbtn = document.querySelector('[name="btn_export_excel"]')
+  if (_excelbtn != null) {
+    _excel.className = 'btn  btn-sm btn-export-excel hidden'
+  }
+}
