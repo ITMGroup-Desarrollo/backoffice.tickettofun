@@ -164,6 +164,8 @@ class Arrives extends CI_Controller
         $userId = 'window.user = ' . $this->session->userdata('user_id');
         $script = custom('script', '', $userId);
 
+        $data['scripts'] = $script .  $data['scripts'];
+
         $userRol = 'window.roluser = ' . $this->session->userdata('rol_id');
         $script = custom('script', '', $userRol);
 
