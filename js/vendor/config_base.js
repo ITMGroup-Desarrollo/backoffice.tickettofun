@@ -373,7 +373,28 @@ var config = {
     var _alertModal = document.getElementById('alert-modal-content')
 
     if (codes.hasOwnProperty(response.code)) {
-      _message = utils.createElement('p', '', '', response.message)
+      var message = ''
+
+      if (utils.isJson(response.message)) {
+        const maxInput = document.querySelector('[name="max_available"]')
+        const minInput = document.querySelector('[name="min_available"]')
+
+        let decode = JSON.parse(response.message)
+        message = decode.message
+
+        if (maxInput != null) {
+          maxInput.value = (decode.available) ? decode.available : 0
+        }
+
+        if (minInput != null) {
+          minInput.value = (decode.available > minInput.value) ? minInput.value : decode.available
+        }
+
+      } else {
+        message = response.message
+      }
+
+      _message = utils.createElement('p', '', '', message)
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
