@@ -88,7 +88,7 @@ class Allotment extends CI_Model
         );
 
         $this->model = str_replace('{rows}', $this->model, $table_content);
-        return /* array(  */$this->model /* ) */;
+        return $this->model;
     }
 
     public function get_form($slug = null, $option = null)
@@ -157,6 +157,7 @@ class Allotment extends CI_Model
             $config->private = $response->message->private_service;
             $config->min_available = $response->message->min_available;
             $config->max_available = $response->message->max_available;
+            $config->opened_schedule = $response->message->opened_schedule;
             $config->available = $response->message->available;
             $config->active = $response->message->active_status;
         }else{

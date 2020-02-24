@@ -157,7 +157,16 @@ var utils = {
     var index = 1
     for (var i in options) {
       element.append(new Option(options[i][key], options[i][value]))
-      element.options.item(index++).setAttribute('id', options[i][value])
+      element.options.item(index).setAttribute('id', options[i][value])
+
+      if (data.extra_data != null) {
+        var extraData = data.extra_data
+        for (var e in  extraData) {
+          element.options.item(index).setAttribute(e, options[i][extraData[e]])
+        }
+      }
+
+      index++
     }
 
     if (data.id !== null){

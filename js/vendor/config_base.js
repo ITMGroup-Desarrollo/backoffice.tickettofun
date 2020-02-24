@@ -5,8 +5,8 @@ var user = window.user
 var configData = window.config
 var objData
 const fireEvent = new Event('change')
-
 var editor
+
 var config = {
   loadOptions: function (response, extradata) {
     const data = JSON.parse(response)
@@ -37,7 +37,9 @@ var config = {
           data.private_service,
           data.active_status,
           data.allotment_id,
-          data.arrive_active_status
+          data.arrive_active_status,
+          data.channel_id,
+          data.active_reservations
         ]
         return dataArray
       })
@@ -110,15 +112,31 @@ var config = {
         data: 'allotment_id',
         className: 'text-center',
         render: function (data, type, row, meta) {
-          if (row[13] === 1) {
-            if (row[11] === 0) {
-              return `<a class="btn-link edit" href="configuration/${row[12]}"><i class="fas fa-edit"></i></a>`
-            } else {
-              return `<a class="btn-link edit" data-toggle="tooltip" data-placement="left" title="Edit allotment" href="configuration/${row[12]}"><i class="fas fa-edit"></i></a> <a class="btn-link delete" data-toggle="tooltip" data-placement="left" title="Delete allotment" data-id="${row[12]}"><i class="fas fa-trash"></i></a>`
-            }
-          } else {
-            return '';
+          switch (row[14]) {
+            case 1:
+              if (row[13] === 1) {
+                let html = `<a class="btn-link edit" data-toggle="tooltip" data-placement="left" title="Edit allotment" href="configuration/${row[12]}"><i class="fas fa-edit"></i></a>`
+
+                if (row[11] === 1) {
+                  html += `<a class="btn-link delete" data-toggle="tooltip" data-placement="left" title="Delete allotment" data-id="${row[12]}"><i class="fas fa-trash"></i></a>`
+                }
+
+                return html
+              } else {
+                return '';
+              }
+              break;
+
+            case 2:
+              let html = `<a class="btn-link edit" data-toggle="tooltip" data-placement="left" title="Edit allotment" href="configuration/${row[12]}"><i class="fas fa-edit"></i></a>`
+
+              if (row[11] === 1 && row[15] === 0) {
+                  html += `<a class="btn-link delete" data-toggle="tooltip" data-placement="left" title="Delete allotment" data-id="${row[12]}"><i class="fas fa-trash"></i></a>`
+              }
+              return html
+              break;
           }
+
         }
       })
     }
@@ -157,12 +175,117 @@ var config = {
 
     MicroModal.close('wait-modal')
   },
-  loadSchedule: function (response){
+  loadServiceSchedules: function () {
+    var service = document.querySelector('[name="service"]')
+    var startDate = document.querySelector('[name="start_date"]')
+    var scheduleStart = document.querySelector('[name="schedule_start"]')
+    var schedule = null
+
+    if (scheduleStart.type == 'select-one') {
+      document.querySelector('[name="schedule_end"]').value = ""
+
+      if (!service.value) {
+        service = configData.service
+        schedule = configData.schedule_start
+      } else {
+        service = service.value
+      }
+
+      if (service && startDate.value) {
+        for (var i = scheduleStart.options.length - 1; i > 0; i--) {
+          scheduleStart.remove(i);
+        }
+
+        var objData = new Object()
+        objData.start_date = startDate.value
+
+        let dataElement = {
+          id: schedule,
+          key: 'schedule_start',
+          value: 'schedule_start',
+          element: document.querySelector('[name="schedule_start"]')
+        }
+
+        utils.api(JSON.stringify(objData), `${apiHost}allotments/serviceschedules/${service}`, 'POST', config.loadOptions, dataElement)
+
+      }
+
+    }
+
+  },
+  loadInputScheduleEnd: function (schedule = null){
+    var service = document.querySelector('[name="service"]')
+    var scheduleStart = (schedule) ? schedule : configData.schedule_start
+
+    if (!service.value) {
+      service = configData.service
+    } else {
+      service = service.value
+    }
+
+    if (scheduleStart && service){
+      utils.api(JSON.stringify({"schedule_start": scheduleStart}), `${apiHost}allotments/servicescheduleend/${service}`, 'POST', config.loadScheduleEnd)
+
+    }else{
+
+      document.querySelector('[name="schedule_end"]').value = "";
+
+    }
+  },
+  loadScheduleEnd: function (response){
     var data = JSON.parse(response);
 
     document.querySelector('[name="schedule_end"]').value = data.message.message;
 
     MicroModal.close();
+
+  },
+  showInputSchedule: function () {
+    var service = document.querySelector('[name="service"]');
+    var scheduleStart = document.querySelector('[name="schedule_start"]')
+    var formActive = document.querySelector('#add-config')
+    var typeSelectDate = null
+    var index = 5
+
+    if (service.value) {
+      typeSelectDate = service.options[service.selectedIndex].getAttribute('data-opened')
+    } else {
+      typeSelectDate = configData.opened_schedule
+    }
+
+    if (formActive != null) {
+      var form = document.getElementById('add-config')
+    } else {
+      var form = document.getElementById('update-config')
+      index = 6
+    }
+
+    var spaceSchedule =  document.getElementsByClassName('form-group')[index].children[1]
+    scheduleStart.remove()
+
+    if (parseInt(typeSelectDate) === 1) {
+      let optionInputSchedule = utils.createElement('select')
+      optionInputSchedule.setAttribute('name', 'schedule_start')
+      optionInputSchedule.setAttribute('id', 'schedule_start')
+      optionInputSchedule.setAttribute('class', 'form-control')
+      optionInputSchedule.append(new Option('-- Choose option --'), '')
+      optionInputSchedule.setAttribute('data-validator', 'empty^timeFormat')
+      optionInputSchedule.setAttribute('data-validator-msg', 'The schedule is required!^Invalid schedule start!')
+      spaceSchedule.appendChild(optionInputSchedule)
+      config.loadServiceSchedules()
+
+    } else {
+      let optionInputSchedule = utils.createElement('input')
+      optionInputSchedule.setAttribute('name', 'schedule_start')
+      optionInputSchedule.setAttribute('value', '00:00')
+      optionInputSchedule.setAttribute('class', 'form-control time-format')
+      optionInputSchedule.setAttribute('autocomplete', 'off')
+      optionInputSchedule.setAttribute('placeholder', 'HH:mm')
+      optionInputSchedule.setAttribute('data-validator', 'empty^timeFormat')
+      optionInputSchedule.setAttribute('data-validator-msg', 'The schedule is required!^Invalid schedule start!')
+      spaceSchedule.appendChild(optionInputSchedule)
+
+    }
   },
   confirm: function (element, option = null){
 
@@ -202,23 +325,31 @@ var config = {
     var _alertModal = document.getElementById('alert-modal-content')
 
     if (codes.hasOwnProperty(response.code)) {
-      let decode = JSON.parse(response.message)
+      var message = ''
 
-      _message = utils.createElement('p', '', '', decode.message)
+      if (utils.isJson(response.message)) {
+        const maxInput = document.querySelector('[name="max_available"]')
+        const minInput = document.querySelector('[name="min_available"]')
+
+        let decode = JSON.parse(response.message)
+        message = decode.message
+
+        if (maxInput != null) {
+          maxInput.value = (decode.available) ? decode.available : 0
+        }
+
+        if (minInput != null) {
+          minInput.value = (decode.available > minInput.value) ? minInput.value : decode.available
+        }
+
+      } else {
+        message = response.message
+      }
+
+      _message = utils.createElement('p', '', '', message)
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
-
-      const maxInput = document.querySelector('[name="max_available"]')
-      const minInput = document.querySelector('[name="min_available"]')
-
-      if (maxInput != null) {
-        maxInput.value = (decode.available) ? decode.available : 0
-      }
-
-      if (minInput != null) {
-        minInput.value = (decode.available > minInput.value) ? minInput.value : decode.available
-      }
 
       MicroModal.show('alert-modal')
     }
@@ -294,6 +425,20 @@ var config = {
       MicroModal.show('alert-modal')
     }
   },
+  setTimeScheduleStart: function () {
+    document.querySelectorAll('.time-format').flatpickr({
+      enableTime: true,
+      noCalendar: true,
+      defaultHour: false,
+      dateFormat: 'H:i',
+      time_24hr: true
+    })
+  },
+  removeOptions: function (element){
+    for (var i = element.options.length - 1; i > 0; i--) {
+      element.remove(i);
+    }
+  },
   setData: function () {
     document.querySelector('[name="status"]').value = configData.active
     document.querySelector('[name="channel"]').value = configData.channel
@@ -302,63 +447,40 @@ var config = {
     document.querySelector('[name="cruise"]').value = configData.cruise
     document.querySelector('[name="start_date"]').value = configData.start_date
     document.querySelector('[name="end_date"]').value = configData.end_date
-    document.querySelector('[name="schedule_start"]').value = configData.schedule_start
-    document.querySelector('[name="schedule_end"]').value = configData.schedule_end
     document.querySelector('[name="overlap"]').value = configData.overlap
     document.querySelector('[name="min_available"]').value = configData.min_available
     document.querySelector('[name="max_available"]').value = configData.max_available
     document.querySelector('[name="shared"]').value = configData.shared
+    config.showInputSchedule()
+    document.querySelector('[name="schedule_start"]').value = configData.schedule_start
+    document.querySelector('[name="schedule_end"]').value = configData.schedule_end
 
-    var private_service =  document.querySelector('[name="private"]')
+    let private_service =  document.querySelector('[name="private"]')
     if (configData.private === 0){
       private_service.removeAttribute('checked')
     }
 
-    if (document.querySelector('[name="reseller"]') != null && configData) {
-      $(document).ready(function () {
-        document.querySelector('[name="reseller"]').value = configData.reseller
-      })
-    }
-
-    if (configData.channel === 1) {
-      document.querySelector('[name="channel"]').setAttribute('disabled', 'disabled')
-      document.querySelector('[name="reseller"]').setAttribute('disabled', 'disabled')
-      document.querySelector('[name="service"]').setAttribute('disabled', 'disabled')
-      document.querySelector('[name="cruise"]').setAttribute('disabled', 'disabled')
-      document.querySelector('[name="start_date"]').setAttribute('disabled', 'disabled')
-      document.querySelector('[name="end_date"]').setAttribute('disabled', 'disabled')
-    } else {
-      var cruise = document.getElementById('cruise')
-      cruise.setAttribute('class','hidden')
-
-      document.querySelector('[name="cruise"]').setAttribute('data-validator','')
-      document.querySelector('[name="start_date"]').removeAttribute('readonly')
-      document.querySelector('[name="end_date"]').removeAttribute('readonly')
-    }
-
-    document.querySelector('[name="overlap"]').removeAttribute('readonly')
-    document.querySelector('[name="schedule_start"]').removeAttribute('readonly')
+    document.querySelector('[name="channel"]').setAttribute('disabled', 'disabled')
+    document.querySelector('[name="start_date"]').setAttribute('disabled', 'disabled')
+    document.querySelector('[name="end_date"]').setAttribute('disabled', 'disabled')
+    document.querySelector('[name="reseller"]').setAttribute('disabled', 'disabled')
+    document.querySelector('[name="service"]').setAttribute('disabled', 'disabled')
+    document.querySelector('[name="cruise"]').setAttribute('disabled', 'disabled')
     document.querySelector('[name="schedule_end"]').setAttribute('disabled', 'disabled')
+
+    switch (configData.channel) {
+      case 1:
+        break
+      case 2:
+        document.querySelector('[name="schedule_start"]').setAttribute('disabled', 'disabled')
+        let cruise = document.getElementById('cruise')
+        cruise.setAttribute('class','hidden')
+        document.querySelector('[name="cruise"]').setAttribute('data-validator','')
+        break;
+    }
+
   }
 }
-
-document.querySelectorAll('.date-format').flatpickr({
-  dateFormat: 'Y-m-d'
-})
-
-document.querySelectorAll('.date-range').flatpickr({
-  altFormat: 'F j, Y',
-  dateFormat: 'Y-m-d',
-  defaultDate: 'today',
-  altInput: true
-})
-
-document.querySelectorAll('.time-format').flatpickr({
-  enableTime: true,
-  noCalendar: true,
-  dateFormat: 'H:i',
-  time_24hr: true
-})
 
 var cruise = document.querySelector('[name="cruise"]')
 if (cruise != null) {
@@ -415,13 +537,13 @@ if (save != null) {
         private_service: document.querySelector('[name="private"]').checked ? 1 : 0,
         user_id: user
       }
-
       form = document.querySelector('#add-config')
 
       if (form != null) {
         var url = `${apiHost}allotments/add`
         info.user_id = user
         info.type_movement = 'I'
+
         utils.api(JSON.stringify(info), url, 'POST', config.add)
       }
 
@@ -430,8 +552,8 @@ if (save != null) {
       if (form != null) {
         info.active_status = document.querySelector('[name="status"]').value
         info.arrive_id = configData.arrive_id;
-
         if (parseInt(info.active_status) === 1) {
+
           var url = `${apiHost}allotments/edit/${configData.id}`
           utils.api(JSON.stringify(info), url, 'PUT', config.update)
         }else{
@@ -440,7 +562,6 @@ if (save != null) {
 
           config.confirm(null, 'update');
         }
-
       }
     }
   })
@@ -458,13 +579,19 @@ if (search !== null) {
 var channel = document.querySelector('[name="channel"]')
 if (channel != null) {
   channel.addEventListener('change', function (e) {
-    e.preventDefault()
+
+    form = document.querySelector('#add-config')
+    if (form != null) {
+      if (!e.target.value){
+        return true
+      }
+    }
 
     var id = (e.target.value) ? e.target.value : configData.reseller
-    var channelId = (typeof(configData) === "object") ? configData.channel : null
+    const resellerId = (typeof(configData) === "object") ? configData.reseller : null
 
     var dataElement = {
-      id: channelId,
+      id: resellerId,
       key: 'reseller_name',
       value: 'reseller_id',
       element: document.querySelector('[name="reseller"]')
@@ -485,6 +612,12 @@ if (reseller != null) {
 
   reseller.addEventListener('change', function (e) {
     e.preventDefault()
+    form = document.querySelector('#add-config')
+    if (form != null) {
+      if (!e.target.value){
+        return true
+      }
+    }
 
     var id = (e.target.value) ? e.target.value : configData.reseller
 
@@ -507,12 +640,17 @@ if (reseller != null) {
       utils.api(JSON.stringify({}), `${apiHost}ships/reseller/${id}`, 'GET', config.loadOptions, dataElement2)
     }
 
-    var serviceId = (typeof(configData) === "object") ? configData.service : null
+    let selectService = document.querySelector('[name="service"]');
+    config.removeOptions(selectService)
 
+    var serviceId = (typeof(configData) === "object") ? configData.service : null
     var dataElement = {
       id: serviceId,
       key: 'service_name',
       value: 'service_id',
+      extra_data: {
+        'data-opened': 'opened_schedule'
+      },
       element: document.querySelector('[name="service"]')
     }
 
@@ -521,53 +659,66 @@ if (reseller != null) {
   })
 }
 
-var scheduleStart = document.querySelector('[name="schedule_start"]')
+var service = document.querySelector('[name="service"]')
 
-if (scheduleStart != null) {
+if (service != null) {
+  service.addEventListener('change', function(e){
+    config.showInputSchedule()
+    config.setTimeScheduleStart()
 
-  scheduleStart.addEventListener('change', function(e) {
-    e.preventDefault()
+    let scheduleStart = document.querySelector('[name="schedule_start"]')
 
-    var service = document.querySelector('[name="service"]')
-    document.querySelector('[name="schedule_end"]')
-
-    if (scheduleStart.value && service.value){
-
-      utils.api(JSON.stringify({"schedule_start": scheduleStart.value}), `${apiHost}allotments/servicescheduleend/${service.value}`, 'POST', config.loadSchedule)
-
-    }else{
-
-      document.querySelector('[name="schedule_end"]').value = "";
-
-    }
-
-
-  });
-
+    scheduleStart.addEventListener('change', function(e) {
+      e.preventDefault()
+      config.loadInputScheduleEnd(scheduleStart.value)
+    })
+  })
 }
+
+var startDate = document.querySelector('[name="start_date"]')
+
+if (startDate != null) {
+  startDate.addEventListener('change', function(e){
+    config.loadServiceSchedules()
+    var endDate = document.querySelector('[name="end_date"]')
+    var service = document.querySelector('[name="service"]')
+    var typeSelectDate = service.options[service.selectedIndex].getAttribute('data-opened')
+
+    endDate.value = startDate.value
+  })
+}
+
 
 form = document.querySelector('#add-config')
 if (form != null) {
-  var statusCombo = form.querySelector('[name="status"]')
+  let statusCombo = form.querySelector('[name="status"]')
   statusCombo.parentElement.parentElement.remove()
 
-  var cruise = document.getElementById('cruise')
+  let cruise = document.getElementById('cruise')
   cruise.setAttribute('class','hidden')
   document.querySelector('[name="cruise"]').setAttribute('data-validator','')
 
+  document.querySelector('[name="end_date"]').setAttribute('disabled', 'disabled')
   document.querySelector('[name="schedule_end"]').setAttribute('disabled', 'disabled')
-  document.querySelector('[name="start_date"]').removeAttribute('readonly')
-  document.querySelector('[name="end_date"]').removeAttribute('readonly')
-  document.querySelector('[name="schedule_start"]').removeAttribute('readonly')
-  document.querySelector('[name="overlap"]').removeAttribute('readonly')
 
-  var channelSelect = form.querySelector('[name="channel"]')
+
+  let channelSelect = form.querySelector('[name="channel"]')
   channelSelect.remove(1)
+  channelSelect.remove(2)
 }
 
 form = document.querySelector('#update-config')
 if (form != null) {
   config.setData()
+}
+
+var scheduleStart = document.querySelector('[name="schedule_start"]')
+
+if (scheduleStart != null) {
+  scheduleStart.addEventListener('change', function(e) {
+    e.preventDefault()
+    config.loadInputScheduleEnd(scheduleStart.value)
+  });
 }
 
 var configTable = document.querySelector('#config-base-registers');
@@ -602,3 +753,17 @@ const utilAjaxExecute = function () {
 }
 
 utilAjaxExecute()
+
+config.setTimeScheduleStart();
+
+document.querySelectorAll('.date-format').flatpickr({
+  dateFormat: 'Y-m-d',
+  minDate: 'today'
+})
+
+document.querySelectorAll('.date-range').flatpickr({
+  altFormat: 'F j, Y',
+  dateFormat: 'Y-m-d',
+  defaultDate: 'today',
+  altInput: true
+})
