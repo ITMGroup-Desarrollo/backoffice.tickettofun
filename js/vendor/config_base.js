@@ -263,7 +263,7 @@ var config = {
     var spaceSchedule =  document.getElementsByClassName('form-group')[index].children[1]
     scheduleStart.remove()
 
-    if (parseInt(typeSelectDate) === 1) {
+    if (parseInt(typeSelectDate) !== 1) {
       let optionInputSchedule = utils.createElement('select')
       optionInputSchedule.setAttribute('name', 'schedule_start')
       optionInputSchedule.setAttribute('id', 'schedule_start')
