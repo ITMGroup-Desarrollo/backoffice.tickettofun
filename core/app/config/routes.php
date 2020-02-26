@@ -96,6 +96,11 @@ $route["locations/list"] = "locations/index/$1";
 $route["locations/new"]   = "locations/index/$1";
 $route["locations/(:num)"]   = "locations/update/$1";
 
+//courtesies
+$route["courtesies/list"] = "courtesies/index/$1";
+$route["courtesies/new"]   = "courtesies/index/$1";
+$route["courtesies/(:num)"]   = "courtesies/update/$1";
+
 //chips
 $route["ships/list"] = "ships/index/$1";
 $route["ships/new"]   = "ships/index/$1";
