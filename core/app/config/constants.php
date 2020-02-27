@@ -99,6 +99,7 @@ defined('GET_SERVICES_ROUTE') OR define('GET_SERVICES_ROUTE', 'api/v1/products')
 defined('GET_LOCATIONS_ROUTE') OR define('GET_LOCATIONS_ROUTE', 'api/v1/locations');
 
 defined('GET_COURTESIES_ROUTE') OR define('GET_COURTESIES_ROUTE', 'api/v1/courtesies');
+defined('GET_PRICES_ROUTE') OR define('GET_PRICES_ROUTE', 'api/v1/prices');
 defined('GET_ROLES_ROUTE') OR define('GET_ROLES_ROUTE', 'api/v1/roles');
 defined('GET_REPS_ROUTE') OR define('GET_REPS_ROUTE', 'api/v1/sales');
 defined('GET_BOOTHS_ROUTE') OR define('GET_BOOTHS_ROUTE', 'api/v1/booths');
