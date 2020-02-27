@@ -457,7 +457,7 @@ $( document ).ready(function() {
   const rowChild = utils.createElement('div', 'col-md-12')
   const new_tour_btn = utils.createElement(
     'button',
-    'btn btn-primary new-tour',
+    'btn btn-primary pull-right new-tour',
     'new-tour',
     'New tour'
   )
