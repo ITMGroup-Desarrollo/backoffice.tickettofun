@@ -23,6 +23,8 @@ var config = {
     let datatable = []
     if (Array.isArray(data.message)) {
       datatable = data.message.map(data => {
+        // console.log('all',data.active_status)
+        // console.log('arr',data)
         const dataArray = [
           data.channel_name,
           data.reseller_name,
@@ -134,6 +136,9 @@ var config = {
                   html += `<a class="btn-link delete" data-toggle="tooltip" data-placement="left" title="Delete allotment" data-id="${row[12]}"><i class="fas fa-trash"></i></a>`
               }
               return html
+              break;
+            default:
+              return '';
               break;
           }
 
