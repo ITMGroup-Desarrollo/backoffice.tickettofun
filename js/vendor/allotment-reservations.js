@@ -45,6 +45,7 @@ var allotment = {
     }
   },
   loadData: function (response) {
+
     const data = JSON.parse(response)
 
     let dataTable = []
@@ -222,6 +223,25 @@ var allotment = {
     }
 
     MicroModal.close('wait-modal')
+  },
+  uploadVendor: function () {
+    for (var i = vendor.options.length - 1; i > 0; i--) {
+      vendor.remove(i)
+    }
+
+    for (var i = ship.options.length - 1; i > 0; i--) {
+      ship.remove(i)
+    }
+
+    vendor.options.length = 0
+    vendor.append(new Option('-- Choose option --', ''))
+
+    info = {
+      type: 'channel_search',
+      start_date: document.querySelector('[name="date"]').value
+    }
+
+    utils.api(JSON.stringify(info), `${apiHost}allotment_reservations/channel/1`, 'POST', allotment.buildfilterVendors)
   }
 }
 
@@ -257,6 +277,13 @@ const unlock = function (elementid) {
   })
 }
 
+var date = document.querySelector('[name="date"]')
+if (date !== null) {
+  date.addEventListener('change', function(){
+    allotment.uploadVendor()
+  })
+}
+
 var ship = document.querySelector('[name="ship"]')
 if (ship != null) {
   ship.options.length = 0
@@ -274,9 +301,6 @@ $(function () {
 
 var vendor = document.querySelector('[name="reseller"]')
 if (vendor != null) {
-  vendor.options.length = 0
-  vendor.append(new Option('-- Choose option --', ''))
-
   vendor.addEventListener('change', function (e) {
     var id = $(this).val()
 
@@ -289,38 +313,10 @@ if (vendor != null) {
       ship.remove(i)
     }
 
-    utils.api(JSON.stringify(info), `${apiHost}allotment_reservations/reseller/${id}`, 'POST', allotment.buildfilterShips)
-  })
-}
-
-var channel = document.querySelector('[name="channel"]')
-if (channel != null) {
-  channel.addEventListener('change', function (e) {
-    var id = $(this).val()
-    var filterShip = document.querySelector('.filter-ship')
-
-    if (id === '1' || id === '') {
-      filterShip.className = 'form-group filter-ship'
-    } else {
-      filterShip.className = 'form-group filter-ship hidden'
+    if (vendor.value) {
+      utils.api(JSON.stringify(info), `${apiHost}allotment_reservations/reseller/${id}`, 'POST', allotment.buildfilterShips)
     }
 
-    info = {
-      type: 'channel_search',
-      start_date: document.querySelector('[name="date"]').value
-    }
-
-    for (var i = vendor.options.length - 1; i > 0; i--) {
-      vendor.remove(i)
-    }
-
-    for (var i = ship.options.length - 1; i > 0; i--) {
-      ship.remove(i)
-    }
-
-    if (id > 0) {
-      utils.api(JSON.stringify(info), `${apiHost}allotment_reservations/channel/${id}`, 'POST', allotment.buildfilterVendors)
-    }
   })
 }
 
@@ -337,9 +333,8 @@ var utilAjaxExecute = function () {
   if (configTable !== undefined && configTable !== null && configTable !== undefined && configTable != undefined) {
     var url = `${apiHost}allotment_reservations`
     var date = document.querySelector('[name="date"]').value
-    const ship = document.querySelector('[name="ship"]').value
-    const channel = document.querySelector('[name="channel"]').value
     const reseller = document.querySelector('[name="reseller"]').value
+    const ship = document.querySelector('[name="ship"]').value
 
     var info = {}
     info.start_date = date
@@ -348,8 +343,8 @@ var utilAjaxExecute = function () {
       url = url + `/ship/${ship}`
     } else if (reseller !== '' && ship === '') {
       url = url + `/reseller/${reseller}`
-    } else if (channel !== '' && reseller === '') {
-      url = url + `/channel/${channel}`
+    }else{
+      url = url + `/channel/1`
     }
 
     utils.api(JSON.stringify(info), url, 'POST', allotment.loadData)
@@ -357,5 +352,6 @@ var utilAjaxExecute = function () {
 }
 
 $(function () {
+  allotment.uploadVendor()
   utilAjaxExecute()
 })
