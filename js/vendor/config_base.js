@@ -23,8 +23,6 @@ var config = {
     let datatable = []
     if (Array.isArray(data.message)) {
       datatable = data.message.map(data => {
-        // console.log('all',data.active_status)
-        // console.log('arr',data)
         const dataArray = [
           data.channel_name,
           data.reseller_name,
@@ -114,34 +112,31 @@ var config = {
         data: 'allotment_id',
         className: 'text-center',
         render: function (data, type, row, meta) {
+          var html = ""
           switch (row[14]) {
             case 1:
               if (row[13] === 1) {
-                let html = `<a class="btn-link edit" data-toggle="tooltip" data-placement="left" title="Edit allotment" href="configuration/${row[12]}"><i class="fas fa-edit"></i></a>`
+                html = `<a class="btn-link edit" data-toggle="tooltip" data-placement="left" title="Edit allotment" href="configuration/${row[12]}"><i class="fas fa-edit"></i></a>`
 
                 if (row[11] === 1) {
                   html += `<a class="btn-link delete" data-toggle="tooltip" data-placement="left" title="Delete allotment" data-id="${row[12]}"><i class="fas fa-trash"></i></a>`
                 }
-
-                return html
-              } else {
-                return '';
               }
               break;
 
             case 2:
-              let html = `<a class="btn-link edit" data-toggle="tooltip" data-placement="left" title="Edit allotment" href="configuration/${row[12]}"><i class="fas fa-edit"></i></a>`
+              html = `<a class="btn-link edit" data-toggle="tooltip" data-placement="left" title="Edit allotment" href="configuration/${row[12]}"><i class="fas fa-edit"></i></a>`
 
               if (row[11] === 1 && row[15] === 0) {
                   html += `<a class="btn-link delete" data-toggle="tooltip" data-placement="left" title="Delete allotment" data-id="${row[12]}"><i class="fas fa-trash"></i></a>`
               }
-              return html
               break;
             default:
-              return '';
+              html = ""
               break;
           }
 
+          return html
         }
       })
     }
@@ -180,7 +175,7 @@ var config = {
 
     MicroModal.close('wait-modal')
   },
-  loadServiceSchedules: function () {
+  loadServiceSchedules: function (reset = null) {
     var service = document.querySelector('[name="service"]')
     var startDate = document.querySelector('[name="start_date"]')
     var scheduleStart = document.querySelector('[name="schedule_start"]')
@@ -188,8 +183,7 @@ var config = {
 
     if (scheduleStart.type == 'select-one') {
       document.querySelector('[name="schedule_end"]').value = ""
-
-      if (!service.value) {
+      if (reset) {
         service = configData.service
         schedule = configData.schedule_start
       } else {
@@ -218,7 +212,7 @@ var config = {
     }
 
   },
-  loadInputScheduleEnd: function (schedule = null){
+  loadInputScheduleEnd: function (schedule = null) {
     var service = document.querySelector('[name="service"]')
     var scheduleStart = (schedule) ? schedule : configData.schedule_start
 
@@ -237,20 +231,19 @@ var config = {
 
     }
   },
-  loadScheduleEnd: function (response){
+  loadScheduleEnd: function (response) {
     var data = JSON.parse(response);
-
     document.querySelector('[name="schedule_end"]').value = data.message.message;
 
     MicroModal.close();
 
   },
-  showInputSchedule: function () {
+  showInputSchedule: function (reset = null) {
     var service = document.querySelector('[name="service"]');
     var scheduleStart = document.querySelector('[name="schedule_start"]')
     var formActive = document.querySelector('#add-config')
+    var form = document.getElementById((formActive != null)?'add-config':'update-config')
     var typeSelectDate = null
-    var index = 5
 
     if (service.value) {
       typeSelectDate = service.options[service.selectedIndex].getAttribute('data-opened')
@@ -258,14 +251,7 @@ var config = {
       typeSelectDate = configData.opened_schedule
     }
 
-    if (formActive != null) {
-      var form = document.getElementById('add-config')
-    } else {
-      var form = document.getElementById('update-config')
-      index = 6
-    }
-
-    var spaceSchedule =  document.getElementsByClassName('form-group')[index].children[1]
+    var spaceSchedule = document.getElementById('schedule-start').children[1]
     scheduleStart.remove()
 
     if (parseInt(typeSelectDate) !== 1) {
@@ -277,7 +263,7 @@ var config = {
       optionInputSchedule.setAttribute('data-validator', 'empty^timeFormat')
       optionInputSchedule.setAttribute('data-validator-msg', 'The schedule is required!^Invalid schedule start!')
       spaceSchedule.appendChild(optionInputSchedule)
-      config.loadServiceSchedules()
+      config.loadServiceSchedules(reset)
 
     } else {
       let optionInputSchedule = utils.createElement('input')
@@ -292,7 +278,7 @@ var config = {
 
     }
   },
-  confirm: function (element, option = null){
+  confirm: function (element, option = null) {
 
     var _message = ''
     var _confirmModal = document.getElementById('confirm-modal-content')
@@ -460,10 +446,18 @@ var config = {
       time_24hr: true
     })
   },
-  removeOptions: function (element){
+  removeOptions: function (element) {
     for (var i = element.options.length - 1; i > 0; i--) {
       element.remove(i);
     }
+  },
+  eventChangeSchedule: function () {
+    var scheduleStart = document.querySelector('[name="schedule_start"]')
+
+    scheduleStart.addEventListener('change', function(e) {
+      e.preventDefault()
+      config.loadInputScheduleEnd(scheduleStart.value)
+    });
   },
   setData: function () {
     document.querySelector('[name="status"]').value = configData.active
@@ -477,7 +471,8 @@ var config = {
     document.querySelector('[name="min_available"]').value = configData.min_available
     document.querySelector('[name="max_available"]').value = configData.max_available
     document.querySelector('[name="shared"]').value = configData.shared
-    config.showInputSchedule()
+    config.showInputSchedule(true)
+    config.eventChangeSchedule()
     document.querySelector('[name="schedule_start"]').value = configData.schedule_start
     document.querySelector('[name="schedule_end"]').value = configData.schedule_end
 
@@ -707,13 +702,10 @@ if (startDate != null) {
   startDate.addEventListener('change', function(e){
     config.loadServiceSchedules()
     var endDate = document.querySelector('[name="end_date"]')
-    var service = document.querySelector('[name="service"]')
-    var typeSelectDate = service.options[service.selectedIndex].getAttribute('data-opened')
 
-    endDate.value = startDate.value
+    endDate.value = this.value
   })
 }
-
 
 form = document.querySelector('#add-config')
 if (form != null) {
@@ -741,10 +733,7 @@ if (form != null) {
 var scheduleStart = document.querySelector('[name="schedule_start"]')
 
 if (scheduleStart != null) {
-  scheduleStart.addEventListener('change', function(e) {
-    e.preventDefault()
-    config.loadInputScheduleEnd(scheduleStart.value)
-  });
+  config.eventChangeSchedule()
 }
 
 var configTable = document.querySelector('#config-base-registers');
@@ -780,7 +769,7 @@ const utilAjaxExecute = function () {
 
 utilAjaxExecute()
 
-config.setTimeScheduleStart();
+config.setTimeScheduleStart()
 
 document.querySelectorAll('.date-format').flatpickr({
   dateFormat: 'Y-m-d',
