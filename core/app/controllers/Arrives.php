@@ -185,8 +185,8 @@ class Arrives extends CI_Controller
         $this->db->close();
         $this->load->database();
 
-        $query = 'CALL get_arrive(?, ?, ?, ?, ?, ?)';
-        $data = array('id', $id, NULL, NULL, NULL, NULL);
+        $query = 'CALL get_arrive(?, ?, ?, ?, ?, ?, ?)';
+        $data = array('id', $id, NULL, NULL, NULL, NULL, NULL);
 
         $query_result = $this->db->query($query, $data);
         $result   = $query_result->result();

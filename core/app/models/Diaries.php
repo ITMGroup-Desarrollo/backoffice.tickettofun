@@ -56,8 +56,8 @@ class Diaries extends CI_Model
 
         $this->db->close();
         $this->load->database();
-        $query = 'CALL get_allotment_reservation(?, ?, ?, ?, ?, ?)';
-        $data = array('bydate', NULL, $next_date, NULL, NULL, NULL);
+        $query = 'CALL get_allotment_reservation(?, ?, ?, ?, ?, ?, ?)';
+        $data = array('bydate', NULL, $next_date, NULL, NULL, NULL, NULL);
 
         $query_result = $this->db->query($query, $data);
 
