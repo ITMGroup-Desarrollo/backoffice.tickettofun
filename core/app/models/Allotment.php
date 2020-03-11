@@ -157,7 +157,6 @@ class Allotment extends CI_Model
             $config->private = $response->message->private_service;
             $config->min_available = $response->message->min_available;
             $config->max_available = $response->message->max_available;
-            $config->opened_schedule = $response->message->opened_schedule;
             $config->available = $response->message->available;
             $config->active = $response->message->active_status;
         }else{

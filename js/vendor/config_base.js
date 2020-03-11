@@ -214,12 +214,12 @@ var config = {
   },
   loadInputScheduleEnd: function (schedule = null) {
     var service = document.querySelector('[name="service"]')
-    var scheduleStart = (schedule) ? schedule : configData.schedule_start
+    var scheduleStart = schedule
+    var service = service.value
 
-    if (!service.value) {
+    if (!schedule) {
+      scheduleStart = configData.schedule_start
       service = configData.service
-    } else {
-      service = service.value
     }
 
     if (scheduleStart && service){
@@ -237,46 +237,6 @@ var config = {
 
     MicroModal.close();
 
-  },
-  showInputSchedule: function (reset = null) {
-    var service = document.querySelector('[name="service"]');
-    var scheduleStart = document.querySelector('[name="schedule_start"]')
-    var formActive = document.querySelector('#add-config')
-    var form = document.getElementById((formActive != null)?'add-config':'update-config')
-    var typeSelectDate = null
-
-    if (service.value) {
-      typeSelectDate = service.options[service.selectedIndex].getAttribute('data-opened')
-    } else {
-      typeSelectDate = configData.opened_schedule
-    }
-
-    var spaceSchedule = document.getElementById('schedule-start').children[1]
-    scheduleStart.remove()
-
-    if (parseInt(typeSelectDate) !== 1) {
-      let optionInputSchedule = utils.createElement('select')
-      optionInputSchedule.setAttribute('name', 'schedule_start')
-      optionInputSchedule.setAttribute('id', 'schedule_start')
-      optionInputSchedule.setAttribute('class', 'form-control')
-      optionInputSchedule.append(new Option('-- Choose option --'), '')
-      optionInputSchedule.setAttribute('data-validator', 'empty^timeFormat')
-      optionInputSchedule.setAttribute('data-validator-msg', 'The schedule is required!^Invalid schedule start!')
-      spaceSchedule.appendChild(optionInputSchedule)
-      config.loadServiceSchedules(reset)
-
-    } else {
-      let optionInputSchedule = utils.createElement('input')
-      optionInputSchedule.setAttribute('name', 'schedule_start')
-      optionInputSchedule.setAttribute('value', '00:00')
-      optionInputSchedule.setAttribute('class', 'form-control time-format')
-      optionInputSchedule.setAttribute('autocomplete', 'off')
-      optionInputSchedule.setAttribute('placeholder', 'HH:mm')
-      optionInputSchedule.setAttribute('data-validator', 'empty^timeFormat')
-      optionInputSchedule.setAttribute('data-validator-msg', 'The schedule is required!^Invalid schedule start!')
-      spaceSchedule.appendChild(optionInputSchedule)
-
-    }
   },
   confirm: function (element, option = null) {
 
@@ -437,27 +397,10 @@ var config = {
       MicroModal.show('alert-modal')
     }
   },
-  setTimeScheduleStart: function () {
-    document.querySelectorAll('.time-format').flatpickr({
-      enableTime: true,
-      noCalendar: true,
-      defaultHour: false,
-      dateFormat: 'H:i',
-      time_24hr: true
-    })
-  },
   removeOptions: function (element) {
     for (var i = element.options.length - 1; i > 0; i--) {
       element.remove(i);
     }
-  },
-  eventChangeSchedule: function () {
-    var scheduleStart = document.querySelector('[name="schedule_start"]')
-
-    scheduleStart.addEventListener('change', function(e) {
-      e.preventDefault()
-      config.loadInputScheduleEnd(scheduleStart.value)
-    });
   },
   setData: function () {
     document.querySelector('[name="status"]').value = configData.active
@@ -471,8 +414,6 @@ var config = {
     document.querySelector('[name="min_available"]').value = configData.min_available
     document.querySelector('[name="max_available"]').value = configData.max_available
     document.querySelector('[name="shared"]').value = configData.shared
-    config.showInputSchedule(true)
-    config.eventChangeSchedule()
     document.querySelector('[name="schedule_start"]').value = configData.schedule_start
     document.querySelector('[name="schedule_end"]').value = configData.schedule_end
 
@@ -669,9 +610,6 @@ if (reseller != null) {
       id: serviceId,
       key: 'service_name',
       value: 'service_id',
-      extra_data: {
-        'data-opened': 'opened_schedule'
-      },
       element: document.querySelector('[name="service"]')
     }
 
@@ -680,30 +618,22 @@ if (reseller != null) {
   })
 }
 
-var service = document.querySelector('[name="service"]')
-
-if (service != null) {
-  service.addEventListener('change', function(e){
-    config.showInputSchedule()
-    config.setTimeScheduleStart()
-
-    let scheduleStart = document.querySelector('[name="schedule_start"]')
-
-    scheduleStart.addEventListener('change', function(e) {
-      e.preventDefault()
-      config.loadInputScheduleEnd(scheduleStart.value)
-    })
-  })
-}
-
 var startDate = document.querySelector('[name="start_date"]')
 
 if (startDate != null) {
   startDate.addEventListener('change', function(e){
-    config.loadServiceSchedules()
     var endDate = document.querySelector('[name="end_date"]')
 
     endDate.value = this.value
+  })
+}
+
+var scheduleStart = document.querySelector('[name="schedule_start"]')
+
+if (scheduleStart != null) {
+  scheduleStart.addEventListener('change', function(e){
+    e.preventDefault
+    config.loadInputScheduleEnd(scheduleStart.value)
   })
 }
 
@@ -715,6 +645,7 @@ if (form != null) {
   let cruise = document.getElementById('cruise')
   cruise.setAttribute('class','hidden')
   document.querySelector('[name="cruise"]').setAttribute('data-validator','')
+  document.querySelector('[name="schedule_start"]').value = "00:00"
 
   document.querySelector('[name="end_date"]').setAttribute('disabled', 'disabled')
   document.querySelector('[name="schedule_end"]').setAttribute('disabled', 'disabled')
@@ -728,12 +659,6 @@ if (form != null) {
 form = document.querySelector('#update-config')
 if (form != null) {
   config.setData()
-}
-
-var scheduleStart = document.querySelector('[name="schedule_start"]')
-
-if (scheduleStart != null) {
-  config.eventChangeSchedule()
 }
 
 var configTable = document.querySelector('#config-base-registers');
@@ -769,7 +694,13 @@ const utilAjaxExecute = function () {
 
 utilAjaxExecute()
 
-config.setTimeScheduleStart()
+document.querySelectorAll('.time-format').flatpickr({
+  enableTime: true,
+  noCalendar: true,
+  defaultHour: false,
+  dateFormat: 'H:i',
+  time_24hr: true
+})
 
 document.querySelectorAll('.date-format').flatpickr({
   dateFormat: 'Y-m-d',
