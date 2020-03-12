@@ -63,15 +63,30 @@ class Price extends CI_Model
                 $aux = '';
                 $this->anchor_attrib = array();
 
-                $aux .= custom('td', '', $row->service_name);
                 $aux .= custom('td', '', $row->reseller_name);
+                $aux .= custom('td', '', $row->service_name);
                 $aux .= custom('td', '', $row->element);
                 $aux .= custom('td', '', $row->symbol_currency." ".$row->price);
                 $aux .= custom('td', '', $row->iso);
-                $aux .= custom('td', '', $row->start_date_purchase);
-                $aux .= custom('td', '', $row->end_date_purchase);
-                $aux .= custom('td', '', $row->seasson_start);
-                $aux .= custom('td', '', $row->seasson_end);
+
+                $span_down = custom('span', array('class' => 'caret'), '');
+                $btn_down = custom('button', array('class' => 'btn btn-default dropdown-toggle', 'type' => 'button', 'id' => 'dropdown-'.$row->price_id, 'data-toggle' => 'dropdown', 'aria-haspopup' => 'true', 'aria-expanded' => 'false'), 'Show date ' . $span_down);
+
+                $head_purchase = custom('li', array('class' => 'dropdown-header'), 'Range Date to Purchase');
+                $a_purcahse = custom('a', array('href' => '#'), $row->start_date_purchase.' - '.$row->end_date_purchase);
+
+                $li_purchase = custom('li', '', $a_purcahse);
+                $head_seasson = custom('li', array('class' => 'dropdown-header'), 'Season date');
+
+                $a_seasson = custom('a', array('href' => '#'), $row->seasson_start.' - '.$row->seasson_end);
+                $li_seasson = custom('li', '', $a_seasson);
+
+                $ul_down = custom('ul', array('class' => 'dropdown-menu', 'aria-labelledby' => 'dropdown-'.$row->price_id), $head_purchase.$li_purchase.$head_seasson.$li_seasson);
+
+                $section_down = custom('div', array('class' => 'dropdown'), $btn_down. $ul_down);
+
+                $aux .= custom('td', '', $section_down);
+
                 $status = '';
                 $delete = '';
                 if ($row->active_status == 1)
@@ -169,4 +184,31 @@ class Price extends CI_Model
 
         return $price;
     }
+
+    public function get_equivalences()
+    {
+        $endpoint = HOST . GET_EQUIVALENCES_ROUTE;
+
+        $params = new stdClass();
+        $this->load->library('session');
+        $token = $this->session->userdata('token');
+
+        $response = json_decode(
+            $this->api->request_api('GET', $endpoint, $params, $token)
+        );
+
+        $equivalence = new stdClass();
+
+        if ($response->code == 200)
+        {
+            $equivalence = $response->message;
+        }
+        else
+        {
+            redirect('/prices/list');
+        }
+
+        return $equivalence;
+    }
+
 }

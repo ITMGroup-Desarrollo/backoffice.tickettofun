@@ -6,6 +6,7 @@ var season
 var base = window.baseUrl
 var token = window.token
 var pricesData = window.prices
+var equivalenceData = window.equivalences
 var user_create_id = window.user_create_id
 
 var prices= {
@@ -100,6 +101,10 @@ var prices= {
     document.querySelector('[name="price"]').value =  pricesData.price
     document.querySelector('[name="currency"]').value =  pricesData.currency_id
     document.querySelector('[name="active"]').value =  pricesData.active_status
+    document.querySelector('[name="reseller"]').disabled = true;
+    document.querySelector('[name="currency"]').disabled = false
+    document.querySelector('[name="pax"]').disabled = true
+    document.querySelector('[name="price"]').disabled = false
   }
 }
 
@@ -115,6 +120,65 @@ if (cancel != null) {
 
     form.reset();
   });
+}
+
+var reseller = document.querySelector('[name="reseller"]')
+if(reseller != null){
+  reseller.addEventListener('change', function(e){
+    e.preventDefault()
+    document.querySelector('[name="service"]').innerHTML = ""
+    var service_equivalence = document.querySelector('[name="service"]')
+
+    if(search(this.value)){
+      for(var _iequivalence = 0; _iequivalence < equivalenceData.length; _iequivalence++){
+        if(this.value == equivalenceData[_iequivalence].reseller_id){
+          service_equivalence.innerHTML += '<option value="'+equivalenceData[_iequivalence].service_id+'">'+equivalenceData[_iequivalence].service_reseller+' / <span style="color:red;">'+equivalenceData[_iequivalence].service_name+'<span></option>'
+        }
+      }
+      service_equivalence.disabled = false;
+      document.querySelector('.save').disabled = false;
+      document.querySelector('[name="currency"]').disabled = false
+      document.querySelector('[name="pax"]').disabled = false
+      document.querySelector('[name="price"]').disabled = false
+    }else{
+      service_equivalence.innerHTML = '<option value="0">This Reseller has no assigned any equivalence</option>'
+      service_equivalence.disabled = true;
+      document.querySelector('.save').disabled = true;
+      document.querySelector('[name="currency"]').disabled = true
+      document.querySelector('[name="pax"]').disabled = true
+      document.querySelector('[name="price"]').disabled = true
+    }
+
+  })
+}
+
+var channel = document.querySelector('[name="channel"]')
+if(channel != null){
+  var reseller = document.querySelector('[name="reseller"]')
+  channel.addEventListener('change', function(e){
+    e.preventDefault()
+    reseller.options[0].selected=true;
+    for(var x= 1; x < reseller.options.length; x++){
+      if(reseller.options[x].getAttribute('data-value') != channel.value)
+      {
+        reseller.options[x].hidden=true;
+      }
+      else
+      {
+        reseller.options[x].removeAttribute('hidden')
+      }
+    }
+  })
+}
+
+function search(nameKey){
+  var response = false
+  for (var _xi=0; _xi < equivalenceData.length; _xi++) {
+      if (equivalenceData[_xi].reseller_id == nameKey) {
+        response = true
+      }
+  }
+  return response
 }
 
 var save = document.querySelector('.save')
@@ -222,4 +286,24 @@ if (servicesTable !== null) {
         "aLengthMenu": [[20, 50, 100, -1], [20, 50, 100, "All"]]
     });
   });
+}
+
+var dropdownBtn = document.querySelectorAll('[data-toggle="dropdown"]')
+
+for (var i = 0, l = options.length; i < l; i++) {
+  dropdownBtn[i].addEventListener('click', function(e) {
+    e.preventDefault()
+
+    var element = e.target
+    if (! e.target.getAttribute('id'))
+      element = e.target.parentElement
+
+    var id = element.getAttribute('id')
+
+    if(!document.querySelector('[aria-labelledby="'+id+'"]').getAttribute('style')){
+      document.querySelector('[aria-labelledby="'+id+'"]').setAttribute('style', 'display:block')
+    }else{
+      document.querySelector('[aria-labelledby="'+id+'"]').removeAttribute('style')
+    }
+  })
 }
