@@ -264,7 +264,7 @@ const unlock = function (elementid) {
     if (valid) {
       if (original !== newpax) {
         var info = {
-          type_channel: 1,
+          channel_id: 1,
           pax: parseInt(inputPax.value),
           user_id: user,
           act_time: null,
