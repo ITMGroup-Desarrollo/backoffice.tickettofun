@@ -89,7 +89,7 @@ class Arrive extends CI_Model
             $arrives->reseller_name = $response->message->reseller_name;
             $arrives->ship_name = $response->message->ship_name;
 
-            $arrives->ships = $response->message->ship_id;
+            $arrives->ship_id = $response->message->ship_id;
             $arrives->arrival_date = $response->message->arrival_date;
             $arrives->arrival_time = $response->message->arrival_time;
             $arrives->arrival_time_markup = $response->message->arrival_time_markup;
