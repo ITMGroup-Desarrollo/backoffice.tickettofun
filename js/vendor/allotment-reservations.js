@@ -29,7 +29,7 @@ var allotment = {
       _alertModal.appendChild(_message)
 
       MicroModal.show('alert-modal')
-    } else if (response.code === 201) {
+    } else if (response.code === 204) {
       var inputPax = document.getElementById(elementid)
       var capmax = inputPax.getAttribute('data-capmax')
       var newpax = inputPax.value
