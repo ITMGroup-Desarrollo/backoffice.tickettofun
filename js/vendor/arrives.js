@@ -237,7 +237,8 @@ var arrives = {
           data: 'allotment_id',
           className: 'center',
           render: function (data, type, row, meta) {
-            const strAction = `<a class="schedule" href="${base}allotments/itinerary/${row[8]}"><i class="fas fa-calendar-alt"></i></a>`
+            const strAction = ` <a class="schedule" href="${base}allotments/clone/${row[8]}"><i class="fas fa-clone" alt="clone"></i></a>
+                                <a class="schedule" href="${base}allotments/itinerary/${row[8]}"><i class="fas fa-calendar-alt"></i></a>`
 
             if (row[7] === 0) {
               return `<a class="edit" href="${row[8]}"><i class="fas fa-edit"></i></a>`
@@ -289,7 +290,7 @@ var arrives = {
     MicroModal.close('wait-modal')
   },
   setData: function () {
-    document.querySelector('[name="ships"]').value = arrivesData.ships
+    document.querySelector('[name="ships"]').value = arrivesData.ship_id
     document.querySelector('[name="arrival_date"]').value = arrivesData.arrival_date
     document.querySelector('[name="arrival_time"]').value = arrivesData.arrival_time
     document.querySelector('[name="departure_time"]').value = arrivesData.departure_time
