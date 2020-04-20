@@ -343,4 +343,111 @@ class Allotments extends CI_Controller
         $this->load->view('Master', $data);
     }
 
+    public function clone()
+    {
+        $this->load->library('user_session', NULL, 'user');
+
+        if ( ! $this->user->active_session())
+            redirect(base_url('signin'));
+
+        $this->load->Model('Page');
+        $this->Page->page_name = 'clone';
+
+        $data = $this->Page->get_contents();
+        $this->load->Model('Allotment');
+
+        $form = $this->Allotment->get_form('clone', 'clone');
+
+        $data['contents'] = str_replace('{title}', 'Allotments',  $data['contents']);
+        $data['contents'] = str_replace('{call}', '',  $data['contents']);
+
+        $data['contents'] = str_replace(
+            '{Form}', $form, $data['contents']
+        );
+
+        $table = $this->Allotment->get_list_clone();
+
+        $data['contents'] = str_replace(
+            '{content}', $table, $data['contents']
+        );
+
+        $data['contents'] = str_replace(
+            '{id}', 'clone-form', $data['contents']
+        );
+
+        $channel = $vendor = $cruise = $arrivalDate = $arrivalTime = "";
+        $dataArrive = array();
+
+        if ($this->uri->segment(3))
+        {
+            $this->load->Model('Arrive');
+            $arrive_data = $this->Arrive->get_data($this->uri->segment(3));
+
+            $channel = $arrive_data->channel_name;
+            $vendor = $arrive_data->reseller_name;
+            $cruise = $arrive_data->ship_name;
+            $arrivalDate = $arrive_data->arrival_date;
+            $arrivalTime = $arrive_data->arrival_time_markup." - ".$arrive_data->departure_time_markup;
+
+            $dataArrive['arriveId'] = $this->uri->segment(3);
+            $dataArrive['channelId'] = $arrive_data->channel_id;
+            $dataArrive['vendorId'] = $arrive_data->reseller_id;
+            $dataArrive['vendor'] = $arrive_data->reseller_name;
+            $dataArrive['cruiseId'] = $arrive_data->ship_id;
+            $dataArrive['cruise'] = $arrive_data->ship_name;
+            $dataArrive['date'] = $arrivalDate;
+        }
+        else
+        {
+            if (!empty($this->input->post('modalchannel')))
+            {
+                $channel = $this->input->post('modalchanneltext');
+                $vendor =   $this->input->post('modalvendortext');
+                $arrivalDate = $this->input->post('modaldate');
+
+                if ($this->input->post('modalcruise') != null && $this->input->post('modaldate') != null) {
+                    $this->load->Model('Arrive');
+                    $cruise = $this->input->post('modalcruisetext');
+                    $cruiseId = $this->input->post('modalcruise');
+
+                    $dataArrive['cruiseId'] = $cruiseId;
+                    $dataArrive['cruise'] = $cruise;
+                }
+
+                $dataArrive['arriveId'] = null;
+                $dataArrive['channelId'] = $this->input->post('modalchannel');
+                $dataArrive['vendorId'] = $this->input->post('modalvendor');
+                $dataArrive['vendor'] = $vendor;
+                $dataArrive['date'] = $arrivalDate;
+            }
+
+        }
+
+        $data['contents'] = str_replace(
+            '{channel-text}', $channel, $data['contents']
+        );
+        $data['contents'] = str_replace(
+            '{reseller-text}', $vendor, $data['contents']
+        );
+        $data['contents'] = str_replace(
+            '{cruise-text}', $cruise, $data['contents']
+        );
+        $data['contents'] = str_replace(
+            '{arrival-text}', $arrivalDate, $data['contents']
+        );
+        $data['contents'] = str_replace(
+            '{time-text}', $arrivalTime, $data['contents']
+        );
+
+        $userId = 'window.user = ' . $this->session->userdata('user_id');
+        $script = custom('script', '', $userId);
+        $data['scripts'] = $script .  $data['scripts'];
+
+        $dayaArrive = 'window.dataArrive = ' . json_encode($dataArrive);
+        $script = custom('script', '', $dayaArrive);
+        $data['scripts'] = $script .  $data['scripts'];
+
+        $this->load->view('Master', $data);
+    }
+
 }

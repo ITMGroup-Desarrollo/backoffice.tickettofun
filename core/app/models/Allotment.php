@@ -79,6 +79,49 @@ class Allotment extends CI_Model
         );
     }
 
+    public function get_list_clone()
+    {
+        $this->db->close();
+        $table_content = $this->Page->get_settings('clone');
+
+        $rol_id = $this->session->userdata('rol_id');
+
+        if ($rol_id != 1 && $rol_id != 2 && $rol_id != 3)
+        {
+            $table = $table_content['CLONE_ALLOTMENT_TABLE'];
+
+            array_splice($table->contents[0]->contents->contents, 10, 1);
+            array_splice($table->contents[2]->contents->contents, 10, 1);
+
+            $table_content['CLONE_ALLOTMENT_TABLE'] = $table;
+        }
+
+        $table = $table_content['CLONE_ALLOTMENT_TABLE'];
+        $table_content = $this->build->build_components($table);
+
+        // Call API here!
+        $params = new stdClass();
+        if (isset($_POST['dates']) && $_POST['dates'] != '') {
+            $dates = explode('to',$_POST['dates']);
+        } else {
+            $dates[0] = date('Y-m-d');
+        }
+
+        $params->start_date = $dates[0];
+        $endpoint = HOST . GET_ALLOTMENTS_ROUTE;
+
+        $this->load->library('session');
+        $token = $this->session->userdata('token');
+
+        $response = json_decode(
+            $this->api->request_api('POST', $endpoint, $params, $token)
+        );
+
+        $this->model = str_replace('{rows}', '', $table_content);
+
+        return $this->model;
+    }
+
     public function get_table_html($id) //arrive_id of slug
     {
         $this->db->close();
@@ -104,6 +147,10 @@ class Allotment extends CI_Model
         else if ($slug == 'schedule_filters')
         {
             $form = 'SCHEDULE_FORM_FILTERS';
+        }
+        else if ($slug == 'clone')
+        {
+            $form = 'CLONE_FORM_FILTERS';
         }
 
         $this->model = $this->build->build_components(
@@ -165,4 +212,5 @@ class Allotment extends CI_Model
 
         return $config;
     }
+
 }
