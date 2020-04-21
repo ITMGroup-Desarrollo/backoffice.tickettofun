@@ -55,8 +55,6 @@ class Courtesy extends CI_Model
             $this->api->request_api('GET', $endpoint, $params, $token)
         );
 
-       // Type","Reserller","Quantity","Min", "Max", "Active","Pax","Service","Actions"
-
         if ($response->code == 200)
         {
             $rows = $response->message;
@@ -86,7 +84,7 @@ class Courtesy extends CI_Model
                 $status_attrib['data-status'] =  $row->courtesy_id;
                 $aux .= custom('td', $status_attrib, $status);
 
-                $aux .= custom('td', '', $row->element);
+                $aux .= custom('td', '', $row->pax_name);
                 $aux .= custom('td', '', $row->service_name);
 
 
