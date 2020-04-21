@@ -65,7 +65,7 @@ class Price extends CI_Model
 
                 $aux .= custom('td', '', $row->reseller_name);
                 $aux .= custom('td', '', $row->service_name);
-                $aux .= custom('td', '', $row->element);
+                $aux .= custom('td', '', $row->pax_name);
                 $aux .= custom('td', '', $row->symbol_currency." ".$row->price);
                 $aux .= custom('td', '', $row->iso);
 
