@@ -51,8 +51,7 @@ class Booths extends CI_Controller
             );
 
             $reps = $this->Booth->get_reps_in_booth($option);
-            var_dump($reps);
-            exit();
+
             $reps = 'window.reps = ' . json_encode($reps);
 
             $booth = 'window.user_create_id = ' . $this->session->userdata('user_id');
