@@ -37,7 +37,7 @@ class Booths extends CI_Controller
                 '{content}', $table, $data['contents']
             );
         }
-        else if($option == 'new' || $option == 'edit')
+        else
         {
             $form = $this->Booth->get_form();
             $form = str_replace('{id}', 'add-booth', $form);
@@ -50,33 +50,13 @@ class Booths extends CI_Controller
                 '{content}', $form, $data['contents']
             );
 
-            $reps = $this->Booth->get_reps_in_booth($option);
-
+            $reps = $this->Booth->get_rep_data($option);
             $reps = 'window.reps = ' . json_encode($reps);
 
             $booth = 'window.user_create_id = ' . $this->session->userdata('user_id');
             $script = custom('script', '', $booth);
+            $scriptrep = custom('script', '', $reps);
             $data['scripts'] = $script .$scriptrep. $data['scripts'];
-        }else
-        {
-            $form = $this->Booth->get_form_booth();
-
-            $form = str_replace('{id}', 'add-booth', $form);
-
-            $data['contents'] = str_replace(
-                '{title}', 'Booths Configuration', $data['contents']
-            );
-
-            $data['contents'] = str_replace(
-                '{content}', $form, $data['contents']
-            );
-
-            $booths = $this->Booth->get_booth_data($option);
-
-            $reps = 'window.boothData = ' . json_encode($reps);
-
-            $booth = 'window.user_create_id = ' . $this->session->userdata('user_id');
-            $script = custom('script', '', $booth);
         }
 
         $this->load->view('Master', $data);
