@@ -2,11 +2,8 @@
 var info
 var form
 var editor
-var base = window.baseUrl
-var token = window.token
 var user = window.user
-var arrive = window.arrive
-var dataArrive = window.dataArrive
+var dataFilter = window.dataArrive//search data
 var dataTable
 var dataTableFilter
 var objData = new Object()
@@ -194,7 +191,6 @@ const clone = {
 
         MicroModal.close('wait-modal')
 
-
     },
     buildJson: function(response) {
         var newAllotment = new Object()
@@ -257,18 +253,6 @@ const clone = {
         var data_list
         let dataTable = []
 
-        if (codes.hasOwnProperty(data.code)) {
-            MicroModal.close('wait-modal')
-            _message = utils.createElement('p', '', '', data.message)
-
-            _alertModal.innerHTML = ''
-            _alertModal.appendChild(_message)
-
-            MicroModal.show('alert-modal')
-
-            return
-        }
-
         if (utils.isJson(data.message)) {
             let dataList = JSON.parse(data.message)
             let list = dataList.list
@@ -298,11 +282,7 @@ const clone = {
             editor.destroy()
         }
 
-        if (dataTable.length === 0) {
-            clone.setData(true)
-        } else {
-            clone.setData(false)
-        }
+        // clone.changeChannel()
 
         editor = $('#allotments-clone')
         .DataTable({
@@ -479,11 +459,39 @@ const clone = {
           element.remove(i);
         }
     },
+    setSelect: function (name, arrayData) {
+        var selectChannelDest = document.querySelector('[name="'+name+'"]')
+        var opt = selectChannelDest.getElementsByTagName('option')
+
+        for (var i = 1; i < opt.length; i++) {
+            opt[i].style.display = 'block'
+
+            if (arrayData.indexOf(parseInt(opt[i].value)) != -1) {
+                opt[i].style.display = 'none'
+            }
+        }
+    },
+    confirm: function() {
+        var _message = ''
+        var _confirmModal = document.getElementById('confirm-modal-content')
+        _message = utils.createElement('p', '', '', 'Are you sure you want to clone allotments?')
+        _confirmModal.innerHTML = ''
+        _confirmModal.appendChild(_message)
+        MicroModal.show('confirm-modal')
+
+        const btnConfirmSave = document.querySelector('.confirm-delete')
+
+        btnConfirmSave.addEventListener('click', function(e){
+            e.preventDefault()
+
+            clone.buildJson()
+        })
+    },
     setTitle: function () {
             var detCruise = document.getElementById('det-cruise')
             var detTime = document.getElementById('det-time')
 
-            switch (parseInt(dataArrive.channelId)) {
+            switch (parseInt(dataFilter.channelId)) {
                 case 1:
                     detCruise.style.display = "block"
                     detTime.style.display = "none"
@@ -498,39 +506,20 @@ const clone = {
                     break;
             }
     },
-    setData: function(band) {
-        if (band === true) {
-            document.querySelector('[name="channel"]').setAttribute('disabled', 'disabled')
-            document.querySelector('[name="vendor"]').setAttribute('disabled', 'disabled')
-            document.querySelector('[name="cruise"]').setAttribute('disabled', 'disabled')
-            document.querySelector('[name="date"]').setAttribute('disabled', 'disabled')
-            document.querySelector('.save').setAttribute('disabled', 'disabled')
-            document.querySelector('.recovery').setAttribute('disabled', 'disabled')
-        } else {
-            let channel = document.querySelector('[name="channel"]').removeAttribute('disabled')
-            let vendor = document.querySelector('[name="vendor"]').removeAttribute('disabled')
-            let cruise = document.querySelector('[name="cruise"]').removeAttribute('disabled')
-            let date = document.querySelector('[name="date"]').removeAttribute('disabled')
-        }
-    }
-}
-
-var selectChannel = document.querySelector('[name="channel"]')
-
-if (selectChannel != null) {
-
-    selectChannel.addEventListener('change', function(e){
-        e.preventDefault()
-        var url = apiHost;
-
+    changeChannel: function (){
+        var url = apiHost
+        var channel = document.querySelector('[name="channel"]')
         var divCruise = document.querySelector('.div-cruise')
         var divVendorCruise = document.querySelector('.div-vendor-cruise')
         var date = document.querySelector('[name="date"]')
         var cruise = document.querySelector('[name="cruise"]')
 
-        switch (parseInt(this.value)) {
+        switch (parseInt(channel.value)) {
             case 1:
-                divCruise.style.display = 'block'
+                if (divCruise.classList.contains('hidden') === true) {
+                    divCruise.classList.remove('hidden')
+                }
+
                 if (divVendorCruise.classList.contains('hidden') === false) {
                     divVendorCruise.classList.add('hidden')
                 }
@@ -544,7 +533,10 @@ if (selectChannel != null) {
                 url = url + "arrives/vendorarrive/list"
                 break;
             case 2:
-                divCruise.style.display = 'none'
+                if (divCruise.classList.contains('hidden') === false) {
+                    divCruise.classList.add('hidden')
+                }
+
                 if (divVendorCruise.classList.contains('hidden') === false) {
                     divVendorCruise.classList.add('hidden')
                 }
@@ -556,22 +548,27 @@ if (selectChannel != null) {
                 break;
             case 3:
 
-                url = url + "resellers/channel/3"
                 if (divVendorCruise.classList.contains('hidden') === true) {
                     divVendorCruise.classList.remove('hidden')
                 }
 
+                if (divCruise.classList.contains('hidden') === true) {
+                    divCruise.classList.remove('hidden')
+                }
+
                 clone.removeOptions(cruise, 'all')
-                cruise.append(new Option(dataArrive.cruise, dataArrive.cruiseId))
+                cruise.append(new Option(dataFilter.cruise, dataFilter.cruiseId))
                 cruise.setAttribute('disabled', 'disabled')
 
                 let vendorCruise = document.querySelector('[name="vendor_cruise"]')
                 clone.removeOptions(vendorCruise, 'all')
-                vendorCruise.append(new Option(dataArrive.vendor, dataArrive.vendorId))
+                vendorCruise.append(new Option(dataFilter.vendor, dataFilter.vendorId))
                 vendorCruise.setAttribute('disabled', 'disabled')
 
                 date.setAttribute('disabled', 'disabled')
-                date.value = dataArrive.date
+                date.value = dataFilter.date
+
+                url = url + "resellers/channel/3"
                 break;
         }
 
@@ -585,6 +582,44 @@ if (selectChannel != null) {
 
         clone.removeOptions(vendor)
         utils.api(JSON.stringify({}), url, 'GET', clone.loadOptions, dataElement)
+    },
+    setData: function(band) {
+        if (band === true) {
+            document.querySelector('[name="channel"]').setAttribute('disabled', 'disabled')
+            document.querySelector('[name="vendor"]').setAttribute('disabled', 'disabled')
+            document.querySelector('[name="cruise"]').setAttribute('disabled', 'disabled')
+            document.querySelector('[name="date"]').setAttribute('disabled', 'disabled')
+            document.querySelector('.save').setAttribute('disabled', 'disabled')
+            document.querySelector('.recovery').setAttribute('disabled', 'disabled')
+        } else {
+            let channel = document.querySelector('[name="channel"]').removeAttribute('disabled')
+            let vendor = document.querySelector('[name="vendor"]').removeAttribute('disabled')
+            let cruise = document.querySelector('[name="cruise"]').removeAttribute('disabled')
+            let date = document.querySelector('[name="date"]').removeAttribute('disabled')
+
+            switch (parseInt(dataFilter.channelId)){
+                case 2:
+                    var arrayData = new Array(2, 3)
+                    clone.setSelect('channel', arrayData)
+                break;
+
+                case 3:
+                    var arrayData = new Array(2, 3)
+                    clone.setSelect('channel', arrayData)
+                break;
+            }
+        }
+    }
+}
+
+var selectChannel = document.querySelector('[name="channel"]')
+
+if (selectChannel != null) {
+
+    selectChannel.addEventListener('change', function(e){
+        e.preventDefault()
+        clone.changeChannel()
+
     })
 }
 
@@ -642,24 +677,20 @@ if (selectCruise != null) {
 var search = document.getElementById('btn-search')
 const btnSearch = utils.createElement('button', 'btn btn-primary', 'Search', "Search")
 btnSearch.setAttribute('name', 'btn_modal_search')
-
 search.appendChild(btnSearch)
 
 var formbtn = document.querySelector('.form-actions')
 formbtn.classList.add('col-md-5')
 
 formbtn.childNodes[1].childNodes[1].remove()//Remove button cancel
-
 var _btnRecovery = utils.createElement('button', 'btn btn-primary recovery', '', 'Recovery')
 _btnRecovery.setAttribute('id', 'recovery')
-
 formbtn.childNodes[1].appendChild(_btnRecovery)
 
 var _btnSimulates = document.querySelector('.save')
 _btnSimulates.addEventListener('click', function (e) {
     e.preventDefault()
-
-    clone.buildJson()
+    clone.confirm()
 })
 
 //Create modal for search allotments
@@ -811,37 +842,34 @@ const utilAjaxExecute = function () {
     var method = "POST"
     var dataObj = new Object()
 
-    dataArrive.channelId
+    dataFilter.channelId
 
-    if (dataArrive.arriveId == null) {
+    if (dataFilter.arriveId == null) {
 
-        switch (parseInt(dataArrive.channelId)) {
+        switch (parseInt(dataFilter.channelId)) {
             case 1:
-                url = "/ship/"+dataArrive.cruiseId
-                dataObj.start_date = dataArrive.date
+                url = "/ship/"+dataFilter.cruiseId
+                dataObj.start_date = dataFilter.date
                 break;
             case 2:
-                url = "/reseller/"+dataArrive.vendorId
-                dataObj.start_date = dataArrive.date
+                url = "/reseller/"+dataFilter.vendorId
+                dataObj.start_date = dataFilter.date
                 break;
             case 3:
-                url = "/reseller/"+dataArrive.vendorId
-                dataObj.start_date = dataArrive.date
+                url = "/reseller/"+dataFilter.vendorId
+                dataObj.start_date = dataFilter.date
                 break;
         }
 
     } else {
-        if (dataArrive.arriveId !== null) {
-            url = "/arrive/" + dataArrive.arriveId
+        if (dataFilter.arriveId !== null) {
+            url = "/arrive/" + dataFilter.arriveId
             method = "GET"
         }
     }
 
     if (configTable !== undefined && configTable !== null && configTable !== undefined && configTable !== undefined) {
-        var band = false
-        if (url == "") {
-            band = true
-        }
+        var band = (url == "")?true:false
 
         utils.api(JSON.stringify(dataObj), `${apiHost}allotments${url}`, method, clone.loadData, band)
     }
