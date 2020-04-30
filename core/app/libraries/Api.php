@@ -31,10 +31,14 @@ class Api
 
     public function request_api($method, $endpoint, $params, $token)
     {
-        if ($method == 'GET')
-            $this->headers = array();
+        $this->headers = array();
+
+        if ($method == 'POST') {
+            $this->headers = array("Content-Type: application/json");
+        }
 
         $this->headers[] = "Authorization: " . $token;
+
         return $this->_request($method, $endpoint, $this->headers, $params);
     }
 
