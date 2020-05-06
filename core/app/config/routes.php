@@ -128,11 +128,15 @@ $route["arrives/listjson"] = "arrives/dataJson/$1";
 $route["arrives/shiplist"] = "arrives/shipList/$1";
 
 //Allotments
+$route["allotments/list"] = "allotments/list/$1";
 $route["allotments/new"] = "allotments/create_configuration/$1";
 $route["allotments/configuration"] = "allotments/configuration/$1";
 $route["allotments/configuration/(:num)"] = "allotments/configuration_update/$1";
 $route["allotments/itinerary/(:num)"] = "allotments/itinerary/$1";
 $route["allotments/dynamic_html/(:num)"] = "allotments/get_dynamic_html/$1";
+$route["allotments/clone/(:num)"] = "allotments/clone/$1";
+$route["allotments/config"] = "allotments/config/$1";
+
 
 //Allotment reservation
 $route["allotments/reservation"] = "allotment_reservations/index/$1";
