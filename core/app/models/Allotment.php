@@ -84,38 +84,21 @@ class Allotment extends CI_Model
         $this->db->close();
         $table_content = $this->Page->get_settings('clone');
 
-        $rol_id = $this->session->userdata('rol_id');
-
-        if ($rol_id != 1 && $rol_id != 2 && $rol_id != 3)
-        {
-            $table = $table_content['CLONE_ALLOTMENT_TABLE'];
-
-            array_splice($table->contents[0]->contents->contents, 10, 1);
-            array_splice($table->contents[2]->contents->contents, 10, 1);
-
-            $table_content['CLONE_ALLOTMENT_TABLE'] = $table;
-        }
-
         $table = $table_content['CLONE_ALLOTMENT_TABLE'];
         $table_content = $this->build->build_components($table);
 
-        // Call API here!
-        $params = new stdClass();
-        if (isset($_POST['dates']) && $_POST['dates'] != '') {
-            $dates = explode('to',$_POST['dates']);
-        } else {
-            $dates[0] = date('Y-m-d');
-        }
+        $this->model = str_replace('{rows}', '', $table_content);
 
-        $params->start_date = $dates[0];
-        $endpoint = HOST . GET_ALLOTMENTS_ROUTE;
+        return $this->model;
+    }
 
-        $this->load->library('session');
-        $token = $this->session->userdata('token');
+    public function get_list_allotment_update()
+    {
+        $this->db->close();
+        $table_content = $this->Page->get_settings('allotments-config');
 
-        $response = json_decode(
-            $this->api->request_api('POST', $endpoint, $params, $token)
-        );
+        $table = $table_content['ALLOTMENT_CONFIG_TABLE'];
+        $table_content = $this->build->build_components($table);
 
         $this->model = str_replace('{rows}', '', $table_content);
 
@@ -140,17 +123,19 @@ class Allotment extends CI_Model
         $contents = $this->Page->get_settings($option);
 
         $form = 'CONFIG_FORM';
-        if ($slug == 'filters')
-        {
-            $form = 'CONFIG_FORM_FILTERS';
-        }
-        else if ($slug == 'schedule_filters')
-        {
-            $form = 'SCHEDULE_FORM_FILTERS';
-        }
-        else if ($slug == 'clone')
-        {
-            $form = 'CLONE_FORM_FILTERS';
+        switch ($slug) {
+            case 'filters':
+                $form = 'CONFIG_FORM_FILTERS';
+                break;
+            case 'schedule_filters':
+                $form = 'SCHEDULE_FORM_FILTERS';
+                break;
+            case 'clone':
+                $form = 'CLONE_FORM_FILTERS';
+                break;
+            case 'form_edit':
+                $form = 'ALLOTMENT_CONFIG_FORM';
+                break;
         }
 
         $this->model = $this->build->build_components(
@@ -206,6 +191,8 @@ class Allotment extends CI_Model
             $config->max_available = $response->message->max_available;
             $config->available = $response->message->available;
             $config->active = $response->message->active_status;
+            $config->stand_by = $response->message->stand_by;
+
         }else{
             redirect('/configuration');
         }
@@ -213,4 +200,96 @@ class Allotment extends CI_Model
         return $config;
     }
 
+    public function get_arrive_data($id, $date)
+    {
+        $endpoints = HOST . GET_ARRIVES_ROUTE . '/ship/' . $id;
+
+        $this->load->library('session');
+        $token = $this->session->userdata('token');
+
+        $params = new stdClass();
+        $params->start_date = $date;
+        $params->end_date = $date;
+
+        $response = json_decode(
+            $this->api->request_api("POST", $endpoints, $params, $token)
+        );
+
+        $config = new stdClass();
+
+        if ($response->code == 200)
+        {
+            $arrive = $response->message[0];
+            $config->code = 200;
+            $config->id = $arrive->arrive_id;
+            $config->channel = $arrive->channel_id;
+            $config->channel_name = $arrive->channel_name;
+            $config->vendor = $arrive->reseller_id;
+            $config->vendor_name = $arrive->reseller_name;
+            $config->cruise = $arrive->ship_id;
+            $config->cruise_name = $arrive->ship_name;
+            $config->arrival_date = $arrive->arrival_date;
+            $config->arrival_time = date('h:i', strtotime($arrive->arrival_time_markup))." - ".date('h:i', strtotime($arrive->departure_time_markup));
+        } else {
+            $config->code = $response->code;
+        }
+
+        return $config;
+    }
+
+    public function get_data_id($type, $id)
+    {
+        $endpoints = HOST;
+
+        switch($type)
+        {
+            case 'reseller':
+                $endpoints .= GET_RESELLERS_ROUTE . '/' . $id;
+            break;
+            case 'cruise':
+                $endpoints .= GET_SHIPS_ROUTE . '/' . $id;
+            break;
+        }
+
+        $this->load->library('session');
+        $token = $this->session->userdata('token');
+
+        $params = new stdClass();
+        $response = json_decode(
+            $this->api->request_api("GET", $endpoints, $params, $token)
+        );
+
+        $config = new stdClass();
+        if ($response->code == 200)
+        {
+            $config->code = 200;
+
+            if($type == 'cruise')
+            {
+                $config->cruise_name = $response->message->ship_name;
+
+            }
+            $config->vendor_name = $response->message->reseller_name;
+
+        } else {
+            $config->code = $response->code;
+        }
+
+        return $config;
+
+    }
+
+    function div_element($label, $text)
+    {
+        $tag = '<div class="col-sm-3" id="det-date">
+                    <label>
+                    '.$label.'
+                    </label>
+                    <div>
+                    '.$text.'
+                    </div>
+                </div>';
+
+        return $tag;
+    }
 }

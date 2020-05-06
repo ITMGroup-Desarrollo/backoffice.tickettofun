@@ -343,6 +343,9 @@ class Allotments extends CI_Controller
         $this->load->view('Master', $data);
     }
 
+    /**
+    *clone page for this controller
+    */
     public function clone()
     {
         $this->load->library('user_session', NULL, 'user');
@@ -444,6 +447,118 @@ class Allotments extends CI_Controller
         $data['scripts'] = $script .  $data['scripts'];
 
         $dayaArrive = 'window.dataArrive = ' . json_encode($dataArrive);
+        $script = custom('script', '', $dayaArrive);
+        $data['scripts'] = $script .  $data['scripts'];
+
+        $this->load->view('Master', $data);
+    }
+
+    /**
+    *config page for this controller
+    */
+    public function config()
+    {
+        $this->load->library('user_session', NULL, 'user');
+
+        if ( ! $this->user->active_session())
+            redirect(base_url('signin'));
+
+        $this->load->Model('Page');
+        $this->Page->page_name = 'allotments-config';
+
+        $data = $this->Page->get_contents();
+        $this->load->Model('Allotment');
+
+        $data['contents'] = str_replace('{title}', 'Allotments',  $data['contents']);
+        $data['contents'] = str_replace('{call}', '',  $data['contents']);
+
+        $cruiseId = $this->input->post('cruise');
+
+        $html = "";
+        $channel = $vendor = $cruise = $arrivalDate = $arrivalTime = "";
+
+        switch ($this->input->post('channel')) {
+            case 1:
+                $cruiseId = $this->input->post('cruise');
+                $date = $this->input->post('date');
+                $arrive = $this->Allotment->get_arrive_data($cruiseId, $date);
+
+                if ($arrive->code == 200) {
+                    $channel = $arrive->channel_name;
+                    $vendor = $arrive->vendor_name;
+                    $cruise = $arrive->cruise_name;
+                    $arrivalDate = $arrive->arrival_date;
+                    $arrivalTime = $arrive->arrival_time;
+                }
+
+                $html = $this->Allotment->div_element('CHANNEL', $channel);
+                $html .= $this->Allotment->div_element('VENDOR', $vendor);
+                $html .= $this->Allotment->div_element('CRUISE', $cruise);
+                $html .= $this->Allotment->div_element('ARRIVAL DATE', $arrivalDate);
+                $html .= $this->Allotment->div_element('ARRIVAL TIME', $arrivalTime);
+
+            break;
+            case 2:
+                $html = $this->Allotment->div_element('CHANNEL', 'Web');
+                $reseller = $this->Allotment->get_data_id('reseller', $this->input->post('vendor'));
+
+                if ($reseller->code == 200){
+                    $vendor = $reseller->vendor_name;
+                }
+
+                $html .= $this->Allotment->div_element('VENDOR', $vendor);
+                $html .= $this->Allotment->div_element('DATE', $this->input->post('date'));
+            break;
+            case 3:
+                $html = $this->Allotment->div_element('CHANNEL', 'LMPS');
+                $reseller = $this->Allotment->get_data_id('reseller', $this->input->post('vendor'));
+
+                if ($reseller->code == 200){
+                    $vendor = $reseller->vendor_name;
+                }
+                $html .= $this->Allotment->div_element('VENDOR', $vendor);
+
+                if (!empty($this->input->post('cruise')))
+                {
+                    $cruise = $this->Allotment->get_data_id('cruise', $this->input->post('cruise'));
+                    if ($cruise->code == 200){
+                        $vendorCruise = $cruise->vendor_name;
+                        $cruise = $cruise->cruise_name;
+                    }
+
+                    $html .= $this->Allotment->div_element('VENDOR CRUISE', $vendorCruise);
+                    $html .= $this->Allotment->div_element('CRUISE', $cruise);
+                }
+
+                $html .= $this->Allotment->div_element('DATE', $this->input->post('date'));
+            break;
+        }
+
+        $data['contents'] = str_replace(
+            '{detail}', $html, $data['contents']
+        );
+
+        $form = $this->Allotment->get_form('form_edit', 'allotments-config');
+
+        $data['contents'] = str_replace(
+            '{Form}', $form, $data['contents']
+        );
+
+        $table = $this->Allotment->get_list_allotment_update();
+
+        $data['contents'] = str_replace(
+            '{content}', $table, $data['contents']
+        );
+
+        $data['contents'] = str_replace(
+            '{id}', 'clone-form', $data['contents']
+        );
+
+        $userId = 'window.user = ' . $this->session->userdata('user_id');
+        $script = custom('script', '', $userId);
+        $data['scripts'] = $script .  $data['scripts'];
+
+        $dayaArrive = 'window.dataArrive = ' . json_encode($this->input->post());
         $script = custom('script', '', $dayaArrive);
         $data['scripts'] = $script .  $data['scripts'];
 
