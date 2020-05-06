@@ -514,6 +514,8 @@ if (save != null) {
       if (form != null) {
         info.active_status = document.querySelector('[name="status"]').value
         info.arrive_id = configData.arrive_id;
+        info.stand_by = configData.stand_by;
+
         if (parseInt(info.active_status) === 1) {
 
           var url = `${apiHost}allotments/edit/${configData.id}`
