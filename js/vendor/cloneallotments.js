@@ -248,9 +248,6 @@ const clone = {
     },
     buildRegistersAllotments: function (response) {
         const data = JSON.parse(response)
-        var _alertModal = document.getElementById('alert-modal-content')
-        var _message = ""
-        var data_list
         let dataTable = []
 
         if (utils.isJson(data.message)) {
@@ -281,8 +278,6 @@ const clone = {
         if ($.fn.DataTable.isDataTable(editor)) {
             editor.destroy()
         }
-
-        // clone.changeChannel()
 
         editor = $('#allotments-clone')
         .DataTable({
@@ -483,28 +478,31 @@ const clone = {
 
         btnConfirmSave.addEventListener('click', function(e){
             e.preventDefault()
+            e.stopImmediatePropagation()
+
+            MicroModal.close()
 
             clone.buildJson()
         })
     },
     setTitle: function () {
-            var detCruise = document.getElementById('det-cruise')
-            var detTime = document.getElementById('det-time')
+        var detCruise = document.getElementById('det-cruise')
+        var detTime = document.getElementById('det-time')
 
-            switch (parseInt(dataFilter.channelId)) {
-                case 1:
-                    detCruise.style.display = "block"
-                    detTime.style.display = "none"
-                    break;
-                case 2:
-                    detCruise.style.display = "none"
-                    detTime.style.display = "none"
-                    break;
-                case 3:
-                    detCruise.style.display = "none"
-                    detTime.style.display = "none"
-                    break;
-            }
+        switch (parseInt(dataFilter.channelId)) {
+            case 1:
+                detCruise.style.display = "block"
+                detTime.style.display = "none"
+                break;
+            case 2:
+                detCruise.style.display = "none"
+                detTime.style.display = "none"
+                break;
+            case 3:
+                detCruise.style.display = "none"
+                detTime.style.display = "none"
+                break;
+        }
     },
     changeChannel: function (){
         var url = apiHost
@@ -523,11 +521,12 @@ const clone = {
                 if (divVendorCruise.classList.contains('hidden') === false) {
                     divVendorCruise.classList.add('hidden')
                 }
+
                 clone.removeOptions(cruise, 'all')
-                cruise.removeAttribute('disabled')
+                cruise.style['pointer-events'] = 'auto'
                 cruise.appendChild(new Option('--Choose option--'))
 
-                date.removeAttribute('disabled')
+                date.style['pointer-events'] = 'auto'
                 date.value = ""
 
                 url = url + "arrives/vendorarrive/list"
@@ -541,7 +540,7 @@ const clone = {
                     divVendorCruise.classList.add('hidden')
                 }
 
-                date.removeAttribute('disabled')
+                date.style['pointer-events'] = 'auto'
                 date.value = ""
 
                 url = url + "resellers/channel/2"
@@ -558,15 +557,15 @@ const clone = {
 
                 clone.removeOptions(cruise, 'all')
                 cruise.append(new Option(dataFilter.cruise, dataFilter.cruiseId))
-                cruise.setAttribute('disabled', 'disabled')
+                cruise.style['pointer-events'] = 'none'
 
                 let vendorCruise = document.querySelector('[name="vendor_cruise"]')
                 clone.removeOptions(vendorCruise, 'all')
                 vendorCruise.append(new Option(dataFilter.vendor, dataFilter.vendorId))
-                vendorCruise.setAttribute('disabled', 'disabled')
+                vendorCruise.style['pointer-events'] = 'none'
 
-                date.setAttribute('disabled', 'disabled')
                 date.value = dataFilter.date
+                date.style['pointer-events'] = 'none'
 
                 url = url + "resellers/channel/3"
                 break;
@@ -678,6 +677,10 @@ var search = document.getElementById('btn-search')
 const btnSearch = utils.createElement('button', 'btn btn-primary', 'Search', "Search")
 btnSearch.setAttribute('name', 'btn_modal_search')
 search.appendChild(btnSearch)
+
+var form = document.getElementById('clone-form')
+form.setAttribute('method', 'POST')
+form.setAttribute('action', '/allotments/config/')
 
 var formbtn = document.querySelector('.form-actions')
 formbtn.classList.add('col-md-5')
