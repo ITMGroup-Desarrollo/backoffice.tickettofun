@@ -37,7 +37,8 @@ class User_session
             'rol_id'    => $credentials->user->rol_id,
             'token'     => $credentials->token,
             'avatar'    => $credentials->user->avatar,
-            'page_default' => $credentials->user->page_default
+            'page_default' => $credentials->user->page_default,
+            'permissions' => $this->get_permissions($credentials->user->permissions)
         );
 
         $this->CI->load->helper('cookie');
@@ -68,5 +69,16 @@ class User_session
         $active = ($this->CI->session->userdata('user_id')) ? TRUE : FALSE;
 
         return $active;
+    }
+
+    private function get_permissions($data_permissions){
+        
+        $permissions = array();
+
+        for ($ipermissions=0; $ipermissions < count($data_permissions); $ipermissions++) {
+            $permissions[$ipermissions] = $data_permissions[$ipermissions]->menu_name;
+        }
+
+        return $permissions;
     }
 }
