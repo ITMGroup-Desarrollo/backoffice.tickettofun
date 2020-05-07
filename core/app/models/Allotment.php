@@ -33,7 +33,7 @@ class Allotment extends CI_Model
 
         $rol_id = $this->session->userdata('rol_id');
 
-        if ($rol_id != 1 && $rol_id != 2 && $rol_id != 3)
+        if (!in_array('g_allotments', $this->session->userdata('permissions')))
         {
             $table = $table_content['CONFIG_BASE_TABLE'];
 

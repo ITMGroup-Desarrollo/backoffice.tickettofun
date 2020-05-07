@@ -33,7 +33,7 @@ class Channel extends CI_Model
 
         $rol_id = $this->session->userdata('rol_id');
 
-        if ($rol_id != 1 && $rol_id != 2 && $rol_id != 3)
+        if (!in_array('g_channels', $this->session->userdata('permissions')))
         {
             $table = $table_content['CHANNELS_TABLE'];
 
@@ -84,7 +84,7 @@ class Channel extends CI_Model
                 $status_attrib['data-status'] =  $row->channel_id;
                 $aux .= custom('td', $status_attrib, $status);
 
-                if ($rol_id == 1 || $rol_id == 2 || $rol_id == 3)
+                if (in_array('u_channels', $this->session->userdata('permissions')))
                 {
                     $path = 'channels/' . $row->channel_id;
                     $this->anchor_attrib['class'] = 'edit';
@@ -92,7 +92,9 @@ class Channel extends CI_Model
                     $edit = custom('i', array('class' => 'fas fa-edit'), '');
 
                     $edit = custom('a', $this->anchor_attrib, $edit);
-
+                }
+                if (in_array('d_channels', $this->session->userdata('permissions')))
+                {
                     if ($row->active_status == 1) {
                         $this->anchor_attrib['href'] = '#';
                         $this->anchor_attrib['class'] = 'delete';

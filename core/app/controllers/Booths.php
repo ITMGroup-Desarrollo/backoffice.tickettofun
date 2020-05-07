@@ -50,7 +50,7 @@ class Booths extends CI_Controller
                 '{content}', $form, $data['contents']
             );
 
-            $reps = $this->Booth->get_rep_data($option);
+            $reps = $this->Booth->get_rep_data();
             $reps = 'window.reps = ' . json_encode($reps);
 
             $booth = 'window.user_create_id = ' . $this->session->userdata('user_id');

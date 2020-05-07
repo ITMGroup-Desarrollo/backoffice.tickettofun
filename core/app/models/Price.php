@@ -102,7 +102,7 @@ class Price extends CI_Model
                 $status_attrib['data-status'] =  $row->price_id;
                 $aux .= custom('td', $status_attrib, $status);
 
-                if ($rol_id == 1 || $rol_id == 2 || $rol_id == 3)
+                if (in_array('u_prices', $this->session->userdata('permissions')))
                 {
                     $path = 'prices/' . $row->price_id;
                     $this->anchor_attrib['class'] = 'edit';
@@ -110,7 +110,9 @@ class Price extends CI_Model
                     $edit = custom('i', array('class' => 'fas fa-edit'), '');
 
                     $edit = custom('a', $this->anchor_attrib, $edit);
-
+                }
+                if (in_array('d_prices', $this->session->userdata('permissions')))
+                {
                     if ($row->active_status == 1) {
                         $this->anchor_attrib['href'] = '#';
                         $this->anchor_attrib['class'] = 'delete';

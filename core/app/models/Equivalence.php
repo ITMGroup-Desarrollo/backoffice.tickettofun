@@ -34,7 +34,7 @@ class Equivalence extends CI_Model
         $rol_id = $this->session->userdata('rol_id');
 
         $table = $table_content['EQUIVALENCES_TABLE'];
-        if ($rol_id != 1 && $rol_id != 2 && $rol_id != 3)
+        if (!in_array('g_equivalences', $this->session->userdata('permissions')))
         {
             $limit = count($table->contents[0]->contents->contents) - 1;
 
@@ -83,7 +83,7 @@ class Equivalence extends CI_Model
                 $status_attrib['data-status'] =  $row->equivalence_id;
                 $aux .= custom('td', $status_attrib, $status);
 
-                if ($rol_id == 1 || $rol_id == 2 || $rol_id == 3)
+                if (in_array('u_equivalences', $this->session->userdata('permissions')))
                 {
                     $path = 'equivalences/' . $row->equivalence_id;
                     $this->anchor_attrib['class'] = 'edit';
@@ -91,7 +91,9 @@ class Equivalence extends CI_Model
                     $edit = custom('i', array('class' => 'fas fa-edit'), '');
 
                     $edit = custom('a', $this->anchor_attrib, $edit);
-
+                }
+                if (in_array('d_equivalences', $this->session->userdata('permissions')))
+                {
                     if ($row->active_status == 1) {
                         $this->anchor_attrib['href'] = '#';
                         $this->anchor_attrib['class'] = 'delete';

@@ -137,13 +137,15 @@ class Rep extends CI_Model
 
         if ($response->code == 200)
         {
-            $sales_rep->rep_id       = $response->message->rep_id;
-            $sales_rep->first_name     = $response->message->first_name;
-            $sales_rep->last_name     = $response->message->last_name;
-            $sales_rep->code     = $response->message->code;
-            $sales_rep->active     = $response->message->active_status;
-            $sales_rep->boot_id     = 1;
-            $sales_rep->boot_name     = "First Boot";
+            $sales_rep->id = $response->message->rep_id;
+            $sales_rep->reseller_id = $response->message->reseller_id;
+            $sales_rep->first_name = $response->message->first_name;
+            $sales_rep->last_name = $response->message->last_name;
+            $sales_rep->user_id = $response->message->user_id;
+            $sales_rep->code_rep = $response->message->code;
+            $sales_rep->email_addr = $response->message->email_addr;
+            $sales_rep->active = $response->message->active_status;
+            $sales_rep->boot_id = (isset($response->message->rep_id) && !empty($response->message->rep_id)? $response->message->rep_id : 0);
         }
         else
         {

@@ -34,7 +34,7 @@ class Courtesy extends CI_Model
         $rol_id = $this->session->userdata('rol_id');
 
         $table = $table_content['COURTESIES_TABLE'];
-        if ($rol_id != 1 && $rol_id != 2 && $rol_id != 3)
+        if (!in_array('g_courtesies', $this->session->userdata('permissions')))
         {
             $limit = count($table->contents[0]->contents->contents) - 1;
 
@@ -88,7 +88,7 @@ class Courtesy extends CI_Model
                 $aux .= custom('td', '', $row->service_name);
 
 
-                if ($rol_id == 1 || $rol_id == 2 || $rol_id == 3)
+                if (in_array('u_courtesies', $this->session->userdata('permissions')))
                 {
                     $path = 'courtesies/' . $row->courtesy_id;
                     $this->anchor_attrib['class'] = 'edit';
@@ -96,7 +96,9 @@ class Courtesy extends CI_Model
                     $edit = custom('i', array('class' => 'fas fa-edit'), '');
 
                     $edit = custom('a', $this->anchor_attrib, $edit);
-
+                }
+                if (in_array('d_courtesies', $this->session->userdata('permissions')))
+                {
                     if ($row->active_status == 1) {
                         $this->anchor_attrib['href'] = '#';
                         $this->anchor_attrib['class'] = 'delete';
