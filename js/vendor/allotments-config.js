@@ -354,13 +354,12 @@ const config = {
     },
     changeSchedule: function(data) {
         let url = `${apiHost}products/`
-        let schedule = data.value;
-        let nodes = data.parentNode.parentNode.childNodes[0].childNodes[0]
+        var schedule = data.value;
+        let i = (parseInt(dataFilter.channel) === 3)? 2 : 0
+        let nodes = data.parentNode.parentNode.childNodes[i].childNodes[0]
 
-        let object = new Object()
-
-        let service = nodes.getAttribute('service_id')
-        let id = nodes.getAttribute('allotment_id')
+        var service = nodes.getAttribute('service_id')
+        var id = nodes.getAttribute('allotment_id')
         url = url + service
 
 
@@ -368,9 +367,7 @@ const config = {
             utils.api(JSON.stringify({"schedule_start": schedule}), `${apiHost}allotments/servicescheduleend/${service}`, 'POST', config.loadScheduleEnd, id)
 
         }else{
-
-            document.getElementById("hrEnd"+id).value = "";
-
+            document.getElementById('hrEnd'+id).value = ''
         }
 
     },
@@ -461,8 +458,7 @@ const config = {
                 if (divVendorCruise.classList.contains('hidden') === false) {
                     divVendorCruise.classList.add('hidden')
                 }
-                config.removeOptions(cruise, 'all')
-                cruise.appendChild(new Option('--Choose option--'))
+                config.removeOptions(cruise)
 
                 date.value = ""
 
@@ -513,8 +509,11 @@ const config = {
                 utils.api(JSON.stringify({}), url + "resellers/channel/1", 'GET', config.loadOptions, dataElement)
 
                 url = url + "resellers/channel/3"
-                if (band === true)
+                if (band === true) {
                     config.changeVendorCruise()
+                } else {
+                    config.removeOptions(cruise)
+                }
 
                 break;
         }
@@ -699,7 +698,7 @@ const utilAjaxExecute = function () {
     }
 
     if (configTable !== undefined && configTable !== null && configTable !== undefined && configTable !== undefined) {
-        var band = (url == "")?true:false
+        var band = (url == "" || dataObj.start_date == "")?true:false
 
         utils.api(JSON.stringify(dataObj), `${apiHost}allotments${url}`, method, config.loadData, band)
     }
@@ -711,6 +710,6 @@ utilAjaxExecute()
 $(function () {
     document.getElementsByClassName('date-format').flatpickr({
         dateFormat: 'Y-m-d',
-        defaultDate: 'today'
+        minDate: 'today'
     });
 })
