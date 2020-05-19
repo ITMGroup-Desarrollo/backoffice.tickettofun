@@ -34,7 +34,7 @@ class Destination extends CI_Model
         $rol_id = $this->session->userdata('rol_id');
 
         $table = $table_content['DESTINATIONS_TABLE'];
-        if (!in_array('g_destinations', $this->session->userdata('permissions')))
+        if ($rol_id != 1 && !in_array('g_destinations', $this->session->userdata('permissions')))
         {
             $limit = count($table->contents[0]->contents->contents) - 1;
 
@@ -82,7 +82,7 @@ class Destination extends CI_Model
                 $status_attrib['data-status'] =  $row->destination_id;
                 $aux .= custom('td', $status_attrib, $status);
 
-                if (in_array('u_destinations', $this->session->userdata('permissions')))
+                if ($rol_id == 1 || in_array('u_destinations', $this->session->userdata('permissions')))
                 {
                     $path = 'destinations/' . $row->destination_id;
                     $this->anchor_attrib['class'] = 'edit';
@@ -91,7 +91,7 @@ class Destination extends CI_Model
 
                     $edit = custom('a', $this->anchor_attrib, $edit);
                 }
-                if (in_array('d_destinations', $this->session->userdata('permissions')))
+                if ($rol_id == 1 || in_array('d_destinations', $this->session->userdata('permissions')))
                 {
                     if ($row->active_status == 1) {
                         $this->anchor_attrib['href'] = '#';

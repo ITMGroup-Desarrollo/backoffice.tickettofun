@@ -34,7 +34,7 @@ class Business_unity extends CI_Model
         $rol_id = $this->session->userdata('rol_id');
 
         $table = $table_content['BUSINESS_TABLE'];
-        if (!in_array('g_business', $this->session->userdata('permissions')))
+        if ($rol_id != 1 && !in_array('g_business', $this->session->userdata('permissions')))
         {
             $limit = count($table->contents[0]->contents->contents) - 1;
 
@@ -81,7 +81,7 @@ class Business_unity extends CI_Model
                 $status_attrib['data-status'] =  $row->unity_id;
                 $aux .= custom('td', $status_attrib, $status);
 
-                if (in_array('u_business', $this->session->userdata('permissions')))
+                if ($rol_id == 1 || in_array('u_business', $this->session->userdata('permissions')))
                 {
                     $path = 'business/' . $row->unity_id;
                     $this->anchor_attrib['class'] = 'edit';
@@ -90,7 +90,7 @@ class Business_unity extends CI_Model
 
                     $edit = custom('a', $this->anchor_attrib, $edit);
                 }
-                if (in_array('d_business', $this->session->userdata('permissions')))
+                if ($rol_id == 1 || in_array('d_business', $this->session->userdata('permissions')))
                 {
                     if ($row->active_status == 1) {
                         $this->anchor_attrib['href'] = '#';

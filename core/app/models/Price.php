@@ -34,7 +34,7 @@ class Price extends CI_Model
         $rol_id = $this->session->userdata('rol_id');
 
         $table = $table_content['PRICES_TABLE'];
-        if ($rol_id != 1 && $rol_id != 2 && $rol_id != 3)
+        if ($rol_id != 1 && !in_array('g_prices', $this->session->userdata('permissions')))
         {
             $limit = count($table->contents[0]->contents->contents) - 1;
 
@@ -102,7 +102,7 @@ class Price extends CI_Model
                 $status_attrib['data-status'] =  $row->price_id;
                 $aux .= custom('td', $status_attrib, $status);
 
-                if (in_array('u_prices', $this->session->userdata('permissions')))
+                if ($rol_id == 1 || in_array('u_prices', $this->session->userdata('permissions')))
                 {
                     $path = 'prices/' . $row->price_id;
                     $this->anchor_attrib['class'] = 'edit';
@@ -111,7 +111,7 @@ class Price extends CI_Model
 
                     $edit = custom('a', $this->anchor_attrib, $edit);
                 }
-                if (in_array('d_prices', $this->session->userdata('permissions')))
+                if ($rol_id == 1 || in_array('d_prices', $this->session->userdata('permissions')))
                 {
                     if ($row->active_status == 1) {
                         $this->anchor_attrib['href'] = '#';

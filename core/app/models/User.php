@@ -34,7 +34,7 @@ class User extends CI_Model
         $rol_id = $this->session->userdata('rol_id');
 
         $table = $table_content['USERS_TABLE'];
-        if (!in_array('g_users', $this->session->userdata('permissions')))
+        if ($rol_id != 1 && !in_array('g_users', $this->session->userdata('permissions')))
         {
             $limit = count($table->contents[0]->contents->contents) - 1;
 
@@ -85,7 +85,7 @@ class User extends CI_Model
                 $status_attrib['data-status'] =  $row->user_id;
                 $aux .= custom('td', $status_attrib, $status);
 
-                if (in_array('u_users', $this->session->userdata('permissions')))
+                if ($rol_id == 1 || in_array('u_users', $this->session->userdata('permissions')))
                 {
                     $path = 'users/' . $row->user_id;
                     $this->anchor_attrib['class'] = 'edit';
@@ -95,7 +95,7 @@ class User extends CI_Model
                     $edit = custom('a', $this->anchor_attrib, $edit);
                 }
 
-                if (in_array('d_users', $this->session->userdata('permissions')))
+                if ($rol_id == 1 || in_array('d_users', $this->session->userdata('permissions')))
                 {
                     if ($row->active_status == 1) {
                         $this->anchor_attrib['href'] = '#';
