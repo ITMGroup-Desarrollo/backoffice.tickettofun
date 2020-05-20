@@ -70,9 +70,16 @@ Sessionx.vim
 # Temporary
 .netrwhist
 *~
+
 # Auto-generated tag files
 tags
+
 # Persistent undo
 [._]*.un~
+
 # Log files git deploy
 git-deploy/*.log
+
+# Enviroment files
+core/app/config/env.php
+core/app/config/env.php.back
