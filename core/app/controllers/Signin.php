@@ -28,7 +28,8 @@ class Signin extends CI_Controller
 
         if ($response->code == 200)
         {
-            $script = "window.token = '{$response->message}'";
+            $script = "window.token = '{$response->message}'\n";
+            $script .= "window.api_host = '{$this->config->item("api_host")}'";
 
             $token = custom(
                 'script', array('type' => 'text/javascript'), $script

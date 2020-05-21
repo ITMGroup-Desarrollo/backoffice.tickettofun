@@ -38,7 +38,7 @@ class Profile extends CI_Controller
 
         $data['scripts'] = $script .  $data['scripts'];
 
-        $pathAvatar = 'window.pathAvatar = ' . '"'. AVATAR . '"';
+        $pathAvatar = "window.pathAvatar = '{$this->config->item("avatar_addr")}'";
         $script = custom('script', '', $pathAvatar);
 
         $data['scripts'] = $script .  $data['scripts'];
