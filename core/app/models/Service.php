@@ -46,7 +46,7 @@ class Service extends CI_Model
 
         // Call API here!
         $params = new stdClass();
-        $endpoint = HOST . GET_SERVICES_ROUTE;
+        $endpoint = GET_SERVICES_ROUTE;
 
         $this->load->library('session');
         $token = $this->session->userdata('token');
@@ -140,7 +140,7 @@ class Service extends CI_Model
 
     public function get_data($id)
     {
-        $endpoint = HOST . GET_SERVICES_ROUTE . '/' . $id;
+        $endpoint = GET_SERVICES_ROUTE . '/' . $id;
 
         $params = new stdClass();
         $this->load->library('session');

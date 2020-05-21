@@ -46,7 +46,7 @@ class Rol extends CI_Model
 
         // Call API here!
         $params = new stdClass();
-        $endpoint = HOST . GET_ROLES_ROUTE;
+        $endpoint = GET_ROLES_ROUTE;
 
         $this->load->library('session');
         $token = $this->session->userdata('token');
@@ -136,7 +136,7 @@ class Rol extends CI_Model
 
     public function get_data($id)
     {
-        $endpoint = HOST . GET_ROLES_ROUTE . '/' . $id;
+        $endpoint = GET_ROLES_ROUTE . '/' . $id;
 
         $params = new stdClass();
         $this->load->library('session');

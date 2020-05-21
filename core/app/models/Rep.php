@@ -37,7 +37,7 @@ class Rep extends CI_Model
 
         // Call API here!
         $params = new stdClass();
-        $endpoint = HOST . GET_REPS_ROUTE;
+        $endpoint = GET_REPS_ROUTE;
 
         $this->load->library('session');
         $token = $this->session->userdata('token');
@@ -123,7 +123,7 @@ class Rep extends CI_Model
 
     public function get_data($id)
     {
-        $endpoint = HOST . GET_REPS_ROUTE . '/' . $id;
+        $endpoint = GET_REPS_ROUTE . '/' . $id;
 
         $params = new stdClass();
         $this->load->library('session');

@@ -76,7 +76,7 @@ class Allotment_reservation extends CI_Model
     public function get_data($id)
     {
 
-        $endpoint = HOST . GET_ALLOTMENT_RESERVATIONS_ROUTE . '/' . $id;
+        $endpoint = GET_ALLOTMENT_RESERVATIONS_ROUTE . '/' . $id;
 
         $params = new stdClass();
         $this->load->library('session');

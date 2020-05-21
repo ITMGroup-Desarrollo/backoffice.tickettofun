@@ -46,7 +46,7 @@ class Ship extends CI_Model
 
         // Call API here!
         $params = new stdClass();
-        $endpoint = HOST . GET_SHIPS_ROUTE;
+        $endpoint = GET_SHIPS_ROUTE;
 
         $this->load->library('session');
         $token = $this->session->userdata('token');
@@ -135,7 +135,7 @@ class Ship extends CI_Model
 
     public function get_data($id)
     {
-        $endpoint = HOST . GET_SHIPS_ROUTE . '/' . $id;
+        $endpoint = GET_SHIPS_ROUTE . '/' . $id;
 
         $params = new stdClass();
         $this->load->library('session');

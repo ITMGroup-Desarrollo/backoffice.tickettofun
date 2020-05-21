@@ -46,7 +46,7 @@ class Reseller extends CI_Model
 
         // Call API here!
         $params = new stdClass();
-        $endpoint = HOST . GET_RESELLERS_ROUTE;
+        $endpoint = GET_RESELLERS_ROUTE;
 
         $this->load->library('session');
         $token = $this->session->userdata('token');
@@ -136,7 +136,7 @@ class Reseller extends CI_Model
 
     public function get_data($id)
     {
-        $endpoint = HOST . GET_RESELLERS_ROUTE . '/' . $id;
+        $endpoint = GET_RESELLERS_ROUTE . '/' . $id;
 
         $params = new stdClass();
         $this->load->library('session');

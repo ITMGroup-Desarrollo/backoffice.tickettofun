@@ -36,8 +36,13 @@ class Page extends CI_Model
         // Close open connections
         $this->db->close();
         $this->load->library('session');
+
+        $user_avatar = $this->config->item('avatar_addr') . 'generic.jpg';
         $user_name = $this->session->userdata('user_name');
-        $user_avatar = (empty($this->session->userdata('avatar')))? 'generic.jpg' : $this->session->userdata('avatar');
+
+        if ( ! empty($this->session->userdata('avatar'))) {
+            $user_avatar = $this->config->item('avatar_addr') . $this->session->userdata('avatar');
+        }
 
         // If page need an special settings
         $this->settings_values .=  ',' . $this->page_name;
@@ -73,6 +78,7 @@ class Page extends CI_Model
         if ($this->page_name != 'signin')
         {
             $build = $this->build;
+
             $body = $build->build_components($this->settings['BODY']);
             $current_user = $build->build_components($this->settings['ACCOUNT']);
             $bottom_menu = $build->build_components($this->settings['BOTTOM-MENU']);
@@ -240,10 +246,12 @@ class Page extends CI_Model
 
                 $this->script_attrib = array('type' => 'text/javascript');
 
-                $script = "window.token = '{$token}'";
-                $token = custom('script', $this->script_attrib, $script);
+                $script = "window.token = '{$token}'\n";
+                $script .= "window.api_host = '{$this->config->item("api_host")}'";
 
-                $scripts = $token . $scripts;
+                $api_config = custom('script', $this->script_attrib, $script);
+
+                $scripts = $api_config . $scripts;
             }
 
             $this->scripts['js'] = $scripts;

@@ -46,7 +46,7 @@ class Destination extends CI_Model
 
         // Call API here!
         $params = new stdClass();
-        $endpoint = HOST . GET_DESTINATIONS_ROUTE;
+        $endpoint = GET_DESTINATIONS_ROUTE;
 
         $this->load->library('session');
         $token = $this->session->userdata('token');
@@ -136,7 +136,7 @@ class Destination extends CI_Model
 
     public function get_data($id)
     {
-        $endpoint = HOST . GET_DESTINATIONS_ROUTE . '/' . $id;
+        $endpoint = GET_DESTINATIONS_ROUTE . '/' . $id;
 
         $params = new stdClass();
         $this->load->library('session');

@@ -46,7 +46,7 @@ class Equivalence extends CI_Model
 
         // Call API here!
         $params = new stdClass();
-        $endpoint = HOST . GET_EQUIVALENCES_ROUTE;
+        $endpoint = GET_EQUIVALENCES_ROUTE;
 
         $this->load->library('session');
         $token = $this->session->userdata('token');
@@ -137,7 +137,7 @@ class Equivalence extends CI_Model
 
     public function get_data($id)
     {
-        $endpoint = HOST . GET_EQUIVALENCES_ROUTE . '/' . $id;
+        $endpoint = GET_EQUIVALENCES_ROUTE . '/' . $id;
         $params = new stdClass();
         $this->load->library('session');
         $token = $this->session->userdata('token');

@@ -24,7 +24,7 @@ class Calendar extends CI_Model
 
         // Call API here!
         $params = new stdClass();
-        $endpoint = HOST . GET_ARRIVES_ROUTE;
+        $endpoint = GET_ARRIVES_ROUTE;
 
         $this->load->library('session');
         $token = $this->session->userdata('token');

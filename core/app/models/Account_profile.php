@@ -42,7 +42,7 @@ class Account_profile extends CI_Model
 
     public function get_data($id)
     {
-        $endpoint = HOST . GET_USERS_ROUTE . '/' . $id;
+        $endpoint = GET_USERS_ROUTE . '/' . $id;
 
         $params = new stdClass();
         $this->load->library('session');

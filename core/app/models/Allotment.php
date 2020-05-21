@@ -56,7 +56,7 @@ class Allotment extends CI_Model
         }
 
         $params->start_date = $dates[0];
-        $endpoint = HOST . GET_ALLOTMENTS_ROUTE;
+        $endpoint = GET_ALLOTMENTS_ROUTE;
 
         $this->load->library('session');
         $token = $this->session->userdata('token');
@@ -150,18 +150,18 @@ class Allotment extends CI_Model
         switch($slug)
         {
             case 'arrives':
-                $endpoint = HOST . GET_ALLOTMENTS_ROUTE . '/' . $slug . '/' . $id;
+                $endpoint = GET_ALLOTMENTS_ROUTE . '/' . $slug . '/' . $id;
             break;
             case 'ship':
-                $endpoint = HOST . GET_ALLOTMENTS_ROUTE . '/' . $slug . '/' . $id;
+                $endpoint = GET_ALLOTMENTS_ROUTE . '/' . $slug . '/' . $id;
             break;
             default:
-                $endpoint = HOST . GET_ALLOTMENTS_ROUTE . '/' . $id;
+                $endpoint = GET_ALLOTMENTS_ROUTE . '/' . $id;
             break;
 
         }
 
-        $endpoint = HOST . GET_ALLOTMENTS_ROUTE . '/' . $id;
+        $endpoint = GET_ALLOTMENTS_ROUTE . '/' . $id;
 
         $params = new stdClass();
         $this->load->library('session');
@@ -202,7 +202,7 @@ class Allotment extends CI_Model
 
     public function get_arrive_data($id, $date)
     {
-        $endpoints = HOST . GET_ARRIVES_ROUTE . '/ship/' . $id;
+        $endpoints = GET_ARRIVES_ROUTE . '/ship/' . $id;
 
         $this->load->library('session');
         $token = $this->session->userdata('token');

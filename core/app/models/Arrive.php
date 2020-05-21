@@ -63,11 +63,11 @@ class Arrive extends CI_Model
         $params = new stdClass();
         switch($slug){
             case 'arriveallotment':
-                $endpoint = HOST . GET_ARRIVES_ROUTE . '/' . $slug . '/' . $id;
+                $endpoint = GET_ARRIVES_ROUTE . '/' . $slug . '/' . $id;
                 $params->start_date = date('Y-m-d');
                 break;
             default:
-                $endpoint = HOST . GET_ARRIVES_ROUTE . '/' . $id; break;
+                $endpoint = GET_ARRIVES_ROUTE . '/' . $id; break;
         }
 
         $this->load->library('session');
