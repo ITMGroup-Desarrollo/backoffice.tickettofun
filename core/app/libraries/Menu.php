@@ -96,7 +96,7 @@ class Menu {
 
     private function _get_menu($options, $actives)
     {
-        $this->menu          ='';
+        $this->menu = '';
 
         $links  = explode(',', trim($options->pages, ','));
         $menus  = explode(',', trim($options->menus, ','));
@@ -123,6 +123,7 @@ class Menu {
             if ( ! empty($options->sub_menus))
             {
                 $sub_menu = $this->_get_submenu($options, $submenu_active);
+
                 $this->anchor_attrib['href'] = '#';
                 $this->anchor_attrib['data-toggle'] = "sidebar";
 
