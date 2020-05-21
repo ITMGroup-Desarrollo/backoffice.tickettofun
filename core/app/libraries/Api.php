@@ -16,6 +16,7 @@ class Api
 
     public function __construct()
     {
+        $this->CI =& get_instance();
         $this->headers = array("Content-Type: application/json");
     }
 
@@ -23,8 +24,8 @@ class Api
     {
         $params = new stdClass();
 
-        $params->id = API_KEY;
-        $endpoint = HOST . TOKEN_ROUTE;
+        $params->id = $this->CI->config->item('api_key');
+        $endpoint = TOKEN_ROUTE;
 
         return $this->_request('POST', $endpoint, $this->headers, $params);
     }
@@ -46,6 +47,8 @@ class Api
     {
         $curl = curl_init();
         $data = json_encode($params);
+
+        $endpoint = $this->CI->config->item('api_host') . $endpoint;
 
         curl_setopt_array($curl, array(
             CURLOPT_URL => $endpoint,

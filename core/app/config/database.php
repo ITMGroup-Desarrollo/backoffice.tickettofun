@@ -73,17 +73,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $active_group = 'default';
 $query_builder = TRUE;
 
-// Set database information for all develop environments
-$user = 'usr_backoffice';
-$password = '@Xtl2Gd^xZG!';
-$database = 'itm_core';
+// CodeIgniter instance
+$CI = get_instance();
 
 $db['default'] = array(
     'dsn'   => '',
-    'hostname' => 'localhost',
-    'username' => $user,
-    'password' => $password,
-    'database' => $database,
+    'hostname' => $CI->config->item('db_host'),
+    'username' => $CI->config->item('db_user'),
+    'password' => $CI->config->item('db_pwd'),
+    'database' => $CI->config->item('db_db'),
     'dbdriver' => 'mysqli',
     'dbprefix' => '',
     'pconnect' => FALSE,

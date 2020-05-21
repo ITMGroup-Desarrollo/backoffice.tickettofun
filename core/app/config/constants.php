@@ -92,8 +92,6 @@ defined('EXIT__AUTO_MAX')      OR define('EXIT__AUTO_MAX', 125); // highest auto
 | Used to getting token access to core.
 |
 */
-defined('HOST') OR define ('HOST', 'http://core.itmgroup.mx/');
-defined('AVATAR') OR define('AVATAR','http://core.itmgroup.mx/img/avatars/');
 defined('TOKEN_ROUTE') OR define('TOKEN_ROUTE', 'v1/token');
 defined('GET_SERVICES_ROUTE') OR define('GET_SERVICES_ROUTE', 'api/v1/products');
 defined('GET_LOCATIONS_ROUTE') OR define('GET_LOCATIONS_ROUTE', 'api/v1/locations');
@@ -118,5 +116,3 @@ defined('GET_ARRIVES_ROUTE') OR define('GET_ARRIVES_ROUTE', 'api/v1/arrives');
 
 defined('GET_ALLOTMENT_RESERVATIONS_ROUTE') OR define('GET_ALLOTMENT_RESERVATIONS_ROUTE', 'api/v1/allotment_reservations');
 defined('GET_ALLOTMENTS_ROUTE') OR define('GET_ALLOTMENTS_ROUTE', 'api/v1/allotments');
-
-defined('API_KEY') OR define('API_KEY', 'mvS80TiF0G9VStnUE0jYwUXrMIDYuTYkcBauSPxYEvC');
