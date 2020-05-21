@@ -33,7 +33,7 @@ $base_url  = $protocol . "://" . $_SERVER["HTTP_HOST"];
 $base_url .= str_replace(basename($script_name), "", $script_name);
 
 $config["base_url"] = '';
-$config['base_url'] = $base_url;
+$config["base_url"] = $base_url;
 
 /*
 |--------------------------------------------------------------------------
