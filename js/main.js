@@ -3,7 +3,7 @@ var menu
 var info
 var base = window.baseUrl
 var token = window.token
-var apiHost = 'http://core.itmgroup.mx/api/v1/'
+var apiHost = `${window.api_host}api/v1/`
 
 var codes = {
   400: 1,
@@ -35,8 +35,9 @@ var app = {
       var user = JSON.parse(response.message)
 
       info.remember = 0
-      if (document.querySelector('[name="remember"]').checked)
-        info.remember =  1
+      if (document.querySelector('[name="remember"]').checked) {
+        info.remember = 1
+      }
 
       info.user = user
       info.token = window.token
@@ -45,11 +46,11 @@ var app = {
       utils.post(JSON.stringify(info), url, app.access, user.page_default)
     }
   },
-  access: function(response, redirect) {
-    location.href = redirect
+  access: function (response, redirect) {
+    window.location.href = redirect
   },
   logout: function () {
-    location.href = `${base}signin`
+    window.location.href = `${base}signin`
   },
   resetMenu: function (elements) {
     for (var i = 0, l = elements.length; i < l; i++) {
@@ -69,9 +70,9 @@ var app = {
         e.preventDefault()
 
         var element = e.target
-        if (!e.target.getAttribute('data-toggle'))
+        if (!e.target.getAttribute('data-toggle')) {
           element = e.target.parentElement
-
+        }
         // collapse himself
         if (element.classList.contains('toggled')) {
           element.classList.remove('toggled')
@@ -86,7 +87,7 @@ var app = {
 
           element.classList.add('toggled')
 
-          var submenu = element.parentElement.querySelector('.submenu')
+          submenu = element.parentElement.querySelector('.submenu')
           submenu.style.display = 'block'
         }
       })
@@ -123,7 +124,7 @@ if (login !== null) {
         password: document.querySelector('[name="user_password"]').value
       }
 
-      var url = 'http://core.itmgroup.mx/auth/login'
+      var url = `${window.api_host}auth/login`
       utils.api(JSON.stringify(info), url, 'POST', app.signin)
     }
   })
