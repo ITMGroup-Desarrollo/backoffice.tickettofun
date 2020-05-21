@@ -363,7 +363,7 @@ class Forms
         $name = $key_value[1];
         $value = $key_value[0];
 
-        $endpoint = HOST . $api_endpoint;
+        $endpoint = $api_endpoint;
 
         $this->CI->load->library('api');
         $this->CI->load->library('session');
@@ -380,13 +380,11 @@ class Forms
             $rows = $response->message;
 
             if ( ! empty($extra_name))
-            {   
+            {
+                $options = "";
                 if($type === 'normal')
-                { 
-                    $options = "";
+                {
                     $options = custom('option', '', '-- Choose option --');
-                }else{
-                    $options = "";
                 }
 
                 foreach ($rows as $row) {
@@ -403,10 +401,10 @@ class Forms
             else
             {
                 foreach ($rows as $row) {
-
                     if((int)$row->active_status === 1)
+                    {
                         $options[$row->$value] = $row->$name;
-
+                    }
                 }
             }
         }
