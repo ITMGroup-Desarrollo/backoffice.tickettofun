@@ -708,7 +708,6 @@ newDataAllotment.addEventListener('click', function (e) {
     var _form = document.createElement('form', '', '', '');
     _form.setAttribute('id', 'frmSearch')
     _form.setAttribute('method', 'POST')
-    _form.setAttribute('action', '/allotments/clone/')
 
     var _labelChannel = utils.createElement('span', 'control-label', '', 'Channel:')
     var _inputChannel = document.querySelector('[name="channelaux"]').cloneNode(true)
