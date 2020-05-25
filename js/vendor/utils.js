@@ -16,6 +16,8 @@ var utils = {
     })(document, 'script')
   },
   api: function (data, endpoint, httpverb, method, element, contentType) {
+    var token = window.token
+
     if (method !== null) MicroModal.show('wait-modal')
 
     var xHR = new XMLHttpRequest()
@@ -63,6 +65,20 @@ var utils = {
     xHR.open('POST', endpoint, true)
     xHR.setRequestHeader('Content-Type', 'application/json')
     xHR.send(data)
+  },
+  displayModal: function (id, message) {
+    var _modal = document.getElementById(`${id}-content`)
+
+    // Default message
+    var _message = utils.createElement('p', '', '', 'Something wrong!!!')
+    if (message !== '') {
+      _message = utils.createElement('p', '', '', message)
+    }
+
+    _modal.innerHTML = ''
+    _modal.appendChild(_message)
+
+    MicroModal.show(id)
   },
   buildModal: function (id, cnHeader, cnButton) {
     var title = `${id}-title`

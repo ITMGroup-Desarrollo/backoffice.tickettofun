@@ -2,8 +2,11 @@
 var menu
 var info
 var base = window.baseUrl
-var token = window.token
-var apiHost = `${window.api_host}api/v1/`
+
+var apiHost = window.api_host
+var authEndpoint = `${apiHost}auth/login`
+
+apiHost = `${apiHost}api/v1/`
 
 var codes = {
   400: 1,
@@ -16,22 +19,20 @@ var app = {
   signin: function (response) {
     MicroModal.close('wait-modal')
 
-    response = JSON.parse(response)
+    var idModal = 'alert-modal'
 
-    if (response.code !== 200) {
-      var _alertModal = document.getElementById('alert-modal-content')
-      var _message = utils.createElement('p', '', '', 'Login failed: Email or password incorrect.')
+    document.querySelector('[name="user_mail"]').value = ''
+    document.querySelector('[name="user_password"]').value = ''
 
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
-
-      document.querySelector('[name="user_mail"]').value = ''
-      document.querySelector('[name="user_password"]').value = ''
+    try {
+      response = JSON.parse(response)
+    } catch (e) {
+      utils.displayModal(idModal, '')
     }
 
-    if (response.code === 200) {
+    if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
+      utils.displayModal(idModal, response.message)
+    } else if (response.code === 200) {
       var user = JSON.parse(response.message)
 
       info.remember = 0
@@ -79,8 +80,7 @@ var app = {
 
           var submenu = element.parentElement.querySelector('.submenu')
           submenu.style.display = 'none'
-        }
-        else {
+        } else {
           // reset other menus
           app.resetMenu(menu.querySelectorAll('.menu-item'))
           app.hiddenMenu(menu.querySelectorAll('.submenu'))
@@ -124,7 +124,7 @@ if (login !== null) {
         password: document.querySelector('[name="user_password"]').value
       }
 
-      var url = `${window.api_host}auth/login`
+      var url = authEndpoint
       utils.api(JSON.stringify(info), url, 'POST', app.signin)
     }
   })
