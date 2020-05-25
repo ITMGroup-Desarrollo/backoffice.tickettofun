@@ -650,12 +650,12 @@ var clone = document.getElementById('clone')
 clone.addEventListener('click', function(e){
     e.preventDefault()
 
-    window.location.href = "/allotments/clone/";
+    window.location.href = `${base}/allotments/clone/`;
 })
 
 var form = document.getElementById('clone-form')
 form.setAttribute('method', 'POST')
-form.setAttribute('action', '/allotments/config/')
+form.setAttribute('action', `${base}/allotments/config/`)
 
 var formbtn = document.querySelector('.form-actions')
 formbtn.classList.add('col-md-5')

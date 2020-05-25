@@ -182,7 +182,7 @@ if (element != null) {
         date: dateStr
       }
 
-      var url = 'diary/get_diary'
+      var url = `${base}diary/get_diary`
       utils.post(JSON.stringify(data), url, diary.refresh)
     }
   })

@@ -680,7 +680,7 @@ search.appendChild(btnSearch)
 
 var form = document.getElementById('clone-form')
 form.setAttribute('method', 'POST')
-form.setAttribute('action', '/allotments/config/')
+form.setAttribute('action', `${base}allotments/config`)
 
 var formbtn = document.querySelector('.form-actions')
 formbtn.classList.add('col-md-5')
@@ -708,6 +708,7 @@ newDataAllotment.addEventListener('click', function (e) {
     var _form = document.createElement('form', '', '', '');
     _form.setAttribute('id', 'frmSearch')
     _form.setAttribute('method', 'POST')
+    _form.setAttribute('action', `${base}allotments/clone`)
 
     var _labelChannel = utils.createElement('span', 'control-label', '', 'Channel:')
     var _inputChannel = document.querySelector('[name="channelaux"]').cloneNode(true)

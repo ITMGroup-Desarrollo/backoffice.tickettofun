@@ -165,7 +165,7 @@ if (save != null) {
       if (form != null) {
         info.user_create_id = user_create_id
         var url = `${apiHost}booths/add`
-        utils.api(JSON.stringify(info), 'http://localhost:8181/api/v1/booths/add', 'POST', booth.add)
+        utils.api(JSON.stringify(info), url, 'POST', booth.add)
       }
 
       form = document.querySelector('#update-booth')
