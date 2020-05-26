@@ -15,17 +15,19 @@ var validator = {
   cssClass: {
     button: 'btn btn-outline-warning'
   },
-  isValid: function isValid(element, option, msg) {
-    if (this.rgx.hasOwnProperty(option)) {
-      if (element.type == 'file' && option === 'fileSize')
-        if (element.files[0].size / 1024 > 1024)
+  isValid: function isValid (element, option, msg) {
+    if ((Object.prototype.hasOwnProperty.call(this.rgx, option))) {
+      if (element.type === 'file' && option === 'fileSize') {
+        if (element.files[0].size / 1024 > 1024) {
           element.value = ''
+        }
+      }
 
-      if (element.type != 'file')
+      if (element.type !== 'file') {
         element.value = element.value.replace(this.rgx.space, '')
+      }
 
       if (!this.rgx[option].test(element.value)) {
-
         var content = document.getElementById('alert-modal-content')
         content.innerText = ''
 
@@ -45,8 +47,9 @@ var validator = {
         acceptButton.setAttribute('aria-controls', 'alert-modal')
         acceptButton.setAttribute('data-micromodal-close', '')
 
-        if (typeof msg === 'undefined')
+        if (typeof msg === 'undefined') {
           msg = element.getAttribute('data-validator-msg')
+        }
 
         var leyendMessage = utils.createElement('p', '', '', msg)
 
@@ -60,7 +63,7 @@ var validator = {
 
     return true
   },
-  setFocus: function setFocus(name) {
+  setFocus: function setFocus (name) {
     var element = document.querySelector(`[name="${name}"]`)
 
     element.value = ''

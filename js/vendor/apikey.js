@@ -1,28 +1,26 @@
 'use strict'
 var info
 var form
-var base = window.baseUrl
-var token = window.token
 var apikeyData = window.apikey
-var user_create_id = window.user_create_id
+var userCreateId = window.user_create_id
 
 var apikey = {
-  add: function(response) {
+  add: function (response) {
     MicroModal.close('wait-modal')
 
     response = JSON.parse(response)
+
     var _message = ''
     var _alertModal = document.getElementById('alert-modal-content')
 
-    if (codes.hasOwnProperty(response.code)) {
+    if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
       _message = utils.createElement('p', '', '', response.message)
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
 
       MicroModal.show('alert-modal')
-    }
-    else if (response.code == 201) {
+    } else if (response.code === 201) {
       _message = utils.createElement('p', '', '', 'Success! API key added correctly')
 
       _alertModal.innerHTML = ''
@@ -31,25 +29,24 @@ var apikey = {
       MicroModal.show('alert-modal')
 
       form = document.querySelector('#add-apikey')
-      form.reset();
+      form.reset()
     }
   },
-  update: function(response) {
+  update: function (response) {
     MicroModal.close('wait-modal')
 
     response = JSON.parse(response)
     var _message = ''
     var _alertModal = document.getElementById('alert-modal-content')
 
-    if (codes.hasOwnProperty(response.code)) {
+    if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
       _message = utils.createElement('p', '', '', response.message)
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
 
       MicroModal.show('alert-modal')
-    }
-    else if (response.code == 204) {
+    } else if (response.code === 204) {
       _message = utils.createElement('p', '', '', 'Success! API key updated correctly')
 
       _alertModal.innerHTML = ''
@@ -58,7 +55,7 @@ var apikey = {
       MicroModal.show('alert-modal')
     }
   },
-  delete: function(response, element) {
+  delete: function (response, element) {
     MicroModal.close('wait-modal')
 
     response = JSON.parse(response)
@@ -68,19 +65,18 @@ var apikey = {
     var _message = ''
     var _alertModal = document.getElementById('alert-modal-content')
 
-    if (codes.hasOwnProperty(response.code)) {
+    if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
       _message = utils.createElement('p', '', '', response.message)
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
 
       MicroModal.show('alert-modal')
-    }
-    else if (response.code == 200) {
+    } else if (response.code === 200) {
       var _status = document.querySelector(`[data-status="${id}"]`)
       _status.innerHTML = ''
 
-      var label = utils.createElement('span', 'label label-danger', '', 'inactive');
+      var label = utils.createElement('span', 'label label-danger', '', 'inactive')
       _status.appendChild(label)
 
       _message = utils.createElement('p', '', '', 'Success! API key inactivate correctly')
@@ -91,7 +87,7 @@ var apikey = {
       MicroModal.show('alert-modal')
     }
   },
-  setData: function(){
+  setData: function () {
     document.querySelector('[name="key_description"]').value = apikeyData.description
     document.querySelector('[name="status"]').value = apikeyData.active
   }
@@ -99,17 +95,17 @@ var apikey = {
 
 var cancel = document.querySelector('.cancel')
 if (cancel != null) {
-  cancel.addEventListener('click', function(e) {
+  cancel.addEventListener('click', function (e) {
     e.preventDefault()
 
     form = document.querySelector('#add-apikey')
-    form.reset();
-  });
+    form.reset()
+  })
 }
 
 var save = document.querySelector('.save')
 if (save != null) {
-  save.addEventListener('click', function(e) {
+  save.addEventListener('click', function (e) {
     e.preventDefault()
 
     var valid = 'true'
@@ -117,18 +113,19 @@ if (save != null) {
 
     valid = utils.dataValidator(fields)
 
-    if(valid) {
+    if (valid) {
       info = {
-        app_name : document.querySelector('[name="key_description"]').value,
+        app_name: document.querySelector('[name="key_description"]').value
       }
 
       form = document.querySelector('#add-apikey')
 
       if (form != null) {
-        if(document.querySelector('[name="user_id"]').value !== '')
+        if (document.querySelector('[name="user_id"]').value !== '') {
           info.idUser = document.querySelector('[name="user_id"]').value
+        }
 
-        info.user_create_id = user_create_id
+        info.user_create_id = userCreateId
 
         var url = apiHost + 'apikeys/add'
         utils.api(JSON.stringify(info), url, 'POST', apikey.add)
@@ -139,7 +136,7 @@ if (save != null) {
       if (form != null) {
         info.active_status = document.querySelector('[name="status"]').value
 
-        var url = apiHost + `apikeys/edit/${apikeyData.id}`
+        url = apiHost + `apikeys/edit/${apikeyData.id}`
         utils.api(JSON.stringify(info), url, 'PUT', apikey.update)
       }
     }
@@ -149,43 +146,43 @@ if (save != null) {
 var options = document.querySelectorAll('.delete')
 
 for (var i = 0, l = options.length; i < l; i++) {
-  options[i].addEventListener('click', function(e) {
+  options[i].addEventListener('click', function (e) {
     e.preventDefault()
 
     var element = e.target
-    if (! e.target.getAttribute('data-id'))
+    if (!e.target.getAttribute('data-id')) {
       element = e.target.parentElement
+    }
 
     var id = element.getAttribute('data-id')
     var url = apiHost + `apikeys/del/${id}`
-      utils.api(JSON.stringify({}), url, 'DELETE', apikey.delete, element)
+    utils.api(JSON.stringify({}), url, 'DELETE', apikey.delete, element)
   })
 }
 
 form = document.querySelector('#add-apikey')
 if (form != null) {
-  var status_combo = form.querySelector('[name="status"]')
-  status_combo.parentElement.parentElement.remove()
+  var statusCombo = form.querySelector('[name="status"]')
+  statusCombo.parentElement.parentElement.remove()
 }
 
 form = document.querySelector('#update-apikey')
-if (form != null){
+if (form != null) {
   var description = form.querySelector('[name="key_description"]')
-  description.setAttribute('readonly','readonly')
+  description.setAttribute('readonly', 'readonly')
 
-  var user_id = form.querySelector('[name="user_id"]');
-  user_id.parentElement.parentElement.remove();
-  apikey.setData();
+  var userId = form.querySelector('[name="user_id"]')
+  userId.parentElement.parentElement.remove()
+  apikey.setData()
 }
-
 
 var servicesTable = document.querySelector('#apikeys-registers')
 if (servicesTable !== null) {
-  $(function() {
+  $(function () {
     $('#apikeys-registers').dataTable({
-        "sPaginationType": "full_numbers",
-        "iDisplayLength": 20,
-        "aLengthMenu": [[20, 50, 100, -1], [20, 50, 100, "All"]]
-    });
-  });
+      sPaginationType: 'full_numbers',
+      iDisplayLength: 20,
+      aLengthMenu: [[20, 50, 100, -1], [20, 50, 100, 'All']]
+    })
+  })
 }

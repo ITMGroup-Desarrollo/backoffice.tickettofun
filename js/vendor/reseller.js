@@ -1,28 +1,25 @@
 'use strict'
 var info
 var form
-var base = window.baseUrl
-var token = window.token
 var resellerData = window.reseller
-var user_create_id = window.user_create_id
+var useCrreateId = window.user_create_id
 
-var reseller= {
-  add: function(response) {
+var reseller = {
+  add: function (response) {
     MicroModal.close('wait-modal')
 
     response = JSON.parse(response)
     var _message = ''
     var _alertModal = document.getElementById('alert-modal-content')
 
-    if (codes.hasOwnProperty(response.code)) {
+    if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
       _message = utils.createElement('p', '', '', response.message)
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
 
       MicroModal.show('alert-modal')
-    }
-    else if (response.code == 201) {
+    } else if (response.code === 201) {
       _message = utils.createElement('p', '', '', 'Success! Vendor added correctly')
 
       _alertModal.innerHTML = ''
@@ -31,25 +28,24 @@ var reseller= {
       MicroModal.show('alert-modal')
 
       form = document.querySelector('#add-reseller')
-      form.reset();
+      form.reset()
     }
   },
-  update: function(response) {
+  update: function (response) {
     MicroModal.close('wait-modal')
 
     response = JSON.parse(response)
     var _message = ''
     var _alertModal = document.getElementById('alert-modal-content')
 
-    if (codes.hasOwnProperty(response.code)) {
+    if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
       _message = utils.createElement('p', '', '', response.message)
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
 
       MicroModal.show('alert-modal')
-    }
-    else if (response.code == 204) {
+    } else if (response.code === 204) {
       _message = utils.createElement('p', '', '', 'Success! Vendor updated correctly')
 
       _alertModal.innerHTML = ''
@@ -58,7 +54,7 @@ var reseller= {
       MicroModal.show('alert-modal')
     }
   },
-  delete: function(response, element) {
+  delete: function (response, element) {
     MicroModal.close('wait-modal')
 
     response = JSON.parse(response)
@@ -68,19 +64,18 @@ var reseller= {
     var _message = ''
     var _alertModal = document.getElementById('alert-modal-content')
 
-    if (codes.hasOwnProperty(response.code)) {
+    if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
       _message = utils.createElement('p', '', '', response.message)
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
 
       MicroModal.show('alert-modal')
-    }
-    else if (response.code == 200) {
+    } else if (response.code === 200) {
       var _status = document.querySelector(`[data-status="${id}"]`)
       _status.innerHTML = ''
 
-      var label = utils.createElement('span', 'label label-danger', '', 'inactive');
+      var label = utils.createElement('span', 'label label-danger', '', 'inactive')
       _status.appendChild(label)
 
       _message = utils.createElement('p', '', '', 'Success! Vendor inactivate correctly')
@@ -91,7 +86,7 @@ var reseller= {
       MicroModal.show('alert-modal')
     }
   },
-  setData: function() {
+  setData: function () {
     document.querySelector('[name="status"]').value = resellerData.active
     document.querySelector('[name="channel"]').value = resellerData.channel_id
     document.querySelector('[name="reseller_name"]').value = resellerData.reseller_name
@@ -100,22 +95,24 @@ var reseller= {
 
 var cancel = document.querySelector('.cancel')
 if (cancel != null) {
-  cancel.addEventListener('click', function(e) {
+  cancel.addEventListener('click', function (e) {
     e.preventDefault()
 
     form = document.querySelector('#add-reseller')
-    if (form != null)
+    if (form != null) {
       form.reset()
+    }
 
     form = document.querySelector('#update-reseller')
-    if (form != null)
+    if (form != null) {
       reseller.setData()
-  });
+    }
+  })
 }
 
 var save = document.querySelector('.save')
 if (save != null) {
-  save.addEventListener('click', function(e) {
+  save.addEventListener('click', function (e) {
     e.preventDefault()
 
     var valid = 'true'
@@ -123,17 +120,18 @@ if (save != null) {
 
     valid = utils.dataValidator(fields)
 
-    if(valid) {
+    if (valid) {
       info = {
         channel_id: document.querySelector('[name="channel"]').value,
-        reseller_name: document.querySelector('[name="reseller_name"]').value,
+        reseller_name: document.querySelector('[name="reseller_name"]').value
       }
 
       form = document.querySelector('#add-reseller')
+      var url = ''
 
       if (form != null) {
-        info.user_create_id = user_create_id
-        var url = `${apiHost}resellers/add`
+        info.useCrreateId = useCrreateId
+        url = `${apiHost}resellers/add`
         utils.api(JSON.stringify(info), url, 'POST', reseller.add)
       }
 
@@ -142,7 +140,7 @@ if (save != null) {
       if (form != null) {
         info.active_status = document.querySelector('[name="status"]').value
 
-        var url = `${apiHost}resellers/edit/${resellerData.id}`
+        url = `${apiHost}resellers/edit/${resellerData.id}`
         utils.api(JSON.stringify(info), url, 'PUT', reseller.update)
       }
     }
@@ -152,36 +150,38 @@ if (save != null) {
 var options = document.querySelectorAll('.delete')
 
 for (var i = 0, l = options.length; i < l; i++) {
-  options[i].addEventListener('click', function(e) {
+  options[i].addEventListener('click', function (e) {
     e.preventDefault()
 
     var element = e.target
-    if (! e.target.getAttribute('data-id'))
+    if (!e.target.getAttribute('data-id')) {
       element = e.target.parentElement
+    }
 
     var id = element.getAttribute('data-id')
     var url = `${apiHost}resellers/del/${id}`
-      utils.api(JSON.stringify({}), url, 'DELETE', reseller.delete, element)
+    utils.api(JSON.stringify({}), url, 'DELETE', reseller.delete, element)
   })
 }
 
 form = document.querySelector('#add-reseller')
-if (form != null) {
-  var status_combo = form.querySelector('[name="status"]')
-  status_combo.parentElement.parentElement.remove()
+if (form !== null) {
+  var statusCombo = form.querySelector('[name="status"]')
+  statusCombo.parentElement.parentElement.remove()
 }
 
 form = document.querySelector('#update-reseller')
-if (form != null)
+if (form != null) {
   reseller.setData()
+}
 
 var servicesTable = document.querySelector('#resellers-registers')
 if (servicesTable !== null) {
-  $(function() {
+  $(function () {
     $('#resellers-registers').dataTable({
-        "sPaginationType": "full_numbers",
-        "iDisplayLength": 20,
-        "aLengthMenu": [[20, 50, 100, -1], [20, 50, 100, "All"]]
-    });
-  });
+      sPaginationType: 'full_numbers',
+      iDisplayLength: 20,
+      aLengthMenu: [[20, 50, 100, -1], [20, 50, 100, 'All']]
+    })
+  })
 }

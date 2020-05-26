@@ -68,17 +68,19 @@ var diary = {
     MicroModal.close('wait-modal')
     response = JSON.parse(response)
 
+    var _alertModal = ''
+    var _message = ''
     if (response.code !== 200) {
-      var _alertModal = document.getElementById('alert-modal-content')
-      var _message = utils.createElement('p', '', '', response.message)
+      _alertModal = document.getElementById('alert-modal-content')
+      _message = utils.createElement('p', '', '', response.message)
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
 
       MicroModal.show('alert-modal')
     } else if (response.code === 200) {
-      var _alertModal = document.getElementById('alert-modal-content')
-      var _message = utils.createElement('p', '', '', 'Success! information updated correctly')
+      _alertModal = document.getElementById('alert-modal-content')
+      _message = utils.createElement('p', '', '', 'Success! information updated correctly')
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
 
@@ -203,7 +205,6 @@ const buildModal = function () {
         var valueassistant = e.target.getAttribute('data-assistant')
         var valueshiptime = e.target.getAttribute('data-ship')
         var valueorigin = e.target.getAttribute('data-origin')
-        var valuedestiny = e.target.getAttribute('data-destiny')
         var valuenextport = e.target.getAttribute('data-next')
         var valueidarrive = e.target.getAttribute('data-idarrive')
 

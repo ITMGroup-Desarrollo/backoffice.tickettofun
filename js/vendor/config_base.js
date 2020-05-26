@@ -34,7 +34,7 @@ var config = {
           data.max_available,
           data.available,
           data.shared_schedule,
-          data.private_service,
+          data.privateService,
           data.active_status,
           data.allotment_id,
           data.arrive_active_status,
@@ -57,43 +57,41 @@ var config = {
       targets: 9,
       data: 'shared_schedule',
       render: function (data, type, row, meta) {
+        const checkboxContainer = utils.createElement('div', 'checkbox')
+        const checkboxInput = utils.createElement('input', '')
+        const checkboxLabel = utils.createElement('label', '')
+        checkboxInput.setAttribute('type', 'checkbox')
+        checkboxInput.setAttribute('readonly', true)
+        checkboxInput.setAttribute('disabled', true)
 
-        const checkbox_container = utils.createElement('div', 'checkbox')
-        const checkbox_input = utils.createElement('input', '')
-        const checkbox_label = utils.createElement('label', '')
-        checkbox_input.setAttribute('type', 'checkbox')
-        checkbox_input.setAttribute('readonly', true)
-        checkbox_input.setAttribute('disabled', true)
-
-        if(parseInt(row[9]) === 1){
-          checkbox_input.setAttribute('checked', true)
+        if (parseInt(row[9]) === 1) {
+          checkboxInput.setAttribute('checked', true)
         }
 
-        checkbox_label.appendChild(checkbox_input)
-        checkbox_container.appendChild(checkbox_label)
-        return `<div>${checkbox_container.innerHTML}</div>`;
+        checkboxLabel.appendChild(checkboxInput)
+        checkboxContainer.appendChild(checkboxLabel)
+        return `<div>${checkboxContainer.innerHTML}</div>`
       }
-    },{
+    }, {
       targets: 10,
-      data: 'private_service',
+      data: 'privateService',
       render: function (data, type, row, meta) {
+        const checkboxContainer = utils.createElement('div', 'checkbox')
+        const checkboxInput = utils.createElement('input', '')
+        const checkboxLabel = utils.createElement('label', '')
+        checkboxInput.setAttribute('type', 'checkbox')
+        checkboxInput.setAttribute('readonly', true)
+        checkboxInput.setAttribute('disabled', true)
 
-        const checkbox_container = utils.createElement('div', 'checkbox')
-        const checkbox_input = utils.createElement('input', '')
-        const checkbox_label = utils.createElement('label', '')
-        checkbox_input.setAttribute('type', 'checkbox')
-        checkbox_input.setAttribute('readonly', true)
-        checkbox_input.setAttribute('disabled', true)
-
-        if(parseInt(row[10]) === 1){
-          checkbox_input.setAttribute('checked', true)
+        if (parseInt(row[10]) === 1) {
+          checkboxInput.setAttribute('checked', true)
         }
 
-        checkbox_label.appendChild(checkbox_input)
-        checkbox_container.appendChild(checkbox_label)
-        return `<div>${checkbox_container.innerHTML}</div>`;
+        checkboxLabel.appendChild(checkboxInput)
+        checkboxContainer.appendChild(checkboxLabel)
+        return `<div>${checkboxContainer.innerHTML}</div>`
       }
-    },{
+    }, {
       targets: 11,
       data: 'allotment_id',
       render: function (data, type, row, meta) {
@@ -112,7 +110,7 @@ var config = {
         data: 'allotment_id',
         className: 'text-center',
         render: function (data, type, row, meta) {
-          var html = ""
+          var html = ''
           switch (row[14]) {
             case 1:
               if (row[13] === 1) {
@@ -122,18 +120,18 @@ var config = {
                   html += `<a class="btn-link delete" data-toggle="tooltip" data-placement="left" title="Delete allotment" data-id="${row[12]}"><i class="fas fa-trash"></i></a>`
                 }
               }
-              break;
+              break
 
             case 2:
               html = `<a class="btn-link edit" data-toggle="tooltip" data-placement="left" title="Edit allotment" href="configuration/${row[12]}"><i class="fas fa-edit"></i></a>`
 
               if (row[11] === 1 && row[15] === 0) {
-                  html += `<a class="btn-link delete" data-toggle="tooltip" data-placement="left" title="Delete allotment" data-id="${row[12]}"><i class="fas fa-trash"></i></a>`
+                html += `<a class="btn-link delete" data-toggle="tooltip" data-placement="left" title="Delete allotment" data-id="${row[12]}"><i class="fas fa-trash"></i></a>`
               }
-              break;
+              break
             default:
-              html = ""
-              break;
+              html = ''
+              break
           }
 
           return html
@@ -181,8 +179,8 @@ var config = {
     var scheduleStart = document.querySelector('[name="schedule_start"]')
     var schedule = null
 
-    if (scheduleStart.type == 'select-one') {
-      document.querySelector('[name="schedule_end"]').value = ""
+    if (scheduleStart.type === 'select-one') {
+      document.querySelector('[name="schedule_end"]').value = ''
       if (reset) {
         service = configData.service
         schedule = configData.schedule_start
@@ -192,13 +190,13 @@ var config = {
 
       if (service && startDate.value) {
         for (var i = scheduleStart.options.length - 1; i > 0; i--) {
-          scheduleStart.remove(i);
+          scheduleStart.remove(i)
         }
 
         var objData = new Object()
         objData.start_date = startDate.value
 
-        let dataElement = {
+        const dataElement = {
           id: schedule,
           key: 'schedule_start',
           value: 'schedule_start',
@@ -206,40 +204,32 @@ var config = {
         }
 
         utils.api(JSON.stringify(objData), `${apiHost}allotments/serviceschedules/${service}`, 'POST', config.loadOptions, dataElement)
-
       }
-
     }
-
   },
   loadInputScheduleEnd: function (schedule = null) {
     var service = document.querySelector('[name="service"]')
     var scheduleStart = schedule
-    var service = service.value
+    service = service.value
 
     if (!schedule) {
       scheduleStart = configData.schedule_start
       service = configData.service
     }
 
-    if (scheduleStart && service){
-      utils.api(JSON.stringify({"schedule_start": scheduleStart}), `${apiHost}allotments/servicescheduleend/${service}`, 'POST', config.loadScheduleEnd)
-
-    }else{
-
-      document.querySelector('[name="schedule_end"]').value = "";
-
+    if (scheduleStart && service) {
+      utils.api(JSON.stringify({ schedule_start: scheduleStart }), `${apiHost}allotments/servicescheduleend/${service}`, 'POST', config.loadScheduleEnd)
+    } else {
+      document.querySelector('[name="schedule_end"]').value = ''
     }
   },
   loadScheduleEnd: function (response) {
-    var data = JSON.parse(response);
-    document.querySelector('[name="schedule_end"]').value = data.message.message;
+    var data = JSON.parse(response)
+    document.querySelector('[name="schedule_end"]').value = data.message.message
 
-    MicroModal.close();
-
+    MicroModal.close()
   },
   confirm: function (element, option = null) {
-
     var _message = ''
     var _confirmModal = document.getElementById('confirm-modal-content')
     _message = utils.createElement('p', '', '', '¿Are you sure delete allotment?')
@@ -249,24 +239,22 @@ var config = {
 
     const btnConfirmDelete = document.querySelector('.confirm-delete')
 
-
     btnConfirmDelete.addEventListener('click', function (e) {
-        e.preventDefault()
+      e.preventDefault()
+      var url = ''
+      if (option === null) {
+        var info = { user_id: window.user }
+        var id = element.getAttribute('data-id')
+        url = `${apiHost}allotments/del/${id}`
 
-        if (option === null) {
-          var info = { user_id: window.user }
-          var id = element.getAttribute('data-id')
-          var url = `${apiHost}allotments/del/${id}`
-
-          utils.api(JSON.stringify(info), url, 'DELETE', config.delete, element)
-        } else if (option === 'update') {
-          var url = `${apiHost}allotments/edit/${objData.allotment_id}`
-          utils.api(JSON.stringify(objData), url, 'PUT', config.update)
-        }
+        utils.api(JSON.stringify(info), url, 'DELETE', config.delete, element)
+      } else if (option === 'update') {
+        url = `${apiHost}allotments/edit/${objData.allotment_id}`
+        utils.api(JSON.stringify(objData), url, 'PUT', config.update)
+      }
     })
 
     MicroModal.show('confirm-modal')
-
   },
   add: function (response) {
     MicroModal.close('wait-modal')
@@ -275,14 +263,14 @@ var config = {
     var _message = ''
     var _alertModal = document.getElementById('alert-modal-content')
 
-    if (codes.hasOwnProperty(response.code)) {
+    if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
       var message = ''
 
       if (utils.isJson(response.message)) {
         const maxInput = document.querySelector('[name="max_available"]')
         const minInput = document.querySelector('[name="min_available"]')
 
-        let decode = JSON.parse(response.message)
+        const decode = JSON.parse(response.message)
         message = decode.message
 
         if (maxInput != null) {
@@ -292,7 +280,6 @@ var config = {
         if (minInput != null) {
           minInput.value = (decode.available > minInput.value) ? minInput.value : decode.available
         }
-
       } else {
         message = response.message
       }
@@ -303,8 +290,7 @@ var config = {
       _alertModal.appendChild(_message)
 
       MicroModal.show('alert-modal')
-    }
-    else if (response.code === 201) {
+    } else if (response.code === 201) {
       _message = utils.createElement('p', '', '', 'Success! Schedule added correctly')
 
       _alertModal.innerHTML = ''
@@ -323,14 +309,14 @@ var config = {
     var _message = ''
     var _alertModal = document.getElementById('alert-modal-content')
 
-    if (codes.hasOwnProperty(response.code)) {
+    if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
       var message = ''
 
       if (utils.isJson(response.message)) {
         const maxInput = document.querySelector('[name="max_available"]')
         const minInput = document.querySelector('[name="min_available"]')
 
-        let decode = JSON.parse(response.message)
+        const decode = JSON.parse(response.message)
         message = decode.message
 
         if (maxInput != null) {
@@ -340,7 +326,6 @@ var config = {
         if (minInput != null) {
           minInput.value = (decode.available > minInput.value) ? minInput.value : decode.available
         }
-
       } else {
         message = response.message
       }
@@ -370,23 +355,21 @@ var config = {
     var _message = ''
     var _alertModal = document.getElementById('alert-modal-content')
 
-    if (codes.hasOwnProperty(response.code)) {
+    if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
       _message = utils.createElement('p', '', '', response.message)
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
 
       MicroModal.show('alert-modal')
-    }
-    else if (response.code == 200)
-    {
+    } else if (response.code === 200) {
       var _status = document.querySelector(`[data-status="${id}"]`)
       var _parentELement = _status.parentElement
       _status.parentElement.innerHTML = ''
 
       element.parentElement.lastChild.style.display = 'none'
 
-      var label = utils.createElement('span', 'label label-danger', '', 'inactive');
+      var label = utils.createElement('span', 'label label-danger', '', 'inactive')
       _parentELement.appendChild(label)
 
       _message = utils.createElement('p', '', '', 'Success! Schedule inactivate correctly')
@@ -399,7 +382,7 @@ var config = {
   },
   removeOptions: function (element) {
     for (var i = element.options.length - 1; i > 0; i--) {
-      element.remove(i);
+      element.remove(i)
     }
   },
   setData: function () {
@@ -417,9 +400,9 @@ var config = {
     document.querySelector('[name="schedule_start"]').value = configData.schedule_start
     document.querySelector('[name="schedule_end"]').value = configData.schedule_end
 
-    let private_service =  document.querySelector('[name="private"]')
-    if (configData.private === 0){
-      private_service.removeAttribute('checked')
+    const privateService = document.querySelector('[name="private"]')
+    if (configData.private === 0) {
+      privateService.removeAttribute('checked')
     }
 
     document.querySelector('[name="channel"]').setAttribute('disabled', 'disabled')
@@ -435,12 +418,11 @@ var config = {
         break
       case 2:
         document.querySelector('[name="schedule_start"]').setAttribute('disabled', 'disabled')
-        let cruise = document.getElementById('cruise')
-        cruise.setAttribute('class','hidden')
-        document.querySelector('[name="cruise"]').setAttribute('data-validator','')
-        break;
+        var cruise = document.getElementById('cruise')
+        cruise.setAttribute('class', 'hidden')
+        document.querySelector('[name="cruise"]').setAttribute('data-validator', '')
+        break
     }
-
   }
 }
 
@@ -496,7 +478,7 @@ if (save != null) {
         min_available: document.querySelector('[name="min_available"]').value,
         max_available: document.querySelector('[name="max_available"]').value,
         shared_schedule: document.querySelector('[name="shared"]').checked ? 1 : 0,
-        private_service: document.querySelector('[name="private"]').checked ? 1 : 0,
+        privateService: document.querySelector('[name="private"]').checked ? 1 : 0,
         user_id: user
       }
       form = document.querySelector('#add-config')
@@ -513,18 +495,17 @@ if (save != null) {
 
       if (form != null) {
         info.active_status = document.querySelector('[name="status"]').value
-        info.arrive_id = configData.arrive_id;
-        info.stand_by = configData.stand_by;
+        info.arrive_id = configData.arrive_id
+        info.stand_by = configData.stand_by
 
         if (parseInt(info.active_status) === 1) {
-
-          var url = `${apiHost}allotments/edit/${configData.id}`
+          url = `${apiHost}allotments/edit/${configData.id}`
           utils.api(JSON.stringify(info), url, 'PUT', config.update)
-        }else{
-          info.allotment_id = configData.id;
-          objData = info;
+        } else {
+          info.allotment_id = configData.id
+          objData = info
 
-          config.confirm(null, 'update');
+          config.confirm(null, 'update')
         }
       }
     }
@@ -543,16 +524,15 @@ if (search !== null) {
 var channel = document.querySelector('[name="channel"]')
 if (channel != null) {
   channel.addEventListener('change', function (e) {
-
     form = document.querySelector('#add-config')
     if (form != null) {
-      if (!e.target.value){
+      if (!e.target.value) {
         return true
       }
     }
 
     var id = (e.target.value) ? e.target.value : configData.reseller
-    const resellerId = (typeof(configData) === "object") ? configData.reseller : null
+    const resellerId = (typeof configData === 'object') ? configData.reseller : null
 
     var dataElement = {
       id: resellerId,
@@ -578,21 +558,21 @@ if (reseller != null) {
     e.preventDefault()
     form = document.querySelector('#add-config')
     if (form != null) {
-      if (!e.target.value){
+      if (!e.target.value) {
         return true
       }
     }
 
     var id = (e.target.value) ? e.target.value : configData.reseller
 
-    if (typeof(configData) === "object") {
-      channel = configData.channel;
+    if (typeof configData === 'object') {
+      channel = configData.channel
     } else {
-      channel = document.querySelector('[name="channel"]');
+      channel = document.querySelector('[name="channel"]')
     }
 
     if (channel === 1) {
-      var shipId = (typeof(configData) === "object") ? configData.cruise : null
+      var shipId = (typeof configData === 'object') ? configData.cruise : null
 
       var dataElement2 = {
         id: shipId,
@@ -604,10 +584,10 @@ if (reseller != null) {
       utils.api(JSON.stringify({}), `${apiHost}ships/reseller/${id}`, 'GET', config.loadOptions, dataElement2)
     }
 
-    let selectService = document.querySelector('[name="service"]');
+    const selectService = document.querySelector('[name="service"]')
     config.removeOptions(selectService)
 
-    var serviceId = (typeof(configData) === "object") ? configData.service : null
+    var serviceId = (typeof configData === 'object') ? configData.service : null
     var dataElement = {
       id: serviceId,
       key: 'service_name',
@@ -616,14 +596,13 @@ if (reseller != null) {
     }
 
     utils.api(JSON.stringify({}), `${apiHost}equivalences/reseller/${id}`, 'GET', config.loadOptions, dataElement)
-
   })
 }
 
 var startDate = document.querySelector('[name="start_date"]')
 
 if (startDate != null) {
-  startDate.addEventListener('change', function(e){
+  startDate.addEventListener('change', function (e) {
     var endDate = document.querySelector('[name="end_date"]')
 
     endDate.value = this.value
@@ -633,27 +612,26 @@ if (startDate != null) {
 var scheduleStart = document.querySelector('[name="schedule_start"]')
 
 if (scheduleStart != null) {
-  scheduleStart.addEventListener('change', function(e){
-    e.preventDefault
+  scheduleStart.addEventListener('change', function (e) {
+    e.preventDefault()
     config.loadInputScheduleEnd(scheduleStart.value)
   })
 }
 
 form = document.querySelector('#add-config')
 if (form != null) {
-  let statusCombo = form.querySelector('[name="status"]')
+  const statusCombo = form.querySelector('[name="status"]')
   statusCombo.parentElement.parentElement.remove()
 
-  let cruise = document.getElementById('cruise')
-  cruise.setAttribute('class','hidden')
-  document.querySelector('[name="cruise"]').setAttribute('data-validator','')
-  document.querySelector('[name="schedule_start"]').value = "00:00"
+  const cruise = document.getElementById('cruise')
+  cruise.setAttribute('class', 'hidden')
+  document.querySelector('[name="cruise"]').setAttribute('data-validator', '')
+  document.querySelector('[name="schedule_start"]').value = '00:00'
 
   document.querySelector('[name="end_date"]').setAttribute('disabled', 'disabled')
   document.querySelector('[name="schedule_end"]').setAttribute('disabled', 'disabled')
 
-
-  let channelSelect = form.querySelector('[name="channel"]')
+  const channelSelect = form.querySelector('[name="channel"]')
   channelSelect.remove(1)
   channelSelect.remove(2)
 }
@@ -663,7 +641,7 @@ if (form != null) {
   config.setData()
 }
 
-var configTable = document.querySelector('#config-base-registers');
+var configTable = document.querySelector('#config-base-registers')
 
 const utilAjaxExecute = function () {
   if (configTable !== undefined && configTable !== null && configTable !== undefined && configTable !== undefined) {
@@ -681,7 +659,7 @@ const utilAjaxExecute = function () {
   if (configData) {
     reseller.dispatchEvent(fireEvent)
 
-    $( document ).ready(function () {
+    $(document).ready(function () {
       setTimeout(function () {
         reseller.value = configData.reseller
         equivalence.value = configData.service

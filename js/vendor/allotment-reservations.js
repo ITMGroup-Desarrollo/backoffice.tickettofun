@@ -1,10 +1,8 @@
 'use strict'
 var id
 var info
-var form
 var editor
 var user = window.user
-var allotmentData = window.allotments
 
 var allotment = {
   update: function (response, elementid) {
@@ -15,10 +13,10 @@ var allotment = {
     var _message = ''
     var _alertModal = document.getElementById('alert-modal-content')
 
-    if (codes.hasOwnProperty(response.code)) {
+    if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
       var action = utils.isJson(response.message)
       var response2 = ''
-      if (action == true) {
+      if (action === true) {
         response2 = JSON.parse(response.message)
       } else {
         response2 = response
@@ -45,7 +43,6 @@ var allotment = {
     }
   },
   loadData: function (response) {
-
     const data = JSON.parse(response)
 
     let dataTable = []
@@ -75,7 +72,6 @@ var allotment = {
 
     // Get num cells
     var reservationTable = document.getElementById('allotment-reservations-registers')
-    var columnsCount = reservationTable.rows[0].cells.length
 
     var columns = [{
       targets: 4,
@@ -279,7 +275,7 @@ const unlock = function (elementid) {
 
 var date = document.querySelector('[name="date"]')
 if (date !== null) {
-  date.addEventListener('change', function(){
+  date.addEventListener('change', function () {
     allotment.uploadVendor()
   })
 }
@@ -302,7 +298,7 @@ $(function () {
 var vendor = document.querySelector('[name="reseller"]')
 if (vendor != null) {
   vendor.addEventListener('change', function (e) {
-    var id = $(this).val()
+    id = $(this).val()
 
     info = {
       type: 'reseller_search',
@@ -316,7 +312,6 @@ if (vendor != null) {
     if (vendor.value) {
       utils.api(JSON.stringify(info), `${apiHost}allotment_reservations/reseller/${id}`, 'POST', allotment.buildfilterShips)
     }
-
   })
 }
 
@@ -330,7 +325,7 @@ if (vendor != null) {
 
 var configTable = document.querySelector('#allotment-reservations-registers')
 var utilAjaxExecute = function () {
-  if (configTable !== undefined && configTable !== null && configTable !== undefined && configTable != undefined) {
+  if (configTable !== undefined && configTable !== null && configTable !== undefined && configTable !== undefined) {
     var url = `${apiHost}allotment_reservations`
     var date = document.querySelector('[name="date"]').value
     const reseller = document.querySelector('[name="reseller"]').value
@@ -343,8 +338,8 @@ var utilAjaxExecute = function () {
       url = url + `/ship/${ship}`
     } else if (reseller !== '' && ship === '') {
       url = url + `/reseller/${reseller}`
-    }else{
-      url = url + `/channel/1`
+    } else {
+      url = `${url}/channel/1`
     }
 
     utils.api(JSON.stringify(info), url, 'POST', allotment.loadData)

@@ -96,7 +96,7 @@ var arrives = {
     var _message = ''
     var _alertModal = document.getElementById('alert-modal-content')
 
-    if (codes.hasOwnProperty(response.code)) {
+    if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
       _message = utils.createElement('p', '', '', response.message)
 
       _alertModal.innerHTML = ''
@@ -122,14 +122,14 @@ var arrives = {
     var _message = ''
     var _alertModal = document.getElementById('alert-modal-content')
 
-    if (codes.hasOwnProperty(response.code)) {
+    if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
       _message = utils.createElement('p', '', '', response.message)
 
       _alertModal.innerHTML = ''
       _alertModal.appendChild(_message)
 
       MicroModal.show('alert-modal')
-    } else if (response.code == 204) {
+    } else if (response.code === 204) {
       _message = utils.createElement('p', '', '', 'Success! Cruise call updated correctly')
 
       _alertModal.innerHTML = ''
@@ -148,7 +148,7 @@ var arrives = {
     var _message = ''
     var _alertModal = document.getElementById('alert-modal-content')
 
-    if (codes.hasOwnProperty(response.code)) {
+    if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
       _message = utils.createElement('p', '', '', response.message)
 
       _alertModal.innerHTML = ''
@@ -283,7 +283,9 @@ var arrives = {
     const data = JSON.parse(response)
 
     if (Array.isArray(data.message)) {
-      for (i in data.message) {
+      var ship = document.querySelector('[name="ship"]')
+
+      for (const i in data.message) {
         ship.append(new Option(data.message[i].ship_name, data.message[i].ship_id, 'selected'))
       }
     }
@@ -494,8 +496,8 @@ var arrives = {
       MicroModal.close('wait-modal')
 
       if (type === 'saveEnd') {
-        var _message = ''
-        var _alertModal = document.getElementById('alert-modal-content')
+        _message = ''
+        _alertModal = document.getElementById('alert-modal-content')
 
         if (data.code === 200) {
           _message = utils.createElement('p', '', '', 'Success! Configuration saved correctly')
@@ -684,7 +686,7 @@ if (save != null) {
       if (form != null) {
         info.active_status = document.querySelector('[name="status"]').value
 
-        var url = `${apiHost}arrives/edit/${arrivesData.id}`
+        url = `${apiHost}arrives/edit/${arrivesData.id}`
         utils.api(JSON.stringify(info), url, 'PUT', arrives.update)
       }
     }
@@ -735,6 +737,7 @@ if (form != null) {
 
 var configTable = document.querySelector('#arrives-registers')
 if (configTable !== null) {
+  var ship = document.querySelector('[name="ship"]')
   var vendor = document.querySelector('[name="reseller"]')
 
   vendor.addEventListener('change', function (e) {

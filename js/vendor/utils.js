@@ -7,7 +7,7 @@ var utils = {
       s.src = `./assets/js/${file}.js`
       s.onload = s.onreadystatechange = function () {
         var rs = this.readyState
-        if (rs) if (rs !== 'complete') if (rs !== 'loaded') return
+        if (rs) if (rs !== 'complete') if (rs !== 'loaded') {}
       }
 
       var src = d.getElementsByTagName(t)[0]
@@ -23,25 +23,27 @@ var utils = {
     var xHR = new XMLHttpRequest()
 
     xHR.onreadystatechange = function () {
-      if (xHR.readyState == 4) {
-        if (xHR.status == 204) {
+      if (xHR.readyState === 4) {
+        if (xHR.status === 204) {
           var response = {
             code: 204,
             status: 'success'
           }
 
-          if (method !== null)
+          if (method !== null) {
             method(JSON.stringify(response), element)
-        }
-        else if (method !== null)
+          }
+        } else if (method !== null) {
           method(xHR.response, element)
+        }
       }
     }
 
     xHR.open(httpverb, endpoint, true)
 
-    if(typeof contentType === 'undefined')
+    if (typeof contentType === 'undefined') {
       xHR.setRequestHeader('Content-Type', 'application/json')
+    }
 
     xHR.setRequestHeader('Authorization', token)
     xHR.withCredentials = true
@@ -128,13 +130,13 @@ var utils = {
 
         cancelButton.setAttribute('aria-label', 'Close modal')
         cancelButton.setAttribute('data-micromodal-close', '')
-        cancelButton.setAttribute('style', 'margin-right: 20px');
+        cancelButton.setAttribute('style', 'margin-right: 20px')
         footer.appendChild(cancelButton)
       }
 
       var acceptButton = this.createElement(
         'button',
-        'btn btn-outline-warning' + (id === 'confirm-modal'? ' confirm-delete': ''),
+        'btn btn-outline-warning' + (id === 'confirm-modal' ? ' confirm-delete' : ''),
         '',
         'Accept'
       )
@@ -177,7 +179,7 @@ var utils = {
 
       if (data.extra_data != null) {
         var extraData = data.extra_data
-        for (var e in  extraData) {
+        for (var e in extraData) {
           element.options.item(index).setAttribute(e, options[i][extraData[e]])
         }
       }
@@ -185,10 +187,9 @@ var utils = {
       index++
     }
 
-    if (data.id !== null){
+    if (data.id !== null) {
       element.options.namedItem(data.id).selected = true
     }
-
   },
   dataValidator: function (fields) {
     var valid = 'true'
@@ -201,21 +202,24 @@ var utils = {
         var messages = fields[i].getAttribute('data-validator-msg').split('^')
 
         for (var j = 0, k = options.length; j < k; j++) {
-          if (options[j] === 'optional' && fields[i].value === '')
+          if (options[j] === 'optional' && fields[i].value === '') {
             j = options.length + 1
+          }
 
           valid = validator.isValid(fields[i], options[j], messages[j])
 
-          if (!valid && options[j] !== 'optional')
+          if (!valid && options[j] !== 'optional') {
             return false
+          }
         }
       } else {
         valid = validator.isValid(fields[i],
           fields[i].getAttribute('data-validator')
         )
 
-        if (!valid)
+        if (!valid) {
           return false
+        }
       }
     }
     return valid
