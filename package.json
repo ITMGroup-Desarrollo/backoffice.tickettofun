@@ -1,5 +1,5 @@
 {
     "standard": {
-        "globals": ["utils", "MicroModal", "apiHost", "token", "codes", "validator", "$"]
+        "globals": ["utils", "MicroModal", "apiHost", "token", "codes", "validator", "$", "base", "flatpickr", "XMLHttpRequest"]
     }
 }
