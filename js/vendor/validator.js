@@ -15,7 +15,7 @@ var validator = {
   cssClass: {
     button: 'btn btn-outline-warning'
   },
-  isValid: function isValid (element, option, msg) {
+  isValid: function (element, option, msg) {
     if ((Object.prototype.hasOwnProperty.call(this.rgx, option))) {
       if (element.type === 'file' && option === 'fileSize') {
         if (element.files[0].size / 1024 > 1024) {
@@ -63,7 +63,7 @@ var validator = {
 
     return true
   },
-  setFocus: function setFocus (name) {
+  setFocus: function (name) {
     var element = document.querySelector(`[name="${name}"]`)
 
     element.value = ''
