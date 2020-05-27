@@ -64,8 +64,15 @@ class Apikey extends CI_Model
                 $aux = '';
                 $this->anchor_attrib = array();
 
+                $key_seq = custom(
+                    'span'
+                    , array('style' => 'word-wrap: break-word;')
+                    , $row->key_seq
+                    , ''
+                );
+
                 $aux .= custom('td', '', $row->key_description);
-                $aux .= custom('td', '', $row->key_seq);
+                $aux .= custom('td', '', $key_seq);
                 $aux .= custom('td', '', $row->user_email);
 
                 $status = '';
@@ -145,22 +152,21 @@ class Apikey extends CI_Model
             $this->api->request_api('GET', $endpoint, $params, $token)
         );
 
-        $apikey = new stdClass();
+        $api_key = new stdClass();
 
         if ($response->code == 200)
         {
-            $apikey->id               = $response->message->id;
-            $apikey->key              = $response->message->key_seq;
-            $apikey->description      = $response->message->key_description;
-            $apikey->email            = $response->message->user_email;
-            $apikey->active           = $response->message->active_status;
-
+            $api_key->id          = $response->message->id;
+            $api_key->key         = $response->message->key_seq;
+            $api_key->email       = $response->message->user_email;
+            $api_key->active      = $response->message->active_status;
+            $api_key->description = $response->message->key_description;
         }
         else
         {
             redirect('/apikeys/list');
         }
 
-        return $apikey;
+        return $api_key;
     }
 }

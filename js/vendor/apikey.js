@@ -181,6 +181,8 @@ if (servicesTable !== null) {
   $(function () {
     $('#apikeys-registers').dataTable({
       sPaginationType: 'full_numbers',
+      responsive: true,
+      fixedHeader: true,
       iDisplayLength: 20,
       aLengthMenu: [[20, 50, 100, -1], [20, 50, 100, 'All']]
     })
