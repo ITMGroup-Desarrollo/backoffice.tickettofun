@@ -268,5 +268,16 @@ var utils = {
     return chars.map(function (c, i) {
       return formats[c] && chars[i - 1] !== '\\' ? formats[c](dateObj) : c !== '\\' ? c : ''
     }).join('')
+  },
+  getDatatableConfig: function () {
+    const configDataTable = {
+      sPaginationType: 'full_numbers',
+      responsive: true,
+      fixedHeader: true,
+      iDisplayLength: 20,
+      aLengthMenu: [[20, 50, 100, -1], [20, 50, 100, 'All']]
+    }
+
+    return configDataTable
   }
 }
