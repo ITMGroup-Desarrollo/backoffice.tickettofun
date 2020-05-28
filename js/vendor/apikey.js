@@ -88,6 +88,7 @@ if (save != null) {
 
     if (valid) {
       info = {
+        user_create_id: userCreateId,
         app_name: document.querySelector('[name="key_description"]').value
       }
 
@@ -97,8 +98,6 @@ if (save != null) {
         if (document.querySelector('[name="user_id"]').value !== '') {
           info.idUser = document.querySelector('[name="user_id"]').value
         }
-
-        info.user_create_id = userCreateId
 
         var url = apiHost + 'apikeys/add'
         utils.api(JSON.stringify(info), url, 'POST', apikey.add)
