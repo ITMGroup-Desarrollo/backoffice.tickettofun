@@ -1,89 +1,66 @@
 'use strict'
+
+var url
 var info
 var form
 var destinationData = window.destination
-var userCreateId = window.userCreateId
+var userCreateId = window.user_create_id
 
 var destination = {
   add: function (response) {
-    MicroModal.close('wait-modal')
+    try {
+      MicroModal.close('wait-modal')
 
-    response = JSON.parse(response)
-    var _message = ''
-    var _alertModal = document.getElementById('alert-modal-content')
+      response = JSON.parse(response)
 
-    if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
-      _message = utils.createElement('p', '', '', response.message)
+      if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
+        utils.displayModal(alertModal, response.message)
+      } else if (response.code === 201) {
+        utils.displayModal(alertModal, 'Success! Destination added correctly')
+      }
 
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
-    } else if (response.code === 201) {
-      _message = utils.createElement('p', '', '', 'Success! Destination added correctly')
-
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
-
-      form = document.querySelector('#add-destination')
-      form.reset()
+      document.querySelector('#add-destination').reset()
+    } catch (e) {
+      utils.displayModal(alertModal, '')
     }
   },
   update: function (response) {
-    MicroModal.close('wait-modal')
+    try {
+      MicroModal.close('wait-modal')
 
-    response = JSON.parse(response)
-    var _message = ''
-    var _alertModal = document.getElementById('alert-modal-content')
+      response = JSON.parse(response)
 
-    if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
-      _message = utils.createElement('p', '', '', response.message)
-
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
-    } else if (response.code === 204) {
-      _message = utils.createElement('p', '', '', 'Success! Destination updated correctly')
-
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
+      if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
+        utils.displayModal(alertModal, response.message)
+      } else if (response.code === 204) {
+        utils.displayModal(alertModal, 'Success! Destination updated correctly')
+      }
+    } catch (e) {
+      utils.displayModal(alertModal, '')
     }
   },
   delete: function (response, element) {
-    MicroModal.close('wait-modal')
+    try {
+      MicroModal.close('wait-modal')
 
-    response = JSON.parse(response)
-    var id = element.getAttribute('data-id')
-    element.style.display = 'none'
+      response = JSON.parse(response)
 
-    var _message = ''
-    var _alertModal = document.getElementById('alert-modal-content')
+      var id = element.getAttribute('data-id')
+      element.style.display = 'none'
 
-    if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
-      _message = utils.createElement('p', '', '', response.message)
+      if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
+        utils.displayModal(alertModal, response.message)
+      } else if (response.code === 200) {
+        var _status = document.querySelector(`[data-status="${id}"]`)
+        _status.innerHTML = ''
 
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
+        var label = utils.createElement('span', 'label label-danger', '', 'inactive')
+        _status.appendChild(label)
 
-      MicroModal.show('alert-modal')
-    } else if (response.code === 200) {
-      var _status = document.querySelector(`[data-status="${id}"]`)
-      _status.innerHTML = ''
-
-      var label = utils.createElement('span', 'label label-danger', '', 'inactive')
-      _status.appendChild(label)
-
-      _message = utils.createElement('p', '', '', 'Success! Destination inactivate correctly')
-
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
+        utils.displayModal(alertModal, 'Success! Destination inactivate correctly')
+      }
+    } catch (e) {
+      utils.displayModal(alertModal, '')
     }
   },
   setData: function () {
@@ -122,14 +99,14 @@ if (save != null) {
 
     if (valid) {
       info = {
+        user_create_id: userCreateId,
         name: document.querySelector('[name="name"]').value,
         country: document.querySelector('[name="country"]').value
       }
 
       form = document.querySelector('#add-destination')
-      var url = ''
+
       if (form != null) {
-        info.userCreateId = userCreateId
         url = `${apiHost}destinations/add`
         utils.api(JSON.stringify(info), url, 'POST', destination.add)
       }
@@ -147,7 +124,6 @@ if (save != null) {
 }
 
 var options = document.querySelectorAll('.delete')
-
 for (var i = 0, l = options.length; i < l; i++) {
   options[i].addEventListener('click', function (e) {
     e.preventDefault()
@@ -159,7 +135,7 @@ for (var i = 0, l = options.length; i < l; i++) {
 
     var id = element.getAttribute('data-id')
 
-    var url = `${apiHost}destinations/del/${id}`
+    url = `${apiHost}destinations/del/${id}`
     utils.api(JSON.stringify({}), url, 'DELETE', destination.delete, element)
   })
 }
@@ -178,10 +154,6 @@ if (form != null) {
 var destinationsTable = document.querySelector('#destinations-registers')
 if (destinationsTable !== null) {
   $(function () {
-    $('#destinations-registers').dataTable({
-      sPaginationType: 'full_numbers',
-      iDisplayLength: 20,
-      aLengthMenu: [[20, 50, 100, -1], [20, 50, 100, 'All']]
-    })
+    $('#destinations-registers').dataTable(utils.getDatatableConfig())
   })
 }
