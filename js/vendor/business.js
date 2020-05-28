@@ -6,83 +6,58 @@ var userCreateId = window.user_create_id
 
 var business = {
   add: function (response) {
-    MicroModal.close('wait-modal')
+    try {
+      MicroModal.close('wait-modal')
 
-    response = JSON.parse(response)
-    var _message = ''
-    var _alertModal = document.getElementById('alert-modal-content')
+      response = JSON.parse(response)
 
-    if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
-      _message = utils.createElement('p', '', '', response.message)
+      if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
+        utils.displayModal(alertModal, response.message)
+      } else if (response.code === 201) {
+        utils.displayModal(alertModal, 'Success! Business added correctly')
 
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
-    } else if (response.code === 201) {
-      _message = utils.createElement('p', '', '', 'Success! Business added correctly')
-
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
-
-      form = document.querySelector('#add-business')
-      form.reset()
+        document.querySelector('#add-business').reset()
+      }
+    } catch (e) {
+      utils.displayModal(alertModal, '')
     }
   },
   update: function (response) {
-    MicroModal.close('wait-modal')
+    try {
+      MicroModal.close('wait-modal')
 
-    response = JSON.parse(response)
-    var _message = ''
-    var _alertModal = document.getElementById('alert-modal-content')
-
-    if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
-      _message = utils.createElement('p', '', '', response.message)
-
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
-    } else if (response.code === 204) {
-      _message = utils.createElement('p', '', '', 'Success! Business updated correctly')
-
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
+      response = JSON.parse(response)
+      if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
+        utils.displayModal(alertModal, response.message)
+      } else if (response.code === 204) {
+        utils.displayModal(alertModal, 'Success! Business updated correctly')
+      }
+    } catch (e) {
+      utils.displayModal(alertModal, '')
     }
   },
   delete: function (response, element) {
-    MicroModal.close('wait-modal')
-    response = JSON.parse(response)
-    var id = element.getAttribute('data-id')
-    element.style.display = 'none'
+    try {
+      MicroModal.close('wait-modal')
 
-    var _message = ''
-    var _alertModal = document.getElementById('alert-modal-content')
+      response = JSON.parse(response)
 
-    if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
-      _message = utils.createElement('p', '', '', response.message)
+      var id = element.getAttribute('data-id')
+      element.style.display = 'none'
 
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
+      if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
+        utils.displayModal(alertModal, response.message)
+      } else if (response.code === 200) {
+        utils.displayModal(alertModal, 'Success! Business inactivate correctly')
 
-      MicroModal.show('alert-modal')
-    } else if (response.code === 200) {
-      var _status = document.querySelector(`[data-status="${id}"]`)
-      _status.innerHTML = ''
+        var _status = document.querySelector(`[data-status="${id}"]`)
+        _status.innerHTML = ''
 
-      var label = utils.createElement('span', 'label label-danger', '', 'inactive')
-      _status.appendChild(label)
-
-      _message = utils.createElement('p', '', '', 'Success! Business inactivate correctly')
-
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
+        var label = utils.createElement('span', 'label label-danger', '', 'inactive')
+        _status.appendChild(label)
+      }
+    } catch (e) {
+      utils.displayModal(alertModal, '')
     }
   },
   setData: function () {
@@ -104,7 +79,7 @@ if (cancel != null) {
 
     form = document.querySelector('#update-business')
     if (form != null) {
-      form.setData()
+      business.setData()
     }
   })
 }
@@ -121,20 +96,18 @@ if (save != null) {
 
     if (valid) {
       info = {
+        user_create_id: userCreateId,
         name: document.querySelector('[name="name"]').value,
         destination: document.querySelector('[name="destination"]').value
       }
 
       form = document.querySelector('#add-business')
-
       if (form != null) {
-        info.userCreateId = userCreateId
         var url = `${apiHost}unities/add`
         utils.api(JSON.stringify(info), url, 'POST', business.add)
       }
 
       form = document.querySelector('#update-business')
-
       if (form != null) {
         info.status = document.querySelector('[name="status"]').value
 
@@ -146,7 +119,6 @@ if (save != null) {
 }
 
 var options = document.querySelectorAll('.delete')
-
 for (var i = 0, l = options.length; i < l; i++) {
   options[i].addEventListener('click', function (e) {
     e.preventDefault()
@@ -176,10 +148,6 @@ if (form != null) {
 var servicesTable = document.querySelector('#services-registers')
 if (servicesTable !== null) {
   $(function () {
-    $('#services-registers').dataTable({
-      sPaginationType: 'full_numbers',
-      iDisplayLength: 20,
-      aLengthMenu: [[20, 50, 100, -1], [20, 50, 100, 'All']]
-    })
+    $('#services-registers').dataTable(utils.getDatatableConfig())
   })
 }
