@@ -1,5 +1,4 @@
 'use strict'
-
 var url
 var info
 var form
