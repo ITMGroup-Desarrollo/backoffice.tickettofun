@@ -8,6 +8,8 @@ var authEndpoint = `${apiHost}auth/login`
 
 apiHost = `${apiHost}api/v1/`
 
+var alertModal = 'alert-modal'
+
 var codes = {
   400: 1,
   404: 1,
@@ -19,19 +21,17 @@ var app = {
   signin: function (response) {
     MicroModal.close('wait-modal')
 
-    var idModal = 'alert-modal'
-
     document.querySelector('[name="user_mail"]').value = ''
     document.querySelector('[name="user_password"]').value = ''
 
     try {
       response = JSON.parse(response)
     } catch (e) {
-      utils.displayModal(idModal, '')
+      utils.displayModal(alertModal, '')
     }
 
     if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
-      utils.displayModal(idModal, response.message)
+      utils.displayModal(alertModal, response.message)
     } else if (response.code === 200) {
       var user = JSON.parse(response.message)
 

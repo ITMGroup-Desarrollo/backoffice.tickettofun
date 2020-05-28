@@ -1,7 +1,6 @@
 'use strict'
 var info
 var form
-var idModal = 'alert-modal'
 var apikeyData = window.apikey
 var userCreateId = window.user_create_id
 
@@ -13,14 +12,14 @@ var apikey = {
       response = JSON.parse(response)
 
       if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
-        utils.displayModal(idModal, response.message)
+        utils.displayModal(alertModal, response.message)
       } else if (response.code === 201) {
-        utils.displayModal(idModal, 'Success! API key added correctly')
+        utils.displayModal(alertModal, 'Success! API key added correctly')
       }
 
       document.querySelector('#add-apikey').reset()
     } catch (e) {
-      utils.displayModal(idModal, '')
+      utils.displayModal(alertModal, '')
     }
   },
   update: function (response) {
@@ -29,12 +28,12 @@ var apikey = {
 
       response = JSON.parse(response)
       if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
-        utils.displayModal(idModal, response.message)
+        utils.displayModal(alertModal, response.message)
       } else if (response.code === 204) {
-        utils.displayModal(idModal, 'Success! API key updated correctly')
+        utils.displayModal(alertModal, 'Success! API key updated correctly')
       }
     } catch (e) {
-      utils.displayModal(idModal, '')
+      utils.displayModal(alertModal, '')
     }
   },
   delete: function (response, element) {
@@ -47,9 +46,9 @@ var apikey = {
       element.style.display = 'none'
 
       if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
-        utils.displayModal(idModal, response.message)
+        utils.displayModal(alertModal, response.message)
       } else if (response.code === 200) {
-        utils.displayModal(idModal, 'Success! API key inactivate correctly')
+        utils.displayModal(alertModal, 'Success! API key inactivate correctly')
 
         var _status = document.querySelector(`[data-status="${id}"]`)
         _status.innerHTML = ''
@@ -58,7 +57,7 @@ var apikey = {
         _status.appendChild(label)
       }
     } catch (e) {
-      utils.displayModal(idModal, '')
+      utils.displayModal(alertModal, '')
     }
   },
   setData: function () {
