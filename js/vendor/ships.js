@@ -1,4 +1,5 @@
 'use strict'
+var url
 var info
 var form
 var shipsData = window.ships
@@ -6,91 +7,66 @@ var userCreateId = window.user_create_id
 
 var ships = {
   add: function (response) {
-    MicroModal.close('wait-modal')
+    try {
+      MicroModal.close('wait-modal')
 
-    response = JSON.parse(response)
-    var _message = ''
-    var _alertModal = document.getElementById('alert-modal-content')
+      response = JSON.parse(response)
 
-    if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
-      _message = utils.createElement('p', '', '', response.message)
+      if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
+        utils.displayModal(alertModal, response.message)
+      } else if (response.code === 201) {
+        utils.displayModal(alertModal, 'Success! Cruise added correctly')
+      }
 
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
-    } else if (response.code === 201) {
-      _message = utils.createElement('p', '', '', 'Success! Cruise added correctly')
-
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
-
-      form = document.querySelector('#add-ship')
-      form.reset()
+      document.querySelector('#add-ship').reset()
+    } catch (e) {
+      utils.displayModal(alertModal, '')
     }
   },
   update: function (response) {
-    MicroModal.close('wait-modal')
+    try {
+      MicroModal.close('wait-modal')
 
-    response = JSON.parse(response)
-    var _message = ''
-    var _alertModal = document.getElementById('alert-modal-content')
+      response = JSON.parse(response)
 
-    if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
-      _message = utils.createElement('p', '', '', response.message)
-
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
-    } else if (response.code === 204) {
-      _message = utils.createElement('p', '', '', 'Success! Cruise updated correctly')
-
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
+      if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
+        utils.displayModal(alertModal, response.message)
+      } else if (response.code === 204) {
+        utils.displayModal(alertModal, 'Success! Cruise updated correctly')
+      }
+    } catch (e) {
+      utils.displayModal(alertModal, '')
     }
   },
   delete: function (response, element) {
-    MicroModal.close('wait-modal')
+    try {
+      MicroModal.close('wait-modal')
 
-    response = JSON.parse(response)
-    var id = element.getAttribute('data-id')
-    element.style.display = 'none'
+      response = JSON.parse(response)
 
-    var _message = ''
-    var _alertModal = document.getElementById('alert-modal-content')
+      var id = element.getAttribute('data-id')
+      element.style.display = 'none'
 
-    if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
-      _message = utils.createElement('p', '', '', response.message)
+      if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
+        utils.displayModal(alertModal, response.message)
+      } else if (response.code === 200) {
+        utils.displayModal(alertModal, 'Success! Cruise inactivate correctly')
 
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
+        var _status = document.querySelector(`[data-status="${id}"]`)
+        _status.innerHTML = ''
 
-      MicroModal.show('alert-modal')
-    } else if (response.code === 200) {
-      var _status = document.querySelector(`[data-status="${id}"]`)
-      _status.innerHTML = ''
-
-      var label = utils.createElement('span', 'label label-danger', '', 'inactive')
-      _status.appendChild(label)
-
-      _message = utils.createElement('p', '', '', 'Success! Cruise inactivate correctly')
-
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
+        var label = utils.createElement('span', 'label label-danger', '', 'inactive')
+        _status.appendChild(label)
+      }
+    } catch (e) {
+      utils.displayModal(alertModal, '')
     }
   },
   setData: function () {
     document.querySelector('[name="name"]').value = shipsData.name
+    document.querySelector('[name="status"]').value = shipsData.active
     document.querySelector('[name="reseller"]').value = shipsData.reseller
     document.querySelector('[name="capacity"]').value = shipsData.capacity
-    document.querySelector('[name="status"]').value = shipsData.active
   }
 }
 
@@ -101,10 +77,13 @@ if (cancel != null) {
 
     form = document.querySelector('#add-ship')
     if (form != null) {
-
+      form.reset()
     }
 
-    form.reset()
+    form = document.querySelector('#update-ship')
+    if (form != null) {
+      ships.setData()
+    }
   })
 }
 
@@ -120,21 +99,19 @@ if (save != null) {
 
     if (valid) {
       info = {
-        reseller_id: document.querySelector('[name="reseller"]').value,
+        user_create_id: userCreateId,
         ship_name: document.querySelector('[name="name"]').value,
+        reseller_id: document.querySelector('[name="reseller"]').value,
         ship_capacity: document.querySelector('[name="capacity"]').value
       }
 
       form = document.querySelector('#add-ship')
-      var url = ''
       if (form != null) {
-        info.userCreateId = userCreateId
         url = `${apiHost}ships/add`
         utils.api(JSON.stringify(info), url, 'POST', ships.add)
       }
 
       form = document.querySelector('#update-ship')
-
       if (form != null) {
         info.active_status = document.querySelector('[name="status"]').value
 
@@ -146,7 +123,6 @@ if (save != null) {
 }
 
 var options = document.querySelectorAll('.delete')
-
 for (var i = 0, l = options.length; i < l; i++) {
   options[i].addEventListener('click', function (e) {
     e.preventDefault()
@@ -170,7 +146,6 @@ if (form != null) {
 }
 
 form = document.querySelector('#update-ship')
-
 if (form != null) {
   ships.setData()
 }
@@ -178,10 +153,6 @@ if (form != null) {
 var servicesTable = document.querySelector('#ships-registers')
 if (servicesTable !== null) {
   $(function () {
-    $('#ships-registers').dataTable({
-      sPaginationType: 'full_numbers',
-      iDisplayLength: 20,
-      aLengthMenu: [[20, 50, 100, -1], [20, 50, 100, 'All']]
-    })
+    $('#ships-registers').dataTable(utils.getDatatableConfig())
   })
 }
