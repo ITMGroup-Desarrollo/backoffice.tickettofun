@@ -157,7 +157,7 @@ if (save != null) {
       form = document.querySelector('#add-booth')
 
       if (form != null) {
-        info.userCreateId = userCreateId
+        info.user_create_id = userCreateId
         var url = `${apiHost}booths/add`
         utils.api(JSON.stringify(info), url, 'POST', booth.add)
       }
