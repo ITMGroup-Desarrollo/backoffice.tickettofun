@@ -86,10 +86,10 @@ class Forms
 
                     if ($row->element_type == 'CHECKBOX')
                     {
-                        $element = custom(
+                        $element .= custom(
                             'label',
                             $this->attrib,
-                            $element . $row->label_name
+                            $row->label_name
                         );
                     }
                     else if ($params[0] != 'signin')
