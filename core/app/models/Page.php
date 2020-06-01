@@ -80,17 +80,27 @@ class Page extends CI_Model
             $build = $this->build;
 
             $body = $build->build_components($this->settings['BODY']);
+            $menu_bar = $build->build_components($this->settings['MENU_BAR']);
             $current_user = $build->build_components($this->settings['ACCOUNT']);
             $bottom_menu = $build->build_components($this->settings['BOTTOM-MENU']);
+            $icon_mobile = $build->build_components($this->settings['MOBILE_ICON_MENU']);
 
             $current_user = str_replace('{img_avatar}', $user_avatar, $current_user);
             $current_user = str_replace('{user_name}',$user_name, $current_user);
 
-            $body = str_replace('{current_user}', $current_user, $body);
             $body = str_replace('{bottom_menu}', $bottom_menu, $body);
+            $body = str_replace('{current_user}', $current_user, $body);
 
             $components = $this->_get_components();
 
+            $menu_bar_page = 'MENU_BAR_' . strtoupper($this->page_name);
+            if (array_key_exists($menu_bar_page, $this->settings)) {
+                $menu_bar = $build->build_components($this->settings[$menu_bar_page]);
+            }
+
+            $menu_bar = str_replace('{menu_icon_mobile}', $icon_mobile, $menu_bar);
+
+            $components = $menu_bar . $components;
             $body = str_replace('{contents}', $components, $body);
         }
         else
