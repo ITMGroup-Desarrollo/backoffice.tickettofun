@@ -45,7 +45,7 @@ class Page extends CI_Model
         }
 
         // If page need an special settings
-        $this->settings_values .=  ',' . $this->page_name;
+        $this->settings_values .=  $this->page_name;
 
         $this->build->page_name = $this->page_name;
 
