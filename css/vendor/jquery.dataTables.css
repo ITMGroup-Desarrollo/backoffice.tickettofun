@@ -74,6 +74,12 @@ table.dataTable tr.even td.sorting_3 { background-color: #FAFBFD; }
 }
 .dataTables_length select {
     margin: 0px 5px;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    height: calc(1.5em + 4px);
 }
 
 /*
