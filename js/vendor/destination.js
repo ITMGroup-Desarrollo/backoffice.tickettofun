@@ -53,7 +53,7 @@ var destination = {
         var _status = document.querySelector(`[data-status="${id}"]`)
         _status.innerHTML = ''
 
-        var label = utils.createElement('span', 'badge badge-danger', '', 'inactive')
+        var label = utils.createElement('span', 'badge badge-danger', '', 'Inactive')
         _status.appendChild(label)
 
         utils.displayModal(alertModal, 'Success! Destination inactivate correctly')
@@ -153,6 +153,6 @@ if (form != null) {
 var destinationsTable = document.querySelector('#destinations-registers')
 if (destinationsTable !== null) {
   $(function () {
-    $('#destinations-registers').dataTable(utils.getDatatableConfig())
+    $('#destinations-registers').dataTable(utils.getDataTableConfig())
   })
 }

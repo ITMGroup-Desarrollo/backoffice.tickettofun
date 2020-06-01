@@ -53,7 +53,7 @@ var apikey = {
         var _status = document.querySelector(`[data-status="${id}"]`)
         _status.innerHTML = ''
 
-        var label = utils.createElement('span', 'badge badge-danger', '', 'inactive')
+        var label = utils.createElement('span', 'badge badge-danger', '', 'Inactive')
         _status.appendChild(label)
       }
     } catch (e) {
@@ -151,6 +151,6 @@ if (form != null) {
 var servicesTable = document.querySelector('#apikeys-registers')
 if (servicesTable !== null) {
   $(function () {
-    $('#apikeys-registers').dataTable(utils.getDatatableConfig())
+    $('#apikeys-registers').dataTable(utils.getDataTableConfig())
   })
 }

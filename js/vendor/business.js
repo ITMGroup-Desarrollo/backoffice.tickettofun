@@ -53,7 +53,7 @@ var business = {
         var _status = document.querySelector(`[data-status="${id}"]`)
         _status.innerHTML = ''
 
-        var label = utils.createElement('span', 'badge badge-danger', '', 'inactive')
+        var label = utils.createElement('span', 'badge badge-danger', '', 'Inactive')
         _status.appendChild(label)
       }
     } catch (e) {
@@ -148,6 +148,6 @@ if (form != null) {
 var servicesTable = document.querySelector('#services-registers')
 if (servicesTable !== null) {
   $(function () {
-    $('#services-registers').dataTable(utils.getDatatableConfig())
+    $('#services-registers').dataTable(utils.getDataTableConfig())
   })
 }

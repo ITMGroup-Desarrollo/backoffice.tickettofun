@@ -55,7 +55,7 @@ var ships = {
         var _status = document.querySelector(`[data-status="${id}"]`)
         _status.innerHTML = ''
 
-        var label = utils.createElement('span', 'badge badge-danger', '', 'inactive')
+        var label = utils.createElement('span', 'badge badge-danger', '', 'Inactive')
         _status.appendChild(label)
       }
     } catch (e) {
@@ -153,7 +153,7 @@ if (form != null) {
 var servicesTable = document.querySelector('#ships-registers')
 if (servicesTable !== null) {
   $(function () {
-    var config = utils.getDatatableConfig()
+    var config = utils.getDataTableConfig()
     config.order = [[1, 'asc']]
 
     $('#ships-registers').dataTable(config)
