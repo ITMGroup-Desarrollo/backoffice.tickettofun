@@ -27,6 +27,10 @@ class Diary extends CI_Controller
         $locations = $this->Diaries->get_location_distribution();
 
         $data['contents'] = str_replace(
+            '{title}', ucwords($view), $data['contents']
+        );
+
+        $data['contents'] = str_replace(
             '{spec}', $locations['tours'], $data['contents']
         );
 
