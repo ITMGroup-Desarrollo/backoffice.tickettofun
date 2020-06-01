@@ -269,7 +269,7 @@ var utils = {
       return formats[c] && chars[i - 1] !== '\\' ? formats[c](dateObj) : c !== '\\' ? c : ''
     }).join('')
   },
-  getDatatableConfig: function () {
+  getDataTableConfig: function () {
     const configDataTable = {
       sPaginationType: 'full_numbers',
       responsive: true,
