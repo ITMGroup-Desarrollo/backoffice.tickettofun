@@ -153,6 +153,9 @@ if (form != null) {
 var servicesTable = document.querySelector('#ships-registers')
 if (servicesTable !== null) {
   $(function () {
-    $('#ships-registers').dataTable(utils.getDatatableConfig())
+    var config = utils.getDatatableConfig()
+    config.order = [[1, 'asc']]
+
+    $('#ships-registers').dataTable(config)
   })
 }
