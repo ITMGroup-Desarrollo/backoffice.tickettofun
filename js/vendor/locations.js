@@ -75,7 +75,7 @@ var locations = {
       var _status = document.querySelector(`[data-status="${id}"]`)
       _status.innerHTML = ''
 
-      var label = utils.createElement('span', 'label label-danger', '', 'inactive')
+      var label = utils.createElement('span', 'badge badge-danger', '', 'inactive')
       _status.appendChild(label)
 
       _message = utils.createElement('p', '', '', 'Success! Location inactivate correctly')

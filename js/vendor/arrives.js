@@ -158,7 +158,7 @@ var arrives = {
     } else if (response.code === 200) {
       var _status = document.querySelector(`[data-status="${id}"]`)
 
-      _status.className = 'label label-danger'
+      _status.className = 'badge badge-danger'
       _status.innerHTML = 'inactive'
 
       _message = utils.createElement('p', '', '', 'Success! Cruise call date inactivate correctly')
@@ -448,9 +448,9 @@ var arrives = {
               render: function (data, type, row, meta) {
                 var _spanStatus = ''
                 if (row[12] === 1) {
-                  _spanStatus = utils.createElement('span', 'label label-success', '', 'Active')
+                  _spanStatus = utils.createElement('span', 'badge badge-success', '', 'Active')
                 } else if (row[12] === 0) {
-                  _spanStatus = utils.createElement('span', 'label label-danger', '', 'Inactive')
+                  _spanStatus = utils.createElement('span', 'badge badge-danger', '', 'Inactive')
                 }
                 return _spanStatus.outerHTML
               }

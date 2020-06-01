@@ -369,7 +369,7 @@ var config = {
 
       element.parentElement.lastChild.style.display = 'none'
 
-      var label = utils.createElement('span', 'label label-danger', '', 'inactive')
+      var label = utils.createElement('span', 'badge badge-danger', '', 'inactive')
       _parentELement.appendChild(label)
 
       _message = utils.createElement('p', '', '', 'Success! Schedule inactivate correctly')
@@ -622,10 +622,10 @@ form = document.querySelector('#add-config')
 if (form != null) {
   const statusCombo = form.querySelector('[name="status"]')
   statusCombo.parentElement.parentElement.remove()
-
+/*
   const cruise = document.getElementById('cruise')
   cruise.setAttribute('class', 'hidden')
-  document.querySelector('[name="cruise"]').setAttribute('data-validator', '')
+  document.querySelector('[name="cruise"]').setAttribute('data-validator', '')*/
   document.querySelector('[name="schedule_start"]').value = '00:00'
 
   document.querySelector('[name="end_date"]').setAttribute('disabled', 'disabled')

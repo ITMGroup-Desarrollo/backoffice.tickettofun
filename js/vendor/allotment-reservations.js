@@ -149,7 +149,7 @@ var allotment = {
         let tag = ''
         switch (row[11]) {
           case 3:
-            tag = utils.createElement('p', 'label label-danger', '', 'Canceled')
+            tag = utils.createElement('p', 'badge badge-danger', '', 'Canceled')
             tag.setAttribute('data-status', row[12])
             return tag.outerHTML
           case 5:
@@ -157,7 +157,7 @@ var allotment = {
             tag.setAttribute('data-status', row[12])
             return tag.outerHTML
           case 6:
-            tag = utils.createElement('p', 'label label-success', '', 'Confirmed')
+            tag = utils.createElement('p', 'badge badge-success', '', 'Confirmed')
             tag.setAttribute('data-status', row[12])
             return tag.outerHTML
         }
