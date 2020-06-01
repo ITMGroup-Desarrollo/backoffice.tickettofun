@@ -6549,7 +6549,10 @@ color: #333; }
     margin-top: 30px;
     text-align: center;
     display: block;
-    text-decoration: none; }
+    text-decoration: none;
+    max-width: 100px;
+    margin-right: auto;
+    margin-left: auto; }
     #signin .logo .brankic-pen {
       color: #FFFFD8;
       font-size: 40px; }
