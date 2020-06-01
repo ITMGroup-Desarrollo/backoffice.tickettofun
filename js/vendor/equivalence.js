@@ -1,89 +1,66 @@
 'use strict'
 var info
 var form
-var equivalencesData = window.equivalences
+var id = ''
+var url = ''
 var user = window.user
+var equivalencesData = window.equivalences
 
 var equivalences = {
   add: function (response) {
-    MicroModal.close('wait-modal')
+    try {
+      MicroModal.close('wait-modal')
 
-    response = JSON.parse(response)
-    var _message = ''
-    var _alertModal = document.getElementById('alert-modal-content')
+      response = JSON.parse(response)
 
-    if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
-      _message = utils.createElement('p', '', '', response.message)
+      if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
+        utils.displayModal(alertModal, response.message)
+      } else if (response.code === 201) {
+        utils.displayModal(alertModal, 'Success! Equivalence added correctly')
+      }
 
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
-    } else if (response.code === 201) {
-      _message = utils.createElement('p', '', '', 'Success! Equivalence added correctly')
-
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
-
-      form = document.querySelector('#add-equivalence')
-      form.reset()
+      document.querySelector('#add-equivalence').reset()
+    } catch (e) {
+      utils.displayModal(alertModal, '')
     }
   },
   update: function (response) {
-    MicroModal.close('wait-modal')
+    try {
+      MicroModal.close('wait-modal')
 
-    response = JSON.parse(response)
-    var _message = ''
-    var _alertModal = document.getElementById('alert-modal-content')
+      response = JSON.parse(response)
 
-    if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
-      _message = utils.createElement('p', '', '', response.message)
-
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
-    } else if (response.code === 204) {
-      _message = utils.createElement('p', '', '', 'Success! Equivalence updated correctly')
-
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
+      if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
+        utils.displayModal(alertModal, response.message)
+      } else if (response.code === 204) {
+        utils.displayModal(alertModal, 'Success! Equivalence updated correctly')
+      }
+    } catch (e) {
+      utils.displayModal(alertModal, '')
     }
   },
   delete: function (response, element) {
-    MicroModal.close('wait-modal')
+    try {
+      MicroModal.close('wait-modal')
 
-    response = JSON.parse(response)
-    var id = element.getAttribute('data-id')
-    element.style.display = 'none'
+      response = JSON.parse(response)
 
-    var _message = ''
-    var _alertModal = document.getElementById('alert-modal-content')
+      id = element.getAttribute('data-id')
+      element.style.display = 'none'
 
-    if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
-      _message = utils.createElement('p', '', '', response.message)
+      if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
+        utils.displayModal(alertModal, response.message)
+      } else if (response.code === 200) {
+        utils.displayModal(alertModal, 'Success! Equivalence inactivate correctly')
 
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
+        var _status = document.querySelector(`[data-status="${id}"]`)
+        _status.innerHTML = ''
 
-      MicroModal.show('alert-modal')
-    } else if (response.code === 200) {
-      var _status = document.querySelector(`[data-status="${id}"]`)
-      _status.innerHTML = ''
-
-      var label = utils.createElement('span', 'badge badge-danger', '', 'inactive')
-      _status.appendChild(label)
-
-      _message = utils.createElement('p', '', '', 'Success! Equivalence inactivate correctly')
-
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
+        var label = utils.createElement('span', 'badge badge-danger', '', 'Inactive')
+        _status.appendChild(label)
+      }
+    } catch (e) {
+      utils.displayModal(alertModal, '')
     }
   },
   setData: function () {
@@ -102,10 +79,13 @@ if (cancel != null) {
 
     form = document.querySelector('#add-equivalence')
     if (form != null) {
-
+      form.reset()
     }
 
-    form.reset()
+    form = document.querySelector('#update-equivalence')
+    if (form != null) {
+      equivalences.setData()
+    }
   })
 }
 
@@ -121,22 +101,21 @@ if (save != null) {
 
     if (valid) {
       info = {
-        service_id: document.querySelector('[name="service"]').value,
         code: document.querySelector('[name="code"]').value,
-        service_name: document.querySelector('[name="service_name"]').value,
-        reseller_id: document.querySelector('[name="vendor"]').value
+        service_id: document.querySelector('[name="service"]').value,
+        reseller_id: document.querySelector('[name="vendor"]').value,
+        service_name: document.querySelector('[name="service_name"]').value
       }
 
       form = document.querySelector('#add-equivalence')
-      var url = ''
+
       if (form != null) {
-        url = `${apiHost}equivalences/add`
         info.user_id = user
+        url = `${apiHost}equivalences/add`
         utils.api(JSON.stringify(info), url, 'POST', equivalences.add)
       }
 
       form = document.querySelector('#update-equivalence')
-
       if (form != null) {
         info.active_status = document.querySelector('[name="status"]').value
 
@@ -148,7 +127,6 @@ if (save != null) {
 }
 
 var options = document.querySelectorAll('.delete')
-
 for (var i = 0, l = options.length; i < l; i++) {
   options[i].addEventListener('click', function (e) {
     e.preventDefault()
@@ -158,8 +136,8 @@ for (var i = 0, l = options.length; i < l; i++) {
       element = e.target.parentElement
     }
 
-    var id = element.getAttribute('data-id')
-    var url = `${apiHost}equivalences/del/${id}`
+    id = element.getAttribute('data-id')
+    url = `${apiHost}equivalences/del/${id}`
 
     utils.api(JSON.stringify({}), url, 'DELETE', equivalences.delete, element)
   })
@@ -172,7 +150,6 @@ if (form != null) {
 }
 
 form = document.querySelector('#update-equivalence')
-
 if (form != null) {
   equivalences.setData()
 }
@@ -180,10 +157,8 @@ if (form != null) {
 var servicesTable = document.querySelector('#equivalences-registers')
 if (servicesTable !== null) {
   $(function () {
-    $('#equivalences-registers').dataTable({
-      sPaginationType: 'full_numbers',
-      iDisplayLength: 20,
-      aLengthMenu: [[20, 50, 100, -1], [20, 50, 100, 'All']]
-    })
+    var config = utils.getDataTableConfig()
+    config.order = [[1, 'asc']]
+    $('#equivalences-registers').dataTable(config)
   })
 }
