@@ -116,3 +116,6 @@ defined('GET_ARRIVES_ROUTE') OR define('GET_ARRIVES_ROUTE', 'api/v1/arrives');
 
 defined('GET_ALLOTMENT_RESERVATIONS_ROUTE') OR define('GET_ALLOTMENT_RESERVATIONS_ROUTE', 'api/v1/allotment_reservations');
 defined('GET_ALLOTMENTS_ROUTE') OR define('GET_ALLOTMENTS_ROUTE', 'api/v1/allotments');
+
+defined('LABEL_SUCCESS') OR define('LABEL_SUCCESS', 'badge badge-success');
+defined('LABEL_DANGER') OR define('LABEL_DANGER', 'badge badge-danger');
