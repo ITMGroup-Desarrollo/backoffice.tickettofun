@@ -22,8 +22,8 @@ class Booth extends CI_Model
         parent::__construct();
 
         $this->attrib = array('class' => 'center');
-        $this->active = array('class' => 'label label-success');
-        $this->inactive = array('class' => 'label label-danger');
+        $this->active = array('class' => LABEL_SUCCESS);
+        $this->inactive = array('class' => LABEL_DANGER);
     }
 
     public function get_list()
