@@ -3176,7 +3176,7 @@ body {
         #sidebar-default .menu-section ul li a {
           color: #ECF6FF;
           font-weight: 400;
-          font-size: 14px;
+          font-size: .9rem;
           padding: 7px 10px 9px 10px;
           padding-left: 23px;
           background: transparent;
@@ -3218,7 +3218,7 @@ body {
             #sidebar-default .menu-section ul li a.active i.fa-chevron-down {
               color: #ECF6FF; }
           #sidebar-default .menu-section ul li a i {
-            font-size: 19px;
+            font-size: 1rem;
             margin-right: 9px;
             min-width: 17px;
             text-align: center;
@@ -3241,7 +3241,7 @@ body {
               top: 2px; }
             #sidebar-default .menu-section ul li a i.fa-chevron-down {
               float: right;
-              font-size: 10px;
+              font-size: .7rem;
               top: 7px;
               right: 7px;
               min-width: inherit;
