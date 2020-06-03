@@ -870,11 +870,6 @@ body {
     display: block;
   }
 }
-  @media screen and (min-height: 901px) {
-    .main-sidebar {
-      position: fixed !important;
-    }
-  }
 
 #sidebar-dark {
   background: #2f343d;
