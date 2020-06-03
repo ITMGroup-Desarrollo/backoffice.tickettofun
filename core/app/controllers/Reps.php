@@ -67,6 +67,7 @@ class Reps extends CI_Controller
     */
     public function update()
     {
+
         $this->load->library('user_session', NULL, 'user');
 
         if ( ! $this->user->active_session())
@@ -94,7 +95,8 @@ class Reps extends CI_Controller
         );
 
         $rep = $this->Rep->get_data($option);
-        $rep = 'window.rep = ' . json_encode($rep);
+
+        $rep = 'window.repData = ' . json_encode($rep);
 
         $script = custom('script', '', $rep);
         $data['scripts'] = $script .  $data['scripts'];

@@ -145,7 +145,7 @@ class Rep extends CI_Model
             $sales_rep->code_rep = $response->message->code;
             $sales_rep->email_addr = $response->message->email_addr;
             $sales_rep->active = $response->message->active_status;
-            $sales_rep->boot_id = (isset($response->message->rep_id) && !empty($response->message->rep_id)? $response->message->rep_id : 0);
+            $sales_rep->booth_id = (isset($response->message->rep_id) && !empty($response->message->rep_id)? $response->message->rep_id : 0);
         }
         else
         {

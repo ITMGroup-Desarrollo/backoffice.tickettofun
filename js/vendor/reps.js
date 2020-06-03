@@ -1,8 +1,9 @@
 'use strict'
 var info
 var form
-var repData = window.rep
+var repData = window.repData
 var userCreateId = window.user_create_id
+var userId = 0
 
 var rep = {
   add: function (response) {
@@ -87,14 +88,29 @@ var rep = {
     }
   },
   setData: function () {
+    var elements = ['first-name','last-name','status-rep','code-rep','booth-rep']
+    userId = repData.user_id
+
+    rep.showElements(elements,false)
+
+    rep.showElements(['email-rep'],true)
+
+    document.querySelector('[name="email"]').value = repData.email_addr
+
     document.querySelector('[name="status"]').value = repData.active
-    document.querySelector('[name="first_name"]').value = repData.name
-    document.querySelector('[name="code"]').value = repData.code
+
+    document.querySelector('[name="first_name"]').value = repData.first_name
+
     document.querySelector('[name="last_name"]').value = repData.last_name
+
+    document.querySelector('[name="code"]').value = repData['code_rep'];
+
+    (repData.booth_id) ? document.querySelector('[name="booths"]').value = repData.booth_id : document.querySelector('[name="booths"]').selectedIndex = 0
   },
   setUserData: function (response) {
     MicroModal.close('wait-modal')
 
+    var elements = []
     var _message = ''
     var _alertModal = document.getElementById('alert-modal-content')
     var repname = document.querySelector('[name="first_name"]')
@@ -114,46 +130,54 @@ var rep = {
       _alertModal.appendChild(_message)
 
       MicroModal.show('alert-modal')
+      elements = ['first-name','last-name','code-rep','booth-rep','new-password','confirm-password','booth-dates']
+      rep.showElements(elements,false)
 
-      repname.parentElement.parentElement.classList.remove('hidden')
       repname.value = ''
-      replastname.parentElement.parentElement.classList.remove('hidden')
       replastname.value = ''
-      repcode.parentElement.parentElement.classList.remove('hidden')
       repcode.value = ''
-      booths.parentElement.parentElement.classList.remove('hidden')
-      repcode.value = ''
-      reppass.parentElement.parentElement.classList.remove('hidden')
+      booths.value = ''
       reppass.value = ''
-      conpass.parentElement.parentElement.classList.remove('hidden')
       conpass.value = ''
-      datepicker.parentElement.parentElement.classList.remove('hidden')
+
     } else if (response.code === 200) {
       var user = new Object()
+
       user = response.message[0]
+      userId = user.user_id
 
-      repname.parentElement.parentElement.classList.remove('hidden')
+      elements = ['first-name','last-name','code-rep','booth-rep','booth-dates']
+      rep.showElements(elements,false)
+
       repname.value = user.first_name
-
-      replastname.parentElement.parentElement.classList.remove('hidden')
       replastname.value = user.last_name
 
-      repcode.parentElement.parentElement.classList.remove('hidden')
+      elements = ['new-password','confirm-password']
+      rep.showElements(elements,true)
 
-      booths.parentElement.parentElement.classList.remove('hidden')
+    }
+  },
+  showElements: function( elements, hidden){
 
-      datepicker.parentElement.parentElement.classList.remove('hidden')
-
-      reppass.parentElement.parentElement.classList.add('hidden')
-
-      conpass.parentElement.parentElement.classList.add('hidden')
+    if(elements.length > 0){
+      if (!hidden){
+        elements.forEach(element => {
+          document.querySelector('.' + element).classList.remove('hidden')
+        });
+      }
+      else{
+        elements.forEach(element => {
+          document.querySelector('.' + element).classList.add('hidden')
+        });
+      }
     }
   }
+
 }
 
 form = document.querySelector('form')
 if (form) {
-  var searchEmail = utils.createElement('div', 'form-group')
+  var searchEmail = utils.createElement('div', 'form-group email-rep')
   var labeltext = utils.createElement('label', 'col-sm-2 col-md-2 control-label', '', 'Email')
   searchEmail.appendChild(labeltext)
   var divgroup = utils.createElement('div', 'input-group')
@@ -210,7 +234,7 @@ if (save != null) {
       info = {
         reseller_id: 1,
         code: document.querySelector('[name="code"]').value,
-        userCreateId: userCreateId,
+        user_create_id: userCreateId,
         booth: document.querySelector('[name="booths"]').value,
         user: {
           first_name: document.querySelector('[name="first_name"]').value,
@@ -218,7 +242,8 @@ if (save != null) {
           email_addr: document.querySelector('[name="email"]').value,
           user_password: document.querySelector('[name="user_password"]').value,
           confirm_password: document.querySelector('[name="confirm_password"]').value,
-          userCreateId: userCreateId
+          user_id: userId,
+          user_create_id: userCreateId,
         },
         booth_id: (document.querySelector('[name="booths"]').value !== '' ? document.querySelector('[name="booths"]').value : 0)
       }
@@ -237,7 +262,7 @@ if (save != null) {
       var _message = ''
       var _alertModal = document.getElementById('alert-modal-content')
 
-      if (info.user.user_password.length < 5) {
+      if (userId == 0 && info.user.user_password.length < 5) {
         _message = utils.createElement('p', '', '', 'You have a wrong password, you need to create a password with more than 5 characters')
         _alertModal.innerHTML = ''
         _alertModal.appendChild(_message)
@@ -245,7 +270,7 @@ if (save != null) {
         return false
       }
 
-      if (info.user.user_password !== info.user.confirm_password) {
+      if (userId == 0 && info.user.user_password !== info.user.confirm_password) {
         _message = utils.createElement('p', '', '', 'You have a wrong password, the password and password confirm not are same')
         _alertModal.innerHTML = ''
         _alertModal.appendChild(_message)
@@ -330,8 +355,7 @@ if (btnemail !== '') {
 
 form = document.querySelector('#add-rep')
 if (form != null) {
-  var statusCombo = form.querySelector('[name="status"]')
-  statusCombo.parentElement.parentElement.remove()
+  document.querySelector('.status-rep').remove()
 }
 
 form = document.querySelector('#update-rep')
