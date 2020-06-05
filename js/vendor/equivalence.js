@@ -3,7 +3,7 @@ var info
 var form
 var id = ''
 var url = ''
-var user = window.user
+var userCreateId = window.user
 var equivalencesData = window.equivalences
 
 var equivalences = {
@@ -101,6 +101,7 @@ if (save != null) {
 
     if (valid) {
       info = {
+        user_create_id: userCreateId,
         code: document.querySelector('[name="code"]').value,
         service_id: document.querySelector('[name="service"]').value,
         reseller_id: document.querySelector('[name="vendor"]').value,
@@ -110,7 +111,6 @@ if (save != null) {
       form = document.querySelector('#add-equivalence')
 
       if (form != null) {
-        info.user_id = user
         url = `${apiHost}equivalences/add`
         utils.api(JSON.stringify(info), url, 'POST', equivalences.add)
       }
