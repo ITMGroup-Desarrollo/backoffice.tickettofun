@@ -41,7 +41,7 @@ class Calendar extends CI_Model
             foreach ($rows as $row)
             {
                 $event = new stdClass();
-                $event->title = $row->ship_name;
+                $event->title = $row->reseller_name . PHP_EOL . $row->ship_name;
 
                 $arrival_date = strtotime($row->arrival_date . ' ' . $row->arrival_time);
                 $departure_date = strtotime($row->arrival_date . ' ' . $row->departure_time);
