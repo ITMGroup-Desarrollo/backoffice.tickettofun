@@ -1,4 +1,5 @@
 'use strict'
+var url
 var info
 var form
 var userData = window.user
@@ -6,84 +7,57 @@ var userCreateId = window.user_create_id
 
 var user = {
   add: function (response) {
-    MicroModal.close('wait-modal')
+    try {
+      MicroModal.close('wait-modal')
 
-    response = JSON.parse(response)
-    var _message = ''
-    var _alertModal = document.getElementById('alert-modal-content')
+      response = JSON.parse(response)
 
-    if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
-      _message = utils.createElement('p', '', '', response.message)
+      if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
+        utils.displayModal(alertModal, response.message)
+      } else if (response.code === 201) {
+        utils.displayModal(alertModal, 'Success! User added correctly')
 
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
-    } else if (response.code === 201) {
-      _message = utils.createElement('p', '', '', 'Success! User added correctly')
-
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
-
-      form = document.querySelector('#add-user')
-      form.reset()
+        document.querySelector('#add-user').reset()
+      }
+    } catch (e) {
+      utils.displayModal(alertModal, '')
     }
   },
   update: function (response) {
-    MicroModal.close('wait-modal')
+    try {
+      MicroModal.close('wait-modal')
 
-    response = JSON.parse(response)
-    var _message = ''
-    var _alertModal = document.getElementById('alert-modal-content')
-
-    if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
-      _message = utils.createElement('p', '', '', response.message)
-
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
-    } else if (response.code === 204) {
-      _message = utils.createElement('p', '', '', 'Success! User updated correctly')
-
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
+      response = JSON.parse(response)
+      if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
+        utils.displayModal(alertModal, response.message)
+      } else if (response.code === 204) {
+        utils.displayModal(alertModal, 'Success! User updated correctly')
+      }
+    } catch (e) {
+      utils.displayModal(alertModal, '')
     }
   },
   delete: function (response, element) {
-    MicroModal.close('wait-modal')
+    try {
+      MicroModal.close('wait-modal')
 
-    response = JSON.parse(response)
-    var id = element.getAttribute('data-id')
-    element.style.display = 'none'
+      response = JSON.parse(response)
+      var id = element.getAttribute('data-id')
+      element.style.display = 'none'
 
-    var _message = ''
-    var _alertModal = document.getElementById('alert-modal-content')
+      if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
+        utils.displayModal(alertModal, response.message)
+      } else if (response.code === 200) {
+        utils.displayModal(alertModal, 'Success! User inactivate correctly')
 
-    if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
-      _message = utils.createElement('p', '', '', response.message)
+        var _status = document.querySelector(`[data-status="${id}"]`)
+        _status.innerHTML = ''
 
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
-    } else if (response.code === 200) {
-      var _status = document.querySelector(`[data-status="${id}"]`)
-      _status.innerHTML = ''
-
-      var label = utils.createElement('span', 'badge badge-danger', '', 'inactive')
-      _status.appendChild(label)
-
-      _message = utils.createElement('p', '', '', 'Success! User inactivate correctly')
-
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
+        var label = utils.createElement('span', 'badge badge-danger', '', 'Inactive')
+        _status.appendChild(label)
+      }
+    } catch (e) {
+      utils.displayModal(alertModal, '')
     }
   },
   setData: function () {
@@ -125,6 +99,7 @@ if (save != null) {
 
     if (valid) {
       info = {
+        user_create_id: userCreateId,
         rol_id: document.querySelector('[name="rol"]').value,
         first_name: document.querySelector('[name="first_name"]').value,
         last_name: document.querySelector('[name="last_name"]').value,
@@ -132,16 +107,14 @@ if (save != null) {
       }
 
       form = document.querySelector('#add-user')
-
       if (form != null) {
         info.user_password = document.querySelector('[name="user_password"]').value
-        info.userCreateId = userCreateId
-        var url = `${apiHost}users/add`
+
+        url = `${apiHost}users/add`
         utils.api(JSON.stringify(info), url, 'POST', user.add)
       }
 
       form = document.querySelector('#update-user')
-
       if (form != null) {
         info.active_status = document.querySelector('[name="status"]').value
 
@@ -153,7 +126,6 @@ if (save != null) {
 }
 
 var options = document.querySelectorAll('.delete')
-
 for (var i = 0, l = options.length; i < l; i++) {
   options[i].addEventListener('click', function (e) {
     e.preventDefault()
@@ -164,7 +136,8 @@ for (var i = 0, l = options.length; i < l; i++) {
     }
 
     var id = element.getAttribute('data-id')
-    var url = `${apiHost}users/del/${id}`
+
+    url = `${apiHost}users/del/${id}`
     utils.api(JSON.stringify({}), url, 'DELETE', user.delete, element)
   })
 }
@@ -186,10 +159,9 @@ if (form != null) {
 var usersTable = document.querySelector('#users-registers')
 if (usersTable !== null) {
   $(function () {
-    $('#users-registers').dataTable({
-      sPaginationType: 'full_numbers',
-      iDisplayLength: 20,
-      aLengthMenu: [[20, 50, 100, -1], [20, 50, 100, 'All']]
-    })
+    var config = utils.getDataTableConfig()
+    config.order = [[2, 'asc']]
+
+    $('#users-registers').dataTable(config)
   })
 }
