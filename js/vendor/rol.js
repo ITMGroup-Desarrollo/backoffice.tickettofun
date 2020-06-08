@@ -1,4 +1,5 @@
 'use strict'
+var url
 var info
 var form
 var rolData = window.rol
@@ -6,89 +7,62 @@ var userCreateId = window.user_create_id
 
 var rol = {
   add: function (response) {
-    MicroModal.close('wait-modal')
+    try {
+      MicroModal.close('wait-modal')
 
-    response = JSON.parse(response)
-    var _message = ''
-    var _alertModal = document.getElementById('alert-modal-content')
+      response = JSON.parse(response)
+      if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
+        utils.displayModal(alertModal, response.message)
+      } else if (response.code === 201) {
+        utils.displayModal(alertModal, 'Success! Role added correctly')
 
-    if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
-      _message = utils.createElement('p', '', '', response.message)
-
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
-    } else if (response.code === 201) {
-      _message = utils.createElement('p', '', '', 'Success! Role added correctly')
-
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
-
-      form = document.querySelector('#add-rol')
-      form.reset()
+        document.querySelector('#add-rol').reset()
+      }
+    } catch (e) {
+      utils.displayModal(alertModal, '')
     }
   },
   update: function (response) {
-    MicroModal.close('wait-modal')
+    try {
+      MicroModal.close('wait-modal')
 
-    response = JSON.parse(response)
-    var _message = ''
-    var _alertModal = document.getElementById('alert-modal-content')
-
-    if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
-      _message = utils.createElement('p', '', '', response.message)
-
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
-    } else if (response.code === 204) {
-      _message = utils.createElement('p', '', '', 'Success! Role updated correctly')
-
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
+      response = JSON.parse(response)
+      if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
+        utils.displayModal(alertModal, response.message)
+      } else if (response.code === 204) {
+        utils.displayModal(alertModal, 'Success! Role updated correctly')
+      }
+    } catch (e) {
+      utils.displayModal(alertModal, '')
     }
   },
   delete: function (response, element) {
-    MicroModal.close('wait-modal')
+    try {
+      MicroModal.close('wait-modal')
 
-    response = JSON.parse(response)
-    var id = element.getAttribute('data-id')
-    element.style.display = 'none'
+      response = JSON.parse(response)
 
-    var _message = ''
-    var _alertModal = document.getElementById('alert-modal-content')
+      var id = element.getAttribute('data-id')
+      element.style.display = 'none'
 
-    if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
-      _message = utils.createElement('p', '', '', response.message)
+      if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
+        utils.displayModal(alertModal, response.message)
+      } else if (response.code === 200) {
+        utils.displayModal(alertModal, 'Success! Role inactivate correctly')
 
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
+        var _status = document.querySelector(`[data-status="${id}"]`)
+        _status.innerHTML = ''
 
-      MicroModal.show('alert-modal')
-    } else if (response.code === 200) {
-      var _status = document.querySelector(`[data-status="${id}"]`)
-      _status.innerHTML = ''
-
-      var label = utils.createElement('span', 'badge badge-danger', '', 'inactive')
-      _status.appendChild(label)
-
-      _message = utils.createElement('p', '', '', 'Success! Role inactivate correctly')
-
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
+        var label = utils.createElement('span', 'badge badge-danger', '', 'Inactive')
+        _status.appendChild(label)
+      }
+    } catch (e) {
+      utils.displayModal(alertModal, '')
     }
   },
   setData: function () {
-    document.querySelector('[name="rol_name"]').value = rolData.rol_name
     document.querySelector('[name="status"]').value = rolData.active
+    document.querySelector('[name="rol_name"]').value = rolData.rol_name
   }
 }
 
@@ -97,8 +71,15 @@ if (cancel !== null) {
   cancel.addEventListener('click', function (e) {
     e.preventDefault()
 
-    form = document.querySelector('#add-rol')
-    form.reset()
+    form = document.querySelector('#update-rol')
+    if (form !== null) {
+      rol.setData()
+    }
+
+    form = document.querySelector('#update-rol')
+    if (form !== null) {
+      rol.setData()
+    }
   })
 }
 
@@ -107,6 +88,7 @@ if (save !== null) {
   save.addEventListener('click', function (e) {
     e.preventDefault()
 
+    url = ''
     var valid = 'true'
     var fields = document.querySelectorAll('[data-validator]')
 
@@ -114,21 +96,17 @@ if (save !== null) {
 
     if (valid) {
       info = {
+        user_create_id: userCreateId,
         role_name: document.querySelector('[name="rol_name"]').value
       }
 
       form = document.querySelector('#add-rol')
-
-      var url = ''
-
       if (form !== null) {
-        info.userCreateId = userCreateId
         url = apiHost + 'roles/add'
         utils.api(JSON.stringify(info), url, 'POST', rol.add)
       }
 
       form = document.querySelector('#update-rol')
-
       if (form !== null) {
         info.active_status = document.querySelector('[name="status"]').value
 
@@ -140,7 +118,6 @@ if (save !== null) {
 }
 
 var options = document.querySelectorAll('.delete')
-
 for (var i = 0, l = options.length; i < l; i++) {
   options[i].addEventListener('click', function (e) {
     e.preventDefault()
@@ -170,10 +147,6 @@ if (form !== null) {
 var servicesTable = document.querySelector('#roles-registers')
 if (servicesTable !== null) {
   $(function () {
-    $('#roles-registers').dataTable({
-      sPaginationType: 'full_numbers',
-      iDisplayLength: 20,
-      aLengthMenu: [[20, 50, 100, -1], [20, 50, 100, 'All']]
-    })
+    $('#roles-registers').dataTable(utils.getDataTableConfig())
   })
 }
