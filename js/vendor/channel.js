@@ -1,4 +1,5 @@
 'use strict'
+var url
 var info
 var form
 var channelData = window.channel
@@ -6,84 +7,57 @@ var userCreateId = window.user_create_id
 
 var channel = {
   add: function (response) {
-    MicroModal.close('wait-modal')
+    try {
+      MicroModal.close('wait-modal')
 
-    response = JSON.parse(response)
-    var _message = ''
-    var _alertModal = document.getElementById('alert-modal-content')
+      response = JSON.parse(response)
+      if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
+        utils.displayModal(alertModal, response.message)
+      } else if (response.code === 201) {
+        utils.displayModal(alertModal, 'Success! Channel added correctly')
 
-    if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
-      _message = utils.createElement('p', '', '', response.message)
-
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
-    } else if (response.code === 201) {
-      _message = utils.createElement('p', '', '', 'Success! Channel added correctly')
-
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
-
-      form = document.querySelector('#add-channel')
-      form.reset()
+        document.querySelector('#add-channel').reset()
+      }
+    } catch (e) {
+      utils.displayModal(alertModal, '')
     }
   },
   update: function (response) {
-    MicroModal.close('wait-modal')
+    try {
+      MicroModal.close('wait-modal')
 
-    response = JSON.parse(response)
-    var _message = ''
-    var _alertModal = document.getElementById('alert-modal-content')
-
-    if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
-      _message = utils.createElement('p', '', '', response.message)
-
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
-    } else if (response.code === 204) {
-      _message = utils.createElement('p', '', '', 'Success! Channel updated correctly')
-
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
+      response = JSON.parse(response)
+      if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
+        utils.displayModal(alertModal, response.message)
+      } else if (response.code === 204) {
+        utils.displayModal(alertModal, 'Success! Channel updated correctly')
+      }
+    } catch (e) {
+      utils.displayModal(alertModal, '')
     }
   },
   delete: function (response, element) {
-    MicroModal.close('wait-modal')
+    try {
+      MicroModal.close('wait-modal')
 
-    response = JSON.parse(response)
-    var id = element.getAttribute('data-id')
-    element.style.display = 'none'
+      response = JSON.parse(response)
 
-    var _message = ''
-    var _alertModal = document.getElementById('alert-modal-content')
+      var id = element.getAttribute('data-id')
+      element.style.display = 'none'
 
-    if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
-      _message = utils.createElement('p', '', '', response.message)
+      if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
+        utils.displayModal(alertModal, response.message)
+      } else if (response.code === 200) {
+        utils.displayModal(alertModal, 'Success! Channel inactivate correctly')
 
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
+        var _status = document.querySelector(`[data-status="${id}"]`)
+        _status.innerHTML = ''
 
-      MicroModal.show('alert-modal')
-    } else if (response.code === 200) {
-      var _status = document.querySelector(`[data-status="${id}"]`)
-      _status.innerHTML = ''
-
-      var label = utils.createElement('span', 'badge badge-danger', '', 'inactive')
-      _status.appendChild(label)
-
-      _message = utils.createElement('p', '', '', 'Success! Channel inactivate correctly')
-
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
+        var label = utils.createElement('span', 'badge badge-danger', '', 'Inactive')
+        _status.appendChild(label)
+      }
+    } catch (e) {
+      utils.displayModal(alertModal, '')
     }
   },
   setData: function () {
@@ -121,19 +95,17 @@ if (save != null) {
 
     if (valid) {
       info = {
+        user_create_id: userCreateId,
         channel_name: document.querySelector('[name="channel_name"]').value
       }
 
       form = document.querySelector('#add-channel')
-
       if (form != null) {
-        info.userCreateId = userCreateId
-        var url = `${apiHost}channels/add`
+        url = `${apiHost}channels/add`
         utils.api(JSON.stringify(info), url, 'POST', channel.add)
       }
 
       form = document.querySelector('#update-channel')
-
       if (form != null) {
         info.active_status = document.querySelector('[name="status"]').value
 
@@ -145,7 +117,6 @@ if (save != null) {
 }
 
 var options = document.querySelectorAll('.delete')
-
 for (var i = 0, l = options.length; i < l; i++) {
   options[i].addEventListener('click', function (e) {
     e.preventDefault()
@@ -176,10 +147,6 @@ if (form != null) {
 var channelsTable = document.querySelector('#channels-registers')
 if (channelsTable !== null) {
   $(function () {
-    $('#channels-registers').dataTable({
-      sPaginationType: 'full_numbers',
-      iDisplayLength: 20,
-      aLengthMenu: [[20, 50, 100, -1], [20, 50, 100, 'All']]
-    })
+    $('#channels-registers').dataTable(utils.getDataTableConfig())
   })
 }
