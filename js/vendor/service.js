@@ -1,4 +1,5 @@
 'use strict'
+var url
 var info
 var form
 var serviceData = window.service
@@ -6,84 +7,57 @@ var userCreateId = window.user_create_id
 
 var service = {
   add: function (response) {
-    MicroModal.close('wait-modal')
+    try {
+      MicroModal.close('wait-modal')
 
-    response = JSON.parse(response)
-    var _message = ''
-    var _alertModal = document.getElementById('alert-modal-content')
+      response = JSON.parse(response)
+      if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
+        utils.displayModal(alertModal, response.message)
+      } else if (response.code === 201) {
+        utils.displayModal(alertModal, 'Success! Service added correctly')
 
-    if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
-      _message = utils.createElement('p', '', '', response.message)
-
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
-    } else if (response.code === 201) {
-      _message = utils.createElement('p', '', '', 'Success! Service added correctly')
-
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
-
-      form = document.querySelector('#add-service')
-      form.reset()
+        document.querySelector('#add-service').reset()
+      }
+    } catch (e) {
+      utils.displayModal(alertModal, '')
     }
   },
   update: function (response) {
-    MicroModal.close('wait-modal')
+    try {
+      MicroModal.close('wait-modal')
 
-    response = JSON.parse(response)
-    var _message = ''
-    var _alertModal = document.getElementById('alert-modal-content')
-
-    if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
-      _message = utils.createElement('p', '', '', response.message)
-
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
-    } else if (response.code === 204) {
-      _message = utils.createElement('p', '', '', 'Success! Service updated correctly')
-
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
+      response = JSON.parse(response)
+      if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
+        utils.displayModal(alertModal, response.message)
+      } else if (response.code === 204) {
+        utils.displayModal(alertModal, 'Success! Service updated correctly')
+      }
+    } catch (e) {
+      utils.displayModal(alertModal, '')
     }
   },
   delete: function (response, element) {
-    MicroModal.close('wait-modal')
+    try {
+      MicroModal.close('wait-modal')
 
-    response = JSON.parse(response)
-    var id = element.getAttribute('data-id')
-    element.style.display = 'none'
+      response = JSON.parse(response)
 
-    var _message = ''
-    var _alertModal = document.getElementById('alert-modal-content')
+      var id = element.getAttribute('data-id')
+      element.style.display = 'none'
 
-    if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
-      _message = utils.createElement('p', '', '', response.message)
+      if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
+        utils.displayModal(alertModal, response.message)
+      } else if (response.code === 200) {
+        utils.displayModal(alertModal, 'Success! Service inactivate correctly')
 
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
+        var _status = document.querySelector(`[data-status="${id}"]`)
+        _status.innerHTML = ''
 
-      MicroModal.show('alert-modal')
-    } else if (response.code === 200) {
-      var _status = document.querySelector(`[data-status="${id}"]`)
-      _status.innerHTML = ''
-
-      var label = utils.createElement('span', 'badge badge-danger', '', 'inactive')
-      _status.appendChild(label)
-
-      _message = utils.createElement('p', '', '', 'Success! Service inactivate correctly')
-
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
+        var label = utils.createElement('span', 'badge badge-danger', '', 'Inactive')
+        _status.appendChild(label)
+      }
+    } catch (e) {
+      utils.displayModal(alertModal, '')
     }
   },
   setData: function () {
@@ -107,7 +81,6 @@ if (cancel != null) {
     }
 
     form = document.querySelector('#update-service')
-
     if (form != null) {
       service.setData()
     }
@@ -126,23 +99,21 @@ if (save != null) {
 
     if (valid) {
       info = {
+        user_create_id: userCreateId,
+        duration: document.querySelector('[name="duration"]').value,
         location_id: document.querySelector('[name="location"]').value,
         service_name: document.querySelector('[name="service_name"]').value,
-        duration: document.querySelector('[name="duration"]').value,
         min_available_num: document.querySelector('[name="min_available"]').value,
         max_available_num: document.querySelector('[name="max_available"]').value
       }
 
       form = document.querySelector('#add-service')
-      var url = ''
       if (form != null) {
-        info.userCreateId = userCreateId
         url = `${apiHost}products/add`
         utils.api(JSON.stringify(info), url, 'POST', service.add)
       }
 
       form = document.querySelector('#update-service')
-
       if (form != null) {
         info.active_status = document.querySelector('[name="status"]').value
 
@@ -154,7 +125,6 @@ if (save != null) {
 }
 
 var options = document.querySelectorAll('.delete')
-
 for (var i = 0, l = options.length; i < l; i++) {
   options[i].addEventListener('click', function (e) {
     e.preventDefault()
@@ -165,7 +135,7 @@ for (var i = 0, l = options.length; i < l; i++) {
     }
 
     var id = element.getAttribute('data-id')
-    var url = `${apiHost}products/del/${id}`
+    url = `${apiHost}products/del/${id}`
     utils.api(JSON.stringify({}), url, 'DELETE', service.delete, element)
   })
 }
@@ -184,10 +154,6 @@ if (form != null) {
 var servicesTable = document.querySelector('#services-registers')
 if (servicesTable !== null) {
   $(function () {
-    $('#services-registers').dataTable({
-      sPaginationType: 'full_numbers',
-      iDisplayLength: 20,
-      aLengthMenu: [[20, 50, 100, -1], [20, 50, 100, 'All']]
-    })
+    $('#services-registers').dataTable(utils.getDataTableConfig())
   })
 }
