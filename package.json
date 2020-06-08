@@ -11,6 +11,7 @@
             "validator",
             "MicroModal",
             "alertModal",
+            "FullCalendar",
             "XMLHttpRequest"
         ]
     }
