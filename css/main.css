@@ -7500,3 +7500,8 @@ color: #333; }
 .error-simulator {
   padding-left: 5px;
 }
+
+#full-calendar {
+    max-width: 100%;
+    min-height: 920px;
+}
