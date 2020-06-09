@@ -7505,3 +7505,17 @@ color: #333; }
     max-width: 100%;
     min-height: 920px;
 }
+
+@media only screen and (max-width: 375px) and (orientation: portrait) {
+    .fc-scroller {
+        min-height: 480px !important;
+    }
+
+    .fc-toolbar h2 {
+        font-size: 1.4rem !important;
+    }
+
+    .fc-button {
+        padding: .3em .4em !important;
+    }
+}

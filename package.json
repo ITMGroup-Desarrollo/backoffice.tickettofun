@@ -12,6 +12,7 @@
             "MicroModal",
             "alertModal",
             "FullCalendar",
+            "MobileDetect",
             "XMLHttpRequest"
         ]
     }
