@@ -64,6 +64,7 @@ class Price extends CI_Model
                 $this->anchor_attrib = array();
 
                 $aux .= custom('td', '', $row->reseller_name);
+                $aux .= custom('td', '', $row->ship_name);
                 $aux .= custom('td', '', $row->service_name);
                 $aux .= custom('td', '', $row->pax_name);
                 $aux .= custom('td', '', $row->symbol_currency." ".$row->price);
@@ -180,6 +181,10 @@ class Price extends CI_Model
             $price->seasson_end   = $response->message->seasson_end;
             $price->active_status   = $response->message->active_status;
             $price->reseller_id   = $response->message->reseller_id;
+            $price->channel_id   = $response->message->channel_id;
+            $price->ship_id   = $response->message->ship_id;
+            $price->ship_name   = $response->message->ship_name;
+
         }else{
             redirect('/prices/list');
         }

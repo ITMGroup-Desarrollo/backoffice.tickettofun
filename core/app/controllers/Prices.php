@@ -50,14 +50,15 @@ class Prices extends CI_Controller
                 '{content}', $form, $data['contents']
             );
 
-            $equivalece = $this->Price->get_equivalences();
-            $equivalece = 'window.equivalences = ' . json_encode($equivalece);
+            // $equivalece = $this->Price->get_equivalences();
+            // $equivalece = 'window.equivalences = ' . json_encode($equivalece);
 
-            $script_equivalence = custom('script', '', $equivalece);
+            // $script_equivalence = custom('script', '', $equivalece);
 
             $price = 'window.user_create_id = ' . $this->session->userdata('user_id');
             $script = custom('script', '', $price);
-            $data['scripts'] = $script . $script_equivalence. $data['scripts'];
+            $data['scripts'] = $script . $data['scripts'];
+            // $data['scripts'] = $script . $script_equivalence. $data['scripts'];
         }
 
         $this->load->view('Master', $data);
