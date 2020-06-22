@@ -64,7 +64,8 @@ class Diary extends CI_Controller
     * @param  php://input JSON form information
     * @return JSON        $response diary information
     */
-    public function get_diary() {
+    public function get_diary()
+    {
         $response = array(
             'code' => 500,
             'msg' => 'No podemos procesar su solicitud'
