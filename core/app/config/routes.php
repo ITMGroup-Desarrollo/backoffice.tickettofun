@@ -53,27 +53,27 @@ $route['default_controller'] = 'signin';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
 
-//Services
+// Services
 $route["services/list"] = "services/index/$1";
 $route["services/new"]   = "services/index/$1";
 $route["services/(:num)"]   = "services/update/$1";
 
-//Channels
+// Channels
 $route["channels/list"] = "channels/index/$1";
 $route["channels/new"]   = "channels/index/$1";
 $route["channels/(:num)"]   = "channels/update/$1";
 
-//Destinations
+// Destinations
 $route["destinations/list"] = "destinations/index/$1";
 $route["destinations/new"]   = "destinations/index/$1";
 $route["destinations/(:num)"]   = "destinations/update/$1";
 
-//Users
+// Users
 $route["users/list"] = "users/index/$1";
 $route["users/new"]   = "users/index/$1";
 $route["users/(:num)"]   = "users/update/$1";
 
-//Settings
+// Settings
 $route["profile"] = "profile/index/$1";
 
 // Resellers
@@ -81,53 +81,53 @@ $route["resellers/list"] = "resellers/index/$1";
 $route["resellers/new"]   = "resellers/index/$1";
 $route["resellers/(:num)"]   = "resellers/update/$1";
 
-//bussines_unity
+// Bussines unity
 $route["business/list"] = "business/index/$1";
 $route["business/new"]   = "business/index/$1";
 $route["business/(:num)"]   = "business/update/$1";
 
-//Roles
+// Roles
 $route["roles/list"] = "roles/index/$1";
 $route["roles/new"]   = "roles/index/$1";
 $route["roles/(:num)"]   = "roles/update/$1";
 
-//locations
+// Locations
 $route["locations/list"] = "locations/index/$1";
 $route["locations/new"]   = "locations/index/$1";
 $route["locations/(:num)"]   = "locations/update/$1";
 
-//courtesies
+// Courtesies
 $route["courtesies/list"] = "courtesies/index/$1";
 $route["courtesies/new"]   = "courtesies/index/$1";
 $route["courtesies/(:num)"]   = "courtesies/update/$1";
 
-//prices
+// Prices
 $route["prices/list"] = "prices/index/$1";
 $route["prices/new"]   = "prices/index/$1";
 $route["prices/(:num)"]   = "prices/update/$1";
-//chips
+// Chips
 $route["ships/list"] = "ships/index/$1";
 $route["ships/new"]   = "ships/index/$1";
 $route["ships/(:num)"]   = "ships/update/$1";
 
-//Api_keys
+// Api keys
 $route["apikeys/list"] = "apikeys/index/$1";
 $route["apikeys/new"]   = "apikeys/index/$1";
 $route["apikeys/(:num)"]   = "apikeys/update/$1";
 
-//Services_equivalence
+// Services equivalence
 $route["equivalences/list"] = "equivalences/index/$1";
 $route["equivalences/new"]   = "equivalences/index/$1";
 $route["equivalences/(:num)"]   = "equivalences/update/$1";
 
-//arrives
+// Arrives
 $route["arrives/list"] = "arrives/index/$1";
 $route["arrives/new"] = "arrives/index/$1";
 $route["arrives/(:num)"] = "arrives/update/$1";
 $route["arrives/listjson"] = "arrives/dataJson/$1";
 $route["arrives/shiplist"] = "arrives/shipList/$1";
 
-//Allotments
+// Allotments
 $route["allotments/list"] = "allotments/list/$1";
 $route["allotments/new"] = "allotments/create_configuration/$1";
 $route["allotments/configuration"] = "allotments/configuration/$1";
@@ -142,12 +142,12 @@ $route["allotments/config"] = "allotments/config/$1";
 $route["allotments/reservation"] = "allotment_reservations/index/$1";
 $route["allotments/reservation/(:num)"] = "allotment_reservations/update/$1";
 
-//Sales Reps
+// Sales Reps
 $route["reps/list"] = "reps/index/$1";
 $route["reps/new"]   = "reps/index/$1";
 $route["reps/(:num)"]   = "reps/update/$1";
 
-//Booths
+// Booths
 $route["booths/list"] = "booths/index/$1";
 $route["booths/new"]   = "booths/index/$1";
 $route["booths/(:num)"]   = "booths/update/$1";
