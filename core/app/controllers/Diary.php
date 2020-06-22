@@ -94,28 +94,23 @@ class Diary extends CI_Controller
 
         $this->load->library('pdfgenerator');
 
+        $this->load->Model('Page');
+        $this->load->Model('Diaries');
 
-      $this->load->Model('Page');
-      $this->load->Model('Diaries');
-      $html = $this->Diaries->get_location_distribution($date, 'DIARY_TABLE_PDF');
-      $html= $html['details'];
-      $formatdate = date('d-m-Y', strtotime($date));
+        $settings = $this->Page->get_settings('diary');
+        // Build html
+        $document = doctype('html5');
+        $document = $this->build->build_components($settings['PRINT_DIARY']);
+        $contents = $this->Diaries->get_location_distribution($date, 'DIARY_TABLE_PDF');
 
-         $htmlend = '<!DOCTYPE html>
-             <html>
-             <head>
-             <title>Diary '.$formatdate.'</title>
-             </head>
-             <body style="margin:0px;">
-             <h1 align="center" style="font-family: sans-serif; font-size:12px; margin:0px; font-weight:bold;">
-                Daily operation journal
-             </h1>
-             <p align="center" style="font-family: sans-serif; font-size:10px; margin:0 0 5px 0;">Port of Costa Maya '. $formatdate .'</p>'
-             . $html.
-            '</body>
-             </html>';
+        $title = 'Diary - ' . $date;
+        $header_title = 'Port of Costa Maya ' . date('l jS M Y', strtotime($date));
 
-          $filename = 'DiaryPruebaPDF';
-          $this->pdfgenerator->generate($htmlend, $filename, true, 'A4', 'portrait');
+        $document = str_replace('{title}', $title, $document);
+        $document = str_replace('{port_of}', $header_title, $document);
+        $document = str_replace('{body}', $contents['details'], $document);
+
+        $filename = 'Diary operation journal';
+        $this->pdfgenerator->generate($document, $filename, true, 'A4', 'portrait');
     }
 }
