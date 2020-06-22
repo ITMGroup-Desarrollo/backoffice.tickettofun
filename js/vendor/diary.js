@@ -329,15 +329,18 @@ const saveExtradatafcn = function () {
   }
 }
 
-var _print = document.querySelector('[name="print"]')
-if (_print !== null) {
-  var _iconprint = utils.createElement('i', 'fa fa-print', '', '')
-  _print.appendChild(_iconprint)
+var printButton = document.querySelector('[name="print"]')
+if (printButton !== null) {
+  var icon = utils.createElement('i', 'fa fa-print', '', '')
+  printButton.appendChild(icon)
 
-  _print.addEventListener('click', function (e) {
+  printButton.addEventListener('click', function (e) {
+    e.preventDefault()
+
     var date = document.querySelector('[name="inputDate"]').value
-    var url = `${base}/diary/buil_pdf?date=${date}`
-    window.open(url, '_blank')
+    var endpoint = `${base}diary/print/${date}`
+
+    window.open(endpoint, '_blank')
   })
 }
 

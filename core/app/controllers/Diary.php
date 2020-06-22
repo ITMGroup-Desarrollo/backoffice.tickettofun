@@ -88,11 +88,12 @@ class Diary extends CI_Controller
         echo json_encode($response);
     }
 
-    public function buil_pdf() {
+    public function print()
+    {
+        $date = $this->uri->segment(3);
 
-    $this->load->library('pdfgenerator');
+        $this->load->library('pdfgenerator');
 
-       $date = $_GET['date'];
 
       $this->load->Model('Page');
       $this->load->Model('Diaries');

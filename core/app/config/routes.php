@@ -156,3 +156,5 @@ $route["booths/(:num)"]   = "booths/update/$1";
 $route["layouts/download"] = "layouts/index/$1";
 $route["layouts/export"] = "layouts/export/$1";
 
+// Diary
+$route["diary/print/(:num)"]   = "diary/print/$1";
