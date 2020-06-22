@@ -854,6 +854,9 @@ body {
     -webkit-transform: translate3d(230px, 0, 0);
     transform: translate3d(230px, 0, 0); }
 
+#content {
+    table-layout: fixed;
+}
 #wrapper {
   position: relative;
   -webkit-backface-visibility: hidden;
@@ -3542,6 +3545,7 @@ body {
       font-weight: bold;
       letter-spacing: .3px; }
   #content .content-wrapper {
+    table-layout: fixed;
     margin-top: 20px; }
 
 /* pages */
