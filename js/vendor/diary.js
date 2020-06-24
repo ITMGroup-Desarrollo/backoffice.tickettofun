@@ -1,4 +1,9 @@
 'use strict'
+var configTable = utils.getDataTableConfig()
+
+configTable.searching = false
+configTable.order = [2, 'ASC']
+configTable.paging = false
 
 var diary = {
   setAction: function () {
@@ -41,11 +46,7 @@ var diary = {
       container.innerHTML = data.details
 
       $(function () {
-        $('.details-registers').dataTable({
-          paging: false,
-          searching: false,
-          order: ([2, 'asc'])
-        })
+        $('.details-registers').dataTable(configTable)
       })
 
       buildModal()
@@ -137,17 +138,6 @@ var containerForm = document.querySelector('.content-form')
 
 containerForm.style.cssFloat = 'right'
 containerForm.style.margin = '-10px'
-
-var tourDetails = document.querySelector('.details-registers')
-if (tourDetails !== null) {
-  $(function () {
-    $('.details-registers').dataTable({
-      paging: false,
-      searching: false,
-      order: ([2, 'asc'])
-    })
-  })
-}
 
 var send = document.querySelector('[name="send"]')
 send.addEventListener('click', function (e) {
@@ -346,6 +336,13 @@ if (printButton !== null) {
 if (rol !== 1 && rol !== 3) {
   containerForm.parentElement.removeChild(containerForm)
   document.querySelector('[name="btn_modal_update"]').remove()
+}
+
+var tourDetails = document.querySelector('.details-registers')
+if (tourDetails !== null) {
+  $(function () {
+    $('.details-registers').dataTable(configTable)
+  })
 }
 
 var lists = document.querySelectorAll('.list-group')
