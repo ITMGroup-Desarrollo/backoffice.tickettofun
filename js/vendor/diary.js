@@ -52,17 +52,15 @@ var diary = {
     }
   },
   sendmail: function (response) {
-    MicroModal.close('wait-modal')
+    try {
+      MicroModal.close('wait-modal')
 
-    response = JSON.parse(response)
+      response = JSON.parse(response)
 
-    var _alertModal = document.getElementById('alert-modal-content')
-
-    var _message = utils.createElement('p', '', '', response.message)
-    _alertModal.innerHTML = ''
-    _alertModal.appendChild(_message)
-
-    MicroModal.show('alert-modal')
+      utils.displayModal(alertModal, response.message)
+    } catch (e) {
+      utils.displayModal(alertModal, '')
+    }
   },
   updateExtradata: function (response, idarrive) {
     MicroModal.close('wait-modal')
