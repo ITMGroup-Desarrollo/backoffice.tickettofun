@@ -68,7 +68,7 @@ class Diary extends CI_Controller
     {
         $response = array(
             'code' => 500,
-            'msg' => 'No podemos procesar su solicitud'
+            'message' => 'Something wrong!'
         );
 
         $this->load->Model('Page');
@@ -81,8 +81,16 @@ class Diary extends CI_Controller
             $this->load->Model('Diaries');
             $diary = $this->Diaries->get_location_distribution($data->date);
 
-            $response['code'] = 200;
-            $response['message'] = json_encode($diary);
+            if ($diary['code'] == 200)
+            {
+                $response['code'] = 200;
+                $response['message'] = json_encode($diary);
+            }
+            else
+            {
+                $response['code'] = $diary['code'];
+                $response['message'] = $diary['message'];
+            }
         }
 
         echo json_encode($response);

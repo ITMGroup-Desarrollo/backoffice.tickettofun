@@ -22,34 +22,37 @@ var diary = {
     }
   },
   refresh: function (response) {
-    MicroModal.close('wait-modal')
+    try {
+      MicroModal.close('wait-modal')
 
-    response = JSON.parse(response)
+      response = JSON.parse(response)
 
-    if (response.code !== 200) {
-      var _alertModal = document.getElementById('alert-modal-content')
-      var _message = utils.createElement('p', '', '', 'Can\'t load information')
+      var actiionButtons = document.querySelector('#form-diary')
+      if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
+        utils.displayModal(alertModal, response.message)
 
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
+        actiionButtons.classList.add('d-none')
+      } else if (response.code === 200) {
+        var data = JSON.parse(response.message)
 
-      MicroModal.show('alert-modal')
-    } else if (response.code === 200) {
-      var data = JSON.parse(response.message)
+        var total = document.querySelector('.price')
+        var specs = document.querySelector('.specs')
+        var container = document.getElementById('list')
 
-      var total = document.querySelector('.price')
-      var specs = document.querySelector('.specs')
-      var container = document.getElementById('list')
+        specs.innerHTML = data.tours
+        total.innerText = data.total_tours
+        container.innerHTML = data.details
 
-      specs.innerHTML = data.tours
-      total.innerText = data.total_tours
-      container.innerHTML = data.details
+        actiionButtons.classList.remove('d-none')
 
-      $(function () {
-        $('.details-registers').dataTable(configTable)
-      })
+        $(function () {
+          $('.details-registers').dataTable(configTable)
+        })
 
-      buildModal()
+        buildModal()
+      }
+    } catch (e) {
+      utils.displayModal(alertModal, '')
     }
   },
   sendmail: function (response) {

@@ -57,6 +57,7 @@ class Diaries extends CI_Model
 
         $this->db->close();
         $this->load->database();
+
         $query = 'CALL get_allotment_reservation(?, ?, ?, ?, ?, ?, ?)';
         $data = array('bydate', NULL, $next_date, NULL, NULL, NULL, NULL);
 
@@ -76,12 +77,15 @@ class Diaries extends CI_Model
         $ship_name = '';
         $ship_time = '';
         $total_tours = 0;
+        $extra_data = new stdClass();
 
         if ($result[0]->response == 200)
         {
-
             foreach ($result as $row)
             {
+                $this->model['code'] = 200;
+                $ship_details = str_replace('{type}', 'flex', $ship_details);
+
                 if ($id == 0)
                 {
                     $id = $row->ship_id;
@@ -115,7 +119,7 @@ class Diaries extends CI_Model
                     );
 
                     $details = str_replace(
-                        '{ship-cruise}', $ship_name, $details
+                        '{ship_cruise}', $ship_name, $details
                     );
 
                     $details = $this->_set_values_headship($extra_data, $details);
@@ -159,9 +163,8 @@ class Diaries extends CI_Model
         }
         else
         {
-            for ($i =0; $i < 8; $i++) {
-                $body .= custom('td', '', '');
-            }
+            $this->model['code'] = 404;
+            $this->model['message'] = 'Not found data for this date';
         }
 
         if ($view == 'DIARY_TABLE_PDF')
@@ -170,6 +173,7 @@ class Diaries extends CI_Model
         }
         else
         {
+            $ship_details = str_replace('{type}', 'flex', $ship_details);
             $ship_details = str_replace('{total_tours}', $total_tours, $ship_details);
         }
 
@@ -177,7 +181,7 @@ class Diaries extends CI_Model
         $table = str_replace('{rows}', $body, $table);
         $details .= str_replace('{tours_details}', $table, $ship_details);
 
-        $details = str_replace('{ship-cruise}', $ship_name, $details);
+        $details = str_replace('{ship_cruise}', $ship_name, $details);
         $details = $this->_set_values_headship($extra_data, $details);
 
         if ($id == 0)
