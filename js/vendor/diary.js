@@ -348,3 +348,13 @@ if (rol !== 1 && rol !== 3) {
   containerForm.parentElement.removeChild(containerForm)
   document.querySelector('[name="btn_modal_update"]').remove()
 }
+
+var lists = document.querySelectorAll('.list-group')
+if (lists !== null) {
+  for (var i = 0, l = lists.length; i < l; i++) {
+    var items = lists[i].querySelectorAll('li')
+    for (var j = 0, k = items.length; j < k; j++) {
+      items[j].classList.add('list-group-item')
+    }
+  }
+}

@@ -5271,7 +5271,7 @@ color: #333; }
         #pricing-alt #first-option .contact .wrapper {
           padding: 20px; } }
     #pricing-alt #first-option .contact h4 {
-      font-size: 15px;
+      font-size: 1.3rem;
       position: relative;
       color: #373F46;
       text-align: center;
@@ -7522,4 +7522,10 @@ color: #333; }
     .fc-button {
         padding: .3em .4em !important;
     }
+}
+
+.list-group-item {
+    background: none;
+    padding: .5rem;
+    border: 0;
 }
