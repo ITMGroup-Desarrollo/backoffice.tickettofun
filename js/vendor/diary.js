@@ -177,6 +177,7 @@ if (element != null) {
     dateFormat: 'Y-m-d',
     altFormat: 'l J F Y',
     defaultDate: new Date().fp_incr(1),
+    disableMobile: true,
     onChange: function (selectedDates, dateStr, instance) {
       var data = {
         date: dateStr
