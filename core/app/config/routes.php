@@ -151,3 +151,8 @@ $route["reps/(:num)"]   = "reps/update/$1";
 $route["booths/list"] = "booths/index/$1";
 $route["booths/new"]   = "booths/index/$1";
 $route["booths/(:num)"]   = "booths/update/$1";
+
+//Upload layouts configuration
+$route["layouts/download"] = "layouts/index/$1";
+$route["layouts/export"] = "layouts/export/$1";
+
