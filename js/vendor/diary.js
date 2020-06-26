@@ -6,21 +6,6 @@ configTable.order = [2, 'ASC']
 configTable.paging = false
 
 var diary = {
-  setAction: function () {
-    var modal = document.getElementById('confirm-modal-footer')
-    if (modal !== null) {
-      var saveExtradata = modal.querySelector('.confirm-delete')
-
-      if (saveExtradata != null) {
-        saveExtradata.addEventListener('click', function (e) {
-          var idarrive = parseInt(e.target.getAttribute('data-idarrive'))
-          saveExtradatafcn(idarrive)
-        })
-      }
-    } else {
-      diary.setAction()
-    }
-  },
   refresh: function (response) {
     try {
       MicroModal.close('wait-modal')
@@ -137,10 +122,6 @@ var diary = {
 }
 
 var rol = window.user
-var containerForm = document.querySelector('.content-form')
-
-containerForm.style.cssFloat = 'right'
-containerForm.style.margin = '-10px'
 
 var send = document.querySelector('[name="send"]')
 send.addEventListener('click', function (e) {
