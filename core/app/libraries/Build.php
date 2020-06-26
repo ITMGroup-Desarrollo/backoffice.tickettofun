@@ -159,6 +159,9 @@ class Build {
             case 'row':
                 return custom('tr', '', $content);
                 break;
+            case 'custom-ul':
+                return custom('ul', $attrib, $content);
+                break;
             default:
                 return custom($element, $attrib, $content);
                 break;
