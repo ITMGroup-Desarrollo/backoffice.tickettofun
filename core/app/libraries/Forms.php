@@ -92,7 +92,7 @@ class Forms
                             $row->label_name
                         );
                     }
-                    else if ($params[0] != 'signin')
+                    else if ($params[0] != 'signin' && $params[0] != 'update_call_extra')
                     {
                         $label = form_label($row->label_name, '', $this->attrib);
                         $wrapper = custom('div', $this->wrapper_attrib, $element);
@@ -142,12 +142,11 @@ class Forms
             }
         }
 
-        if ($params[0] != 'signin')
+        if ($params[0] != 'signin' && $params[0] != 'update_call_extra')
         {
             $typeForm = explode('_', $params[0]);
 
             $this->form_attrib = array(
-                'id' => '{id}',
                 'class' => 'form-horizontal'
             );
 
@@ -166,7 +165,6 @@ class Forms
             if (in_array('search', $typeForm))
             {
                 $this->form_attrib = array(
-                    'id' => '{id}',
                     'class' => 'form-inline',
                     'method' => 'post',
                 );
