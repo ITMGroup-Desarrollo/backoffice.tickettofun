@@ -38,7 +38,7 @@ class User_session
             'token'     => $credentials->token,
             'avatar'    => $credentials->user->avatar,
             'page_default' => $credentials->user->page_default,
-            'permissions' => $this->get_permissions($credentials->user->permissions)
+            'permissions' => $this->_get_permissions($credentials->user->permissions)
         );
 
         $this->CI->load->helper('cookie');
@@ -71,12 +71,12 @@ class User_session
         return $active;
     }
 
-    private function get_permissions($data_permissions){
-        
+    private function _get_permissions($data_permissions) {
+
         $permissions = array();
 
-        for ($ipermissions=0; $ipermissions < count($data_permissions); $ipermissions++) {
-            $permissions[$ipermissions] = $data_permissions[$ipermissions]->menu_name;
+        for ($i = 0; $i < count($data_permissions); $i++) {
+            $permissions[$i] = $data_permissions[$i]->menu_name;
         }
 
         return $permissions;
