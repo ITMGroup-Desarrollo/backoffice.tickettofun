@@ -89,11 +89,10 @@ class Diaries extends CI_Model
                 if ($id == 0)
                 {
                     $id = $row->ship_id;
-                    $ship_name = $row->ship_name . ' <';
-                    $ship_name .= $row->arrival_time . '-' . $row->departure_time . '>';
+                    $ship_name = "{$row->ship_name} <";
+                    $ship_name .= "{$row->arrival_time} - {$row->departure_time}>";
 
                     $extra_data = $row;
-
                     $ship_time = $row->ship_time;
                 }
 
@@ -114,6 +113,7 @@ class Diaries extends CI_Model
 
                     $id = $row->ship_id;
                     $schedules = str_replace('{rows}', $body, $table);
+
                     $details .= str_replace(
                         '{tours_details}', $schedules, $ship_details
                     );
@@ -126,8 +126,8 @@ class Diaries extends CI_Model
 
                     $body = '';
                     $total_tours = 0;
-                    $ship_name = $row->ship_name . ' | ';
-                    $ship_name .= $row->arrival_time . '-' . $row->departure_time;
+                    $ship_name = "{$row->ship_name} <";
+                    $ship_name .= "{$row->arrival_time} - {$row->departure_time}>";
 
                     $extra_data = $row;
 
@@ -136,21 +136,26 @@ class Diaries extends CI_Model
 
                 $aux = '';
                 $aux .= custom('td', '', $row->service_name);
+
                 if ($view != 'DIARY_TABLE_PDF')
                 {
                     $aux .= custom('td', '', $row->service_equivalence_name);
                 }
+
                 $aux .= custom('td', '', $row->schedule_start);
                 $aux .= custom('td', '', $row->schedule_end);
                 $aux .= custom('td', '', $row->duration);
+
                 if ($view != 'DIARY_TABLE_PDF')
                 {
-                    if ($row->private_service == 1){
+                    if ($row->private_service == 1)
+                    {
                         $aux .= custom('td', '', 'Yes');
                     }else{
                         $aux .= custom('td', '', 'No');
                     }
                 }
+
                 $aux .= custom('td', '', $row->pax);
                 $aux .= custom('td', '', $row->min_available);
                 $aux .= custom('td', '', $row->max_available);
