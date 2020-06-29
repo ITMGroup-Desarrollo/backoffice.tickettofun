@@ -160,66 +160,70 @@ class Diaries extends CI_Model
                 $total_tours += $row->pax;
                 $body .=  custom('tr', '', $aux);
             }
-        }
-        else
-        {
-            $this->model['code'] = 404;
-            $this->model['message'] = 'Not found data for this date';
-        }
 
-        if ($view == 'DIARY_TABLE_PDF')
-        {
-            $aux = "<span> | Total of tours : {$total_tours}</span> <span> | Ship time : {$ship_time}</span>";
-        }
-        else
-        {
-            $ship_details = str_replace('{type}', 'flex', $ship_details);
-            $ship_details = str_replace('{total_tours}', $total_tours, $ship_details);
-        }
-
-        $this->model['total_tours'] = $total;
-        $table = str_replace('{rows}', $body, $table);
-        $details .= str_replace('{tours_details}', $table, $ship_details);
-
-        $details = str_replace('{ship_cruise}', $ship_name, $details);
-        $details = $this->_set_values_headship($extra_data, $details);
-
-        if ($id == 0)
-            $details = str_replace('btn btn-primary btn-md', 'btn btn-primary btn-md hidden', $details);
-
-        $this->model['details'] = $details;
-
-        // If is a print option don't build this secction
-        if ($view == null) {
-            // Locations distribution
-            $this->load->database();
-            $query = 'CALL get_sales_tours(?)';
-            $data = array($next_date);
-
-            $query_result = $this->db->query($query, $data);
-
-            $num_rows = $query_result->num_rows();
-            $result   = $query_result->result();
-
-            $query_result->free_result();
-            $this->db->close();
-
-            if ($num_rows)
+            if ($view == 'DIARY_TABLE_PDF')
             {
-                foreach ($result as $row)
+                $aux = "<span> | Total of tours : {$total_tours}</span> <span> | Ship time : {$ship_time}</span>";
+            }
+            else
+            {
+                $ship_details = str_replace('{type}', 'flex', $ship_details);
+                $ship_details = str_replace('{total_tours}', $total_tours, $ship_details);
+            }
+
+            $this->model['total_tours'] = $total;
+            $table = str_replace('{rows}', $body, $table);
+            $details .= str_replace('{tours_details}', $table, $ship_details);
+
+            $details = str_replace('{ship_cruise}', $ship_name, $details);
+            $details = $this->_set_values_headship($extra_data, $details);
+
+            $this->model['display'] = 'block';
+            $this->model['details'] = $details;
+            $this->model['message'] = '';
+            // If is a print option don't build this secction
+            if ($view == null) {
+                // Locations distribution
+                $this->load->database();
+                $query = 'CALL get_sales_tours(?)';
+                $data = array($next_date);
+
+                $query_result = $this->db->query($query, $data);
+
+                $num_rows = $query_result->num_rows();
+                $result   = $query_result->result();
+
+                $query_result->free_result();
+                $this->db->close();
+
+                if ($num_rows)
                 {
-                    if ($row->response == 200)
-                        $locations[$row->location_name] = $row->total;
+                    foreach ($result as $row)
+                    {
+                        if ($row->response == 200)
+                            $locations[$row->location_name] = $row->total;
+                    }
+                }
+
+                foreach ($locations as $key => $value)
+                {
+                    $items = str_replace('{count}', $value, $element);
+                    $items = str_replace('{location}', $key, $items);
+
+                    $this->model['tours'] .= $items;
                 }
             }
 
-            foreach ($locations as $key => $value)
-            {
-                $items = str_replace('{count}', $value, $element);
-                $items = str_replace('{location}', $key, $items);
+        }
+        else
+        {
+            // For POST request
+            $this->model['code'] = 404;
+            $this->model['message'] = 'Not found calls for this date';
 
-                $this->model['tours'] .= $items;
-            }
+            // For default view
+            $this->model['display'] = 'none';
+            $this->model['total_tours'] = $total_tours;
         }
 
         return $this->model;
