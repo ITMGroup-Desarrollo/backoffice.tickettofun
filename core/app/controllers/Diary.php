@@ -39,6 +39,14 @@ class Diary extends CI_Controller
         );
 
         $data['contents'] = str_replace(
+            '{option}', $locations['display'], $data['contents']
+        );
+
+        $data['contents'] = str_replace(
+            '{msg}', $locations['message'], $data['contents']
+        );
+
+        $data['contents'] = str_replace(
             '{total_tours}', $locations['total_tours'], $data['contents']
         );
 

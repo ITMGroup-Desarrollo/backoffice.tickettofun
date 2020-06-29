@@ -23,12 +23,18 @@ var diary = {
         var total = document.querySelector('.price')
         var specs = document.querySelector('.specs')
         var container = document.getElementById('list')
+        var chart = document.querySelector('.featured')
+
+        if (document.querySelector('.msg-title') !== null) {
+          document.querySelector('.msg-title').remove()
+        }
 
         specs.innerHTML = data.tours
         total.innerText = data.total_tours
         container.innerHTML = data.details
 
         actiionButtons.classList.remove('d-none')
+        chart.classList.remove('d-none')
 
         $(function () {
           $('.details-registers').dataTable(configTable)
