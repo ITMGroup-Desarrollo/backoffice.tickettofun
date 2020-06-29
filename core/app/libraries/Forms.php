@@ -16,6 +16,7 @@ class Forms
 
     public $form;
     public $attrib;
+    public $rol_id;
     public $form_attrib;
     public $content_form;
     public $button_attrib;
@@ -47,15 +48,32 @@ class Forms
         $query_result->free_result();
         $this->CI->db->close();
 
+        $this->CI->load->library('session');
+        $this->rol_id = $this->CI->session->userdata('rol_id');
+
         if ($num_rows)
         {
             foreach ($result as $row)
             {
                 $extra = '';
+                $add_element = 1;
 
                 $this->attrib = $this->_get_attributes(
                     $row->element_attributes
                 );
+
+                if (array_key_exists('withPrivilegies', $this->attrib)) {
+                    if ($this->attrib['withPrivilegies'] == 'default') {
+                        if ($this->rol_id != 1 && !in_array('g_roles', $this->CI->session->userdata('permissions'))) {
+                            $add_element = 0;
+                        }
+                    }
+                    else if ($this->rol_id != 1 && $this->rol_id != $this->attrib['withPrivilegies']) {
+                        $add_element = 0;
+                    }
+
+                    unset($this->attrib['withPrivilegies']);
+                }
 
                 if ($row->element_type == 'BUTTON')
                 {
@@ -67,13 +85,20 @@ class Forms
                     $extra = $row->catalog_id;
                 }
 
-                $element = $this->_get_element(
-                    $row->element_type,
-                    $extra,
-                    $row->api_endpoint,
-                    $row->keyvalue_pair,
-                    $row->extra_name
-                );
+                if ($add_element == 1)
+                {
+                    $element = $this->_get_element(
+                        $row->element_type,
+                        $extra,
+                        $row->api_endpoint,
+                        $row->keyvalue_pair,
+                        $row->extra_name
+                    );
+                }
+                else
+                {
+                    $element = '';
+                }
 
                 if ( ! empty($row->label_name))
                 {

@@ -14,6 +14,7 @@ class Build {
 
     public $page;
     public $menu;
+    public $rol_id;
     public $submenu;
     public $columns;
     public $component;
@@ -29,6 +30,9 @@ class Build {
         $content = '';
         $this->component = '';
 
+        $this->CI->load->library('session');
+        $this->rol_id = $this->CI->session->userdata('rol_id');
+
         // Validate object for correcty structure
         if ( ! is_object($contents))
             return '';
@@ -36,9 +40,19 @@ class Build {
         if (is_array($contents->element))
             return '';
 
-        $element = $contents->element;
+        if (array_key_exists('withPrivilegies', $contents)) {
+            if ($contents->withPrivilegies == 'default') {
+                if ($this->rol_id != 1 && !in_array('g_roles', $this->CI->session->userdata('permissions'))) {
+                    return '';
+                }
+            }
+            else if ($this->rol_id != 1 && $this->rol_id != $contents->withPrivilegies) {
+                return '';
+            }
+        }
 
         $attrib = $contents->attrib;
+        $element = $contents->element;
 
         if (is_object($contents->attrib))
             $attrib = json_decode(json_encode($contents->attrib), true);
