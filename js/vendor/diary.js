@@ -121,8 +121,6 @@ var diary = {
   }
 }
 
-var rol = window.user
-
 var send = document.querySelector('[name="send"]')
 if (send !== null) {
   send.addEventListener('click', function (e) {
@@ -317,11 +315,6 @@ if (printButton !== null) {
 
     window.open(endpoint, '_blank')
   })
-}
-
-if (rol !== 1 && rol !== 3) {
-  containerForm.parentElement.removeChild(containerForm)
-  document.querySelector('[name="btn_modal_update"]').remove()
 }
 
 var tourDetails = document.querySelector('.details-registers')

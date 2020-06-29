@@ -51,10 +51,6 @@ class Diary extends CI_Controller
             'form-send', $form, $data['contents']
         );
 
-        $userRol = 'window.user = ' . $this->session->userdata('rol_id');
-        $script = custom('script', '', $userRol);
-        $data['scripts'] = $script .  $data['scripts'];
-
         $this->load->view('Master', $data);
     }
 
