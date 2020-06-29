@@ -40,7 +40,7 @@ class Layout extends CI_Model
         $this->db->close();
         $table_content = $this->Page->get_settings('layouts');
 
-        $listLayout = $this->filter_layout($table_content, $this::WORD);
+        $listLayout = $this->_filter_layout($table_content, $this::WORD);
 
         $rol_id = $this->session->userdata('rol_id');
 
@@ -88,7 +88,7 @@ class Layout extends CI_Model
         return $this->model;
     }
 
-    private function filter_layout($listLayout, $searchWord)
+    private function _filter_layout($listLayout, $searchWord)
     {
 
         return array_filter($listLayout, function ($key) use ($searchWord) {
@@ -97,12 +97,12 @@ class Layout extends CI_Model
         }, ARRAY_FILTER_USE_KEY);
     }
 
-    private function get_list_resellers()
+    private function _get_list_resellers()
     {
         $endpoint = GET_RESELLERS_ROUTE;
 
         $params = new stdClass();
-        $this->load->library('session');
+
         $token = $this->session->userdata('token');
 
         $response = json_decode(
@@ -128,12 +128,12 @@ class Layout extends CI_Model
         return $resellers;
     }
 
-    private function get_list_ships()
+    private function _get_list_ships()
     {
         $endpoint = GET_SHIPS_ROUTE;
 
         $params = new stdClass();
-        $this->load->library('session');
+
         $token = $this->session->userdata('token');
 
         $response = json_decode(
@@ -160,12 +160,12 @@ class Layout extends CI_Model
         return $ships;
     }
 
-    private function get_list_services()
+    private function _get_list_services()
     {
         $endpoint = GET_SERVICES_ROUTE;
 
         $params = new stdClass();
-        $this->load->library('session');
+
         $token = $this->session->userdata('token');
 
         $response = json_decode(
@@ -197,7 +197,7 @@ class Layout extends CI_Model
     public function build_layout($code, &$file_name)
     {
 
-        $layout = $this->get_layout($code);
+        $layout = $this->_get_layout($code);
 
         $file_name = $layout->file_name;
 
@@ -207,19 +207,19 @@ class Layout extends CI_Model
         $sheetDataValidation = $spreadsheet->createSheet(1);
         $sheetDataValidation->setTitle('Lista');
 
-        $this->setHeadersLayout($sheet, $layout->schema->headers);
+        $this->_set_headers_layout($sheet, $layout->schema->headers);
 
         if (property_exists($layout, 'source')) {
 
-            $this->setHeadersLayout($sheetDataValidation, $layout->source->headers);
+            $this->_set_headers_layout($sheetDataValidation, $layout->source->headers);
 
-            $this->setDataSourceToLayout($sheet, $sheetDataValidation, $layout->source);
+            $this->_set_data_source_to_layout($sheet, $sheetDataValidation, $layout->source);
         }
 
         return $spreadsheet;
     }
 
-    private function setDataValidationByColumn(Worksheet $sheet, $column, $startCellIndex, $endCellIndex)
+    private function _set_data_validation_by_column(Worksheet $sheet, $column, $startCellIndex, $endCellIndex)
     {
 
         //Setting data validation on a cell
@@ -242,7 +242,7 @@ class Layout extends CI_Model
         }
     }
 
-    private function setListDataValidation(Worksheet $sheet, $list, $column, $cellIndex, $field)
+    private function _set_list_data_validation(Worksheet $sheet, $list, $column, $cellIndex, $field)
     {
         foreach ($list as $item) {
             $sheet->setCellValue($column . $cellIndex, $item->$field);
@@ -250,7 +250,7 @@ class Layout extends CI_Model
         }
     }
 
-    private function get_layout($code)
+    private function _get_layout($code)
     {
         $this->db->close();
         $this->load->Model('Page');
@@ -258,7 +258,7 @@ class Layout extends CI_Model
 
         $layout = null;
 
-        $listLayout = $this->filter_layout($contents, $this::WORD);
+        $listLayout = $this->_filter_layout($contents, $this::WORD);
 
         foreach ($listLayout as $row) {
             if ($row->code == $code) {
@@ -270,18 +270,18 @@ class Layout extends CI_Model
             redirect('layouts/download');
         }
 
-        if (!$this->validateSchema($layout, 'schema')) {
+        if (!$this->_validate_schema($layout, 'schema')) {
             redirect('layouts/download');
         }
 
-        if (property_exists($layout, 'source') && !$this->validateSchema($layout, 'source')) {
+        if (property_exists($layout, 'source') && !$this->_validate_schema($layout, 'source')) {
             redirect('layouts/download');
         }
 
         return $layout;
     }
 
-    private function validateSchema($layout, $schema)
+    private function _validate_schema($layout, $schema)
     {
         $errorFlag = true;
 
@@ -305,7 +305,7 @@ class Layout extends CI_Model
         return $errorFlag;
     }
 
-    private function setHeadersLayout(Worksheet $sheet, $headers)
+    private function _set_headers_layout(Worksheet $sheet, $headers)
     {
 
         $column = $sheet->getHighestColumn();
@@ -318,7 +318,7 @@ class Layout extends CI_Model
         }
     }
 
-    private function setDataSourceToLayout(Worksheet $sheetLayout, Worksheet $sheetData, $source)
+    private function _set_data_source_to_layout(Worksheet $sheetLayout, Worksheet $sheetData, $source)
     {
 
         $list = array();
@@ -332,7 +332,7 @@ class Layout extends CI_Model
 
             switch ($property->select->catalog) {
                 case $this::RESELLER:
-                    $list = $this->get_list_resellers();
+                    $list = $this->_get_list_resellers();
 
                     while (!$found) {
 
@@ -342,12 +342,12 @@ class Layout extends CI_Model
                             $column++;
                     }
 
-                    $this->setListDataValidation($sheetData, $list, $column, ($cellIndex + 1), $property->select->text);
-                    $this->setDataValidationByColumn($sheetLayout, $column, ($cellIndex + 1), (count($list) + 1));
+                    $this->_set_list_data_validation($sheetData, $list, $column, ($cellIndex + 1), $property->select->text);
+                    $this->_set_data_validation_by_column($sheetLayout, $column, ($cellIndex + 1), (count($list) + 1));
 
                     break;
                 case $this::SHIP:
-                    $list = $this->get_list_ships();
+                    $list = $this->_get_list_ships();
 
                     while (!$found) {
 
@@ -358,12 +358,12 @@ class Layout extends CI_Model
                         }
                     }
 
-                    $this->setListDataValidation($sheetData, $list, $column, ($cellIndex + 1), $property->select->text);
-                    $this->setDataValidationByColumn($sheetLayout, $column, ($cellIndex + 1), (count($list) + 1));
+                    $this->_set_list_data_validation($sheetData, $list, $column, ($cellIndex + 1), $property->select->text);
+                    $this->_set_data_validation_by_column($sheetLayout, $column, ($cellIndex + 1), (count($list) + 1));
 
                     break;
                 case $this::SERVICE:
-                    $list = $this->get_list_services();
+                    $list = $this->_get_list_services();
 
                     while (!$found) {
 
@@ -374,8 +374,8 @@ class Layout extends CI_Model
                         }
                     }
 
-                    $this->setListDataValidation($sheetData, $list, $column, ($cellIndex + 1), $property->select->text);
-                    $this->setDataValidationByColumn($sheetLayout, $column, ($cellIndex + 1), (count($list) + 1));
+                    $this->_set_list_data_validation($sheetData, $list, $column, ($cellIndex + 1), $property->select->text);
+                    $this->_set_data_validation_by_column($sheetLayout, $column, ($cellIndex + 1), (count($list) + 1));
 
                     break;
                 default:

@@ -1,7 +1,6 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class Layouts extends CI_Controller
@@ -72,6 +71,6 @@ class Layouts extends CI_Controller
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename="' . $file_name . '.xlsx"');
         header('Cache-Control: max-age=0');
-        $writer->save('php://output'); // download file
+        $writer->save('php://output');
     }
 }
