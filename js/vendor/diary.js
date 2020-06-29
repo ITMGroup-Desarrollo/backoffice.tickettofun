@@ -124,14 +124,16 @@ var diary = {
 var rol = window.user
 
 var send = document.querySelector('[name="send"]')
-send.addEventListener('click', function (e) {
-  e.preventDefault()
-  var data = {
-    date: document.querySelector('[name="inputDate"]').value
-  }
+if (send !== null) {
+  send.addEventListener('click', function (e) {
+    e.preventDefault()
+    var data = {
+      date: document.querySelector('[name="inputDate"]').value
+    }
 
-  utils.api(JSON.stringify(data), `${apiHost}general/sendmail`, 'POST', diary.sendmail)
-})
+    utils.api(JSON.stringify(data), `${apiHost}general/sendmail`, 'POST', diary.sendmail)
+  })
+}
 
 var element = document.querySelector('.flatpickr')
 if (element != null) {
