@@ -55,6 +55,10 @@ class Diary extends CI_Controller
         );
 
         $form = $this->Diaries->get_form();
+        $form = str_replace(
+            '{display}', $locations['display'], $form
+        );
+
         $data['contents'] = str_replace(
             'form-send', $form, $data['contents']
         );
