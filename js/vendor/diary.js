@@ -12,11 +12,11 @@ var diary = {
 
       response = JSON.parse(response)
 
-      var actiionButtons = document.querySelector('#form-diary')
+      var actionButtons = document.querySelector('#form-diary')
       if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
         utils.displayModal(alertModal, response.message)
 
-        actiionButtons.classList.add('d-none')
+        actionButtons.classList.add('d-none')
       } else if (response.code === 200) {
         var data = JSON.parse(response.message)
 
@@ -24,6 +24,8 @@ var diary = {
         var specs = document.querySelector('.specs')
         var container = document.getElementById('list')
         var chart = document.querySelector('.featured')
+        var sendBtn = document.querySelector('[name="send"]')
+        var printBtn = document.querySelector('[name="print"]')
 
         if (document.querySelector('.msg-title') !== null) {
           document.querySelector('.msg-title').remove()
@@ -33,8 +35,10 @@ var diary = {
         total.innerText = data.total_tours
         container.innerHTML = data.details
 
-        actiionButtons.classList.remove('d-none')
+        actionButtons.classList.remove('d-none')
         chart.classList.remove('d-none')
+        sendBtn.classList.remove('d-none')
+        printBtn.classList.remove('d-none')
 
         $(function () {
           $('.details-registers').dataTable(configTable)
