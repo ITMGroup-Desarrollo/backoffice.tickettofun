@@ -11,7 +11,10 @@
 class Diaries extends CI_Model
 {
     public $model;
+    public $print;
     public $settings;
+    public $tableModel;
+    public $specifications;
 
     public function __construct()
     {
@@ -20,7 +23,10 @@ class Diaries extends CI_Model
             'details' => ''
         );
 
+        $this->print = 0;
         $this->settings = '';
+        $this->tableModel = 'DIARY_TABLE';
+        $this->specifications = 'SHIP_SPEC';
     }
 
     public function get_location_distribution($next_date = NULL, $view = NULL)
@@ -36,16 +42,15 @@ class Diaries extends CI_Model
         $table = '';
         $ship_details = '';
 
-        if ($view == NULL)
+        if ($view == 'PRINT')
         {
-            $table = $this->build->build_components($this->settings['DIARY_TABLE']);
-            $ship_details = $this->build->build_components($this->settings['SHIP_SPEC']);
+            $this->print = 1;
+            $this->tableModel = 'DIARY_TABLE_PDF';
+            $this->specifications = 'SHIP_SPEC_PDF';
         }
-        else
-        {
-            $table = $this->build->build_components($this->settings['DIARY_TABLE_PDF']);
-            $ship_details = $this->build->build_components($this->settings['SHIP_SPEC_PDF']);
-        }
+
+        $table = $this->build->build_components($this->settings[$this->tableModel]);
+        $ship_details = $this->build->build_components($this->settings[$this->specifications]);
 
         if ($next_date == NULL)
         {
@@ -89,8 +94,8 @@ class Diaries extends CI_Model
                 if ($id == 0)
                 {
                     $id = $row->ship_id;
-                    $ship_name = "{$row->ship_name} <";
-                    $ship_name .= "{$row->arrival_time} - {$row->departure_time}>";
+                    $ship_name = "{$row->ship_name} &#60;";
+                    $ship_name .= "{$row->arrival_time} - {$row->departure_time}&#62;";
 
                     $extra_data = $row;
                     $ship_time = $row->ship_time;
@@ -98,16 +103,26 @@ class Diaries extends CI_Model
 
                 if ($id != $row->ship_id)
                 {
-                    if ($view == 'DIARY_TABLE_PDF')
+                    if ($this->print == 1)
                     {
-                        $aux = "<span> | Total of tours : {$total_tours}</span> <span> | Ship time : {$ship_time}</span>";
+                        $ship_details = str_replace(
+                            '{ship_time}'
+                            , $ship_time
+                            , $ship_details
+                        );
+
+                        $ship_details = str_replace(
+                            '{total_tours}'
+                            , $total_tours
+                            , $ship_details
+                        );
                     }
                     else
                     {
                         $ship_details = str_replace(
-                            '{total_tours}',
-                            $total_tours,
-                            $ship_details
+                            '{total_tours}'
+                            , $total_tours
+                            , $ship_details
                         );
                     }
 
@@ -126,18 +141,17 @@ class Diaries extends CI_Model
 
                     $body = '';
                     $total_tours = 0;
-                    $ship_name = "{$row->ship_name} <";
-                    $ship_name .= "{$row->arrival_time} - {$row->departure_time}>";
+                    $ship_name = "{$row->ship_name} &#60;";
+                    $ship_name .= "{$row->arrival_time} - {$row->departure_time}&#62;";
 
                     $extra_data = $row;
-
                     $ship_time = $row->ship_time;
                 }
 
                 $aux = '';
                 $aux .= custom('td', '', $row->service_name);
 
-                if ($view != 'DIARY_TABLE_PDF')
+                if ($this->print == 0) // Remove columns on print
                 {
                     $aux .= custom('td', '', $row->service_equivalence_name);
                 }
@@ -146,7 +160,7 @@ class Diaries extends CI_Model
                 $aux .= custom('td', '', $row->schedule_end);
                 $aux .= custom('td', '', $row->duration);
 
-                if ($view != 'DIARY_TABLE_PDF')
+                if ($this->print == 0) // Remove columns on print
                 {
                     if ($row->private_service == 1)
                     {
@@ -166,9 +180,10 @@ class Diaries extends CI_Model
                 $body .=  custom('tr', '', $aux);
             }
 
-            if ($view == 'DIARY_TABLE_PDF')
+            if ($this->print == 1)
             {
-                $aux = "<span> | Total of tours : {$total_tours}</span> <span> | Ship time : {$ship_time}</span>";
+                $ship_details = str_replace('{ship_time}', $ship_time, $ship_details);
+                $ship_details = str_replace('{total_tours}', $total_tours, $ship_details);
             }
             else
             {
@@ -186,8 +201,9 @@ class Diaries extends CI_Model
             $this->model['display'] = 'block';
             $this->model['details'] = $details;
             $this->model['message'] = '';
+
             // If is a print option don't build this secction
-            if ($view == null) {
+            if ($this->print == 0) {
                 // Locations distribution
                 $this->load->database();
                 $query = 'CALL get_sales_tours(?)';
@@ -218,7 +234,6 @@ class Diaries extends CI_Model
                     $this->model['tours'] .= $items;
                 }
             }
-
         }
         else
         {

@@ -114,10 +114,11 @@ class Diary extends CI_Controller
         $this->load->Model('Diaries');
 
         $settings = $this->Page->get_settings('diary');
+
         // Build html
         $document = doctype('html5');
         $document = $this->build->build_components($settings['PRINT_DIARY']);
-        $contents = $this->Diaries->get_location_distribution($date, 'DIARY_TABLE_PDF');
+        $contents = $this->Diaries->get_location_distribution($date, 'PRINT');
 
         $title = 'Diary - ' . $date;
         $header_title = 'Port of Costa Maya ' . date('l jS M Y', strtotime($date));
