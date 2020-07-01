@@ -64,15 +64,8 @@ class Apikey extends CI_Model
                 $aux = '';
                 $this->anchor_attrib = array();
 
-                $key_seq = custom(
-                    'span'
-                    , array('style' => 'word-wrap: break-word;')
-                    , $row->key_seq
-                    , ''
-                );
-
                 $aux .= custom('td', '', $row->key_description);
-                $aux .= custom('td', '', $key_seq);
+                $aux .= custom('td', '', $row->key_seq);
                 $aux .= custom('td', '', $row->user_email);
 
                 $status = '';

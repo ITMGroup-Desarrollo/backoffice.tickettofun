@@ -116,7 +116,6 @@ if (save != null) {
 }
 
 var options = document.querySelectorAll('.delete')
-
 for (var i = 0, l = options.length; i < l; i++) {
   options[i].addEventListener('click', function (e) {
     e.preventDefault()
@@ -153,4 +152,20 @@ if (servicesTable !== null) {
   $(function () {
     $('#apikeys-registers').dataTable(utils.getDataTableConfig())
   })
+
+  var md = new MobileDetect(window.navigator.userAgent)
+
+  if (md.mobile() !== null) {
+    var rows = document.querySelectorAll('#apikeys-registers tr')
+
+    for (let i = 0, l = rows.length; i < l; i++) {
+      rows[i].addEventListener('click', function (e) {
+        e.preventDefault()
+
+        if (!servicesTable.classList.contains('fixed-layour')) {
+          servicesTable.classList.add('fixed-layout')
+        }
+      })
+    }
+  }
 }
