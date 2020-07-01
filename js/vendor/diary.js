@@ -259,5 +259,7 @@ if (printButton !== null) {
   })
 }
 
+document.querySelector('#form-diary > form').classList.add('d-flex')
+
 diary.setActions()
 diary.tableInit()
