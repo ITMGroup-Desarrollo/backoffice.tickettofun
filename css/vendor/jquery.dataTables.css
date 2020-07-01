@@ -66,12 +66,14 @@ table.dataTable tr.even td.sorting_3 { background-color: #FAFBFD; }
  * Page length menu
  */
 .dataTables_length {
-    float: left;
+    float: right;
     margin-bottom: 10px;
 }
+
 .dataTables_length label {
     font-weight: 600;
 }
+
 .dataTables_length select {
     margin: 0px 5px;
     background-color: #fff;
@@ -82,16 +84,23 @@ table.dataTable tr.even td.sorting_3 { background-color: #FAFBFD; }
     height: calc(1.5em + 4px);
 }
 
+@media (min-width: 768px) {
+    .dataTables_length {
+        float: left;
+        margin-bottom: 10px;
+    }
+}
 /*
  * Filter
  */
 .dataTables_filter {
-    float: right;
-    text-align: right;
+    text-align: center;
 }
+
 .dataTables_filter label {
     font-weight: 600;
 }
+
 .dataTables_filter input[type="text"] {
     margin-left: 7px;
     border: 1px solid #cccccc;
@@ -102,8 +111,17 @@ table.dataTable tr.even td.sorting_3 { background-color: #FAFBFD; }
     -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
     transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
 }
+
 .dataTables_filter input[type="text"]:focus {
     border-color: #66afe9;
+}
+
+@media (min-width: 768px) {
+    .dataTables_filter {
+        float: right;
+        text-align: right;
+        margin-top: -5px;
+    }
 }
 
 /*
@@ -111,16 +129,30 @@ table.dataTable tr.even td.sorting_3 { background-color: #FAFBFD; }
  */
 .dataTables_info {
     clear: both;
-    float: left;
+    text-align: center;
     margin-bottom: 1em;
+}
+
+@media (min-width: 768px) {
+    .dataTables_info {
+        clear: both;
+        float: left;
+        margin-bottom: 1em;
+    }
 }
 
 /*
  * Pagination
  */
- .dataTables_paginate {
-    float: right;
-    text-align: right;
+.dataTables_paginate {
+    text-align: center;
+}
+
+@media (min-width: 768px) {
+    .dataTables_paginate {
+        float: right;
+        text-align: right;
+    }
 }
 
 /* Two button pagination - previous / next */
