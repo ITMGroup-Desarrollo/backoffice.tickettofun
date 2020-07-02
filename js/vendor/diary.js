@@ -81,7 +81,7 @@ var diary = {
 
     for (let i = 0, l = items.length; i < l; i++) {
       id = items[i].getAttribute('data-name')
-      text = items[i].textContent.split(':')[1].trim()
+      text = items[i].innerText.split(':')[1].trim()
 
       inputElement = document.querySelector(`[name="${id}"`)
       if (inputElement != null) {
@@ -93,7 +93,7 @@ var diary = {
 
         if (id === 'all_aboard') {
           if (text !== '') {
-            inputElement.value = `${text}:${items[i].textContent.split(':')[2].trim()}`
+            inputElement.value = `${text}:${items[i].innerText.split(':')[2].trim()}`
           }
 
           inputElement.flatpickr({
@@ -169,8 +169,8 @@ var diary = {
           }
 
           if (itemList !== null) {
-            const text = itemList.textContent.split(':')[0]
-            itemList.textContent = `${text}: ${inputElements[i].value}`
+            const text = itemList.innerText.split(':')[0]
+            itemList.innerText = `${text}: ${inputElements[i].value}`
           }
         }
 
