@@ -58,7 +58,6 @@ class Menu {
         {
             $grouper = '';
             $grouper_title = '';
-            $nav_bar = '{current_user}';
 
             foreach ($result as $row)
             {
@@ -89,7 +88,7 @@ class Menu {
             }
         }
 
-        $this->menu = $nav_bar . '{bottom_menu}';
+        $this->menu = $nav_bar;
 
         return $this->menu;
     }
