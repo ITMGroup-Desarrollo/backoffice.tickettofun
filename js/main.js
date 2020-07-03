@@ -1,6 +1,7 @@
 'use strict'
 var menu
 var info
+var sbMenu
 var base = window.baseUrl
 
 var apiHost = window.api_host
@@ -170,6 +171,17 @@ var waitMessage = utils.createElement(
 )
 
 waitModal.appendChild(waitMessage)
+
+sbMenu = document.querySelector('.sb-menu')
+if (sbMenu !== null) {
+  var bodyHeight = window.innerHeight
+
+  bodyHeight = bodyHeight - 120
+
+  sbMenu.style.height = `${bodyHeight}px`
+  // Init scroll
+  SimpleScrollbar.initEl(sbMenu)
+}
 
 menu = document.querySelector('.main-sidebar')
 if (menu !== null) {

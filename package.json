@@ -13,7 +13,8 @@
             "alertModal",
             "FullCalendar",
             "MobileDetect",
-            "XMLHttpRequest"
+            "XMLHttpRequest",
+            "SimpleScrollbar"
         ]
     }
 }
