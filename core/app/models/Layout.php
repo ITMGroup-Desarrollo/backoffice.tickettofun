@@ -10,6 +10,7 @@
  */
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class Layout extends CI_Model
@@ -19,10 +20,30 @@ class Layout extends CI_Model
     public $attrib;
     public $inactive;
     public $anchor_attrib;
+
+    private $dataRows = array();
+    private $dataErrors = array();
+
     const RESELLER = 'resellers';
     const SHIP = 'ships';
     const SERVICE = 'services';
-    const WORD = 'LAYOUT_TABLE';
+    const TEMPLATE = 'LAYOUTS';
+
+    const NAME = 'name';
+    const MAIL = 'mail';
+    const CP = 'cp';
+    const RFC = 'rfc';
+    const MONEY = 'money';
+    const ALPHANUMERIC = 'alphanumeric';
+    const ALPHA = 'alpha';
+    const DATE = 'date';
+    const DECIMAL = 'decimal';
+    const NUMERIC = 'numeric';
+    const NUMERICPOS = 'numericpos';
+    const TIME = 'time';
+
+
+
 
     public function __construct()
     {
@@ -40,7 +61,7 @@ class Layout extends CI_Model
         $this->db->close();
         $table_content = $this->Page->get_settings('layouts');
 
-        $listLayout = $this->_filter_layout($table_content, $this::WORD);
+        $listLayout = $this->_get_list_layouts($table_content);
 
         $rol_id = $this->session->userdata('rol_id');
 
@@ -88,12 +109,62 @@ class Layout extends CI_Model
         return $this->model;
     }
 
-    private function _filter_layout($listLayout, $searchWord)
+    public function get_layout($code)
     {
 
+        return $this->_get_layout($code);
+    }
+
+    public function get_form()
+    {
+        $this->db->close();
+        $contents = $this->Page->get_settings('layouts');
+
+        $this->model = $this->build->build_components(
+            $contents['LAYOUT_FORM']
+        );
+
+        return $this->model;
+    }
+
+    public function get_list_layouts()
+    {
+        $this->db->close();
+        $content = $this->Page->get_settings('layouts');
+
+        $list = array();
+
+        $result = $this->_get_list_layouts($content);
+
+        foreach ($result as $item) {
+            $layout = new stdClass();
+            $layout->code = $item->code;
+            $layout->file_name = $item->file_name;
+            $list[] = $layout;
+        }
+
+        return $list;
+    }
+
+    public function get_data_rows()
+    {
+        return $this->dataRows;
+    }
+
+    public function get_data_errors()
+    {
+        return $this->dataErrors;
+    }
+
+    private function _get_list_layouts($content)
+    {
+        return $this->_filter_layout($content, $this::TEMPLATE);
+    }
+
+    private function _filter_layout($listLayout, $searchWord)
+    {
         return array_filter($listLayout, function ($key) use ($searchWord) {
-            $filter = explode("_", $searchWord);
-            return (preg_match("/^$filter[0]/", $key) && !preg_match("/^$searchWord/", $key));
+            return (preg_match("/^$searchWord/", $key));
         }, ARRAY_FILTER_USE_KEY);
     }
 
@@ -226,10 +297,10 @@ class Layout extends CI_Model
         $validation = $sheet->getCell($column . $startCellIndex)->getDataValidation();
         $validation->setType(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::TYPE_LIST);
         $validation->setErrorStyle(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::STYLE_INFORMATION);
-        $validation->setAllowBlank(false);
-        $validation->setShowInputMessage(true);
-        $validation->setShowErrorMessage(true);
-        $validation->setShowDropDown(true);
+        $validation->setAllowBlank(FALSE);
+        $validation->setShowInputMessage(TRUE);
+        $validation->setShowErrorMessage(TRUE);
+        $validation->setShowDropDown(TRUE);
         $validation->setErrorTitle('Input error');
         $validation->setError('Value is not in list.');
         $validation->setPromptTitle('Pick from list');
@@ -258,7 +329,7 @@ class Layout extends CI_Model
 
         $layout = null;
 
-        $listLayout = $this->_filter_layout($contents, $this::WORD);
+        $listLayout = $this->_filter_layout($contents, $this::TEMPLATE);
 
         foreach ($listLayout as $row) {
             if ($row->code == $code) {
@@ -283,21 +354,21 @@ class Layout extends CI_Model
 
     private function _validate_schema($layout, $schema)
     {
-        $errorFlag = true;
+        $errorFlag = TRUE;
 
         if (!property_exists($layout, $schema)) {
 
-            $errorFlag = false;
+            $errorFlag = FALSE;
         } else if (!property_exists($layout->$schema, 'headers') || !is_array($layout->$schema->headers)) {
 
-            $errorFlag = false;
+            $errorFlag = FALSE;
         }
 
         $headers = $layout->$schema->headers;
 
         foreach ($headers as $property) {
             if (!is_object($property)) {
-                $errorFlag = false;
+                $errorFlag = FALSE;
                 break;
             }
         }
@@ -307,14 +378,8 @@ class Layout extends CI_Model
 
     private function _set_headers_layout(Worksheet $sheet, $headers)
     {
-
-        $column = $sheet->getHighestColumn();
-        $cellIndex = 1;
-
         foreach ($headers as $property) {
-            $sheet->setCellValue($column . $cellIndex, $property->field)->getColumnDimension($column)->setAutoSize(true);
-
-            $column++;
+            $sheet->setCellValue($property->column, $property->field)->getColumnDimension(substr($property->column, 0, 1))->setAutoSize(TRUE);
         }
     }
 
@@ -322,9 +387,7 @@ class Layout extends CI_Model
     {
 
         $list = array();
-        $column = 'A';
         $cellIndex = 1;
-        $found = false;
 
         $headers = $source->headers;
 
@@ -333,58 +396,179 @@ class Layout extends CI_Model
             switch ($property->select->catalog) {
                 case $this::RESELLER:
                     $list = $this->_get_list_resellers();
-
-                    while (!$found) {
-
-                        if ($property->field == $sheetData->getCell($column . $cellIndex)->getValue()) {
-                            $found = true;
-                        } else
-                            $column++;
-                    }
-
-                    $this->_set_list_data_validation($sheetData, $list, $column, ($cellIndex + 1), $property->select->text);
-                    $this->_set_data_validation_by_column($sheetLayout, $column, ($cellIndex + 1), (count($list) + 1));
-
                     break;
                 case $this::SHIP:
                     $list = $this->_get_list_ships();
-
-                    while (!$found) {
-
-                        if ($property->field == $sheetData->getCell($column . $cellIndex)->getValue()) {
-                            $found = true;
-                        } else {
-                            $column++;
-                        }
-                    }
-
-                    $this->_set_list_data_validation($sheetData, $list, $column, ($cellIndex + 1), $property->select->text);
-                    $this->_set_data_validation_by_column($sheetLayout, $column, ($cellIndex + 1), (count($list) + 1));
-
                     break;
                 case $this::SERVICE:
                     $list = $this->_get_list_services();
-
-                    while (!$found) {
-
-                        if ($property->field == $sheetData->getCell($column . $cellIndex)->getValue()) {
-                            $found = true;
-                        } else {
-                            $column++;
-                        }
-                    }
-
-                    $this->_set_list_data_validation($sheetData, $list, $column, ($cellIndex + 1), $property->select->text);
-                    $this->_set_data_validation_by_column($sheetLayout, $column, ($cellIndex + 1), (count($list) + 1));
-
                     break;
                 default:
                     break;
             }
 
-            $column = 'A';
+            $this->_set_list_data_validation($sheetData, $list, substr($property->column, 0, 1), ($cellIndex + 1), $property->select->text);
+            $this->_set_data_validation_by_column($sheetLayout, substr($property->column, 0, 1), ($cellIndex + 1), (count($list) + 1));
+
             $list = array();
-            $found = false;
         }
+    }
+
+    public function validate_headers(Worksheet $sheet, $layout)
+    {
+        $headers = $layout->schema->headers;
+
+        $isfound = TRUE;
+
+        foreach ($headers as $property) {
+
+            if ($property->field != $sheet->getCell($property->column)->getValue()) {
+                $isfound = FALSE;
+                break;
+            }
+        }
+
+        return $isfound;
+    }
+
+    public function validate_data_row(Worksheet $sheet, $layout)
+    {
+        $headers = $layout->schema->headers;
+
+        $isValid = TRUE;
+
+        foreach ($sheet->getRowIterator(2) as $row) {
+
+            if ((!$this->_is_empty_data_row($row))) {
+                $rowElement = array();
+                if (!$this->_is_valid_data_row($row, $headers, $rowElement))
+                    $isValid = FALSE;
+
+                $this->dataRows[] = $rowElement;
+            }
+        }
+
+        return $isValid;
+    }
+
+    private function _is_empty_data_row(Row $row)
+    {
+
+        $rowEmpty = TRUE;
+        $cellIterator = $row->getCellIterator();
+        $cellIterator->setIterateOnlyExistingCells(FALSE);
+
+        foreach ($cellIterator as $cell) {
+
+            if (!empty(trim($cell->getValue())))
+                $rowEmpty = FALSE;
+        }
+
+        return $rowEmpty;
+    }
+
+    private function _is_valid_data_row(Row $row, $headers, &$rowElement)
+    {
+        $isValid = TRUE;
+        $cellIterator = $row->getCellIterator();
+        $cellIterator->setIterateOnlyExistingCells(FALSE);
+        $message = "";
+
+        $styleArray = [
+            'borders' => [
+                'outline' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
+                    'color' => ['argb' => 'FFFF0000'],
+                ],
+            ],
+        ];
+
+        foreach ($headers as $property) {
+
+            foreach ($cellIterator as $cell) {
+
+                if (substr($property->column, 0, 1) == $cell->getColumn() && (property_exists($property, 'format') && !empty(trim($property->format)))) {
+                    if (!Layout::is_valid_value($cell->getFormattedValue(), $property->format, $message, $property->required)) {
+
+                        $cell->getStyle()->applyFromArray($styleArray);
+                        $this->dataErrors[] = array(
+                            "Line" => $row->getRowIndex(),
+                            "Field" => $property->field,
+                            "Error" => $message,
+                            "Value" => $cell->getFormattedValue()
+                        );
+
+                        $message = "";
+                        $isValid = FALSE;
+                    }
+
+                    $rowElement[$property->field] =  $cell->getFormattedValue();
+                } else if (substr($property->column, 0, 1) == $cell->getColumn()) {
+                    $rowElement[$property->field] =  $cell->getFormattedValue();
+                }
+            }
+        }
+
+        return $isValid;
+    }
+
+    public static function is_valid_value($value, $type, &$message, $isRequired = FALSE)
+    {
+
+        $pattern = '';
+        $value = trim($value);
+
+        switch ($type) {
+            case Layout::NAME:
+                $pattern = "/^[\u00e1\u00e9\u00ed\u00f3\u00fa\u00c1\u00c9\u00cd\u00d3\u00da\u00f1\u00d1a-zA-Z\s\.]*$/";
+                break;
+            case Layout::MAIL:
+                $pattern = "/^[a-zA-Z][\w\.-]*[a-zA-Z0-9]@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$/";
+                break;
+            case Layout::CP:
+                $pattern = "/^[0-9]{5}$/";
+                break;
+            case Layout::RFC:
+                $pattern = "/^[a-zA-Z]{3,4}(\d{6})((\D|\d){3})?$/";
+                break;
+            case Layout::MONEY:
+                $pattern = "/^\$?[0-9,]*[0-9]+(\.[0-9]+)?$/";
+                break;
+            case Layout::ALPHANUMERIC:
+                $pattern = "/^[a-zA-Z0-9]+$/";
+                break;
+            case Layout::ALPHA:
+                $pattern = "/^[a-zA-Z]+$/";
+                break;
+            case Layout::DATE:
+                $pattern = "/^(\d{4})([\/|-])(0[1-9]|1[0-2])([\/|-])([0][1-9]|[12][0-9]|3[01])$/";
+                break;
+            case Layout::DECIMAL:
+                $pattern = "/^-?[0-9]+(\.[0-9]*)?$/";
+                break;
+            case Layout::NUMERIC:
+                $pattern = "/^-?[0-9]+$/";
+                break;
+            case Layout::NUMERICPOS:
+                $pattern = "/^[0-9]+$/";
+                break;
+            case Layout::TIME:
+                $pattern = "/^(0[1-9]|1\d|2[0-3]):([0-5]\d):([0-5]\d)$/";
+                break;
+        }
+
+        if (empty($value) && $isRequired) {
+            $message = "The field is required";
+            return FALSE;
+        }
+
+
+        if (!preg_match($pattern, $value)) {
+            $message = "Invalid format.";
+            return FALSE;
+        }
+
+
+        return TRUE;
     }
 }
