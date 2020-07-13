@@ -172,6 +172,7 @@ class Forms
             $typeForm = explode('_', $params[0]);
 
             $this->form_attrib = array(
+                'id' => '{id}',
                 'class' => 'form-horizontal'
             );
 
@@ -190,6 +191,7 @@ class Forms
             if (in_array('search', $typeForm))
             {
                 $this->form_attrib = array(
+                    'id' => '{id}',
                     'class' => 'form-inline',
                     'method' => 'post',
                 );
@@ -313,6 +315,10 @@ class Forms
                     $element = form_dropdown('', $options, '', $this->attrib);
                 }
                 break;
+                case 'FILE':
+
+                    $element = form_upload($this->attrib);
+                    break;
         }
 
         $this->attrib = array();
