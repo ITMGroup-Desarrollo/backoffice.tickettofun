@@ -85,8 +85,9 @@ class Page extends CI_Model
             $bottom_menu = $build->build_components($this->settings['BOTTOM-MENU']);
             $icon_mobile = $build->build_components($this->settings['MOBILE_ICON_MENU']);
 
-            $current_user = str_replace('{img_avatar}', $user_avatar, $current_user);
+            $current_user = str_replace('{base}', base_url(), $current_user);
             $current_user = str_replace('{user_name}',$user_name, $current_user);
+            $current_user = str_replace('{img_avatar}', $user_avatar, $current_user);
 
             $body = str_replace('{bottom_menu}', $bottom_menu, $body);
             $body = str_replace('{current_user}', $current_user, $body);
