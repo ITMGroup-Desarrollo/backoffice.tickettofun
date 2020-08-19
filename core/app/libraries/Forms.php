@@ -318,7 +318,7 @@ class Forms
                 case 'FILE':
 
                     $element = form_upload($this->attrib);
-                    break;
+                break;
         }
 
         $this->attrib = array();
@@ -373,7 +373,11 @@ class Forms
                     $options[$row->option_value] = $row->option_description;
                 }
             }
-
+        }
+        else
+        {
+            // Set default value for non catalags
+            $options[''] = '-- Choose option --';
         }
 
         if (count($catalog) > 1)
