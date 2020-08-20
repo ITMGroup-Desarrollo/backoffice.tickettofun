@@ -13,6 +13,7 @@
             "MicroModal",
             "clickEvent",
             "alertModal",
+            "permissions",
             "FullCalendar",
             "MobileDetect",
             "XMLHttpRequest",
