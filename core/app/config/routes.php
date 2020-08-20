@@ -72,6 +72,7 @@ $route["destinations/(:num)"]   = "destinations/update/$1";
 $route["users/list"] = "users/index/$1";
 $route["users/new"]   = "users/index/$1";
 $route["users/(:num)"]   = "users/update/$1";
+$route["users/permissions"] = "users/permissions";
 
 // Settings
 $route["profile"] = "profile/index/$1";
@@ -105,6 +106,7 @@ $route["courtesies/(:num)"]   = "courtesies/update/$1";
 $route["prices/list"] = "prices/index/$1";
 $route["prices/new"]   = "prices/index/$1";
 $route["prices/(:num)"]   = "prices/update/$1";
+
 // Chips
 $route["ships/list"] = "ships/index/$1";
 $route["ships/new"]   = "ships/index/$1";

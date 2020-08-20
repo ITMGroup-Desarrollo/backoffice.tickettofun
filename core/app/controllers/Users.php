@@ -99,4 +99,51 @@ class Users extends CI_Controller
 
         $this->load->view('Master', $data);
     }
+
+    /**
+     * Get actions elements
+     * @param  php://input JSON form information
+     * @return JSON        $response permissions information
+     */
+    public function permissions()
+    {
+        $this->load->library('user_session', NULL, 'user');
+
+        $response = array(
+            'code' => 200,
+            'message' => '',
+        );
+
+        $permissions = array(
+            'g' => 0,
+            'gElement' => '',
+            'i' => 0,
+            'iElement' => '',
+            'u' => 0,
+            'uElement' => '',
+            'd' => 0,
+            'dElement' => '',
+            'statusElement' => ''
+        );
+
+        $anchor_attrib = array();
+        $status_attrib = array(
+            'class' => 'badge badge-{status}',
+            'data-status' => '{status_value}'
+        );
+
+        $permissions['statusElement'] = custom('span', $status_attrib, '{s_text}');
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST')
+        {
+            $data = json_decode(file_get_contents('php://input'));
+            $this->load->library('user_session', NULL, 'user');
+
+            $permissions = $this->user->get_actions($data->table, $permissions);
+        }
+
+        $response['message'] = $permissions;
+
+        echo json_encode($response);
+    }
 }
