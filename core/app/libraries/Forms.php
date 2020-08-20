@@ -117,7 +117,7 @@ class Forms
                             $row->label_name
                         );
                     }
-                    else if ($params[0] != 'signin' && $params[0] != 'update_call_extra')
+                    else if ($params[0] != 'signin' && $params[0] != 'update_call_extra' && $params[0] != 'arrives_search')
                     {
                         $label = form_label($row->label_name, '', $this->attrib);
                         $wrapper = custom('div', $this->wrapper_attrib, $element);
@@ -196,7 +196,7 @@ class Forms
                     'method' => 'post',
                 );
 
-                $this->button_attrib['class'] = 'btn btn-success search';
+                $this->button_attrib['class'] = 'btn btn-success search mb-2 mt-3 mt-md-0';
                 $buttons = custom('BUTTON', $this->button_attrib, 'Search');
             }
             else if ($params[0] == 'diary') {
