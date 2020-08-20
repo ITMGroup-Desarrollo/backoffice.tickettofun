@@ -167,27 +167,29 @@ var utils = {
 
     return e
   },
-  buildOptions: function (data, options) {
+  buildOptions: function (data, options, index) {
     const key = data.key
     const value = data.value
     const element = data.element
 
-    var index = 1
+    if (!Number.isInteger(index)) {
+      index = 0
+    }
+
     for (var i in options) {
       element.append(new Option(options[i][key], options[i][value]))
       element.options.item(index).setAttribute('id', options[i][value])
 
-      if (data.extra_data != null) {
-        var extraData = data.extra_data
-        for (var e in extraData) {
-          element.options.item(index).setAttribute(e, options[i][extraData[e]])
+      if (typeof data.extraData === 'object' && data.extraData !== null) {
+        for (var [k, v] of Object.entries(data.extraData)) {
+          element.options.item(index).setAttribute(k, v)
         }
       }
 
       index++
     }
 
-    if (data.id !== null) {
+    if (Number.isInteger(data.id) && data.id !== null) {
       element.options.namedItem(data.id).selected = true
     }
   },
