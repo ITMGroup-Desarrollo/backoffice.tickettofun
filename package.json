@@ -6,6 +6,7 @@
             "token",
             "codes",
             "utils",
+            "Option",
             "apiHost",
             "flatpickr",
             "validator",
