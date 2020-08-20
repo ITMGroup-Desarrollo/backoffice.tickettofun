@@ -10,6 +10,7 @@
             "flatpickr",
             "validator",
             "MicroModal",
+            "clickEvent",
             "alertModal",
             "FullCalendar",
             "MobileDetect",

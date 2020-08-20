@@ -18,6 +18,10 @@ var codes = {
   500: 1
 }
 
+const clickEvent = typeof window.ontouchstart !== 'undefined'
+  ? 'touchstart'
+  : 'click'
+
 var app = {
   signin: function (response) {
     MicroModal.close('wait-modal')
