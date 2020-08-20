@@ -1,5 +1,16 @@
 'use strict'
 
+var permissions = {
+  g: 0,
+  gElement: '',
+  i: 0,
+  iElement: '',
+  u: 0,
+  uElement: '',
+  d: 0,
+  dElement: ''
+}
+
 var utils = {
   loadJs: function (file) {
     (function (d, t) {
@@ -67,6 +78,16 @@ var utils = {
     xHR.open('POST', endpoint, true)
     xHR.setRequestHeader('Content-Type', 'application/json')
     xHR.send(data)
+  },
+  setPermissions: function (response) {
+    try {
+      response = JSON.parse(response)
+      if (!Object.prototype.hasOwnProperty.call(codes, response.code)) {
+        permissions = response.message
+      }
+    } catch (e) {
+      utils.displayModal(alertModal, '')
+    }
   },
   displayModal: function (id, message) {
     var _modal = document.getElementById(`${id}-content`)
