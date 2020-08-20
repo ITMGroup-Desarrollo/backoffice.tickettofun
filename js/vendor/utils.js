@@ -193,6 +193,15 @@ var utils = {
       element.options.namedItem(data.id).selected = true
     }
   },
+  removeOptions: function (element, index) {
+    const l = element.options.length
+
+    for (let i = l; i > 0; i--) {
+      if (i !== index) {
+        element.remove(i)
+      }
+    }
+  },
   dataValidator: function (fields) {
     var valid = 'true'
 
