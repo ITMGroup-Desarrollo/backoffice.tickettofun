@@ -243,6 +243,17 @@ var utils = {
     }
     return true
   },
+  getDate: function (addDay) {
+    var presentDate = new Date()
+
+    if (!Number.isInteger(addDay)) {
+      addDay = 0
+    }
+
+    presentDate.setDate(presentDate.getDate() + addDay)
+
+    return utils.dateFormat('Y-m-d', presentDate)
+  },
   dateFormat: function (frmt, dateObj) {
     const formats = {
       // full year e.g. 2016
@@ -282,10 +293,10 @@ var utils = {
   },
   getDataTableConfig: function () {
     const configDataTable = {
-      sPaginationType: 'full_numbers',
       responsive: true,
       fixedHeader: true,
       iDisplayLength: 20,
+      sPaginationType: 'full_numbers',
       aLengthMenu: [[20, 50, 100, -1], [20, 50, 100, 'All']]
     }
 
