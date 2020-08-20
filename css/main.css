@@ -3536,7 +3536,7 @@ body.open-sidebar #wrapper #content {
     }
 }
 
-#reports .stats {
+#reports .stats, #arrives .stats {
     margin: 0 -40px;
     margin-top: -24px;
     padding: 26px 40px 29px;
@@ -3546,20 +3546,20 @@ body.open-sidebar #wrapper #content {
 }
 
 @media (max-width: 767px) {
-    #reports .stats {
+    #reports .stat, #arrives .stats {
         margin-left: -20px;
         margin-right: -20px;
         padding-bottom: 15px;
     }
 }
 
-#reports .stats .stat {
+#reports .stats .stat, , #arrives .stats .stat {
     float: left;
     width: 25%;
 }
 
 @media (max-width: 767px) {
-    #reports .stats .stat {
+    #reports .stats .stat, , #arrives .stats .stat {
         width: 50%;
         margin-bottom: 20px;
     }
@@ -7628,7 +7628,7 @@ body.open-sidebar #wrapper #content {
 }
 
 .error-simulator {
-    padding-left: 5px;
+    padding-left: 0px;
 }
 
 #full-calendar {

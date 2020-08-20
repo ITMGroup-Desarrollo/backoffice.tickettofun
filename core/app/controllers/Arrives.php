@@ -49,7 +49,7 @@ class Arrives extends CI_Controller
             );
 
             $data['contents'] = str_replace(
-                '{content}', "<hr />".$table, $data['contents']
+                '{content}', $table, $data['contents']
             );
 
             $data['contents'] = str_replace(
