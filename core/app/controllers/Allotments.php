@@ -200,7 +200,7 @@ class Allotments extends CI_Controller
 
         $table = $this->Allotment->get_list();
 
-        $form = $this->Allotment->get_form('filters');
+        $form = $this->Allotment->get_form('filters',$view);
 
         $header_keys = [
             '{title}',
