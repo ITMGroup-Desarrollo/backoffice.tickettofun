@@ -565,4 +565,46 @@ class Allotments extends CI_Controller
         $this->load->view('Master', $data);
     }
 
+    public function transfer(){
+
+        $this->load->library('user_session', NULL, 'user');
+
+        if ( ! $this->user->active_session())
+            redirect(base_url('signin'));
+
+        $view   = $this->uri->segment(1);
+        $option = $this->uri->segment(2);
+
+        $this->load->Model('Page');
+        $this->Page->page_name = $option;
+        $this->Page->menu_active = 'allotments';
+        $this->Page->submenu_active = $option;
+
+        $data = $this->Page->get_contents();
+
+        $this->load->Model('Allotment');
+
+        $form = $this->Allotment->get_form($option,$view);
+
+        $form = str_replace('{id}', 'form-transfer', $form);
+
+        $data['contents'] = str_replace(
+            '{title}', 'Transferring of allotments', $data['contents']
+        );
+
+        $data['contents'] = str_replace(
+            '{search}', '', $data['contents']
+        );
+
+        $data['contents'] = str_replace(
+            '{content}', $form, $data['contents']
+        );
+
+        $userId = 'window.user_create_id = ' . $this->session->userdata('user_id');
+        $script = custom('script', '', $userId);
+        $data['scripts'] = $script .  $data['scripts'];
+
+        $this->load->view('Master', $data);
+    }
+
 }

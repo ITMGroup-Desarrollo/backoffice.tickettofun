@@ -136,6 +136,9 @@ class Allotment extends CI_Model
             case 'form_edit':
                 $form = 'ALLOTMENT_CONFIG_FORM';
                 break;
+            case 'transfer':
+                $form = 'TRANSFER_FORM';
+                break;
         }
 
         $this->model = $this->build->build_components(
