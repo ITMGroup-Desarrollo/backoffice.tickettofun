@@ -2354,6 +2354,10 @@ body.open-sidebar #wrapper #content {
     margin: 0 5px;
 }
 
+.form-control:disabled, .form-control[readonly] {
+    background-color: transparent !important;
+}
+
 #form #content form {
     margin-top: 35px;
 }
