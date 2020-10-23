@@ -346,5 +346,23 @@ var utils = {
     statusElement = statusElement.replace('{status_value}', id)
 
     return statusElement
+  },
+  getActionButtons: function (id) {
+    const regexId = /{id}/gi
+
+    var actions = ''
+    if (permissions.i === 1) {
+      actions = `${actions} ${permissions.iElement.replace(regexId, id)}`
+    }
+
+    if (permissions.u === 1) {
+      actions = `${actions} ${permissions.uElement.replace('{id}', id)}`
+    }
+
+    if (permissions.d === 1) {
+      actions = `${actions} ${permissions.dElement.replace('{id}', id)}`
+    }
+
+    return actions
   }
 }
