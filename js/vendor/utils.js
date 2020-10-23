@@ -322,5 +322,14 @@ var utils = {
     }
 
     return configDataTable
+  },
+  dropTable: function (table) {
+    if (table !== null && $.fn.dataTable.isDataTable(table)) {
+      $(table)
+        .DataTable()
+        .destroy()
+
+      table.parentNode.removeChild(table)
+    }
   }
 }
