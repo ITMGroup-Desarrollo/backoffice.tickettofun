@@ -331,5 +331,20 @@ var utils = {
 
       table.parentNode.removeChild(table)
     }
+  },
+  addStatusFormat: function (status, id) {
+    var textStatus = 'Active'
+    var labelStatus = 'success'
+
+    if (status === 0) {
+      labelStatus = 'danger'
+      textStatus = 'Inactive'
+    }
+
+    var statusElement = permissions.statusElement.replace('{status}', labelStatus)
+    statusElement = statusElement.replace('{s_text}', textStatus)
+    statusElement = statusElement.replace('{status_value}', id)
+
+    return statusElement
   }
 }
