@@ -1,10 +1,10 @@
 'use strict'
 var id
 var url
+var form
 var data
-var editor
-var dataTable
 var initialOptions
+var user = window.user
 var configTable = utils.getDataTableConfig()
 
 const arrives = {
