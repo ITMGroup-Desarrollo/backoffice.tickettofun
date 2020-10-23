@@ -121,21 +121,4 @@ class Arrive extends CI_Model
 
         return $this->model;
     }
-
-
-    public function get_formbtn()
-    {
-        $this->db->close();
-        $contents = $this->Page->get_settings('arrives');
-
-        $form = 'ALLOTMENTS_FORM';
-
-        $this->model = $this->build->build_components(
-            $contents[$form]
-        );
-
-        return $this->model;
-    }
-
-
 }
