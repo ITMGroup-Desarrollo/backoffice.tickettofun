@@ -49,20 +49,12 @@ class Arrives extends CI_Controller
             );
 
             $data['contents'] = str_replace(
-                '{content}', $table, $data['contents']
-            );
-
-            $data['contents'] = str_replace(
                 '{allotmentsTitle}', '', $data['contents']
             );
 
             $data['contents'] = str_replace(
                 '{allotments}', '', $data['contents']
             );
-            $data['contents'] = str_replace(
-                '{contentbtn}', '', $data['contents']
-            );
-
         }
         else
         {
@@ -85,10 +77,6 @@ class Arrives extends CI_Controller
             );
             $data['contents'] = str_replace(
                 '{allotments}', '', $data['contents']
-            );
-
-            $data['contents'] = str_replace(
-                '{contentbtn}', '', $data['contents']
             );
         }
 
@@ -113,7 +101,6 @@ class Arrives extends CI_Controller
         $option = $this->uri->segment(2);
 
         $this->load->Model('Page');
-        //$this->Page->page_name = $view;
         $this->Page->page_name = 'arrives';
 
         $data = $this->Page->get_contents();
@@ -128,13 +115,13 @@ class Arrives extends CI_Controller
         );
 
         $data['contents'] = str_replace(
-            '{search}', '', $data['contents']
+            '{search}', $form, $data['contents']
         );
-
+/*
         $data['contents'] = str_replace(
             '{content}', $form, $data['contents']
         );
-
+*/
         $table = $this->Arrive->get_list_allotments();
 
         $data['contents'] = str_replace(
@@ -145,21 +132,8 @@ class Arrives extends CI_Controller
             '{allotments}', $table, $data['contents']
         );
 
-        $formbtn = $this->Arrive->get_formbtn();
-        $formbtn = str_replace('{id}', 'allotmentsbtn', $formbtn);
-        $formbtn = str_replace('btn btn-success save', 'btn btn-info load-allotments', $formbtn);
-        $formbtn = str_replace('Save', 'Simulate', $formbtn);
-
-        $data['contents'] = str_replace(
-            '{contentbtn}', $formbtn, $data['contents']
-        );
-
         $arrives = $this->Arrive->get_data($option);
         $arrives = 'window.arrives = ' . json_encode($arrives);
-
-        $data['contents'] = str_replace(
-            '{classcontainererrors}', ' hidden', $data['contents']
-        );
 
         $userId = 'window.user = ' . $this->session->userdata('user_id');
         $script = custom('script', '', $userId);
@@ -371,5 +345,4 @@ class Arrives extends CI_Controller
          header('Cache-Control: max-age=0');
          $writer->save('php://output'); // download file
     }
-
 }
