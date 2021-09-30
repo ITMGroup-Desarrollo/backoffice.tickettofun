@@ -83,3 +83,16 @@ git-deploy/*.log
 # Enviroment files
 core/app/config/env.php
 core/app/config/env.php.back
+
+# Enviroment file
+.env
+
+# Codeigniter writable files
+writable/logs/*.log
+writable/debugbar/*.json
+writable/session/*
+!writable/session/index.html
+writable/cache/*
+!writable/cache/index.html
+writable/uploads/*
+!writable/uploads/index.html
