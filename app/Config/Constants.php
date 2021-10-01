@@ -77,3 +77,39 @@ defined('EXIT_USER_INPUT')     || define('EXIT_USER_INPUT', 7); // invalid user 
 defined('EXIT_DATABASE')       || define('EXIT_DATABASE', 8); // database error
 defined('EXIT__AUTO_MIN')      || define('EXIT__AUTO_MIN', 9); // lowest automatically-assigned error code
 defined('EXIT__AUTO_MAX')      || define('EXIT__AUTO_MAX', 125); // highest automatically-assigned error code
+
+/*
+|--------------------------------------------------------------------------
+| API Key
+|--------------------------------------------------------------------------
+|
+| Used to getting token access to core.
+|
+*/
+defined('TOKEN_ROUTE')          || define('TOKEN_ROUTE', 'v1/token');
+defined('GET_SERVICES_ROUTE')   || define('GET_SERVICES_ROUTE', 'api/v1/products');
+defined('GET_LOCATIONS_ROUTE')  || define('GET_LOCATIONS_ROUTE', 'api/v1/locations');
+
+defined('GET_COURTESIES_ROUTE')   || define('GET_COURTESIES_ROUTE', 'api/v1/courtesies');
+defined('GET_PRICES_ROUTE')       || define('GET_PRICES_ROUTE', 'api/v1/prices');
+defined('GET_ROLES_ROUTE')        || define('GET_ROLES_ROUTE', 'api/v1/roles');
+defined('GET_REPS_ROUTE')         || define('GET_REPS_ROUTE', 'api/v1/sales');
+defined('GET_BOOTHS_ROUTE')       || define('GET_BOOTHS_ROUTE', 'api/v1/booths');
+defined('GET_REP_BOOTH_ROUTE')    || define('GET_REP_BOOTH_ROUTE', 'api/v1/rep_booth');
+defined('GET_CHANNELS_ROUTE')     || define('GET_CHANNELS_ROUTE', 'api/v1/channels');
+defined('GET_DESTINATIONS_ROUTE') || define('GET_DESTINATIONS_ROUTE', 'api/v1/destinations');
+defined('GET_USERS_ROUTE')        || define('GET_USERS_ROUTE', 'api/v1/users');
+defined('GET_COUNTRIES_ROUTE')    || define('GET_COUNTRIES_ROUTE', 'api/v1/countries');
+
+defined('GET_RESELLERS_ROUTE')    || define('GET_RESELLERS_ROUTE', 'api/v1/resellers');
+defined('GET_BUSINESS_ROUTE')     || define('GET_BUSINESS_ROUTE', 'api/v1/unities');
+defined('GET_SHIPS_ROUTE')        || define('GET_SHIPS_ROUTE', 'api/v1/ships');
+defined('GET_APIKEYS_ROUTE')      || define('GET_APIKEYS_ROUTE', 'api/v1/apikeys');
+defined('GET_EQUIVALENCES_ROUTE') || define('GET_EQUIVALENCES_ROUTE', 'api/v1/equivalences');
+defined('GET_ARRIVES_ROUTE')      || define('GET_ARRIVES_ROUTE', 'api/v1/arrives');
+
+defined('GET_ALLOTMENT_RESERVATIONS_ROUTE') || define('GET_ALLOTMENT_RESERVATIONS_ROUTE', 'api/v1/allotment_reservations');
+defined('GET_ALLOTMENTS_ROUTE')             || define('GET_ALLOTMENTS_ROUTE', 'api/v1/allotments');
+
+defined('LABEL_SUCCESS') || define('LABEL_SUCCESS', 'badge badge-success');
+defined('LABEL_DANGER')  || define('LABEL_DANGER', 'badge badge-danger');
