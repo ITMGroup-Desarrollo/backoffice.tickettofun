@@ -9,6 +9,8 @@ use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use Psr\Log\LoggerInterface;
 
+use App\Libraries\User_session;
+
 /**
  * Class BaseController
  *
@@ -35,7 +37,7 @@ class BaseController extends Controller
      *
      * @var array
      */
-    protected $helpers = [];
+    protected $helpers = ['html', 'form', 'cookie'];
 
     /**
      * Constructor.
@@ -46,7 +48,8 @@ class BaseController extends Controller
         parent::initController($request, $response, $logger);
 
         // Preload any models, libraries, etc, here.
-
-        // E.g.: $this->session = \Config\Services::session();
+        $this->user    = new User_session();
+        $this->page    = new \App\Models\Page();
+        $this->session = \Config\Services::session();
     }
 }

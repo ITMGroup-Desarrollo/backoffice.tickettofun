@@ -30,6 +30,8 @@ $routes->setAutoRoute(true);
  * --------------------------------------------------------------------
  */
 
+// TODO: Add pending routes for new sections
+
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
 $routes->get('/', 'Signin::index');
