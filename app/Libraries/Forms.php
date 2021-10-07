@@ -331,8 +331,7 @@ class Forms
                     $element = form_dropdown('', $options, '', $this->attrib);
                 }
                 break;
-                case 'FILE':
-
+            case 'FILE':
                     $element = form_upload($this->attrib);
                 break;
         }
@@ -406,7 +405,7 @@ class Forms
             $this->api->request_api('GET', $endpoint, $params, $token)
         );
 
-        $options[''] = ($type === 'normal' ? '-- Choose option --' : '');
+        $options = custom('option', '', '-- Choose option --');
 
         if ($response->code == 200)
         {
@@ -435,6 +434,9 @@ class Forms
             }
             else
             {
+                $options = array();
+                $options[''] = ($type === 'normal') ? '-- Choose option --' : '';
+
                 foreach ($rows as $row) {
                     if((int)$row->active_status === 1)
                     {

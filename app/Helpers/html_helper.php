@@ -41,7 +41,6 @@ if ( ! function_exists('custom'))
     function custom($tag = '', $attributes = '', $content = '', $complement = ''): string
     {
         $out = '';
-        // TODO: Fix Array to string conversion error, may be caused by extra_name property
         if ( ! empty($tag))
         {
             $out .= '<' . $tag;
