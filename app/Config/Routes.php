@@ -55,6 +55,7 @@ $routes->add("destinations/(:num)", "Destinations::update/$1");
 $routes->add("users/list", "Users::index/$1");
 $routes->add("users/new", "Users::index/$1");
 $routes->add("users/(:num)", "Users::update/$1");
+$routes->add("users/permissions", "Users::permissions");
 
 //Settings
 $routes->add("profile", "Profile::index/$1");
@@ -79,7 +80,7 @@ $routes->add("locations/list", "Locations::index/$1");
 $routes->add("locations/new", "Locations::index/$1");
 $routes->add("locations/(:num)", "Locations::update/$1");
 
-//chips
+//ships
 $routes->add("ships/list", "Ships::index/$1");
 $routes->add("ships/new", "Ships::index/$1");
 $routes->add("ships/(:num)", "Ships::update/$1");
@@ -111,6 +112,33 @@ $routes->add("allotments/dynamic_html/(:num)", "Allotments::get_dynamic_html/$1"
 //Allotment reservation
 $routes->add("allotments/reservation", "Allotment_reservations::index/$1");
 $routes->add("allotments/reservation/(:num)", "Allotment_reservations::update/$1");
+
+// Prices
+$routes->add("prices/list", "Prices::index/$1");
+$routes->add("prices/new", "Prices::index/$1");
+$routes->add("prices/(:num)", "Prices::update/$1");
+
+// Courtesies
+$routes->add("courtesies/list", "Courtesies::index/$1");
+$routes->add("courtesies/new", "Courtesies::index/$1");
+$routes->add("courtesies/(:num)", "Courtesies::update/$1");
+
+// Sales Reps
+$routes->add("reps/list", "Reps::index/$1");
+$routes->add("reps/new", "Reps::index/$1");
+$routes->add("reps/(:num)", "Reps::update/$1");
+
+// Booths
+$routes->add("booths/list", "Booths::index/$1");
+$routes->add("booths/new", "Booths::index/$1");
+$routes->add("booths/(:num)", "Booths::update/$1");
+
+//Upload layouts configuration
+$routes->add("layouts/download", "Layouts::index/$1");
+$routes->add("layouts/export", "Layouts::export/$1");
+
+// Diary
+$routes->add("diary/print/(:num)", "Diary::print/$1");
 
 /*
  * --------------------------------------------------------------------
