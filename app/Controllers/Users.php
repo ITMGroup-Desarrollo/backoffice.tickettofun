@@ -1,6 +1,8 @@
 <?php
 namespace App\Controllers;
 
+use App\Libraries\User_session;
+
 class Users extends BaseController
 {
     public $user_model;
@@ -104,6 +106,8 @@ class Users extends BaseController
      */
     public function permissions()
     {
+        $this->user_actions = new User_session();
+
         $response = array(
             'code' => 200,
             'message' => '',
@@ -121,7 +125,6 @@ class Users extends BaseController
             'statusElement' => ''
         );
 
-        $anchor_attrib = array();
         $status_attrib = array(
             'class' => 'badge badge-{status}',
             'data-status' => '{status_value}'
@@ -133,8 +136,7 @@ class Users extends BaseController
         {
             $data = json_decode(file_get_contents('php://input'));
             
-
-            $permissions = $this->user_model->get_actions($data->table, $permissions);
+            $permissions = $this->user_actions->get_actions($data->table, $permissions);
         }
 
         $response['message'] = $permissions;
