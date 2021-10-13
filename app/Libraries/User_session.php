@@ -36,8 +36,7 @@ class User_session
             'token'        => $credentials->token,
             'avatar'       => $credentials->user->avatar,
             'page_default' => $credentials->user->page_default,
-            // TODO: Review and fix the attribute permissions
-            //'permissions'  => $this->_get_permissions($credentials->user->permissions)
+            'permissions'  => $this->_get_permissions($credentials->user->permissions)
         );
 
         if ($credentials->remember == 1)
