@@ -44,7 +44,7 @@ class Page extends Model
         $user_avatar = getenv('avatarAddr') . 'generic.jpg';
 
         if ( ! empty($this->session->get('avatar'))) {
-            $user_avatar = $this->config->item('avatar_addr') . $this->session->get('avatar');
+            $user_avatar = getenv('avatarAddr') . $this->session->get('avatar');
         }
 
         // If page need an special settings
