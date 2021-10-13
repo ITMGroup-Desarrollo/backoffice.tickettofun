@@ -7,7 +7,7 @@ class Reps extends BaseController
 
     public function __construct()
     {
-        $this->reseller = new \App\Models\Rep();
+        $this->rep = new \App\Models\Rep();
     }
 
     /**

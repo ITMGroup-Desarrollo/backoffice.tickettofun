@@ -29,7 +29,7 @@ class Courtesies extends BaseController
 
         if ($option == 'list')
         {
-            $table = $this->Courtesy->get_list();
+            $table = $this->courtesy->get_list();
 
             $data['contents'] = str_replace(
                 '{title}', 'List of courtesy', $data['contents']
@@ -41,7 +41,7 @@ class Courtesies extends BaseController
         }
         else
         {
-            $form = $this->Courtesy->get_form();
+            $form = $this->courtesy->get_form();
             $form = str_replace('{id}', 'add-courtesy', $form);
 
             $data['contents'] = str_replace(
@@ -75,7 +75,7 @@ class Courtesies extends BaseController
 
         $data = $this->page->get_contents();
 
-        $form = $this->Courtesy->get_form();
+        $form = $this->courtesy->get_form();
         $form = str_replace('{id}', 'update-courtesy', $form);
 
         $data['contents'] = str_replace(
@@ -86,7 +86,7 @@ class Courtesies extends BaseController
             '{content}', $form, $data['contents']
         );
 
-        $courtesy = $this->Courtesy->get_data($option);
+        $courtesy = $this->courtesy->get_data($option);
         $courtesy = 'window.courtesies = ' . json_encode($courtesy);
 
         $user_courtesy = 'window.user_create_id = ' . $this->session->get('user_id');
