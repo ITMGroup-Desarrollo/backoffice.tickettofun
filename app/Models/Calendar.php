@@ -49,18 +49,22 @@ class Calendar extends Model
 
             foreach ($rows as $row)
             {
-                $event        = new stdClass();
-                $event->title = $row->reseller_name . PHP_EOL . $row->ship_name;
+                // TODO:  Fix store procedure to evaluate active_status
+                if ($row->active_status == 1)
+                {
+                    $event        = new stdClass();
+                    $event->title = $row->reseller_name . PHP_EOL . $row->ship_name;
 
-                $arrival_date   = strtotime($row->arrival_date . ' ' . $row->arrival_time);
-                $departure_date = strtotime($row->arrival_date . ' ' . $row->departure_time);
+                    $arrival_date   = strtotime($row->arrival_date . ' ' . $row->arrival_time);
+                    $departure_date = strtotime($row->arrival_date . ' ' . $row->departure_time);
 
-                $event->end    = date("c", $departure_date);
-                $event->start  = date("c", $arrival_date);
-                
-                $event->allDay = false;
+                    $event->end    = date("c", $departure_date);
+                    $event->start  = date("c", $arrival_date);
 
-                $events[] = $event;
+                    $event->allDay = false;
+
+                    $events[] = $event;
+                }
             }
         }
 
