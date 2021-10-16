@@ -11,8 +11,8 @@ var configTable = utils.getDataTableConfig()
 const arrives = {
   list: {
     init: function () {
-      utils.post(JSON.stringify(
-        { table: 'arrives' }),
+      utils.post(
+        JSON.stringify({table:'arrives'}),
         `${base}users/permissions`,
         utils.setPermissions
       )
@@ -129,6 +129,7 @@ const arrives = {
 
           $(nodeTable).DataTable(configTable).draw()
 
+          // TODO: make a gglobal function
           var deleteBtns = document.querySelectorAll('.delete')
           for (let i = 0, l = deleteBtns.length; i < l; i++) {
             deleteBtns[i].addEventListener(clickEvent, (e) => {
@@ -198,7 +199,7 @@ const arrives = {
           data: 'arrive_id',
           title: 'Actions',
           render: (data, type, row, meta) => {
-            return utils.getActionButtons(data)
+            return buttons
           }
         })
       }

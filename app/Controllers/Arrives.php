@@ -30,7 +30,6 @@ class Arrives extends BaseController
         $view   = $this->request->uri->getSegment(1);
         $option = $this->request->uri->getSegment(2);
 
-        
         $this->page->page_name      = $view;
         $this->page->menu_active    = 'arrives';
         $this->page->submenu_active = $option;
@@ -43,8 +42,6 @@ class Arrives extends BaseController
 
         if ($option == 'list')
         {
-            $table = $this->arrive->get_list();
-
             $data['contents'] = str_replace(
                 '{title}', 'List of calls', $data['contents']
             );
@@ -62,6 +59,10 @@ class Arrives extends BaseController
 
             $data['contents'] = str_replace(
                 '{allotments}', '', $data['contents']
+            );
+
+            $data['contents'] = str_replace(
+                '{contentbtn}', '', $data['contents']
             );
         }
         else
