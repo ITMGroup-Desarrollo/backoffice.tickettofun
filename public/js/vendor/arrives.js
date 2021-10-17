@@ -110,22 +110,27 @@ const arrives = {
         MicroModal.close('wait-modal')
         response = JSON.parse(response)
 
+        utils.dropTable(document.querySelector('#arrives-registers'))
+
+        const content = document.querySelector('.table-arrives')
+        const nodeTable = utils.createElement('table', '', 'arrives-registers', '')
+
+        content.appendChild(nodeTable)
+
         if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
+          configTable = arrives.list.getTableConfig([])
+          console.log(configTable)
           if (response.code === 404) {
             utils.displayModal(alertModal, 'Not found calls with the selected data')
           } else {
             utils.displayModal(alertModal, response.message)
           }
+
+          $(nodeTable).DataTable(configTable).draw()
         } else {
           var registers = response.message
 
-          utils.dropTable(document.querySelector('#arrives-registers'))
-
           configTable = arrives.list.getTableConfig(registers)
-          const content = document.querySelector('.table-arrives')
-          const nodeTable = utils.createElement('table', '', 'arrives-registers', '')
-
-          content.appendChild(nodeTable)
 
           $(nodeTable).DataTable(configTable).draw()
 
@@ -175,7 +180,11 @@ const arrives = {
     getTableConfig: (registers) => {
       const config = utils.getDataTableConfig()
 
-      var buttons = utils.getActionButtons(registers[0].arrive_id)
+      var buttons = ''
+
+      if (registers.length > 0) {
+        buttons = utils.getActionButtons(registers[0].arrive_id)
+      }
 
       const columns = [
         { data: 'reseller_name', title: 'Vendor' },

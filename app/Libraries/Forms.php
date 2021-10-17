@@ -204,7 +204,7 @@ class Forms
                     'method' => 'post',
                 );
 
-                $this->button_attrib['class'] = 'btn btn-success search mb-2 mt-3 mt-md-0';
+                $this->button_attrib['class'] = 'btn btn-success search';
                 $buttons = custom('BUTTON', $this->button_attrib, 'Search');
             }
             else if ($params[0] == 'diary') {
