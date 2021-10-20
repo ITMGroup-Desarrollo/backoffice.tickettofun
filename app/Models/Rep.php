@@ -164,7 +164,7 @@ class Rep extends Model
             $sales_rep->active      = $response->message->active_status;
             $sales_rep->user_id     = $response->message->user_id;
             $sales_rep->code_rep    = $response->message->code;
-            $sales_rep->booth_id    = $booth_id;
+            $sales_rep->booth_id    = $response->message->booth_id;
             $sales_rep->last_name   = $response->message->last_name;
             $sales_rep->first_name  = $response->message->first_name;
             $sales_rep->email_addr  = $response->message->email_addr;

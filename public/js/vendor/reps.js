@@ -342,11 +342,12 @@ var btnemail = (document.querySelector('[name="searchbtn"]') ? document.querySel
 
 if (btnemail !== '') {
     btnemail.addEventListener('click', function(e) {
-        var valid = 'true'
-        var emailField = document.querySelector('[name="email"]')
+        var valid = true
+        var emailField = document.querySelectorAll('[name="email"]')
 
         valid = utils.dataValidator(emailField)
         if (valid) {
+            emailField = document.querySelector('[name="email"]')
             utils.api(JSON.stringify({}), `${apiHost}users/email/${emailField.value}`, 'GET', rep.setUserData)
         }
     })

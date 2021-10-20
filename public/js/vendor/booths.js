@@ -309,7 +309,7 @@ $('#reps_select').multiSelect({
 
         datepicker.flatpickr({
             altFormat: 'F j, Y',
-            dateFormat: 'Y-m-d h:i:S',
+            dateFormat: 'Y-m-d',
             defaultDate: 'today',
             altInput: true,
             mode: 'range',
