@@ -218,7 +218,7 @@ if (element != null) {
         date: dateStr
       }
 
-      const url = `${base}diary/get_diary`
+      const url = `${base}/diary/get_diary`
       utils.post(JSON.stringify(data), url, diary.refresh)
     }
   })
@@ -253,7 +253,7 @@ if (printButton !== null) {
     e.preventDefault()
 
     var date = document.querySelector('[name="inputDate"]').value
-    var endpoint = `${base}diary/print/${date}`
+    var endpoint = `${base}/diary/print/${date}`
 
     window.open(endpoint, '_blank')
   })

@@ -97,7 +97,7 @@ if (save !== null) {
     save.addEventListener("click", function(e) {
         e.preventDefault();
 
-        url = `${base}layouts/upload_file`;
+        url = `${base}/layouts/upload_file`;
 
         let valid = true;
         let fields = document.querySelectorAll("[data-validator]");

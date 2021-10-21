@@ -48,7 +48,7 @@ var app = {
       info.user = user
       info.token = window.token
 
-      var url = `${base}signin/set_data`
+      var url = `${base}/signin/set_data`
       utils.post(JSON.stringify(info), url, app.access, user.page_default)
     }
   },
@@ -56,7 +56,7 @@ var app = {
     window.location.href = redirect
   },
   logout: function () {
-    window.location.href = `${base}signin`
+    window.location.href = `${base}/signin`
   },
   resetMenu: function (elements) {
     for (var i = 0, l = elements.length; i < l; i++) {
@@ -139,7 +139,7 @@ var logouts = document.querySelectorAll('[class="signout"]')
 if (logouts.length > 0) {
   for (var i = 0, l = logouts.length; i < l; i++) {
     logouts[i].addEventListener('click', function (e) {
-      var url = `${base}signin/logout`
+      var url = `${base}/signin/logout`
       utils.post(null, url, app.logout)
     })
   }

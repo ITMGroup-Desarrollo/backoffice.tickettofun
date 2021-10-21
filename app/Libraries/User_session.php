@@ -129,13 +129,13 @@ class User_session
             if ($table == 'arrives') 
             {
                 $anchor_attrib['class'] = 'schedule';
-                $anchor_attrib['href']  = base_url() . 'allotments/itinerary/{id}';
+                $anchor_attrib['href']  = base_url() . '/allotments/itinerary/{id}';
 
                 $itinerary = custom('i', array('class' => 'fas fa-calendar-alt'), '');
                 $itinerary = custom('a', $anchor_attrib, $itinerary);
 
                 $anchor_attrib['class'] = 'clone';
-                $anchor_attrib['href']  = base_url() . 'allotments/clone/{id}';
+                $anchor_attrib['href']  = base_url() . '/allotments/clone/{id}';
 
                 $clone = custom('i', array('class' => 'fas fa-clone'), '');
                 $clone = custom('a', $anchor_attrib, $clone);
@@ -148,7 +148,7 @@ class User_session
         {
             $permissions['u']       = 1;
             $anchor_attrib['class'] = 'edit';
-            $anchor_attrib['href']  = base_url() . 'arrives/{id}';
+            $anchor_attrib['href']  = base_url() . '/arrives/{id}';
 
             $edit = custom('i', array('class' => 'fas fa-edit'), '');
             $edit = custom('a', $anchor_attrib, $edit);

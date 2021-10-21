@@ -405,7 +405,7 @@ const readElements = function () {
       e.preventDefault()
 
       utils.post(JSON.stringify({
-      }), `${base}allotments/dynamic_html/${arriveData.ships}`, schedule.dynamicDataTable, newTour)
+      }), `${base}/allotments/dynamic_html/${arriveData.ships}`, schedule.dynamicDataTable, newTour)
     })
   }
 }
