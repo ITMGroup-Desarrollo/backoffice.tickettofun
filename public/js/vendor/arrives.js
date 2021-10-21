@@ -9,14 +9,15 @@ var user = window.user
 var configTable = utils.getDataTableConfig()
 
 const arrives = {
+  initPermissions: () => {
+    utils.post(
+      JSON.stringify({table:'arrives'}),
+      `${base}/users/permissions`,
+      utils.setPermissions
+    )
+  },
   list: {
-    init: function () {
-      utils.post(
-        JSON.stringify({table:'arrives'}),
-        `${base}users/permissions`,
-        utils.setPermissions
-      )
-
+    init: () => {
       var searchBtn = document.querySelector('.search')
       var ship = document.querySelector('[name="ship"]')
       var dateRange = document.querySelector('.date-range')
@@ -119,7 +120,7 @@ const arrives = {
 
         if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
           configTable = arrives.list.getTableConfig([])
-          console.log(configTable)
+
           if (response.code === 404) {
             utils.displayModal(alertModal, 'Not found calls with the selected data')
           } else {
@@ -153,7 +154,6 @@ const arrives = {
           }
         }
       } catch (e) {
-        console.log(e)
         utils.displayModal(alertModal, '')
       }
     },
@@ -241,16 +241,7 @@ const arrives = {
     }
   },
   update: {
-    init: function () {
-      utils.post(JSON.stringify(
-        { table: 'allotments' }),
-        `${base}users/permissions`,
-        utils.setPermissions
-      )
-
-      arrives.update.loadData()
-    },
-    loadData: function () {
+    loadData: () => {
       url = `${apiHost}allotments`
 
       form.querySelector('[name="ships"]').value = dataArrive.ship_id
@@ -346,11 +337,10 @@ const arrives = {
           })
         }
       } catch (e) {
-        console.log(e)
         utils.displayModal(alertModal, '')
       }
     },
-    loadObject: function () {
+    loadObject: () => {
       var valid = true
       var fields = document.querySelectorAll('[data-validator]')
 
@@ -609,6 +599,9 @@ const arrives = {
   }
 }
 
+// Set permissions
+arrives.initPermissions()
+
 // Evaluate if exists table element
 form = document.querySelector('#form-arrives-search')
 if (form !== null) {
@@ -619,5 +612,5 @@ if (form !== null) {
 form = document.querySelector('#update-arrives')
 if (form !== null) {
   dataArrive = window.arrives
-  arrives.update.init()
+  arrives.update.loadData()
 }
