@@ -280,25 +280,33 @@ const arrives = {
         MicroModal.close('wait-modal')
         response = JSON.parse(response)
 
-        if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
-          utils.displayModal(alertModal, response.message)
+        utils.dropTable(document.querySelector('#allotments-registers'))
 
-          var title = document.querySelector('.msg-title')
+        configTable = arrives.update.getTableConfig(registers)
+        const content = document.querySelector('.table-allotment')
+        const nodeTable = utils.createElement('table', '', 'allotments-registers', '')
+
+        content.appendChild(nodeTable)
+
+        if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
+          configTable = arrives.update.getTableConfig([])
+
           if (response.code === 404) {
-            if (title) {
-              title.innerText = 'Not allotment configuration found!'
-            }
+            utils.displayModal(alertModal, 'Not allotment configuration found!')
+          } else {
+            utils.displayModal(alertModal, response.message)
           }
+
+          $(nodeTable).DataTable(configTable).draw()
         } else {
           var registers = response.message
+
           if (utils.isJson(registers)) {
             const dRegisters = JSON.parse(registers)
             registers = dRegisters.list
           }
 
-          if (title) {
-            title.innerText = 'Edit Allotments of Cruise'
-          }
+          configTable = arrives.update.getTableConfig(registers)
 
           var simulateBtn = document.querySelector('.load-allotments')
           var cancelButton = document.querySelector('.form-actions .cancel')
@@ -318,14 +326,6 @@ const arrives = {
               }
             })
           }
-
-          utils.dropTable(document.querySelector('#allotments-registers'))
-
-          configTable = arrives.update.getTableConfig(registers)
-          const content = document.querySelector('.table-allotment')
-          const nodeTable = utils.createElement('table', '', 'allotments-registers', '')
-
-          content.appendChild(nodeTable)
 
           $(nodeTable).DataTable(configTable).draw()
 
@@ -438,7 +438,13 @@ const arrives = {
       return rqstObject
     },
     getTableConfig: (registers) => {
-      const config = utils.getDataTableConfig()
+      const config = {
+        info:false,
+        paging: false,
+        responsive: true,
+        searching: false,
+        fixedHeader: true,
+      }
 
       var status
       const statusElement = document.querySelector('[name="status"]')

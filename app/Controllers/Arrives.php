@@ -35,7 +35,7 @@ class Arrives extends BaseController
         $this->page->submenu_active = $option;
 
         $data = $this->page->get_contents();
-     
+
         $data['contents'] = str_replace(
             'btn-export-excel', 'btn-export-excel hidden', $data['contents']
         );
@@ -107,7 +107,7 @@ class Arrives extends BaseController
         $view   = $this->request->uri->getSegment(1);
         $option = $this->request->uri->getSegment(2);
 
-        $this->page->page_name = 'arrives';
+        $this->page->page_name = $view;
 
         $data = $this->page->get_contents();
 
@@ -121,19 +121,9 @@ class Arrives extends BaseController
         $data['contents'] = str_replace(
             '{search}', $form, $data['contents']
         );
-/*
-        $data['contents'] = str_replace(
-            '{content}', $form, $data['contents']
-        );
-*/
-        $table = $this->arrive->get_list_allotments();
 
         $data['contents'] = str_replace(
             '{allotmentsTitle}', 'Edit Allotments of Cruise', $data['contents']
-        );
-
-        $data['contents'] = str_replace(
-            '{allotments}', $table, $data['contents']
         );
 
         $arrives = $this->arrive->get_data($option);
@@ -144,7 +134,7 @@ class Arrives extends BaseController
 
         $data['scripts'] = $script .  $data['scripts'];
 
-        $userRol = 'window.roluser = ' . $this->session->userdata('rol_id');
+        $userRol = 'window.roluser = ' . $this->session->get('rol_id');
         $script = custom('script', '', $userRol);
 
         $data['scripts'] = $script .  $data['scripts'];
@@ -153,7 +143,6 @@ class Arrives extends BaseController
         $data['scripts'] = $script .  $data['scripts'];
 
         return view('Master', $data);
-
     }
 
     public function buil_excel() {
@@ -167,7 +156,7 @@ class Arrives extends BaseController
         $result = $this->db->query($query, ['id', $id, NULL, NULL, NULL, NULL, NULL]);
 
         $row = $result->getRow();
-        
+
         $spreadsheet = new Spreadsheet();
         $sheet       = $spreadsheet->getActiveSheet();
 
@@ -338,7 +327,7 @@ class Arrives extends BaseController
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename="'. $filename .'.xlsx"');
         header('Cache-Control: max-age=0');
-        
+
         $writer->save('php://output'); // download file
     }
 }

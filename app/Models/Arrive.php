@@ -44,7 +44,7 @@ class Arrive extends Model
 
     public function get_list()
     {
-       
+
         $table_content = $this->page->get_settings('arrives');
 
         $table_content = $this->build->build_components(
@@ -100,13 +100,13 @@ class Arrive extends Model
             $arrives->reseller_id   = $response->message->reseller_id;
             $arrives->channel_name  = $response->message->channel_name;
             $arrives->reseller_name = $response->message->reseller_name;
-            
+
             $arrives->active                = $response->message->active_status;
             $arrives->ship_id               = $response->message->ship_id;
             $arrives->markup_end            = $response->message->markup_end;
             $arrives->arrival_date          = $response->message->arrival_date;
             $arrives->markup_start          = $response->message->markup_start;
-            $arrives->arrival_time          = $response->message->arrival_time;           
+            $arrives->arrival_time          = $response->message->arrival_time;
             $arrives->departure_time        = $response->message->departure_time;
             $arrives->arrival_time_markup   = $response->message->arrival_time_markup;
             $arrives->departure_time_markup = $response->message->departure_time_markup;
