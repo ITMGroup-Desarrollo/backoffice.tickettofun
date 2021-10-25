@@ -45,7 +45,7 @@ class Forms
     public function get($params = '')
     {
         $this->content_form = '';
-        
+
         $query  = 'CALL get_form(?)';
         $result = $this->db->query($query, [$params]);
 
@@ -60,16 +60,16 @@ class Forms
                 $row->element_attributes
             );
 
-            if (array_key_exists('withPrivilegies', $this->attrib)) 
+            if (array_key_exists('withPrivilegies', $this->attrib))
             {
-                if ($this->attrib['withPrivilegies'] == 'default') 
+                if ($this->attrib['withPrivilegies'] == 'default')
                 {
-                    if ($this->rol_id != 1 && !in_array('g_roles', $this->session->get('permissions'))) 
+                    if ($this->rol_id != 1 && !in_array('g_roles', $this->session->get('permissions')))
                     {
                         $add_element = 0;
                     }
                 }
-                else if ($this->rol_id != 1 && $this->rol_id != $this->attrib['withPrivilegies']) 
+                else if ($this->rol_id != 1 && $this->rol_id != $this->attrib['withPrivilegies'])
                 {
                     $add_element = 0;
                 }
@@ -119,8 +119,8 @@ class Forms
                         $row->label_name
                     );
                 }
-                else if ($params[0] != 'signin' && 
-                    $params[0] != 'update_call_extra' && 
+                else if ($params[0] != 'signin' &&
+                    $params[0] != 'update_call_extra' &&
                     $params[0] != 'arrives_search'
                     )
                 {
@@ -176,10 +176,32 @@ class Forms
         // Free query result
         $result->freeResult();
 
-        if ($params[0] != 'signin' && $params[0] != 'update_call_extra')
-        {
-            $typeForm = explode('_', $params[0]);
+        $query = 'SELECT f.default_buttons FROM forms AS f WHERE f.form_name = UPPER(?) AND f.active_status = 1';
+        $result = $this->db->query($query, [$params]);
 
+        $row = $result->getRow();
+
+        $default = 0;
+        if (isset($row)) {
+            $default = $row->default_buttons;
+        }
+
+        // Free query result
+        $result->freeResult();
+
+        $typeForm = explode('_', $params[0]);
+
+        $page  = new \App\Models\Page;
+        $build = new Build();
+
+        $content = $page->get_settings('');
+
+        $content = $build->build_components(
+            $content['BUTTONS_FORM']
+        );
+
+        if ($default == 1)
+        {
             $this->form_attrib = array(
                 'id'    => '{id}',
                 'class' => 'form-horizontal'
@@ -187,36 +209,26 @@ class Forms
 
             $this->button_attrib = array('class' => 'btn btn-default cancel');
 
-            $page  = new \App\Models\Page;
-            $build = new Build();
+            $buttons = custom('BUTTON', $this->button_attrib, 'Cancel');
 
-            $content = $page->get_settings('');
+            $this->button_attrib['class'] = 'btn btn-success save';
+            $buttons .= custom('BUTTON', $this->button_attrib, 'Save');
 
-            $content = $build->build_components(
-                $content['BUTTONS_FORM']
+            $content = str_replace('{buttons}', $buttons, $content);
+
+            $this->content_form .= $content;
+            $this->form = custom('form', $this->form_attrib, $this->content_form);
+        }
+        else if (in_array('search', $typeForm))
+        {
+            $this->form_attrib = array(
+                'id'     => '{id}',
+                'class'  => 'form-inline',
+                'method' => 'post',
             );
 
-            if (in_array('search', $typeForm))
-            {
-                $this->form_attrib = array(
-                    'id'     => '{id}',
-                    'class'  => 'form-inline',
-                    'method' => 'post',
-                );
-
-                $this->button_attrib['class'] = 'btn btn-success search';
-                $buttons = custom('BUTTON', $this->button_attrib, 'Search');
-            }
-            else if ($params[0] == 'diary') {
-                $buttons = '';
-                $content = '';
-            }
-            else {
-                $buttons = custom('BUTTON', $this->button_attrib, 'Cancel');
-
-                $this->button_attrib['class'] = 'btn btn-success save';
-                $buttons .= custom('BUTTON', $this->button_attrib, 'Save');
-            }
+            $this->button_attrib['class'] = 'btn btn-success search';
+            $buttons = custom('BUTTON', $this->button_attrib, 'Search');
 
             $content = str_replace('{buttons}', $buttons, $content);
 
@@ -236,20 +248,20 @@ class Forms
         if ( ! empty($api_endpoint)) {
             return $this->_get_catalog_api($api_endpoint, $keyvalue_pair, $extra_name, $type);
         }
-            
+
         return $this->_get_catalog($catalog_id);
     }
 
     private function _contains_array($array)
     {
-        foreach ($array as $item) 
+        foreach ($array as $item)
         {
             if (is_array($item))
             {
                 return true;
             }
         }
-            
+
         return false;
     }
 
@@ -260,7 +272,7 @@ class Forms
 
         if ( ! is_array($object))
         {
-            foreach ($object as $key => $value) 
+            foreach ($object as $key => $value)
             {
                 $attributes[$key] = $value;
             }
@@ -279,7 +291,7 @@ class Forms
         return $attributes;
     }
 
-    private function _get_element($form_element, $extra = '', 
+    private function _get_element($form_element, $extra = '',
         $api_endpoint = '', $keyvalue_pair = '', $extra_name = ''
         )
     {
@@ -394,7 +406,7 @@ class Forms
         $params  = new stdClass();
 
         $key_value = explode(',', $keyvalue_pair);
-     
+
         $name  = $key_value[1];
         $value = $key_value[0];
 
@@ -419,10 +431,10 @@ class Forms
                     $options = custom('option', '', '-- Choose option --');
                 }
 
-                foreach ($rows as $row) 
+                foreach ($rows as $row)
                 {
                     $attrib = array();
-                    
+
                     if((int)$row->active_status === 1)
                     {
                         $attrib['value'] = $row->$value;
