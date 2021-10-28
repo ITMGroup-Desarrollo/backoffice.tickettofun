@@ -88,7 +88,7 @@ var rep = {
         }
     },
     setData: function() {
-        var elements = ['first-name', 'last-name', 'status-rep', 'code-rep', 'booth-rep']
+        var elements = ['first-name', 'last-name', 'status-rep', 'code-rep']
         userId = repData.user_id
 
         rep.showElements(elements, false)
@@ -104,8 +104,7 @@ var rep = {
         document.querySelector('[name="last_name"]').value = repData.last_name
 
         document.querySelector('[name="code"]').value = repData['code_rep'];
-
-        (repData.booth_id) ? document.querySelector('[name="booths"]').value = repData.booth_id: document.querySelector('[name="booths"]').selectedIndex = 0
+        
     },
     setUserData: function(response) {
         MicroModal.close('wait-modal')
@@ -231,10 +230,8 @@ if (save != null) {
 
         if (valid) {
             info = {
-                reseller_id: 1,
                 code: document.querySelector('[name="code"]').value,
-                user_create_id: userCreateId,
-                booth: document.querySelector('[name="booths"]').value,
+                user_create_id: userCreateId,                
                 user: {
                     first_name: document.querySelector('[name="first_name"]').value,
                     last_name: document.querySelector('[name="last_name"]').value,
