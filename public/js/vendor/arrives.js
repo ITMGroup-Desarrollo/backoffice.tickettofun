@@ -180,12 +180,6 @@ const arrives = {
     getTableConfig: (registers) => {
       const config = utils.getDataTableConfig()
 
-      var buttons = ''
-
-      if (registers.length > 0) {
-        buttons = utils.getActionButtons(registers[0].arrive_id)
-      }
-
       const columns = [
         { data: 'reseller_name', title: 'Vendor' },
         { data: 'ship_name', title: 'Cruise' },
@@ -200,18 +194,15 @@ const arrives = {
           render: (data, type, row, meta) => {
             return utils.addStatusFormat(data, row.arrive_id)
           }
-        }
-      ]
-
-      if (buttons) {
-        columns.push({
+        },
+        {
           data: 'arrive_id',
           title: 'Actions',
           render: (data, type, row, meta) => {
-            return buttons
+            return  utils.getActionButtons(row.arrive_id)
           }
-        })
-      }
+        }
+      ]
 
       config.order = [2, 'asc']
       config.data = registers
