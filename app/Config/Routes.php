@@ -140,6 +140,11 @@ $routes->add("layouts/export", "Layouts::export/$1");
 // Diary
 $routes->add("diary/print/(:num)", "Diary::print/$1");
 
+//Sale locations
+$routes->add("sale-locations/list", "Sale_locations::index/$1");
+$routes->add("sale-locations/new", "Sale_locations::index/$1");
+$routes->add("sale-locations/(:num)", "Sale_locations::update/$1");
+
 /*
  * --------------------------------------------------------------------
  * Additional Routing

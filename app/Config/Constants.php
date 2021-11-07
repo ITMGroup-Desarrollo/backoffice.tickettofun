@@ -111,5 +111,7 @@ defined('GET_ARRIVES_ROUTE')      || define('GET_ARRIVES_ROUTE', 'api/v1/arrives
 defined('GET_ALLOTMENT_RESERVATIONS_ROUTE') || define('GET_ALLOTMENT_RESERVATIONS_ROUTE', 'api/v1/allotment_reservations');
 defined('GET_ALLOTMENTS_ROUTE')             || define('GET_ALLOTMENTS_ROUTE', 'api/v1/allotments');
 
+defined('GET_SALE_LOCATION_ROUTE')  || define('GET_SALE_LOCATION_ROUTE', 'api/v1/sale_locations');
+
 defined('LABEL_SUCCESS') || define('LABEL_SUCCESS', 'badge badge-success');
 defined('LABEL_DANGER')  || define('LABEL_DANGER', 'badge badge-danger');
