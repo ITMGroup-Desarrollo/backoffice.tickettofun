@@ -5,7 +5,8 @@ var form
 var data
 var dataArrive
 var initialOptions
-var user = window.user
+const user = window.user
+var pendingChanges = false
 var configTable = utils.getDataTableConfig()
 
 const arrives = {
@@ -18,10 +19,10 @@ const arrives = {
   },
   list: {
     init: () => {
-      var searchBtn = document.querySelector('.search')
-      var ship = document.querySelector('[name="ship"]')
-      var dateRange = document.querySelector('.date-range')
-      var reseller = document.querySelector('[name="reseller"]')
+      const searchBtn = document.querySelector('.search')
+      const ship = document.querySelector('[name="ship"]')
+      const dateRange = document.querySelector('.date-range')
+      const reseller = document.querySelector('[name="reseller"]')
 
       if (reseller !== null && ship !== null) {
         initialOptions = ship.innerHTML
@@ -55,12 +56,23 @@ const arrives = {
         })
       }
 
-      var confirmModal = document.getElementById('confirm-modal')
-      if (confirmModal !== null) {
-        var message = utils.createElement('p', '', '', 'Are you sure to delete this call?')
+      const cancel = document.querySelector('.cancel')
+      if (cancel != null) {
+        cancel.addEventListener('click', (e) => {
+          e.preventDefault()
 
-        var content = confirmModal.querySelector('#confirm-modal-content')
-        var btnConfirm = confirmModal.querySelector('.confirm-delete')
+          const form = document.querySelector('#add-arrives')
+          form.reset()
+        })
+      }
+
+
+      const confirmModal = document.getElementById('confirm-modal')
+      if (confirmModal !== null) {
+        const message = utils.createElement('p', '', '', 'Are you sure to delete this call?')
+
+        const content = confirmModal.querySelector('#confirm-modal-content')
+        const btnConfirm = confirmModal.querySelector('.confirm-delete')
 
         content.innerHTML = ''
         content.appendChild(message)
@@ -68,7 +80,7 @@ const arrives = {
         btnConfirm.addEventListener(clickEvent, (e) => {
           e.preventDefault()
 
-          var idArrive = e.target.getAttribute('data-id')
+          const idArrive = e.target.getAttribute('data-id')
           url = `${apiHost}arrives/del/${idArrive}`
 
           utils.api(JSON.stringify({ user: user }), url, 'DELETE', arrives.list.delete, e.target)
@@ -78,15 +90,15 @@ const arrives = {
       arrives.list.load(ship, reseller)
     },
     load: function (ship, reseller) {
-      var info = {}
+      const info = {}
       url = `${apiHost}arrives`
 
       const idShip = parseInt(ship.value, 10)
       const idReseller = parseInt(reseller.value, 10)
-      var dates = document.querySelector('[name="dates"]').value
+      const dates = document.querySelector('[name="dates"]').value
 
       if (dates.trim() !== '') {
-        var aDates = dates.split(' to ')
+        const aDates = dates.split(' to ')
 
         info.start_date = aDates[0]
         info.end_date = aDates[0]
@@ -129,20 +141,20 @@ const arrives = {
 
           $(nodeTable).DataTable(configTable).draw()
         } else {
-          var registers = response.message
+          const registers = response.message
 
           configTable = arrives.list.getTableConfig(registers)
 
           $(nodeTable).DataTable(configTable).draw()
 
           // TODO: make a gglobal function
-          var deleteBtns = document.querySelectorAll('.delete')
+          const deleteBtns = document.querySelectorAll('.delete')
           for (let i = 0, l = deleteBtns.length; i < l; i++) {
             deleteBtns[i].addEventListener(clickEvent, (e) => {
               e.preventDefault()
 
               let element = e.target
-              var btnConfirm = document.querySelector('.confirm-delete')
+              const btnConfirm = document.querySelector('.confirm-delete')
 
               if (!e.target.getAttribute('data-id')) {
                 element = e.target.parentElement
@@ -168,7 +180,7 @@ const arrives = {
           utils.displayModal(alertModal, 'Success! Cruise call date inactive correctly')
 
           id = element.getAttribute('data-id')
-          var statusLabel = document.querySelector(`[data-status="${id}"]`)
+          const statusLabel = document.querySelector(`[data-status="${id}"]`)
 
           statusLabel.classList.add('badge-danger')
           statusLabel.classList.remove('badge-success')
@@ -263,6 +275,37 @@ const arrives = {
         time_24hr: true
       })
 
+      //Listener if exists unapplied changes before to leave page
+      window.addEventListener('beforeunload', (e) => {
+        if (pendingChanges) {
+          e.preventDefault()
+          e.returnValue = ''
+        }
+      })
+
+      var saveButton = document.querySelector('.save')
+      if (saveButton != null) {
+        saveButton.addEventListener('click', (e) => {
+          e.preventDefault()
+
+          arrives.confirm()
+        })
+      }
+
+      var confirmButton = document.querySelector('.confirm-save')
+      if (confirmButton != null) {
+        confirmButton.addEventListener('click', (e) => {
+          e.preventDefault()
+
+          const info = arrives.update.loadObject()
+          if (info.frm !== null) {
+            pendingChanges = false
+            url = `${apiHost}arrives/edit/${dataArrive.id}`
+            utils.api(JSON.stringify(info), url, 'PUT', arrives.update.deploy)
+          }
+        })
+      }
+
       url = `${url}/arrive/${dataArrive.id}`
       utils.api(JSON.stringify({}), url, 'GET', arrives.update.deploy)
     },
@@ -273,7 +316,7 @@ const arrives = {
 
         utils.dropTable(document.querySelector('#allotments-registers'))
 
-        configTable = arrives.update.getTableConfig(registers)
+        configTable = arrives.update.getTableConfig([])
         const content = document.querySelector('.table-allotment')
         const nodeTable = utils.createElement('table', '', 'allotments-registers', '')
 
@@ -293,14 +336,14 @@ const arrives = {
           var registers = response.message
 
           if (utils.isJson(registers)) {
-            const dRegisters = JSON.parse(registers)
+            var  dRegisters = JSON.parse(registers)
             registers = dRegisters.list
           }
 
           configTable = arrives.update.getTableConfig(registers)
 
           var simulateBtn = document.querySelector('.load-allotments')
-          var cancelButton = document.querySelector('.form-actions .cancel')
+          const cancelButton = document.querySelector('.form-actions .cancel')
 
           if (simulateBtn === null) {
             simulateBtn = utils.createElement('button', 'btn btn-info load-allotments ml-1', '', 'Simulate')
@@ -312,6 +355,8 @@ const arrives = {
 
               const info = arrives.update.loadObject()
               if (info.frm !== null) {
+                pendingChanges = true
+
                 url = `${apiHost}arrives/simulator/`
                 utils.api(JSON.stringify(info), url, 'POST', arrives.update.deploy)
               }
@@ -333,9 +378,9 @@ const arrives = {
     },
     loadObject: () => {
       var valid = true
-      var fields = document.querySelectorAll('[data-validator]')
+      const fields = document.querySelectorAll('[data-validator]')
 
-      var rqstObject = {
+      const rqstObject = {
         frm: null,
         list: null,
         frmOrg: null
@@ -373,7 +418,7 @@ const arrives = {
         const schedulesEndBase = table.querySelectorAll('.schedule-end-base')
 
         for (let i = 0, l = startHours.length; i < l; i++) {
-          var allotment = {}
+          const allotment = {}
 
           allotment.schedule_start = schedulesBase[i].innerText
 
@@ -391,23 +436,23 @@ const arrives = {
 
           if (!Number.isInteger(allotment.capacity_min)) {
             valid = false
-            arrives.errorMsg('missing', 'minimum capacity', minAvailable[i], (i + 1))
+            arrives.errorMsg('missing', 'minimum capacity', minAvailable[i], allotment.service_name)
             break
-          } else if (allotment.capacity_min < 0) {
+          } else if (allotment.capacity_min <= 0) {
             valid = false
-            arrives.errorMsg('lessThanZero', 'minimum capacity', minAvailable[i], (i + 1))
+            arrives.errorMsg('lessThanZero', 'minimum capacity', minAvailable[i], allotment.service_name)
             break
           } else if (!Number.isInteger(allotment.capacity_max)) {
             valid = false
-            arrives.errorMsg('missing', 'maximum capacity', maxAvailable[i], (i + 1))
+            arrives.errorMsg('missing', 'maximum capacity', maxAvailable[i], allotment.service_name)
             break
           } else if (allotment.capacity_max < 0) {
             valid = false
-            arrives.errorMsg('lessThanZero', 'maximum capacity', maxAvailable[i], (i + 1))
+            arrives.errorMsg('lessThanZero', 'maximum capacity', maxAvailable[i], allotment.service_name)
             break
           } else if (allotment.capacity_min > allotment.capacity_max) {
             valid = false
-            arrives.errorMsg('exceded', 'minimum capacity', minAvailable[i], (i + 1))
+            arrives.errorMsg('exceded', 'minimum capacity', minAvailable[i], allotment.service_name)
             break
           }
 
@@ -483,8 +528,8 @@ const arrives = {
           data: 'schedule_start',
           title: 'Schedule start',
           render: (data, type, row, meta) => {
-            var startTime = utils.createElement(
-              'input', 'form-control-plaintext hrStart', '', ''
+            const startTime = utils.createElement(
+              'input', 'form-control-plaintext hrStart', `hrStart${row.allotment_id}`, ''
             )
 
             startTime.setAttribute('value', data)
@@ -500,8 +545,8 @@ const arrives = {
           data: 'min_available_base',
           title: 'Min.Capacity',
           render: (data, type, row, meta) => {
-            var startTime = utils.createElement(
-              'input', 'form-control-plaintext capmin', '', ''
+            const startTime = utils.createElement(
+              'input', 'form-control-plaintext capmin',`capmin${row.allotment_id}`, ''
             )
 
             startTime.setAttribute('type', 'number')
@@ -518,8 +563,8 @@ const arrives = {
           data: 'max_available_base',
           title: 'Max.Capacity',
           render: (data, type, row, meta) => {
-            var startTime = utils.createElement(
-              'input', 'form-control-plaintext capmax', '', ''
+            const startTime = utils.createElement(
+              'input', 'form-control-plaintext capmax', `capmax${row.allotment_id}`, ''
             )
 
             startTime.setAttribute('type', 'number')
@@ -557,7 +602,7 @@ const arrives = {
           data: 'allotment_id',
           title: 'Messages',
           render: (data, type, row, meta) => {
-            var span = utils.createElement(
+            const span = utils.createElement(
               'span', 'msg-error', '', row.message
             )
 
@@ -570,19 +615,30 @@ const arrives = {
       config.columns = columns
 
       return config
-    }
+    },
   },
-  errorMsg: function (error, type, element, position) {
+  confirm: () => {
+    var msg = ''
+    const confirmModal = document.querySelector('#confirm-modal-content')
+
+    msg = utils.createElement('p', '', '', 'Are you sure to save this configuration?')
+
+    confirmModal.innerHTML = ''
+    confirmModal.appendChild(msg)
+
+    MicroModal.show('confirm-modal')
+  },
+  errorMsg: function (error, type, element, service) {
     var msg = ''
     switch (error) {
       case 'lessThanZero':
         msg = `The  ${type} field doesn't accept negative numbers`
         break
       case 'missing':
-        msg = `The ${type} is required on register number ${position}`
+        msg = `The ${type} is required for <b>${service}</b> service`
         break
       case 'exceded':
-        msg = `Invalid ${type} on register number ${position}`
+        msg = `Invalid ${type} for <b>${service}</b> service`
         break
     }
 
@@ -609,5 +665,12 @@ if (form !== null) {
 form = document.querySelector('#update-arrives')
 if (form !== null) {
   dataArrive = window.arrives
+
+  // rename confirm button
+  const confirmButton = document.querySelector('.confirm-delete')
+  confirmButton.classList.remove('confirm-delete')
+  confirmButton.classList.add('confirm-save')
+
+
   arrives.update.loadData()
 }
