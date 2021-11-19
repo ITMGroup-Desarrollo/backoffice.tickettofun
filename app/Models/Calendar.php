@@ -20,7 +20,7 @@ class Calendar extends Model
     public $api;
     public $model;
     public $session;
-    
+
     public function __construct()
     {
         $this->model = '';
@@ -54,6 +54,11 @@ class Calendar extends Model
                 {
                     $event        = new stdClass();
                     $event->title = $row->reseller_name . PHP_EOL . $row->ship_name;
+
+                    if ($row->arrival_time == '0' || $row->arrival_time == '') {
+                        $row->arrival_time   = '00:00:00';
+                        $row->departure_time = '00:00:00';
+                    }
 
                     $arrival_date   = strtotime($row->arrival_date . ' ' . $row->arrival_time);
                     $departure_date = strtotime($row->arrival_date . ' ' . $row->departure_time);

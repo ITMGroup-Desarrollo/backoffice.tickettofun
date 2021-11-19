@@ -26,11 +26,11 @@ class Page extends Model
     public $script_attrib   = array();
     public $submenu_active  = '';
     public $settings_values = '';
-    
+
     public function __construct()
     {
         parent::__construct();
-        
+
         $this->build   = new Build();
         $this->session = \Config\Services::session();
 
@@ -285,7 +285,7 @@ class Page extends Model
         }
 
         $result->freeResult();
-        
+
         if ($this->page_name == 'signin')
             $contents = str_replace('{y}', date('Y'), $contents);
 
