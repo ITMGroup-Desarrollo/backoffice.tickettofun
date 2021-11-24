@@ -132,6 +132,7 @@ $routes->add("reps/(:num)", "Reps::update/$1");
 $routes->add("booths/list", "Booths::index/$1");
 $routes->add("booths/new", "Booths::index/$1");
 $routes->add("booths/(:num)", "Booths::update/$1");
+$routes->add("booths/configuration", "Booths::configuration/$1");
 
 //Upload layouts configuration
 $routes->add("layouts/download", "Layouts::index/$1");

@@ -121,12 +121,15 @@ class Booth extends Model
         return $this->model;
     }
 
-    public function get_form()
+    public function get_form($frmName="")
     {
         $contents = $this->page->get_settings('booths');
 
+        if(empty($frmName))
+            $frmName = "BOOTHS_FORM";
+
         $this->model = $this->build->build_components(
-            $contents['BOOTHS_FORM']
+            $contents[$frmName]
         );
 
         return $this->model;
@@ -160,6 +163,7 @@ class Booth extends Model
     public function get_data($id)
     {
         $params   = new stdClass();
+        $booth = new stdClass();
         $endpoint = GET_BOOTHS_ROUTE . '/' . $id;
 
         $token = $this->session->get('token');
@@ -170,38 +174,20 @@ class Booth extends Model
 
         if ($response->code == 200)
         {
-            $boothData = array();
-            $response = json_decode(json_encode($response), true);
-         
-            foreach($response['message'] as $key => $rowData) 
-            {
-                $boothData[$rowData["booth_id"]]['response']                                  = $rowData["response"];
-                $boothData[$rowData["booth_id"]]['booth_id']                                  = $rowData["booth_id"];
-                $boothData[$rowData["booth_id"]]['booth_name']                                = $rowData["booth_name"];
-                $boothData[$rowData["booth_id"]]['location_id']                               = $rowData["location_id"];
-                $boothData[$rowData["booth_id"]]['location_name']                             = $rowData["location_name"];
-                $boothData[$rowData["booth_id"]]['active']                                    = $rowData["active_status"];
-                $boothData[$rowData["booth_id"]]['reps'][$rowData["rep_id"]]['rep_id']        = $rowData["rep_id"];
-                $boothData[$rowData["booth_id"]]['reps'][$rowData["rep_id"]]['reseller_id']   = $rowData["reseller_id"];
-                $boothData[$rowData["booth_id"]]['reps'][$rowData["rep_id"]]['reseller_name'] = $rowData["reseller_name"];
-                $boothData[$rowData["booth_id"]]['reps'][$rowData["rep_id"]]['code']          = $rowData["code"];
-                $boothData[$rowData["booth_id"]]['reps'][$rowData["rep_id"]]['user_id']       = $rowData["user_id"];
-                $boothData[$rowData["booth_id"]]['reps'][$rowData["rep_id"]]['name']          = $rowData["name"];
-                $boothData[$rowData["booth_id"]]['reps'][$rowData["rep_id"]]['lastname']      = $rowData["lastname"];
-                $boothData[$rowData["booth_id"]]['reps'][$rowData["rep_id"]]['fullname']      = $rowData["lastname"];
-                $boothData[$rowData["booth_id"]]['reps'][$rowData["rep_id"]]['start_date']    = $rowData["start_date"];
-                $boothData[$rowData["booth_id"]]['reps'][$rowData["rep_id"]]['end_date']      = $rowData["end_date"];
-                $boothData[$rowData['booth_id']]['reps']                                      = $this->clearObjt($boothData[$rowData['booth_id']]['reps']);
-            }
-
-            $response = $this->clearObjt($boothData);
+            $booth->response = $response->message->response;
+            $booth->booth_id = $response->message->booth_id;
+            $booth->booth_name = $response->message->booth_name;
+            $booth->location_id = $response->message->location_id;
+            $booth->location_name = $response->message->location_name;
+            $booth->active_status = $response->message->active_status;
+           
         }
         else
         {
             redirect('/booths/list');
         }
 
-        return $response = (object) $response[0];
+        return $booth;
     }
 
     public function clearObjt(array $objectCart)

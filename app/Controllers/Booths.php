@@ -92,19 +92,51 @@ class Booths extends BaseController
         );
 
         $booth = $this->booth->get_data($option);
-        $booth = 'window.booth = ' . json_encode($booth);
+        $booth = 'window.booth = ' . json_encode($booth);        
 
-        $reps = $this->booth->get_rep_data($option);
-        $reps = 'window.reps = ' . json_encode($reps);
-
-        $script    = custom('script', '', $booth);
-        $scriptrep = custom('script', '', $reps);
+        $script    = custom('script', '', $booth);        
 
         $booth_user  = 'window.user_create_id = ' . $this->session->get('user_id');
         $script_user = custom('script', '', $booth_user);
 
-        $data['scripts'] = $script . $scriptrep . $script_user. $data['scripts'];
+        $data['scripts'] = $script . $script_user. $data['scripts'];
 
         return view('Master', $data);
+    }
+
+    public function configuration(){
+        if ( ! $this->user->active_session())
+            redirect(base_url('signin'));
+
+        $view   = $this->request->uri->getSegment(1);
+        $option = $this->request->uri->getSegment(2);
+        
+        $this->page->page_name = $view;
+
+        $data = $this->page->get_contents();
+
+        $form = $this->booth->get_form('BOOTHS_REP_FORM');
+        $form = str_replace('{id}', 'booth-rep', $form);
+
+        $data['contents'] = str_replace(
+            '{title}', 'Booth Rep', $data['contents']
+        );
+
+        $data['contents'] = str_replace(
+            '{content}', $form, $data['contents']
+        );
+
+        $reps = $this->booth->get_rep_data();
+        $reps = 'window.reps = ' . json_encode($reps);
+      
+        $scriptrep = custom('script', '', $reps);       
+
+        $booth_user  = 'window.user_create_id = ' . $this->session->get('user_id');
+        $script_user = custom('script', '', $booth_user);
+
+        $data['scripts'] = $scriptrep . $script_user. $data['scripts'];
+
+        return view('Master', $data);
+
     }
 }
