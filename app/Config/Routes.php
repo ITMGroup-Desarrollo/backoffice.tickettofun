@@ -101,6 +101,7 @@ $routes->add("arrives/new", "Arrives::index/$1");
 $routes->add("arrives/(:num)", "Arrives::update/$1");
 $routes->add("arrives/listjson", "Arrives/dataJson/$1");
 $routes->add("arrives/shiplist", "Arrives/shipList/$1");
+$routes->add("arrives/export/(:num)", "Arrives::export/$1");
 
 //Allotments
 $routes->add("allotments/new", "Allotments::create_configuration/$1");
@@ -136,7 +137,7 @@ $routes->add("booths/configuration", "Booths::configuration/$1");
 
 //Upload layouts configuration
 $routes->add("layouts/download", "Layouts::index/$1");
-$routes->add("layouts/export", "Layouts::export/$1");
+$routes->add("layouts/export/(:any)", "Layouts::export/$1");
 
 // Diary
 $routes->add("diary/print/(:num)", "Diary::print/$1");

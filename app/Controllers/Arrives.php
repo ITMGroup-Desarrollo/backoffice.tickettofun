@@ -108,6 +108,7 @@ class Arrives extends BaseController
         $option = $this->request->uri->getSegment(2);
 
         $this->page->page_name = $view;
+        $this->page->custom_menu_bar = 'MENU_BAR_EXPORT';
 
         $data = $this->page->get_contents();
 
@@ -125,6 +126,9 @@ class Arrives extends BaseController
         $data['contents'] = str_replace(
             '{allotmentsTitle}', 'Edit Allotments of Cruise', $data['contents']
         );
+
+        $export_icon = '<i class="fa fa-file-excel"></i>';
+        $data['contents'] = str_replace('EXPORT', $export_icon, $data['contents']);
 
         $arrives = $this->arrive->get_data($option);
         $arrives = 'window.arrives = ' . json_encode($arrives);
@@ -145,108 +149,94 @@ class Arrives extends BaseController
         return view('Master', $data);
     }
 
-    public function buil_excel() {
+    public function export() {
 
-        $id = $_GET['id'];
+        $id = $this->request->uri->getSegment(3);
 
-        $this->db->close();
-        $this->load->database();
-
-        $query  = 'CALL get_arrive(?, ?, ?, ?, ?, ?, ?)';
-        $result = $this->db->query($query, ['id', $id, NULL, NULL, NULL, NULL, NULL]);
-
-        $row = $result->getRow();
+        $arrive = $this->arrive->get_data($id);
 
         $spreadsheet = new Spreadsheet();
         $sheet       = $spreadsheet->getActiveSheet();
 
-        if ($row->response == 200)
+        if (property_exists($arrive, "id"))
         {
-            $sheet ->getColumnDimension('B')->setWidth(40);
-            $sheet ->getColumnDimension('C')->setWidth(19);
-            $sheet ->getColumnDimension('D')->setWidth(16);
-            $sheet ->getColumnDimension('E')->setWidth(16);
-            $sheet ->getColumnDimension('F')->setWidth(16);
-            $sheet ->getColumnDimension('G')->setWidth(10);
+            $sheet->getColumnDimension('B')->setWidth(40);
+            $sheet->getColumnDimension('C')->setWidth(19);
+            $sheet->getColumnDimension('D')->setWidth(16);
+            $sheet->getColumnDimension('E')->setWidth(18);
+            $sheet->getColumnDimension('F')->setWidth(18);
+            $sheet->getColumnDimension('G')->setWidth(10);
 
-            $styletableArrive = array(
-                "borders" => array(
-                    "allBorders" => array(
+            $styletableArrive         = array(
+                "borders"             => array(
+                    "allBorders"      => array(
                         "borderStyle" => Border::BORDER_THIN,
-                        "color" => array("argb" => "517094"),
+                        "color"       => array("argb" => "517094"),
                     ),
                 ),
             );
 
-            $sheet ->getStyle("B2:C7")->applyFromArray($styletableArrive);
+            $sheet->getStyle("B2:C6")->applyFromArray($styletableArrive);
 
-            $sheet->getStyle('B2:C7')->getFill()->applyFromArray(
+            $sheet->getStyle('B2:C6')->getFill()->applyFromArray(
                 [
-                    'fillType' => Fill::FILL_GRADIENT_LINEAR,
-                    'rotation' => 0,
+                    'fillType'   => Fill::FILL_GRADIENT_LINEAR,
+                    'rotation'   => 0,
                     'startColor' => [
-                        'rgb' => 'DCE6F2'
+                        'rgb'    => 'DCE6F2'
                     ],
-                    'endColor' => [
-                        'argb' => 'DCE6F2'
+                    'endColor'   => [
+                        'argb'   => 'DCE6F2'
                     ]
                 ]
             );
 
-            $darkrow = array(
+            $darkrow       = array(
                 'fillType' => Fill::FILL_GRADIENT_LINEAR,
                 'rotation' => 0,
-                'color' => array('argb' => '8EABCC')
+                'color'    => array('argb' => '8EABCC')
             );
 
             $sheet->getStyle('B2:C2')->getFill()->applyFromArray($darkrow);
             $sheet->getStyle('B4:C4')->getFill()->applyFromArray($darkrow);
             $sheet->getStyle('B6:C6')->getFill()->applyFromArray($darkrow);
 
-            $sheet->getStyle('B2:B7')->getFont()->applyFromArray(
+            $sheet->getStyle('B2:B6')->getFont()->applyFromArray(
                 [
-                   'bold' => False,
-                    'color' => [
+                   'bold'     => False,
+                    'color'   => [
                         'rgb' => '17202A'
                    ]
                ]
             );
 
-            $sheet->setCellValue('B2', 'CRUISE:');
-            $sheet->setCellValue('B3', 'ARRIVAL_DATE:');
-            $sheet->setCellValue('B4', 'ARRIVAL_TIME:');
-            $sheet->setCellValue('B5', 'DEPARTURE_TIME:');
-            $sheet->setCellValue('B5', 'MARKUP_START:');
-            $sheet->setCellValue('B6', 'MARKUP_END:');
-            $sheet->setCellValue('B7', 'STATUS:');
+            $sheet->setCellValue('B2', 'Cruise');
+            $sheet->setCellValue('B3', 'Arrival date');
+            $sheet->setCellValue('B4', 'Arrival time');
+            $sheet->setCellValue('B5', 'Departure tieme');
+            $sheet->setCellValue('B5', 'Markup start');
+            $sheet->setCellValue('B6', 'Markup end');
 
-            foreach ($result->getResult() as $row)
+            $sheet->setCellValue('C2', $arrive->ship_name);
+            $sheet->setCellValue('C3', $arrive->arrival_date);
+            $sheet->setCellValue('C4', $arrive->arrival_time);
+            $sheet->setCellValue('C5', $arrive->departure_time);
+            $sheet->setCellValue('C5', $arrive->markup_start);
+            $sheet->setCellValue('C6', $arrive->markup_end);
+
+            $response = $this->arrive->get_allotments_data($id);
+
+            if ($response->code == 200)
             {
-                $sheet->setCellValue('C2', $row->ship_name);
-                $sheet->setCellValue('C3', $row->arrival_date);
-                $sheet->setCellValue('C4', $row->arrival_time);
-                $sheet->setCellValue('C5', $row->departure_time);
-                $sheet->setCellValue('C5', $row->markup_start);
-                $sheet->setCellValue('C6', $row->markup_end);
-                $sheet->setCellValue('C7', $row->active_status);
-            }
+                $allotments = $response->message;
 
-            $result->freeResult();
+                $num_rows = count($allotments);
 
-            //ALLOTMENTS TABLE ON EXCEL
-            $query  = 'CALL get_allotment(?, ?, ?, ?, ?, ?, ?)';
-            $result = $this->db->query($query, ['arrive', NULL, NULL, NULL, $id, NULL, NULL]);
-
-            $row      = $result->getRow();
-            $num_rows = $result->getNumRows();
-
-            if ($row->response == 200)
-            {
                 $styleheaderAllotments = array(
-                    "borders" => array(
-                        "allBorders" => array(
+                    "borders"             => array(
+                        "allBorders"      => array(
                             "borderStyle" => Border::BORDER_THIN,
-                            "color" => array("argb" => "517094"),
+                            "color"       => array("argb" => "517094"),
                         ),
                     ),
                 );
@@ -257,66 +247,71 @@ class Arrives extends BaseController
                     [
                         'fillType' => Fill::FILL_GRADIENT_LINEAR,
                         'rotation' => 0,
-                         'color' => [
-                             'rgb' => '517094'
-                         ]
+                        'color'    => [
+                            'rgb'  => '517094'
+                        ]
                     ]
                 );
 
                 //Font Style on Header Allotments
                 $sheet->getStyle('B10:G10')->getFont()->applyFromArray(
                          [
-                            'bold' => TRUE,
-                             'color' => [
-                                 'rgb' => 'FBFCFC'
+                            'bold'     => TRUE,
+                            'color'    => [
+                                'rgb'  => 'FBFCFC'
                             ]
                         ]
                 );
 
-                $sheet->setCellValue('B10', 'SERVICE');
-                $sheet->setCellValue('C10', 'SCHEDULE_START');
-                $sheet->setCellValue('D10', 'SCHEDULE_END');
-                $sheet->setCellValue('E10', 'MIN_CAPACITY');
-                $sheet->setCellValue('F10', 'MAX_CAPACITY');
-                $sheet->setCellValue('G10', 'STATUS');
-                $ind=10;
+                $sheet->setCellValue('B10', 'Service');
+                $sheet->setCellValue('C10', 'Schedule start');
+                $sheet->setCellValue('D10', 'Schedule end');
+                $sheet->setCellValue('E10', 'Minimum capacity');
+                $sheet->setCellValue('F10', 'Maximum capacity');
+                $sheet->setCellValue('G10', 'Status');
 
                 //background default of body of Allotments #DCE6F2
                 $sheet->getStyle('B11:G'.(10 + $num_rows))->getFill()->applyFromArray(
                     [
                         'fillType' => Fill::FILL_GRADIENT_LINEAR,
                         'rotation' => 0,
-                        'color' => [
-                            'rgb' => 'DCE6F2'
+                        'color'    => [
+                            'rgb'  => 'DCE6F2'
                         ]
                     ]
                 );
 
-                $controw = 0;
-                 for ($i = 0; $i < $num_rows; $i++)
+                $pos = 11;
+                foreach ($allotments as $row)
                 {
-                    $ind++;
+                    $sheet->setCellValue('B'.$pos, $row->service_name);
+                    $sheet->setCellValue('C'.$pos, $row->schedule_start_base);
+                    $sheet->setCellValue('D'.$pos, $row->schedule_end_base);
+                    $sheet->setCellValue('E'.$pos, $row->min_available_base);
+                    $sheet->setCellValue('F'.$pos, $row->max_available_base);
 
-                    $sheet->setCellValue('B'.$ind, $result[$i]->service_name);
-                    $sheet->setCellValue('C'.$ind, $result[$i]->schedule_start_base);
-                    $sheet->setCellValue('D'.$ind, $result[$i]->schedule_end_base);
-                    $sheet->setCellValue('E'.$ind, $result[$i]->min_available_base);
-                    $sheet->setCellValue('F'.$ind, $result[$i]->max_available_base);
-                    $sheet->setCellValue('G'.$ind, $result[$i]->active_status_base);
+                    $status = 'Active';
+                    if ($row->active_status_base == 0)
+                    {
+                        $status = 'Inactive';
+                    }
 
-                   //background diferent each 2 rows #8EABCC
-                    if ($controw == $i){
-                       $sheet->getStyle('B'.$ind.':G'.$ind)->getFill()->applyFromArray(
-                        [
-                             'fillType' => Fill::FILL_GRADIENT_LINEAR,
-                             'rotation' => 0,
-                             'color' => [
-                                 'rgb' => '8EABCC'
-                             ]
-                        ]
-                       );
-                       $controw = $controw + 2;
-                   }
+                    $sheet->setCellValue('G'.$pos, $status);
+
+                    if ($pos % 2 == 0)
+                    {
+                        $sheet->getStyle('B'.$pos.':G'.$pos)->getFill()->applyFromArray(
+                            [
+                                'fillType' => Fill::FILL_GRADIENT_LINEAR,
+                                'rotation' => 0,
+                                'color'    => [
+                                    'rgb'  => '8EABCC'
+                                ]
+                            ]
+                        );
+                    }
+
+                    $pos++;
                 }
             }
         }
@@ -324,10 +319,12 @@ class Arrives extends BaseController
         $writer = new Xlsx($spreadsheet);
         $filename = 'Arrive Excel';
 
-        header('Content-Type: application/vnd.ms-excel');
+       // header('Content-Type: application/vnd.ms-excel');
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="'. $filename .'.xlsx"');
         header('Cache-Control: max-age=0');
 
         $writer->save('php://output'); // download file
+        exit();
     }
 }

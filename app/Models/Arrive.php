@@ -119,6 +119,20 @@ class Arrive extends Model
         return $arrives;
     }
 
+    public function get_allotments_data($arrive_id)
+    {
+        $params = new stdClass();
+        $endpoint = GET_ARRIVES_ALLOTMENTS_ROUTE . $arrive_id;
+
+        $token = $this->session->get('token');
+
+        $response = json_decode(
+            $this->api->request_api('GET', $endpoint, $params, $token)
+        );
+
+        return $response;
+    }
+
     public function get_list_allotments()
     {
         $table_content = $this->page->get_settings('arrives');

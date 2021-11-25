@@ -655,6 +655,15 @@ const arrives = {
 // Set permissions
 arrives.initPermissions()
 
+//Add export actions
+const btnExport = document.querySelector('[name="export"]')
+if (btnExport !== null) {
+  btnExport.addEventListener('click', (e) => {
+    url = `${base}/arrives/export/${dataArrive.id}`
+    window.open(url)
+  })
+}
+
 // Evaluate if exists table element
 form = document.querySelector('#form-arrives-search')
 if (form !== null) {

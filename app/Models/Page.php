@@ -26,6 +26,7 @@ class Page extends Model
     public $script_attrib   = array();
     public $submenu_active  = '';
     public $settings_values = '';
+    public $custom_menu_bar = '';
 
     public function __construct()
     {
@@ -98,6 +99,10 @@ class Page extends Model
             $menu_bar_page = 'MENU_BAR_' . strtoupper($this->page_name);
             if (array_key_exists($menu_bar_page, $this->settings)) {
                 $menu_bar = $this->build->build_components($this->settings[$menu_bar_page]);
+            }
+
+            if ($this->custom_menu_bar != '') {
+                $menu_bar = $this->build->build_components($this->settings[$this->custom_menu_bar]);
             }
 
             $menu_bar = str_replace('{menu_icon_mobile}', $icon_mobile, $menu_bar);
