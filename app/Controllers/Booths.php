@@ -21,7 +21,6 @@ class Booths extends BaseController
         $view   = $this->request->uri->getSegment(1);
         $option = $this->request->uri->getSegment(2);
 
-        
         $this->page->page_name      = $view;
         $this->page->menu_active    = 'booths';
         $this->page->submenu_active = $option;
@@ -75,7 +74,7 @@ class Booths extends BaseController
 
         $view   = $this->request->uri->getSegment(1);
         $option = $this->request->uri->getSegment(2);
-        
+
         $this->page->page_name = $view;
 
         $data = $this->page->get_contents();
@@ -92,9 +91,9 @@ class Booths extends BaseController
         );
 
         $booth = $this->booth->get_data($option);
-        $booth = 'window.booth = ' . json_encode($booth);        
+        $booth = 'window.booth = ' . json_encode($booth);
 
-        $script    = custom('script', '', $booth);        
+        $script    = custom('script', '', $booth);
 
         $booth_user  = 'window.user_create_id = ' . $this->session->get('user_id');
         $script_user = custom('script', '', $booth_user);
@@ -110,7 +109,7 @@ class Booths extends BaseController
 
         $view   = $this->request->uri->getSegment(1);
         $option = $this->request->uri->getSegment(2);
-        
+
         $this->page->page_name = $view;
 
         $data = $this->page->get_contents();
@@ -128,8 +127,8 @@ class Booths extends BaseController
 
         $reps = $this->booth->get_rep_data();
         $reps = 'window.reps = ' . json_encode($reps);
-      
-        $scriptrep = custom('script', '', $reps);       
+
+        $scriptrep = custom('script', '', $reps);
 
         $booth_user  = 'window.user_create_id = ' . $this->session->get('user_id');
         $script_user = custom('script', '', $booth_user);

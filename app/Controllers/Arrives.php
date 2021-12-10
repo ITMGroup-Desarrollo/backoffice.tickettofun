@@ -178,32 +178,9 @@ class Arrives extends BaseController
 
             $sheet->getStyle("B2:C6")->applyFromArray($styletableArrive);
 
-            $sheet->getStyle('B2:C6')->getFill()->applyFromArray(
-                [
-                    'fillType'   => Fill::FILL_GRADIENT_LINEAR,
-                    'rotation'   => 0,
-                    'startColor' => [
-                        'rgb'    => 'DCE6F2'
-                    ],
-                    'endColor'   => [
-                        'argb'   => 'DCE6F2'
-                    ]
-                ]
-            );
-
-            $darkrow       = array(
-                'fillType' => Fill::FILL_GRADIENT_LINEAR,
-                'rotation' => 0,
-                'color'    => array('argb' => '8EABCC')
-            );
-
-            $sheet->getStyle('B2:C2')->getFill()->applyFromArray($darkrow);
-            $sheet->getStyle('B4:C4')->getFill()->applyFromArray($darkrow);
-            $sheet->getStyle('B6:C6')->getFill()->applyFromArray($darkrow);
-
             $sheet->getStyle('B2:B6')->getFont()->applyFromArray(
                 [
-                   'bold'     => False,
+                   'bold'     => True,
                     'color'   => [
                         'rgb' => '17202A'
                    ]
@@ -240,10 +217,11 @@ class Arrives extends BaseController
                         ),
                     ),
                 );
-                $sheet ->getStyle("B10:G" .(10 + $num_rows))->applyFromArray($styleheaderAllotments);
 
-                //background default of Header of Allotments
-                $sheet->getStyle('B10:G10')->getFill()->applyFromArray(
+                $sheet ->getStyle("B10:F" .(10 + $num_rows))->applyFromArray($styleheaderAllotments);
+
+                // Background default of Header of Allotments
+                $sheet->getStyle('B10:F10')->getFill()->applyFromArray(
                     [
                         'fillType' => Fill::FILL_GRADIENT_LINEAR,
                         'rotation' => 0,
@@ -268,10 +246,9 @@ class Arrives extends BaseController
                 $sheet->setCellValue('D10', 'Schedule end');
                 $sheet->setCellValue('E10', 'Minimum capacity');
                 $sheet->setCellValue('F10', 'Maximum capacity');
-                $sheet->setCellValue('G10', 'Status');
 
                 //background default of body of Allotments #DCE6F2
-                $sheet->getStyle('B11:G'.(10 + $num_rows))->getFill()->applyFromArray(
+                $sheet->getStyle('B11:F'.(10 + $num_rows))->getFill()->applyFromArray(
                     [
                         'fillType' => Fill::FILL_GRADIENT_LINEAR,
                         'rotation' => 0,
@@ -290,17 +267,9 @@ class Arrives extends BaseController
                     $sheet->setCellValue('E'.$pos, $row->min_available_base);
                     $sheet->setCellValue('F'.$pos, $row->max_available_base);
 
-                    $status = 'Active';
-                    if ($row->active_status_base == 0)
-                    {
-                        $status = 'Inactive';
-                    }
-
-                    $sheet->setCellValue('G'.$pos, $status);
-
                     if ($pos % 2 == 0)
                     {
-                        $sheet->getStyle('B'.$pos.':G'.$pos)->getFill()->applyFromArray(
+                        $sheet->getStyle('B'.$pos.':F'.$pos)->getFill()->applyFromArray(
                             [
                                 'fillType' => Fill::FILL_GRADIENT_LINEAR,
                                 'rotation' => 0,
@@ -319,7 +288,6 @@ class Arrives extends BaseController
         $writer = new Xlsx($spreadsheet);
         $filename = 'Arrive Excel';
 
-       // header('Content-Type: application/vnd.ms-excel');
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="'. $filename .'.xlsx"');
         header('Cache-Control: max-age=0');

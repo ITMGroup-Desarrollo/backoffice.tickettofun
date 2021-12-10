@@ -146,7 +146,7 @@ class Allotment_reservations extends BaseController
         $view   = 'config';
         $option = $this->request->uri->getSegment(2);
 
-        
+
         $this->page->page_name      = $view;
         $this->page->menu_active    = 'list';
         $this->page->submenu_active = $option;

@@ -8,7 +8,6 @@ class Allotments extends BaseController
 
     public function __construct()
     {
-
         $this->arrive = new \App\Models\Arrive();
         $this->allotment = new \App\Models\Allotment();
     }
@@ -24,7 +23,7 @@ class Allotments extends BaseController
         $view   = $this->request->uri->getSegment(1);
         $option = $this->request->uri->getSegment(2);
 
-        
+
         $this->page->page_name      = $view;
         $this->page->menu_active    = 'cruise';
         $this->page->submenu_active = $option;
@@ -97,7 +96,7 @@ class Allotments extends BaseController
         return view('Master', $data);
     }
 
-    public function itinerary() 
+    public function itinerary()
     {
         if ( ! $this->user->active_session())
             redirect(base_url('signin'));
@@ -106,7 +105,7 @@ class Allotments extends BaseController
         $option = $this->request->uri->getSegment(2);
         $id     = $this->request->uri->getSegment(3);
 
-        
+
         $this->page->page_name = $view;
         $this->page->menu_active = 'allotments';
 
@@ -147,12 +146,12 @@ class Allotments extends BaseController
         return view('Master', $data);
     }
 
-    public function get_dynamic_html($id) 
+    public function get_dynamic_html($id)
     {
         echo json_encode($this->_get_dynamic_html($id));
     }
 
-    private function _get_dynamic_html($id) 
+    private function _get_dynamic_html($id)
     {
         if ( ! $this->user->active_session())
             redirect(base_url('signin'));
@@ -183,7 +182,7 @@ class Allotments extends BaseController
 
         $view   = 'config';
         $option = $this->request->uri->getSegment(2);
-        
+
         $this->page->page_name      = $view;
         $this->page->menu_active    = 'allotments';
         $this->page->submenu_active = $option;
@@ -548,7 +547,7 @@ class Allotments extends BaseController
 
         $view   = $this->request->uri->getSegment(1);
         $option = $this->request->uri->getSegment(2);
-   
+
         $this->page->page_name = $option;
         $this->page->menu_active = 'allotments';
         $this->page->submenu_active = $option;
