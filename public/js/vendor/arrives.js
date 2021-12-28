@@ -66,7 +66,6 @@ const arrives = {
         })
       }
 
-
       const confirmModal = document.getElementById('confirm-modal')
       if (confirmModal !== null) {
         const message = utils.createElement('p', '', '', 'Are you sure to delete this call?')

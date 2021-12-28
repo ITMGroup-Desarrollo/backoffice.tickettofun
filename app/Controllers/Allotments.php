@@ -1,14 +1,19 @@
 <?php
 namespace App\Controllers;
 
+use stdClass;
+use App\Libraries\Api;
+
 class Allotments extends BaseController
 {
+    public $api;
     public $arrive;
     public $allotment;
 
     public function __construct()
     {
-        $this->arrive = new \App\Models\Arrive();
+        $this->api       = new Api();
+        $this->arrive    = new \App\Models\Arrive();
         $this->allotment = new \App\Models\Allotment();
     }
 
@@ -22,7 +27,6 @@ class Allotments extends BaseController
 
         $view   = $this->request->uri->getSegment(1);
         $option = $this->request->uri->getSegment(2);
-
 
         $this->page->page_name      = $view;
         $this->page->menu_active    = 'cruise';
@@ -71,7 +75,6 @@ class Allotments extends BaseController
         $option = $this->request->uri->getSegment(2);
 
         $this->page->page_name = $view;
-
         $data = $this->page->get_contents();
 
         $this->ship = new \App\Models\Ship();
@@ -102,9 +105,7 @@ class Allotments extends BaseController
             redirect(base_url('signin'));
 
         $view   = 'schedules';
-        $option = $this->request->uri->getSegment(2);
         $id     = $this->request->uri->getSegment(3);
-
 
         $this->page->page_name = $view;
         $this->page->menu_active = 'allotments';
@@ -118,30 +119,61 @@ class Allotments extends BaseController
         $call .= $arrive_data->arrival_date . ' / ';
         $call .= $arrive_data->arrival_time . '-' . $arrive_data->departure_time;
 
-        $dynamic_element = $this->_get_dynamic_html($id);
+        $params = new stdClass();
 
-        $data['contents'] = str_replace('{call}', $call, $data['contents']);
+        $token              = $this->session->get('token');
+        $endpoint           = GET_ALLOTMENTS_ROUTE;
+        $params->start_date = $arrive_data->arrival_date;
 
-        $header_keys = [
-            '{title}',
-            '{content}'
-        ];
-
-        $header_elements = [
-            'Schedules List',
-            $dynamic_element['filters_form'] . '<hr>' . $dynamic_element['table']
-        ];
-
-        $data['contents'] = str_replace(
-            $header_keys, $header_elements, $data['contents']
+        $response = json_decode(
+            $this->api->request_api('POST', $endpoint, $params, $token)
         );
 
+        $dataRows = "";
+        if ($response->code == 200)
+        {
+            $rows = $response->message;
+
+            for ($i = 0; $i < count($rows); $i++)
+            {
+                $column = "";
+
+                $shared = "No";
+                if ($rows[$i]->shared_schedule == 1) {
+                    $shared = "Yes";
+                }
+
+                $private = "No";
+                if ($rows[$i]->private_service == 1) {
+                    $private = "Yes";
+                }
+
+                $column = custom('td', '', $rows[$i]->allotment_id);
+                $column .= custom('td', '', $rows[$i]->channel_name);
+                $column .= custom('td', '', $rows[$i]->reseller_name);
+                $column .= custom('td', '', $rows[$i]->ship_name);
+                $column .= custom('td', '', $rows[$i]->service_name);
+                $column .= custom('td', '', "{$rows[$i]->min_available} - {$rows[$i]->max_available}");
+                $column .= custom('td', '', "{$rows[$i]->schedule_start} - {$rows[$i]->schedule_end}");
+                $column .= custom('td', '', $shared);
+                $column .= custom('td', '', $private);
+
+                $dataRows .= custom('tr', '', $column);
+            }
+        }
+
+        $data['contents'] = str_replace('{rows}', $dataRows, $data['contents']);
+        $data['contents'] = str_replace('{cruise-edit}', $call, $data['contents']);
+        $data['contents'] = str_replace('{id}', 'schedules-search', $data['contents']);
+        $data['contents'] = str_replace('{title}', 'Schedules suggested', $data['contents']);
+
         $userId = 'window.user = ' . $this->session->get('user_id');
-        $script2 = custom('script', '', $userId);
+        $script = custom('script', '', $userId);
 
         $arrive = 'window.arrive_data = ' . json_encode($arrive_data);
-        $script = custom('script', '', $arrive);
-        $data['scripts'] = $script . $script2 . $data['scripts'];
+        $script .= custom('script', '', $arrive);
+
+        $data['scripts'] = $script . $data['scripts'];
 
         return view('Master', $data);
     }

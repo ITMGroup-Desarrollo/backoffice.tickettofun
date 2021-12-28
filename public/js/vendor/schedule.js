@@ -1,285 +1,194 @@
 'use strict'
-var info
 var user = window.user
-const arriveData = window.arrive_data
-let cont = 1
-var service
-let scheduleTableinitialized = $('#schedule0 #schedules-registers')
+var arriveData = window.arrive_data
+var configTable = utils.getDataTableConfig()
 
-const schedule = {
-  dataTableInitializer (parentElementParam, data = [], originalData = []) {
-    const parentElementJS = document.querySelector(`${parentElementParam}`)
-    const search = parentElementJS.querySelector('.search')
+const schedules = {
+  init: () => {
+    const overlap = document.querySelector('[name="overlap"]')
+    const service = document.querySelector('[name="service"]')
+    const generate = document.querySelector('.generate-schedule')
+    const assingment = document.querySelector('.previous-assignment')
 
-    if (search != null) {
-      if (search.getAttribute('data-event') !== 'true' || search.getAttribute('data-event') === null) {
-        search.setAttribute('data-event', 'true')
+    if (assingment != null) {
+      configTable.iDisplayLength = 5
+      configTable.order = [[0, 'desc']]
+      configTable.aLengthMenu = [[5, 10, 25, -1], [5, 10, 25, 'All']]
 
-        search.addEventListener('click', function (e) {
-          e.preventDefault()
-
-          utilAjaxExecute(e.target.closest('.content-wrapper').id)
-        })
-      }
+      $(assingment).DataTable(configTable)
     }
-
-    service = parentElementJS.querySelector('[name="service"]')
-
-    const preservServiceId = service.value
 
     if (service != null) {
-      service.innerHTML = ''
-      for (var i = service.options.length - 1; i > 0; i--) {
-        service.remove(i)
-      }
-
-      service.options.length = 0
       service.append(new Option('-- Choose option --', ''))
 
-      service.value = preservServiceId
-      const equivalencesByShip = utils.api(JSON.stringify({}), `${apiHost}equivalences/ship/${arriveData.ships}`, 'GET', schedule.buildOptions, {
-        element: 'service',
-        name: 'service',
-        id: originalData[0] ? originalData[0].service_id : 0
+      utils.api(JSON.stringify({}), `${apiHost}equivalences/ship/${arriveData.ship_id}`, 'GET', schedules.serviceList, service)
+    }
+
+    if (overlap != null) {
+      flatpickr(overlap, {
+        altInput: false,
+        enableTime: true,
+        noCalendar: true,
+        dateFormat: 'H:i',
+        defaultHour: 0,
+        defaultMinute: 30,
+        maxTime: '05:00',
+        minuteIncrement: 30,
+        time_24hr: true
       })
-      service.value = originalData[0] ? originalData[0].service_id : 0
     }
 
-    scheduleTableinitialized = parentElementParam === '#schedule0' ? $('#schedule0 #schedules-registers') : $(`${parentElementParam} #schedules-registers`)
+    if (generate != null) {
+      generate.addEventListener('click', (e) => {
+        e.preventDefault()
 
-    if (scheduleTableinitialized != null) {
-      if (scheduleTableinitialized.attr('data-isdatatable') === 'true') {
-        scheduleTableinitialized.attr('data-isdatatable', 'true')
-        $(scheduleTableinitialized).DataTable().destroy()
-      }
+        schedules.loadData()
+      })
     }
+  },
+  serviceList: (response, element) => {
+    try {
+      MicroModal.close('wait-modal')
+      response = JSON.parse(response)
 
-    scheduleTableinitialized.attr('data-isdatatable', 'true')
-    $(scheduleTableinitialized).DataTable({
-      retrieve: true,
-      data: data,
-      columnDefs: [
-        {
-          targets: 0,
-          render: function (data, type, row, meta) {
-            return `<input name="schedule_start${meta.row}" class="form-control text-center time-format" value="${data}">`
-          }
-        },
-        {
-          targets: 1,
-          render: function (data, type, row, meta) {
-            return `<input name="schedule_end${meta.row}" class="form-control text-center time-format" value="${data}">`
-          }
-        },
-        {
-          targets: 2,
-          render: function (data, type, row, meta) {
-            return `<input name="min_available${meta.row}" class="form-control text-center" value="${data}">`
-          }
-        },
-        {
-          targets: 3,
-          render: function (data, type, row, meta) {
-            return `<input name="max_available${meta.row}" class="form-control text-center" value="${data}">`
-          }
-        },
-        {
-          targets: 4,
-          data: 'shared_schedule',
-          className: 'text-center',
-          render: function (data, type, row, meta) {
-            const checkboxContainer = utils.createElement('div', 'checkbox')
-            const checkboxInput = utils.createElement('input', '')
-            const checkboxLabel = utils.createElement('label', '')
-            checkboxInput.setAttribute('type', 'checkbox')
-            checkboxInput.setAttribute('name', `shared${meta.row}`)
-            checkboxInput.setAttribute('id', meta.row)
-            checkboxInput.setAttribute('readonly', true)
-            checkboxInput.setAttribute('disabled', true)
+      if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
+        configTable = schedules.getTableConfig([])
 
-            if (row[4] === 0) {
-              checkboxInput.setAttribute('checked', false)
-              checkboxLabel.appendChild(checkboxInput)
-              checkboxContainer.appendChild(checkboxLabel)
-              return `<div>${checkboxContainer.innerHTML}</div>`
-            } else {
-              checkboxInput.setAttribute('checked', true)
-              checkboxLabel.appendChild(checkboxInput)
-              checkboxContainer.appendChild(checkboxLabel)
-              return `<div>${checkboxContainer.innerHTML}</div>`
-            }
-          }
-        },
-        {
-          targets: 5,
-          data: 'private_service',
-          className: 'text-center',
-          render: function (data, type, row, meta) {
-            const checkboxContainer = utils.createElement('div', 'checkbox')
-            const checkboxInput = utils.createElement('input', '')
-            const checkboxLabel = utils.createElement('label', '')
-            checkboxInput.setAttribute('type', 'checkbox')
-            checkboxInput.setAttribute('name', `private${meta.row}`)
-            checkboxInput.setAttribute('id', meta.row)
-            checkboxInput.setAttribute('readonly', true)
-
-            if (parseInt(row[5]) === 1) {
-              checkboxInput.setAttribute('checked', true)
-            }
-
-            checkboxLabel.appendChild(checkboxInput)
-            checkboxContainer.appendChild(checkboxLabel)
-            return `<div>${checkboxContainer.innerHTML}</div>`
-          }
-        },
-        {
-          targets: 6,
-          data: 'arrive_id',
-          render: function (data, type, row, meta) {
-            return `<a class="btn-link save" data-toggle="tooltip" data-placement="left" title="Save allotment" id="${meta.row}" dataservice="${originalData[0].service_id}"><i class="fas fa-save" aria-hidden="true"></i></a> <a class="btn-link delete" data-toggle="tooltip" data-placement="left" title="Remove this schedule" id="${meta.row}" dataservice="${originalData[0].service_id}"><i class="fas fa-trash" aria-hidden="true"></i></a>`
-          }
+        if (response.code === 404) {
+          utils.displayModal(alertModal, 'Not found services')
+        } else {
+          utils.displayModal(alertModal, response.message)
         }
-      ],
-      processing: true,
-      stateSave: true,
-      sPaginationType: 'full_numbers',
-      iDisplayLength: 20,
-      aLengthMenu: [
-        [20, 50, 100, -1], [20, 50, 100, 'All']
-      ]
-    })
+      } else {
+        const data = {
+          key: 'service_name',
+          value: 'service_id',
+          element: element
+        }
 
-    document.querySelector(parentElementParam).querySelectorAll('.time-format').flatpickr({
-      enableTime: true,
-      noCalendar: true,
-      dateFormat: 'H:i',
-      time_24hr: true
-    })
-
-    document.querySelector(parentElementParam).querySelectorAll('.overlap-format').flatpickr({
-      altInput: false,
-      enableTime: true,
-      noCalendar: true,
-      dateFormat: 'H:i',
-      defaultDate: originalData.length > 0 ? originalData[0].overlap : '00:30',
-      defaultHour: 0,
-      defaultMinute: 30,
-      maxTime: '05:00',
-      minuteIncrement: 30,
-      time_24hr: true
-    })
-
-    var save = document.querySelector(parentElementParam).querySelectorAll('.save')
-    if (save != null) {
-      const contadordeeventossave = 0
-      save.forEach(saveBtn => {
-        saveBtn.addEventListener('click', function (e) {
-          e.preventDefault()
-
-          const valid = 'true'
-          var id = saveBtn.id
-          const dataservice = saveBtn.dataservice
-
-          const container = document.querySelector(parentElementParam)
-
-          info = {
-            channel_id: arriveData.channel_id,
-            reseller_id: arriveData.reseller_id,
-            arrive_id: arriveData.id,
-            service_id: preservServiceId,
-            start_date: arriveData.arrival_date,
-            end_date: arriveData.arrival_date,
-            schedule_start: container.querySelector(`[name="schedule_start${id}"]`).value,
-            schedule_end: container.querySelector(`[name="schedule_end${id}"]`).value,
-            overlap: container.querySelector('[name="overlap"]').value,
-            min_available: container.querySelector(`[name="min_available${id}"]`).value,
-            max_available: container.querySelector(`[name="max_available${id}"]`).value,
-            shared_schedule: container.querySelector(`[name="shared${id}"]`).checked ? 1 : 0,
-            private_service: container.querySelector(`[name="private${id}"]`).checked ? 1 : 0,
-            user_id: user
-          }
-
-          var url = `${apiHost}allotments/add`
-          info.user_id = user
-          info.type_movement = 'I'
-
-          info.row = id
-          info.container = container
-          console.log(info)
-          utils.api(JSON.stringify(info), url, 'POST', schedule.add, info)
-        })
-      })
-    }
-
-    var remove = document.querySelector(parentElementParam).querySelectorAll('.delete')
-    if (remove) {
-      remove.forEach(removeBtn => {
-        removeBtn.addEventListener('click', function (e) {
-          e.preventDefault()
-
-          removeBtn.closest('tr').remove()
-        })
-      })
-    }
-  },
-  loadData: function (response, element) {
-    const data = JSON.parse(response)
-
-    let datatable = []
-    if (Array.isArray(data.message)) {
-      datatable = data.message.map(data => {
-        const dataArray = [
-          data.schedule_start,
-          data.schedule_end,
-          data.min_available,
-          data.max_available,
-          data.shared_schedule,
-          data.private_service,
-          data.arrive_id
-        ]
-
-        return dataArray
-      })
-    }
-
-    const tableId = element !== undefined ? element : 'schedule0'
-
-    schedule.dataTableInitializer(`#${tableId}`, datatable, data.message) // last param for recovery serviceId
-
-    MicroModal.close('wait-modal')
-  },
-  dynamicDataTable (response, extradata) {
-    const html = JSON.parse(response)
-    const contentWrapper = document.querySelector('#content')
-    const content = utils.createElement('div', 'row content-wrapper', `schedule${cont++}`)
-
-    const filters = document.createRange().createContextualFragment(`${html.filters_form}<hr>`)
-    const table = document.createRange().createContextualFragment(html.table)
-
-    content.appendChild(filters)
-    content.appendChild(table)
-
-    contentWrapper.appendChild(content)
-
-    schedule.dataTableInitializer(`#schedule${cont - 1}`) // parentELementParam ID
-  },
-  buildOptions: function (response, extradata) {
-    const data = JSON.parse(response)
-
-    if (Array.isArray(data.message)) {
-      for (var i in data.message) {
-        eval (extradata.element).append(new Option(data.message[i][`${extradata.name}_name`], data.message[i][`${extradata.name}_id`], 'selected'))
+        utils.buildOptions(data, response.message, 1)
       }
+    } catch (e) {
+      utils.displayModal(alertModal, '')
     }
-
-    eval (extradata.element).value = extradata.id !== undefined && extradata.id !== 0 ? extradata.id : ''
-    MicroModal.close('wait-modal')
   },
-  add: function (response, data, element) {
+  loadData: () => {
+    var valid = true
+    const fields = document.querySelectorAll('[data-validator]')
+
+    valid = utils.dataValidator(fields)
+
+    if (valid) {
+      const service = document.querySelector('[name="service"]')
+      const overlap = document.querySelector('[name="overlap"]')
+
+      const info = {
+        arrive: arriveData,
+        overlap: overlap.value,
+        service: service.value,
+        ship: arriveData.ship_id,
+        start_date: arriveData.arrival_date,
+      }
+
+      utils.api(JSON.stringify(info), `${apiHost}allotments/shipservice`, 'POST', schedules.deploy)
+    }
+  },
+  deploy: (response) => {
+    try {
+      MicroModal.close('wait-modal')
+      response = JSON.parse(response)
+
+      utils.dropTable(document.querySelector('#schedules-registers'))
+
+      configTable = schedules.getTableConfig([])
+      const content = document.querySelector('.table-schedules')
+      const nodeTable = utils.createElement('table', '', 'schedules-registers', '')
+
+      content.appendChild(nodeTable)
+
+      if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
+
+        if (response.code === 404) {
+          utils.displayModal(alertModal, 'Not allotment configuration found!')
+        } else {
+          utils.displayModal(alertModal, response.message)
+        }
+
+        $(nodeTable).DataTable(configTable).draw()
+      } else {
+        var registers = response.message
+
+        if (utils.isJson(registers)) {
+          var  dRegisters = JSON.parse(registers)
+          registers = dRegisters.list
+        }
+
+        configTable = schedules.getTableConfig(registers)
+
+        flatpickr('.time-format', {
+          enableTime: true,
+          noCalendar: true,
+          dateFormat: 'H:i',
+          time_24hr: true
+        })
+
+        $(nodeTable).DataTable(configTable).draw()
+
+        // Add save event listener for icons
+        const saveBtns = nodeTable.querySelectorAll('.save')
+        for(let i = 0, l = saveBtns.length; i < l; i++) {
+          saveBtns[i].addEventListener('click', (e) => {
+            e.preventDefault()
+
+            var id = saveBtns[i].id
+
+            const info = {
+              arrive_id: arriveData.id,
+              channel_id: arriveData.channel_id,
+              end_date: arriveData.arrival_date,
+              start_date: arriveData.arrival_date,
+              reseller_id: arriveData.reseller_id,
+              service_id: saveBtns[i].dataset.service,
+              overlap: document.querySelector('[name="overlap"]').value,
+              schedule_start: nodeTable.querySelector(`[name="schedule_start${id}"]`).value,
+              schedule_end: nodeTable.querySelector(`[name="schedule_end${id}"]`).value,
+              min_available: nodeTable.querySelector(`[name="min_available${id}"]`).value,
+              max_available: nodeTable.querySelector(`[name="max_available${id}"]`).value,
+              shared_schedule: nodeTable.querySelector(`[name="shared${id}"]`).checked ? 1 : 0,
+              private_service: nodeTable.querySelector(`[name="private${id}"]`).checked ? 1 : 0,
+            }
+
+            const url = `${apiHost}allotments/add`
+
+            info.row = id
+            info.user_id = user
+            info.type_movement = 'I'
+            info.container = nodeTable
+
+            utils.api(JSON.stringify(info), url, 'POST', schedules.add, info)
+          })
+        }
+
+        // Add delete event listener for icons
+        var deleteBtns = nodeTable.querySelectorAll('.delete')
+        for(let i = 0, l = deleteBtns.length; i < l; i++) {
+          deleteBtns[i].addEventListener('click', (e) => {
+            e.preventDefault()
+
+            e.target.closest('tr').remove()
+          })
+        }
+      }
+    } catch (e) {
+      utils.displayModal(alertModal, '')
+    }
+  },
+  add: (response, data) => {
     MicroModal.close('wait-modal')
     response = JSON.parse(response)
-    var _message = ''
-    var _alertModal = document.getElementById('alert-modal-content')
+
+    var message = ''
+    var alertModal = document.getElementById('alert-modal-content')
 
     if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
       let decode = response
@@ -288,159 +197,304 @@ const schedule = {
         decode = JSON.parse(response.message)
       }
 
-      _message = utils.createElement('p', '', '', decode.message)
+      message = utils.createElement('p', '', '', decode.message)
 
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
+      alertModal.innerHTML = ''
+      alertModal.appendChild(message)
 
-      const maxInput = (data.container).querySelector(`[name="max_available${data.row}"]`)
-      const minInput = (data.container).querySelector(`[name="min_available${data.row}"]`)
+      const maxInput = data.container.querySelector(`[name="max_available${data.row}"]`)
+      const minInput = data.container.querySelector(`[name="min_available${data.row}"]`)
 
-      if (maxInput != null) {
-        maxInput.value = decode.available ? decode.available : 0
-      }
+      maxInput.value = 0
 
-      if (minInput != null) {
-        if (Object.prototype.hasOwnProperty.call(decode, 'available')) {
-          minInput.value = (decode.available > minInput.value) ? minInput.value : decode.available
+      if (Object.prototype.hasOwnProperty.call(decode, 'available')) {
+        maxInput.value = decode.available
+
+        if (decode.available < minInput.value) {
+          minInput.value = decode.available
         }
       }
 
       MicroModal.show('alert-modal')
     } else if (response.code === 201) {
-      _message = utils.createElement('p', '', '', 'Success! Schedule added correctly')
-
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
-
-      var form = (data.container).querySelector('#add-config')
-    }
-  },
-  update: function (response) {
-    MicroModal.close('wait-modal')
-
-    response = JSON.parse(response)
-    var _message = ''
-    var _alertModal = document.getElementById('alert-modal-content')
-
-    if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
-      let decode = response
-
-      if (utils.isJson(response.message)) {
-        decode = JSON.parse(response.message)
+      // Update previous assigments
+      const info = {
+        start_date: arriveData.arrival_date
       }
 
-      _message = utils.createElement('p', '', '', decode.message)
+      const url = `${apiHost}allotments`
 
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      const maxInput = document.querySelector('[name="max_available"]')
-
-      MicroModal.show('alert-modal')
-    } else if (response.code === 204) {
-      _message = utils.createElement('p', '', '', 'Success! Schedule updated correctly')
-
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
-
-      MicroModal.show('alert-modal')
+      utils.api(JSON.stringify(info), url, 'POST', schedules.regenerate)
     }
   },
-  delete: function (response, element) {
-    MicroModal.close('wait-modal')
+  regenerate: (response) => {
+    try {
+      MicroModal.close('wait-modal')
+      response = JSON.parse(response)
 
-    response = JSON.parse(response)
-    var id = element.getAttribute('data-id')
-    element.style.display = 'none'
+      var message = ''
+      var alertModal = document.getElementById('alert-modal-content')
 
-    var _message = ''
-    var _alertModal = document.getElementById('alert-modal-content')
+      if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
 
-    if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
-      _message = utils.createElement('p', '', '', response.message)
+        if (response.code === 404) {
+          utils.displayModal(alertModal, 'Not allotment configuration found!')
+        } else {
+          utils.displayModal(alertModal, response.message)
+        }
+      } else {
+        var registers = response.message
 
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
+        if (utils.isJson(registers)) {
+          var  dRegisters = JSON.parse(registers)
+          registers = dRegisters.list
+        }
 
-      MicroModal.show('alert-modal')
-    } else if (response.code === 200) {
-      var _status = document.querySelector(`[data-status="${id}"]`)
-      _status.innerHTML = ''
+        utils.dropTable(document.querySelector('#previous-assignment'))
 
-      var label = utils.createElement('span', 'badge badge-danger', '', 'inactive')
-      _status.appendChild(label)
+        const content = document.querySelector('.table-previous-assignment')
+        const nodeTable = utils.createElement('table', '', 'previous-assignment', '')
 
-      _message = utils.createElement('p', '', '', 'Success! Schedule inactivate correctly')
+        content.appendChild(nodeTable)
 
-      _alertModal.innerHTML = ''
-      _alertModal.appendChild(_message)
+        configTable = schedules.getAllotmentTableConfig(registers)
 
-      MicroModal.show('alert-modal')
+        $(nodeTable).DataTable(configTable).draw()
+
+        message = utils.createElement('p', '', '', 'Success! Schedule added correctly')
+
+        alertModal.innerHTML = ''
+        alertModal.appendChild(message)
+
+        MicroModal.show('alert-modal')
+      }
+    } catch (e) {
+      utils.displayModal(alertModal, '')
     }
   },
-  setData: function () {
-    document.querySelector('[name="status"]').value = scheduleData.active
-    document.querySelector('[name="channel"]').value = scheduleData.channel
-    document.querySelector('[name="reseller"]').value = scheduleData.reseller
-    document.querySelector('[name="service"]').value = scheduleData.service
-    document.querySelector('[name="start_date"]').value = scheduleData.start_date
-    document.querySelector('[name="end_date"]').value = scheduleData.end_date
-    document.querySelector('[name="schedule_start"]').value = scheduleData.schedule_start
-    document.querySelector('[name="schedule_end"]').value = scheduleData.schedule_end
-    document.querySelector('[name="overlap"]').value = scheduleData.overlap
-    document.querySelector('[name="min_available"]').value = scheduleData.min_available
-    document.querySelector('[name="max_available"]').value = scheduleData.max_available
-    document.querySelector('[name="shared"]').value = scheduleData.shared
+  getAllotmentTableConfig: (registers) => {
+    var config = utils.getDataTableConfig()
+
+    config.iDisplayLength = 5
+    config.order = [[0, 'desc']]
+    config.aLengthMenu = [[5, 10, 25, -1], [5, 10, 25, 'All']]
+
+    const columns = [
+      {
+        data: 'allotment_id',
+        title: 'ID',
+        render: (data, type, row, meta) => {
+          return data
+        }
+      },
+      {
+        data: 'channel_name',
+        title: 'Channel',
+        render: (data, type, row, meta) => {
+          return data
+        }
+      },
+      {
+        data: 'reseller_name',
+        title: 'Vendor',
+        render: (data, type, row, meta) => {
+          return data
+        }
+      },
+      {
+        data: 'ship_name',
+        title: 'Ship',
+        render: (data, type, row, meta) => {
+          return data
+        }
+      },
+      {
+        data: 'service_name',
+        title: 'Service',
+        render: (data, type, row, meta) => {
+          return data
+        }
+      },
+      {
+        title: 'Capacity',
+        render: (data, type, row, meta) => {
+          return `${row.min_available} - ${row.max_available}`
+        }
+      },
+      {
+        title: 'Schedule',
+        render: (data, type, row, meta) => {
+          return `${row.schedule_start} - ${row.schedule_end}`
+        }
+      },
+      {
+        data: 'shared_schedule',
+        title: 'Shared',
+        render: (data, type, row, meta) => {
+          let shared = 'No'
+          if (data === 1) {
+            shared = 'Yes'
+          }
+          return shared
+        }
+      },
+      {
+        data: 'private_service',
+        title: 'Private',
+        render: (data, type, row, meta) => {
+          let privateService = 'No'
+          if (data === 1) {
+            privateService = 'Yes'
+          }
+          return privateService
+        }
+      }
+    ]
+
+    config.data = registers
+    config.columns = columns
+    config.order = [[0, 'desc']]
+
+    return config
+  },
+  getTableConfig: (registers) => {
+    const config = {
+      info:false,
+      paging: false,
+      responsive: true,
+      searching: false,
+      fixedHeader: true,
+    }
+
+    const columns = [
+      {
+        data: 'schedule_start',
+        title: 'Schedule Start',
+        render: (data, type, row, meta) => {
+          const scheduleStart = utils.createElement('input', 'form-control time-format')
+
+          scheduleStart.setAttribute('value', data)
+          scheduleStart.setAttribute('type', 'text')
+          scheduleStart.setAttribute('readonly', true)
+          scheduleStart.setAttribute('name', `schedule_start${meta.row}`)
+
+          return scheduleStart.outerHTML
+        }
+      },
+      {
+        data: 'schedule_end',
+        title: 'Schedule End',
+        render: (data, type, row, meta) => {
+          var scheduleEnd = utils.createElement('input', 'form-control time-format')
+
+          scheduleEnd.setAttribute('value', data)
+          scheduleEnd.setAttribute('type', 'text')
+          scheduleEnd.setAttribute('name', `schedule_end${meta.row}`)
+
+          return scheduleEnd.outerHTML
+        }
+      },
+      {
+        data: 'min_available',
+        title: 'Minimum',
+        render: (data, type, row, meta) => {
+          const minimum = utils.createElement('input', 'form-control')
+
+          minimum.setAttribute('value', data)
+          minimum.setAttribute('type', 'text')
+          minimum.setAttribute('name', `min_available${meta.row}`)
+
+          return minimum.outerHTML
+        }
+      },
+      {
+        data: 'max_available',
+        title: 'Maximum',
+        render: (data, type, row, meta) => {
+          const maximum = utils.createElement('input', 'form-control')
+
+          maximum.setAttribute('value', data)
+          maximum.setAttribute('type', 'text')
+          maximum.setAttribute('name', `max_available${meta.row}`)
+
+          return maximum.outerHTML
+        }
+      },
+      {
+        data: 'duration',
+        title: 'Duration',
+        render: (data, type, row, meta) => {
+          return data
+        }
+      },
+      {
+        data: 'shared_schedule',
+        className: 'text-center',
+        title: 'Shared',
+        render: (data, type, row, meta) => {
+          const shared = utils.createElement('input')
+
+          shared.setAttribute('id', meta.row)
+          shared.setAttribute('checked', true)
+          shared.setAttribute('type', 'checkbox')
+          shared.setAttribute('name', `shared${meta.row}`)
+
+          return shared.outerHTML
+        }
+      },
+      {
+        data: 'private_service',
+        className: 'text-center',
+        title: 'Private',
+        render: (data, type, row, meta) => {
+          const privateService = utils.createElement('input')
+
+          privateService.setAttribute('id', meta.row)
+          privateService.setAttribute('type', 'checkbox')
+          privateService.setAttribute('name', `private${meta.row}`)
+
+          return privateService.outerHTML
+        }
+      },
+      {
+        data: 'arrive_id',
+        className: 'text-center',
+        title: 'Actions',
+        render: (data, type, row, meta) => {
+          const saveIcon = utils.createElement('i', 'fas fa-save')
+          saveIcon.setAttribute('aria-hidden', true)
+
+          const saveData = utils.createElement('a', 'save', '', saveIcon.outerHTML)
+
+          saveData.setAttribute('href', '#')
+          saveData.setAttribute('id', meta.row)
+          saveData.setAttribute('data-toggle', 'tooltip')
+          saveData.setAttribute('data-placement', 'left')
+          saveData.setAttribute('title', 'Save allotment')
+          saveData.setAttribute('data-service', `${row.service_id}`)
+
+          const deleteIcon = utils.createElement('i', 'fas fa-trash')
+          deleteIcon.setAttribute('aria-hidden', true)
+
+          const deleteData = utils.createElement('a', 'delete', '', deleteIcon.outerHTML)
+
+          deleteData.setAttribute('href', '#')
+          deleteData.setAttribute('id', meta.row)
+          deleteData.setAttribute('data-toggle', 'tooltip')
+          deleteData.setAttribute('data-placement', 'left')
+          deleteData.setAttribute('title', 'Discard this allotment suggest')
+          deleteData.setAttribute('data-service', `${row.service_id}`)
+
+          return `${saveData.outerHTML} ${deleteData.outerHTML}`
+        }
+      }
+    ]
+
+    config.data = registers
+    config.columns = columns
+
+    return config
   }
 }
 
-// Initializer event listener for elements
-const readElements = function () {
-  const newTour = document.querySelector('.new-tour')
-  if (newTour != null) {
-    newTour.addEventListener('click', function (e) {
-      e.preventDefault()
-
-      utils.post(JSON.stringify({
-      }), `${base}/allotments/dynamic_html/${arriveData.ships}`, schedule.dynamicDataTable, newTour)
-    })
-  }
-}
-
-const utilAjaxExecute = function (element) {
-  if (scheduleTableinitialized !== undefined && scheduleTableinitialized !== null) {
-    const container = element !== undefined ? document.querySelector(`#${element}`) : document.querySelector('#schedule0')
-    const elem = element !== undefined ? container.querySelector('[name="service"]') : document.querySelector('[name="service"]')
-    const overlap = element !== undefined ? container.querySelector('[name="overlap"]') : document.querySelector('[name="overlap"]')
-
-    utils.api(JSON.stringify({
-      arrive: arriveData,
-      start_date: arriveData.arrival_date,
-      service: elem.value,
-      ship: arriveData.ships,
-      overlap: overlap === null ? '' : overlap.value
-    }), `${apiHost}allotments/shipservice`, 'POST', schedule.loadData, element)
-  }
-}
-
-$(document).ready(function () {
-  const content = document.querySelector('.menubar')
-  const masterContent = utils.createElement('div', 'row general-content')
-  const rowChild = utils.createElement('div', 'col-md-12')
-  const newTourBtn = utils.createElement(
-    'button',
-    'btn btn-primary pull-right new-tour',
-    'new-tour',
-    'New tour'
-  )
-
-  rowChild.appendChild(newTourBtn)
-  masterContent.appendChild(rowChild)
-  content.after(masterContent)
-
-  readElements()
-  utilAjaxExecute()
-})
+schedules.init()
