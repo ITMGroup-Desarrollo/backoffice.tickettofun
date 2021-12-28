@@ -121,7 +121,8 @@ class Forms
                 }
                 else if ($params[0] != 'signin' &&
                     $params[0] != 'update_call_extra' &&
-                    $params[0] != 'arrives_search'
+                    $params[0] != 'arrives_search' &&
+                    $params[0] != 'schedule-filters_search'
                     )
                 {
                     $label   = form_label($row->label_name, '', $this->attrib);
@@ -237,7 +238,12 @@ class Forms
         }
         else
         {
-            $this->form = $this->content_form;
+            $this->form_attrib = array(
+                'id'    => '{id}',
+                'class' => 'form-inline',
+            );
+
+            $this->form = custom('form', $this->form_attrib, $this->content_form);
         }
 
         return $this->form;
