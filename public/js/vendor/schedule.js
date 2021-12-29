@@ -125,14 +125,15 @@ const schedules = {
 
         configTable = schedules.getTableConfig(registers)
 
+        $(nodeTable).DataTable(configTable).draw()
+
+        // Initialize calendars
         flatpickr('.time-format', {
           enableTime: true,
           noCalendar: true,
           dateFormat: 'H:i',
           time_24hr: true
         })
-
-        $(nodeTable).DataTable(configTable).draw()
 
         // Add save event listener for icons
         const saveBtns = nodeTable.querySelectorAll('.save')
@@ -141,9 +142,21 @@ const schedules = {
             e.preventDefault()
 
             var id = saveBtns[i].id
+            var privateService = 0
+            var sharedSchedule = 0
+
+            if (nodeTable.querySelector(`[name="shared${id}"]`).checked) {
+              sharedSchedule = 1
+            }
+
+            if (nodeTable.querySelector(`[name="private${id}"]`).checked) {
+              sharedSchedule = 1
+            }
 
             const info = {
               arrive_id: arriveData.id,
+              shared_schedule: sharedSchedule,
+              private_service: privateService,
               channel_id: arriveData.channel_id,
               end_date: arriveData.arrival_date,
               start_date: arriveData.arrival_date,
@@ -154,8 +167,6 @@ const schedules = {
               schedule_end: nodeTable.querySelector(`[name="schedule_end${id}"]`).value,
               min_available: nodeTable.querySelector(`[name="min_available${id}"]`).value,
               max_available: nodeTable.querySelector(`[name="max_available${id}"]`).value,
-              shared_schedule: nodeTable.querySelector(`[name="shared${id}"]`).checked ? 1 : 0,
-              private_service: nodeTable.querySelector(`[name="private${id}"]`).checked ? 1 : 0,
             }
 
             const url = `${apiHost}allotments/add`
