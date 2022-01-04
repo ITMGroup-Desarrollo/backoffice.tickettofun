@@ -115,7 +115,7 @@ var allotment = {
       width: '160px',
       className: 'center',
       render: function (data, type, row, meta) {
-        var _input = utils.createElement('input', 'form-control input-pax', row[12], '')
+        var _input = utils.createElement('input', 'form-control input-pax mr-2', row[12], '')
         _input.setAttribute('style', 'border-radius:3px')
         _input.setAttribute('type', 'number')
         _input.setAttribute('value', row[10])
