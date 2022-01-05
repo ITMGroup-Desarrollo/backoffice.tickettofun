@@ -63,7 +63,7 @@ class Allotment extends Model
 
         // Call API here!
         $params = new stdClass();
-        
+
         if (isset($_POST['dates']) && $_POST['dates'] != '')
         {
             $dates = explode('to',$_POST['dates']);
@@ -87,7 +87,7 @@ class Allotment extends Model
         }
 
         $this->model = str_replace('{rows}', $this->model, $table_content);
-        
+
         return array(
             'table-data'  => $this->model,
             'data-header' => $data_headerbar
@@ -184,6 +184,7 @@ class Allotment extends Model
         $response = json_decode(
             $this->api->request_api('GET', $endpoint, $params, $token)
         );
+
         $config = new stdClass();
 
         if ($response->code == 200)
@@ -207,8 +208,6 @@ class Allotment extends Model
             $config->active         = $response->message->active_status;
             $config->stand_by       = $response->message->stand_by;
 
-        }else{
-            redirect('/configuration');
         }
 
         return $config;
@@ -222,7 +221,7 @@ class Allotment extends Model
         $params             = new stdClass();
         $params->end_date   = $date;
         $params->start_date = $date;
-        
+
         $response = json_decode(
             $this->api->request_api("POST", $endpoints, $params, $token)
         );
@@ -244,10 +243,10 @@ class Allotment extends Model
             $config->vendor_name  = $arrive->reseller_name;
             $config->cruise_name  = $arrive->ship_name;
             $config->arrival_date = $arrive->arrival_date;
-            $config->channel_name = $arrive->channel_name;            
+            $config->channel_name = $arrive->channel_name;
             $config->arrival_time = $arrive_date . " - " . $departure_date;
         }
-        else 
+        else
         {
             $config->code         = $response->code;
         }
@@ -271,7 +270,7 @@ class Allotment extends Model
 
         $token  = $this->session->get('token');
         $params = new stdClass();
-       
+
         $response = json_decode(
             $this->api->request_api("GET", $endpoints, $params, $token)
         );
@@ -288,7 +287,7 @@ class Allotment extends Model
             }
             $config->vendor_name = $response->message->reseller_name;
 
-        } else 
+        } else
         {
             $config->code = $response->code;
         }

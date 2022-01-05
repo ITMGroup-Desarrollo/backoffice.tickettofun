@@ -12,7 +12,7 @@ var config = {
     const data = JSON.parse(response)
 
     if (data.code === 200) {
-      utils.buildOptions(extradata, data.message)
+      utils.buildOptions(extradata, data.message, 1)
     }
 
     MicroModal.close('wait-modal')
@@ -96,9 +96,9 @@ var config = {
       data: 'allotment_id',
       render: function (data, type, row, meta) {
         if (row[11] === 0) {
-          return `<span class="label label-danger" data-status="${row[12]}">Inactive</span>`
+          return `<span class="badge badge-danger" data-status="${row[12]}">Inactive</span>`
         } else {
-          return `<span class="label label-success" data-status="${row[12]}">Active</span>`
+          return `<span class="badge badge-success" data-status="${row[12]}">Active</span>`
         }
       }
     }
@@ -114,19 +114,19 @@ var config = {
           switch (row[14]) {
             case 1:
               if (row[13] === 1) {
-                html = `<a class="btn-link edit" data-toggle="tooltip" data-placement="left" title="Edit allotment" href="configuration/${row[12]}"><i class="fas fa-edit"></i></a>`
+                html = `<a class="btn-link edit mr-2" data-toggle="tooltip" data-placement="left" title="Edit allotment" href="configuration/${row[12]}"><i class="fas fa-edit"></i></a>`
 
                 if (row[11] === 1) {
-                  html += `<a class="btn-link delete" data-toggle="tooltip" data-placement="left" title="Delete allotment" data-id="${row[12]}"><i class="fas fa-trash"></i></a>`
+                  html += `<a class="btn-link delete" data-toggle="tooltip" data-placement="left" title="Delete allotment" data-id="${row[12]}" href="#"><i class="fas fa-trash"></i></a>`
                 }
               }
               break
 
             case 2:
-              html = `<a class="btn-link edit" data-toggle="tooltip" data-placement="left" title="Edit allotment" href="configuration/${row[12]}"><i class="fas fa-edit"></i></a>`
+              html = `<a class="btn-link edit mr-2" data-toggle="tooltip" data-placement="left" title="Edit allotment" href="configuration/${row[12]}"><i class="fas fa-edit"></i></a>`
 
               if (row[11] === 1 && row[15] === 0) {
-                html += `<a class="btn-link delete" data-toggle="tooltip" data-placement="left" title="Delete allotment" data-id="${row[12]}"><i class="fas fa-trash"></i></a>`
+                html += `<a class="btn-link delete" data-toggle="tooltip" data-placement="left" title="Delete allotment" data-id="${row[12]}" href="#"><i class="fas fa-trash"></i></a>`
               }
               break
             default:
@@ -241,6 +241,7 @@ var config = {
 
     btnConfirmDelete.addEventListener('click', function (e) {
       e.preventDefault()
+
       var url = ''
       if (option === null) {
         var info = { user_id: window.user }
@@ -349,8 +350,12 @@ var config = {
     MicroModal.close('wait-modal')
 
     response = JSON.parse(response)
+
     var id = element.getAttribute('data-id')
-    element.style.display = 'none'
+
+    if (id == null) {
+      id = element.parentElement.getAttribute('data-id')
+    }
 
     var _message = ''
     var _alertModal = document.getElementById('alert-modal-content')
@@ -367,7 +372,7 @@ var config = {
       var _parentELement = _status.parentElement
       _status.parentElement.innerHTML = ''
 
-      element.parentElement.lastChild.style.display = 'none'
+      element.remove()
 
       var label = utils.createElement('span', 'badge badge-danger', '', 'inactive')
       _parentELement.appendChild(label)
@@ -386,6 +391,7 @@ var config = {
     }
   },
   setData: function () {
+
     document.querySelector('[name="status"]').value = configData.active
     document.querySelector('[name="channel"]').value = configData.channel
     document.querySelector('[name="reseller"]').value = configData.reseller

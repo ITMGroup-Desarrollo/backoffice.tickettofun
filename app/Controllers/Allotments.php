@@ -222,31 +222,13 @@ class Allotments extends BaseController
         $data = $this->page->get_contents();
 
         $table = $this->allotment->get_list();
-        $form = $this->allotment->get_form('filters',$view);
 
-        $header_keys = [
-            '{title}',
-            '{channel-name}',
-            '{reseller-name}',
-            '{service-name}',
-            '{filters}',
-            '{content}'
-        ];
+        $form = $this->allotment->get_form('filters', $view);
+        $form = str_replace('{id}', 'filters', $form);
 
-        $date_today = !empty($table['data-header']) ? $table['data-header']->start_date:date('Y-m-d');
-
-        $header_elements = [
-            'Configuration schedules',
-            'Start date: '.date_format(date_create($date_today), 'l jS F Y'),
-            '',
-            '',
-            $form,
-            '<hr>'.$table['table-data']
-        ];
-
-        $data['contents'] = str_replace(
-            $header_keys, $header_elements, $data['contents']
-        );
+        $data['contents'] = str_replace('{filters}', $form, $data['contents']);
+        $data['contents'] = str_replace('{content}', $table['table-data'], $data['contents']);
+        $data['contents'] = str_replace('{title}', 'Configuration schedules', $data['contents']);
 
         $userId = 'window.user = ' . $this->session->get('user_id');
 
@@ -312,7 +294,8 @@ class Allotments extends BaseController
             redirect(base_url('signin'));
 
         $view   = 'config';// $this->request->uri->getSegment(1);
-        $option = $this->request->uri->getSegment(3);
+        $id = $this->request->uri->getSegment(3);
+        $option = $this->request->uri->getSegment(2);
 
         $this->page->page_name = $view;
         $this->page->menu_active = 'allotments';
@@ -344,7 +327,12 @@ class Allotments extends BaseController
             '{filters}', '', $data['contents']
         );
 
-        $config = $this->allotment->get_data('',$option);
+        $config = $this->allotment->get_data($id, $option);
+
+        if (! property_exists($config, 'id')) {
+            return redirect()->to('allotments/configuration');
+        }
+
         $config = 'window.config = ' . json_encode($config);
 
         $userId = 'window.user = ' . $this->session->get('user_id');
