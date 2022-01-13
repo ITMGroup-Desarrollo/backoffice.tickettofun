@@ -36,10 +36,6 @@ class Arrives extends BaseController
 
         $data = $this->page->get_contents();
 
-        $data['contents'] = str_replace(
-            'btn-export-excel', 'btn-export-excel hidden', $data['contents']
-        );
-
         if ($option == 'list')
         {
             $data['contents'] = str_replace(
@@ -75,15 +71,13 @@ class Arrives extends BaseController
             );
 
             $data['contents'] = str_replace(
-                '{search}', '', $data['contents']
+                '{search}', $form, $data['contents']
             );
 
             $data['contents'] = str_replace(
-                '{content}', $form, $data['contents']
-            );
-            $data['contents'] = str_replace(
                 '{allotmentsTitle}', '', $data['contents']
             );
+
             $data['contents'] = str_replace(
                 '{allotments}', '', $data['contents']
             );

@@ -17,6 +17,96 @@ const arrives = {
       utils.setPermissions
     )
   },
+  add: {
+    init: () => {
+      // Initialize pickers
+      flatpickr('.date-format', {
+        dateFormat: 'Y-m-d',
+        minDate: new Date().fp_incr(1)
+      })
+
+      flatpickr('.time-format', {
+          enableTime: true,
+          noCalendar: true,
+          dateFormat: 'H:i',
+          time_24hr: true
+      })
+
+      flatpickr('.markup', {
+          enableTime: true,
+          noCalendar: true,
+          dateFormat: 'H:i',
+          defaultDate: '00:30',
+          time_24hr: true
+      })
+
+      var cancel = document.querySelector('.cancel')
+      if (cancel != null) {
+        cancel.addEventListener('click', function (e) {
+          e.preventDefault()
+          form = document.querySelector('#add-arrives')
+          form.reset()
+        })
+      }
+
+
+      var save = document.querySelector('.save')
+      if (save != null) {
+        save.addEventListener('click', function (e) {
+          e.preventDefault()
+
+          arrives.add.saveArrive()
+        })
+      }
+    },
+    saveArrive: () => {
+      var valid = 'true'
+      var fields = document.querySelectorAll('[data-validator]')
+
+      valid = utils.dataValidator(fields)
+
+      if (valid) {
+        info = {
+          ship_id: document.querySelector('[name="ships"]').value,
+          arrival_date: document.querySelector('[name="arrival_date"]').value,
+          arrival_time: document.querySelector('[name="arrival_time"]').value,
+          departure_time: document.querySelector('[name="departure_time"]').value,
+          markup_start: document.querySelector('[name="markup_start"]').value,
+          markup_end: document.querySelector('[name="markup_end"]').value
+        }
+
+        var url = `${apiHost}arrives/add`
+        info.user_id = user
+        utils.api(JSON.stringify(info), url, 'POST', arrives.add.confirm)
+      }
+    },
+    confirm: (response) => {
+      MicroModal.close('wait-modal')
+
+      response = JSON.parse(response)
+      var _message = ''
+      var _alertModal = document.getElementById('alert-modal-content')
+
+      if (codes.hasOwnProperty(response.code)) {
+        _message = utils.createElement('p', '', '', response.message)
+
+        _alertModal.innerHTML = ''
+        _alertModal.appendChild(_message)
+
+        MicroModal.show('alert-modal')
+      } else if (response.code === 201) {
+        _message = utils.createElement('p', '', '', 'Success! Cruise call added correctly')
+
+        _alertModal.innerHTML = ''
+        _alertModal.appendChild(_message)
+
+        MicroModal.show('alert-modal')
+
+        form = document.querySelector('#add-arrives')
+        form.reset()
+      }
+    }
+  },
   list: {
     init: () => {
       const searchBtn = document.querySelector('.search')
@@ -122,8 +212,6 @@ const arrives = {
         MicroModal.close('wait-modal')
         response = JSON.parse(response)
 
-        utils.dropTable(document.querySelector('#arrives-registers'))
-
         const content = document.querySelector('.table-arrives')
         const nodeTable = utils.createElement('table', '', 'arrives-registers', '')
 
@@ -165,6 +253,7 @@ const arrives = {
           }
         }
       } catch (e) {
+        console.log(e)
         utils.displayModal(alertModal, '')
       }
     },
@@ -312,8 +401,6 @@ const arrives = {
       try {
         MicroModal.close('wait-modal')
         response = JSON.parse(response)
-
-        utils.dropTable(document.querySelector('#allotments-registers'))
 
         configTable = arrives.update.getTableConfig([])
         const content = document.querySelector('.table-allotment')
@@ -667,6 +754,14 @@ if (btnExport !== null) {
 form = document.querySelector('#form-arrives-search')
 if (form !== null) {
   arrives.list.init()
+}
+
+// Evaluate if exists add form
+form = document.querySelector('#add-arrives')
+if (form !== null) {
+  MicroModal.close('wait-modal')
+
+  arrives.add.init()
 }
 
 // Evaluate if exists update form
