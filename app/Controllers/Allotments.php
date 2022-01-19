@@ -354,19 +354,15 @@ class Allotments extends BaseController
         $this->page->page_name = 'clone';
 
         $data = $this->page->get_contents();
-        $form = $this->allotment->get_form('clone', 'clone');
 
-        $data['contents'] = str_replace('{title}', 'Allotments',  $data['contents']);
+        $data['contents'] = str_replace('{title}', 'Clone allotments',  $data['contents']);
         $data['contents'] = str_replace('{call}', '',  $data['contents']);
 
-        $data['contents'] = str_replace(
-            '{Form}', $form, $data['contents']
-        );
-
-        $table = $this->allotment->get_list_clone();
+        $data['contents'] = str_replace('{text-form}', 'Search allotment to clone',  $data['contents']);
+        $data['contents'] = preg_replace('/{id}/', 'search-form', $data['contents'], 1);
 
         $data['contents'] = str_replace(
-            '{content}', $table, $data['contents']
+            '{content}', '', $data['contents']
         );
 
         $data['contents'] = str_replace(
@@ -380,8 +376,9 @@ class Allotments extends BaseController
         $arrivalTime = "";
 
         $dataArrive = array();
+        $display = 'none';
 
-        if ($this->request->uri->getSegment(3))
+        /* if ($this->request->uri->getSegment(3))
         {
             $arrive_data = $this->arrive->get_data($this->request->uri->getSegment(3));
 
@@ -398,31 +395,37 @@ class Allotments extends BaseController
             $dataArrive['cruiseId']  = $arrive_data->ship_id;
             $dataArrive['cruise']    = $arrive_data->ship_name;
             $dataArrive['date']      = $arrivalDate;
+
+            $display = 'block';
         }
         else
         {
-            if (!empty($this->input->post('modalchannel')))
+            if (!empty($this->request->getPost('channel')))
             {
-                $channel     = $this->input->post('modalchanneltext');
-                $vendor      = $this->input->post('modalvendortext');
-                $arrivalDate = $this->input->post('modaldate');
+                $channel     = $this->request->getPost('modalchanneltext');
+                $vendor      = $this->request->getPost('modalvendortext');
+                $arrivalDate = $this->request->getPost('date');
 
-                if ($this->input->post('modalcruise') != null && $this->input->post('modaldate') != null) {
-                    $cruise = $this->input->post('modalcruisetext');
-                    $cruiseId = $this->input->post('modalcruise');
+                if ($this->request->getPost('cruise') != null && $this->request->getPost('date') != null) {
+                    $cruise = $this->request->getPost('modalcruisetext');
+                    $cruiseId = $this->request->getPost('cruise');
 
                     $dataArrive['cruiseId'] = $cruiseId;
                     $dataArrive['cruise'] = $cruise;
                 }
 
                 $dataArrive['arriveId']  = null;
-                $dataArrive['channelId'] = $this->input->post('modalchannel');
-                $dataArrive['vendorId']  = $this->input->post('modalvendor');
+                $dataArrive['channelId'] = $this->request->getPost('channel');
+                $dataArrive['vendorId']  = $this->request->getPost('reseller');
                 $dataArrive['vendor']    = $vendor;
                 $dataArrive['date']      = $arrivalDate;
             }
 
         }
+ */
+        $data['contents'] = str_replace(
+            '{display}', $display, $data['contents']
+        );
 
         $data['contents'] = str_replace(
             '{channel-text}', $channel, $data['contents']
@@ -467,15 +470,15 @@ class Allotments extends BaseController
         $data['contents'] = str_replace('{title}', 'Allotments',  $data['contents']);
         $data['contents'] = str_replace('{call}', '',  $data['contents']);
 
-        $cruiseId = $this->input->post('cruise');
+        $cruiseId = $this->request->getPost('cruise');
 
         $html = "";
         $channel = $vendor = $cruise = $arrivalDate = $arrivalTime = "";
 
-        switch ($this->input->post('channel')) {
+        switch ($this->request->getPost('channel')) {
             case 1:
-                $cruiseId = $this->input->post('cruise');
-                $date     = $this->input->post('date');
+                $cruiseId = $this->request->getPost('cruise');
+                $date     = $this->request->getPost('date');
                 $arrive   = $this->allotment->get_arrive_data($cruiseId, $date);
 
                 if ($arrive->code == 200) {
@@ -495,27 +498,27 @@ class Allotments extends BaseController
             break;
             case 2:
                 $html     = $this->allotment->div_element('CHANNEL', 'Web');
-                $reseller = $this->allotment->get_data_id('reseller', $this->input->post('vendor'));
+                $reseller = $this->allotment->get_data_id('reseller', $this->request->getPost('vendor'));
 
                 if ($reseller->code == 200){
                     $vendor = $reseller->vendor_name;
                 }
 
                 $html .= $this->allotment->div_element('VENDOR', $vendor);
-                $html .= $this->allotment->div_element('DATE', $this->input->post('date'));
+                $html .= $this->allotment->div_element('DATE', $this->request->getPost('date'));
             break;
             case 3:
                 $html     = $this->allotment->div_element('CHANNEL', 'LMPS');
-                $reseller = $this->allotment->get_data_id('reseller', $this->input->post('vendor'));
+                $reseller = $this->allotment->get_data_id('reseller', $this->request->getPost('vendor'));
 
                 if ($reseller->code == 200){
                     $vendor = $reseller->vendor_name;
                 }
                 $html .= $this->allotment->div_element('VENDOR', $vendor);
 
-                if (!empty($this->input->post('cruise')))
+                if (!empty($this->request->getPost('cruise')))
                 {
-                    $cruise = $this->allotment->get_data_id('cruise', $this->input->post('cruise'));
+                    $cruise = $this->allotment->get_data_id('cruise', $this->request->getPost('cruise'));
                     if ($cruise->code == 200){
                         $vendorCruise = $cruise->vendor_name;
                         $cruise = $cruise->cruise_name;
@@ -525,7 +528,7 @@ class Allotments extends BaseController
                     $html .= $this->allotment->div_element('CRUISE', $cruise);
                 }
 
-                $html .= $this->allotment->div_element('DATE', $this->input->post('date'));
+                $html .= $this->allotment->div_element('DATE', $this->request->getPost('date'));
             break;
         }
 
@@ -553,7 +556,7 @@ class Allotments extends BaseController
         $script          = custom('script', '', $userId);
         $data['scripts'] = $script .  $data['scripts'];
 
-        $dayaArrive      = 'window.dataArrive = ' . json_encode($this->input->post());
+        $dayaArrive      = 'window.dataArrive = ' . json_encode($this->request->getPost());
         $script          = custom('script', '', $dayaArrive);
         $data['scripts'] = $script .  $data['scripts'];
 

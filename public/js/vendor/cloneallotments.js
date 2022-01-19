@@ -4,865 +4,520 @@ var editor
 var dataTable
 var dataTableFilter
 var user = window.user
-var dataFilter = window.dataArrive //  search data
+var dataFilter = window.dataArrive
+var configTable = utils.getDataTableConfig()
+
+const defaultOption = '-- Choose option --'
 
 const clone = {
-  loadData: function (response, band = false) {
-    const data = JSON.parse(response)
-    let dataTable = []
-
-    if (Array.isArray(data.message) && band === false) {
-      var filter = data.message.filter(allotment => allotment.active_status === 1)
-      dataTableFilter = filter
-
-      dataTable = filter.map(data => {
-        const dataArray = [
-          data.allotment_id,
-          data.service_name,
-          data.schedule_start,
-          data.schedule_end,
-          data.min_available,
-          data.max_available,
-          data.shared_schedule,
-          data.private_service,
-          data.overlap,
-          data.active_status,
-          data.service_id
-        ]
-        return dataArray
+  init: () => {
+    // search form events
+    const channel = document.querySelector('[name="channel"]')
+    if (channel != null) {
+      channel.addEventListener('change', (e) => {
+        e.preventDefault()
+        clone.changeChannel(e.target.value, '')
       })
     }
 
-    if ($.fn.DataTable.isDataTable(editor)) {
-      editor.destroy()
+    const ship = document.querySelector('[name="ship"]')
+    if (ship != null) {
+      ship.append(new Option(defaultOption))
+
+      const shipContent = ship.closest('.form-group')
+      shipContent.classList.add('d-none')
     }
 
-    if (dataTable.length === 0) {
-      clone.setData(true)
-    } else {
-      clone.setData(false)
-    }
+    const reseller = document.querySelector('[name="reseller"]')
+    if (reseller != null) {
+      reseller.append(new Option(defaultOption))
 
-    editor = $('#allotments-clone')
-      .DataTable({
-        data: dataTable,
-        columnDefs: [
-          {
-            targets: 0, // Service name
-            data: 'arrive_id',
-            render: function (data, type, row, meta) {
-              var _tag = ''
-              _tag = utils.createElement('label', 'reg-allotments', row[0], row[1])
-              _tag.setAttribute('service_id', row[10])
-              return _tag.outerHTML
-            }
-          }, {
-            targets: 1, // schedule start
-            data: 'schedule_start',
-            render: function (data, type, row, meta) {
-              var _tag = ''
-              _tag = utils.createElement('input', 'form-control hrStart', 'hrStart' + row[0], '')
-              _tag.setAttribute('value', row[2])
-              _tag.setAttribute('disabled', 'disabled')
+      reseller.addEventListener('change', (e) => {
+        e.preventDefault()
 
-              return _tag.outerHTML
-            }
-          }, {
-            targets: 2, // schedule end
-            data: 'schedule_end',
-            render: function (data, type, row, meta) {
-              var _tag = ''
-              _tag = utils.createElement('input', 'form-control hrEnd', 'hrEnd' + row[0], '')
-              _tag.setAttribute('value', row[3])
-              _tag.setAttribute('disabled', 'disabled')
+        if (channel.value == 1) {
+          var url = `${apiHost}arrives/shipsarrive/${e.target.value}`
 
-              return _tag.outerHTML
-            }
-          }, {
-            targets: 3, // min
-            data: 'min',
-            render: function (data, type, row, meta) {
-              var _tag = ''
-              _tag = utils.createElement('input', 'form-control min', 'min' + row[0], '')
-              _tag.setAttribute('value', row[4])
-
-              return _tag.outerHTML
-            }
-          }, {
-            targets: 4, // max
-            data: 'max',
-            render: function (data, type, row, meta) {
-              var _tag = ''
-              _tag = utils.createElement('input', 'form-control max', 'max' + row[0], '')
-              _tag.setAttribute('value', row[5])
-
-              return _tag.outerHTML
-            }
-          }, {
-            targets: 5, // shared
-            className: 'center',
-            data: 'shared',
-            render: function (data, type, row, meta) {
-              var _tag = ''
-              _tag = utils.createElement('input', 'shared', 'shared' + row[0], '')
-              _tag.setAttribute('type', 'checkbox')
-
-              if (row[6] === 1) {
-                _tag.setAttribute('checked', 'checked')
-              }
-
-              return _tag.outerHTML
-            }
-          }, {
-            targets: 6, // private
-            className: 'center',
-            data: 'private',
-            render: function (data, type, row, meta) {
-              var _tag = ''
-              _tag = utils.createElement('input', 'shared', 'private' + row[0], '')
-              _tag.setAttribute('type', 'checkbox')
-
-              if (row[7] === 1) {
-                _tag.setAttribute('checked', 'checked')
-              }
-
-              return _tag.outerHTML
-            }
-          }, {
-            targets: 7, // overlap
-            className: 'center',
-            data: 'overlap',
-            render: function (data, type, row, meta) {
-              var _tag = ''
-              _tag = utils.createElement('input', 'form-control shared', 'overlap' + row[0], '')
-              _tag.setAttribute('value', row[8])
-
-              return _tag.outerHTML
-            }
-          }, {
-            targets: 8, // clone
-            className: 'center',
-            data: 'clone',
-            render: function (data, type, row, meta) {
-              var _tag = ''
-              _tag = utils.createElement('input', 'shared', 'clone' + row[0], '')
-              _tag.setAttribute('type', 'checkbox')
-
-              _tag.setAttribute('checked', 'checked')
-
-              return _tag.outerHTML
-            }
-          }, {
-            targets: 9, // status
-            className: 'center',
-            data: 'clone',
-            render: function (data, type, row, meta) {
-              if (row[9] === 0) {
-                return `<span class="label label-danger" id="status${row[0]}" data-status="${row[9]}">Inactive</span>`
-              } else {
-                return `<span class="label label-success" id="status${row[0]}" data-status="${row[9]}">Active</span>`
-              }
-            }
-          }, {
-            targets: 10, // message
-            className: 'center',
-            data: 'message',
-            render: function (data, type, row, meta) {
-              return ''
-            }
+          const data = {
+            id: null,
+            key: 'ship_name',
+            value: 'ship_id',
+            element: ship
           }
-        ],
-        processing: true,
-        stateSave: true,
-        paging: false,
-        sPaginationType: 'full_numbers'
-      })
 
-    editor.draw()
-    editor.columns.adjust().draw()
-
-    MicroModal.close('wait-modal')
-  },
-  buildJson: function (response) {
-    var newAllotment = new Object()
-    newAllotment.channel = parseInt(document.querySelector('[name="channel"]').value)
-    newAllotment.user = user
-    newAllotment.arrive = null
-    newAllotment.vendor = parseInt(document.querySelector('[name="vendor"]').value)
-    newAllotment.cruise = parseInt(document.querySelector('[name="cruise"]').value)
-    newAllotment.date = document.querySelector('[name="date"]').value
-    newAllotment.arrival_time = null
-    newAllotment.departure_time = null
-    newAllotment.markup_start = null
-    newAllotment.markup_end = null
-    newAllotment.type_sim = 'N'
-
-    var datatable2 = document.querySelectorAll('.reg-allotments')
-    var arrList = []
-
-    for (var i = 0; i <= datatable2.length - 1; i++) {
-      var id = datatable2[i].getAttribute('id')
-      const data = dataTableFilter.find(allotment => allotment.allotment_id === id)
-
-      var list = new Object()
-      const shared = (document.getElementById('shared' + id).checked) ? 1 : 0
-      const alloPrivate = (document.getElementById('private' + id).checked) ? 1 : 0
-      const clone = (document.getElementById('clone' + id).checked) ? 1 : 0
-
-      list.allotment_id = id
-      list.arrive_id = data.arrive_id
-      list.service_id = parseInt(datatable2[i].getAttribute('service_id'))
-      list.service_name = datatable2[i].innerHTML
-      list.schedule_start = document.getElementById('hrStart' + id).value
-      list.schedule_end = document.getElementById('hrEnd' + id).value
-      list.min_available = parseInt(document.getElementById('min' + id).value)
-      list.max_available = parseInt(document.getElementById('max' + id).value)
-      list.available = ''
-      list.shared_schedule = shared
-      list.private_service = alloPrivate
-      list.overlap = document.getElementById('overlap' + id).value
-      list.active_status = data.active_status
-      list.clone = clone
-      list.available_status = parseInt(document.getElementById('status' + id).getAttribute('data-status'))
-
-      list.message = ''
-
-      arrList.push(list)
-    }
-
-    var general = new Object()
-
-    general.newAllotment = newAllotment
-    general.list = arrList
-
-    utils.api(JSON.stringify(general), `${apiHost}allotments/clonealloments/`, 'POST', clone.buildRegistersAllotments)
-  },
-  buildRegistersAllotments: function (response) {
-    const data = JSON.parse(response)
-    let dataTable = []
-
-    if (utils.isJson(data.message)) {
-      const dataList = JSON.parse(data.message)
-      const list = dataList.list
-
-      dataTable = list.map(data => {
-        const dataArray = [
-          data.allotment_id,
-          data.service_name,
-          data.schedule_start,
-          data.schedule_end,
-          data.min_available,
-          data.max_available,
-          data.shared_schedule,
-          data.private_service,
-          data.overlap,
-          data.active_status,
-          data.service_id,
-          data.available_status,
-          data.clone,
-          data.message
-        ]
-        return dataArray
+          utils.api(JSON.stringify({}), url, 'GET', clone.deployOptions, data)
+        }
       })
     }
 
-    if ($.fn.DataTable.isDataTable(editor)) {
-      editor.destroy()
+    const arriveDate = document.querySelector('[name="date"]')
+    if (arriveDate != null) {
+      flatpickr(arriveDate, {
+        dateFormat: 'Y-m-d',
+        minDate: 'today'
+      })
     }
 
-    editor = $('#allotments-clone')
-      .DataTable({
-        retrieve: true,
-        data: dataTable,
-        columnDefs: [
-          {
-            targets: 0, // Service name
-            data: 'arrive_id',
-            render: function (data, type, row, meta) {
-              var _tag = ''
-              _tag = utils.createElement('label', 'reg-allotments', row[0], row[1])
-              _tag.setAttribute('service_id', row[10])
-              return _tag.outerHTML
-            }
-          }, {
-            targets: 1, // schedule start
-            data: 'schedule_start',
-            render: function (data, type, row, meta) {
-              var _tag = ''
-              _tag = utils.createElement('input', 'form-control hrStart', 'hrStart' + row[0], '')
-              _tag.setAttribute('value', row[2])
-              _tag.setAttribute('disabled', 'disabled')
+    const btnSearch = document.querySelector('[name="search"]')
+    if (btnSearch != null) {
+      btnSearch.addEventListener('click', (e) => {
+        e.preventDefault()
+        var valid = 'true'
+        var slug = 'reseller'
 
-              return _tag.outerHTML
-            }
-          }, {
-            targets: 2, // schedule end
-            data: 'schedule_end',
-            render: function (data, type, row, meta) {
-              var _tag = ''
-              _tag = utils.createElement('input', 'form-control hrEnd', 'hrEnd' + row[0], '')
-              _tag.setAttribute('value', row[3])
-              _tag.setAttribute('disabled', 'disabled')
+        var form = btnSearch.closest('form')
+        var fields = form.querySelectorAll('[data-validator]')
 
-              return _tag.outerHTML
-            }
-          }, {
-            targets: 3, // min
-            data: 'min',
-            render: function (data, type, row, meta) {
-              var _tag = ''
-              _tag = utils.createElement('input', 'form-control min', 'min' + row[0], '')
-              _tag.setAttribute('value', row[4])
+        valid = utils.dataValidator(fields)
 
-              return _tag.outerHTML
-            }
-          }, {
-            targets: 4, // max
-            data: 'max',
-            render: function (data, type, row, meta) {
-              var _tag = ''
-              _tag = utils.createElement('input', 'form-control max', 'max' + row[0], '')
-              _tag.setAttribute('value', row[5])
-
-              return _tag.outerHTML
-            }
-          }, {
-            targets: 5, // shared
-            className: 'center',
-            data: 'shared',
-            render: function (data, type, row, meta) {
-              var _tag = ''
-              var channel = document.querySelector('[name="channel"]')
-              _tag = utils.createElement('input', 'shared', 'shared' + row[0], '')
-              _tag.setAttribute('type', 'checkbox')
-
-              if (row[6] === 1) {
-                _tag.setAttribute('checked', 'checked')
-              }
-
-              return _tag.outerHTML
-            }
-          }, {
-            targets: 6, // private
-            className: 'center',
-            data: 'private',
-            render: function (data, type, row, meta) {
-              var _tag = ''
-              _tag = utils.createElement('input', 'shared', 'private' + row[0], '')
-              _tag.setAttribute('type', 'checkbox')
-
-              if (row[7] === 1) {
-                _tag.setAttribute('checked', 'checked')
-              }
-
-              return _tag.outerHTML
-            }
-          }, {
-            targets: 7, // overlap
-            className: 'center',
-            data: 'overlap',
-            render: function (data, type, row, meta) {
-              var _tag = ''
-              _tag = utils.createElement('input', 'form-control shared', 'overlap' + row[0], '')
-              _tag.setAttribute('value', row[8])
-
-              return _tag.outerHTML
-            }
-          }, {
-            targets: 8, // clone
-            className: 'center',
-            data: 'clone',
-            render: function (data, type, row, meta) {
-              var _tag = ''
-              _tag = utils.createElement('input', 'shared', 'clone' + row[0], '')
-              _tag.setAttribute('type', 'checkbox')
-
-              if (row[12] === 1) {
-                _tag.setAttribute('checked', 'checked')
-              }
-
-              return _tag.outerHTML
-            }
-          }, {
-            targets: 9, // status
-            className: 'center',
-            data: 'status',
-            render: function (data, type, row, meta) {
-              if (row[11] === 0) {
-                return `<span class="label label-danger" id="status${row[0]}" data-status="${row[11]}">Inactive</span>`
-              } else {
-                return `<span class="label label-success" id="status${row[0]}" data-status="${row[11]}">Active</span>`
-              }
-            }
-          }, {
-            targets: 10, // message
-            className: 'center',
-            data: 'message',
-            render: function (data, type, row, meta) {
-              var _tag = ''
-
-              if (row[11] === 1 && row[12] === 1) {
-                _tag = '<i class="fas fa-check text-success" style="font-size: 20px;"></i>'
-              }
-
-              if (row[13] != '') {
-                _tag += `<i class="fas fa-comment-alt" style="font-size: 20px;" title="${row[13]}"></i>`
-              }
-
-              return _tag
-            }
+        if (valid) {
+          info = {
+            start_date: form.querySelector('[name="date"]').value,
           }
-        ],
-        processing: true,
-        stateSave: true,
-        paging: false,
-        sPaginationType: 'full_numbers'
+
+          let id = reseller.value
+          if (channel.value == 1) {
+            slug = 'ship'
+            id = ship.value
+          }
+
+          var url = `${apiHost}allotments/${slug}/${id}`
+          utils.api(JSON.stringify(info), url, 'POST', clone.deploy)
+        }
       })
-
-    editor.draw()
-    editor.columns.adjust().draw()
-
-    MicroModal.close('wait-modal')
-  },
-  loadOptions: function (response, extradata) {
-    const data = JSON.parse(response)
-
-    if (data.code === 200) {
-      utils.buildOptions(extradata, data.message)
     }
 
-    MicroModal.close('wait-modal')
-  },
-  removeOptions: function (element, type = null) {
-    const init = (type === 'all') ? -1 : 0
+    // clone form events
+    const arriveClone = document.querySelector('[name="date-clone"]')
+    if (arriveClone != null) {
+      flatpickr(arriveClone, {
+        dateFormat: 'Y-m-d',
+        minDate: 'today'
+      })
+    }
 
-    for (var i = element.options.length - 1; i > init; i--) {
-      element.remove(i)
+    const channelClone = document.querySelector('[name="channel-clone"]')
+    if (channelClone != null) {
+      channelClone.addEventListener('change', (e) => {
+        e.preventDefault()
+        clone.changeChannel(e.target.value, 'clone')
+      })
+    }
+
+    const shipClone = document.querySelector('[name="ship-clone"]')
+    if (shipClone != null) {
+      shipClone.append(new Option(defaultOption))
+
+      const shipContent = shipClone.closest('.form-group')
+      shipContent.classList.add('d-none')
+    }
+
+    const resellerClone = document.querySelector('[name="reseller-clone"]')
+    if (resellerClone != null) {
+      resellerClone.append(new Option(defaultOption))
+
+      resellerClone.addEventListener('change', (e) => {
+        e.preventDefault()
+        var url = `${apiHost}arrives/shipsarrive/${e.target.value}`
+
+        if (channelClone.value == 1) {
+          const data = {
+            id: null,
+            key: 'ship_name',
+            value: 'ship_id',
+            element: document.querySelector('[name="ship-clone"]')
+          }
+
+          utils.api(JSON.stringify({}), url, 'GET', clone.deployOptions, data)
+        } else {
+          utils.removeOptions(shipClone, 0)
+
+          shipClone.appendChild(new Option(dataFilter[0].ship_name, dataFilter[0].ship_id))
+          shipClone.value = dataFilter[0].ship_id
+
+          arriveClone.value = dataFilter[0].start_date
+        }
+      })
+    }
+
+    const btnClone = document.querySelector('.save')
+    if (btnClone !== null) {
+      const btnsContent = btnClone.closest('.error-simulator')
+
+      btnsContent.classList.add('d-flex', 'justify-content-end')
+      btnsContent.classList.remove('offset-sm-2', 'col-sm-10')
+
+      btnClone.innerText = 'Clone configuration'
+      btnClone.classList.add('ml-2')
+
+      btnClone.addEventListener('click', (e) => {
+        e.preventDefault()
+        var valid = 'true'
+
+        var form = btnClone.closest('form')
+        var fields = form.querySelectorAll('[data-validator]')
+
+        valid = utils.dataValidator(fields)
+
+        if (valid) {
+          clone.confirm()
+        }
+      })
+    }
+
+    const cancel = document.querySelector('.cancel')
+    if (cancel != null) {
+      cancel.addEventListener('click', (e) => {
+        e.preventDefault()
+
+        const form = document.querySelector('#clone-form')
+        form.reset()
+      })
     }
   },
-  setSelect: function (name, arrayData) {
-    var selectChannelDest = document.querySelector('[name="' + name + '"]')
-    var opt = selectChannelDest.getElementsByTagName('option')
+  confirm: () => {
+    const confirmModal = document.querySelector('#confirm-modal-content')
+    const message = utils.createElement('p', '', '', 'Are you sure you want to clone allotments?')
 
-    for (var i = 1; i < opt.length; i++) {
-      opt[i].style.display = 'block'
+    confirmModal.innerHTML = ''
+    confirmModal.append(message)
 
-      if (arrayData.indexOf(parseInt(opt[i].value)) !== -1) {
-        opt[i].style.display = 'none'
-      }
-    }
-  },
-  confirm: function () {
-    var _message = ''
-    var _confirmModal = document.getElementById('confirm-modal-content')
-    _message = utils.createElement('p', '', '', 'Are you sure you want to clone allotments?')
-    _confirmModal.innerHTML = ''
-    _confirmModal.appendChild(_message)
-    MicroModal.show('confirm-modal')
+    const btnConfirm = document.querySelector('.confirm-delete')
 
-    const btnConfirmSave = document.querySelector('.confirm-delete')
-
-    btnConfirmSave.addEventListener('click', function (e) {
+    btnConfirm.addEventListener('click', (e) => {
       e.preventDefault()
       e.stopImmediatePropagation()
 
       MicroModal.close()
 
-      clone.buildJson()
+      clone.initClone()
     })
+
+    MicroModal.show('confirm-modal')
   },
-  setTitle: function () {
-    var detCruise = document.getElementById('det-cruise')
-    var detTime = document.getElementById('det-time')
+  initClone: () => {
+    const allotment = {}
 
-    switch (parseInt(dataFilter.channelId)) {
-      case 1:
-        detCruise.style.display = 'block'
-        detTime.style.display = 'none'
-        break
-      case 2:
-        detCruise.style.display = 'none'
-        detTime.style.display = 'none'
-        break
-      case 3:
-        detCruise.style.display = 'none'
-        detTime.style.display = 'none'
-        break
-    }
-  },
-  changeChannel: function () {
-    var url = apiHost
-    var channel = document.querySelector('[name="channel"]')
-    var divCruise = document.querySelector('.div-cruise')
-    var divVendorCruise = document.querySelector('.div-vendor-cruise')
-    var date = document.querySelector('[name="date"]')
-    var cruise = document.querySelector('[name="cruise"]')
+    const form = document.querySelector('#clone-form')
 
-    switch (parseInt(channel.value)) {
-      case 1:
-        if (divCruise.classList.contains('hidden') === true) {
-          divCruise.classList.remove('hidden')
-        }
+    allotment.user = user
+    allotment.type_sim = 'N'
+    allotment.date = form.querySelector('[name="date-clone"]').value
+    allotment.cruise = parseInt(form.querySelector('[name="ship-clone"]').value ,10)
+    allotment.channel = parseInt(form.querySelector('[name="channel-clone"]').value ,10)
+    allotment.vendor = parseInt(form.querySelector('[name="reseller-clone"]').value ,10)
 
-        if (divVendorCruise.classList.contains('hidden') === false) {
-          divVendorCruise.classList.add('hidden')
-        }
+    let list = []
+    const rows = document.querySelectorAll('.row-allotmetns')
+    // Build array of allotmeent data
+    for (let i = 0, l = rows.length; i < l; i++) {
+      const id = parseInt(rows[i].id, 10);
 
-        clone.removeOptions(cruise, 'all')
-        cruise.style['pointer-events'] = 'auto'
-        cruise.appendChild(new Option('--Choose option--'))
+      const item = {}
 
-        date.style['pointer-events'] = 'auto'
-        date.value = ''
-
-        url = url + 'arrives/vendorarrive/list'
-        break
-      case 2:
-        if (divCruise.classList.contains('hidden') === false) {
-          divCruise.classList.add('hidden')
-        }
-
-        if (divVendorCruise.classList.contains('hidden') === false) {
-          divVendorCruise.classList.add('hidden')
-        }
-
-        date.style['pointer-events'] = 'auto'
-        date.value = ''
-
-        url = url + 'resellers/channel/2'
-        break
-      case 3:
-        if (divVendorCruise.classList.contains('hidden') === true) {
-          divVendorCruise.classList.remove('hidden')
-        }
-
-        if (divCruise.classList.contains('hidden') === true) {
-          divCruise.classList.remove('hidden')
-        }
-
-        clone.removeOptions(cruise, 'all')
-        cruise.append(new Option(dataFilter.cruise, dataFilter.cruiseId))
-        cruise.style['pointer-events'] = 'none'
-
-        var vendorCruise = document.querySelector('[name="vendor_cruise"]')
-        clone.removeOptions(vendorCruise, 'all')
-        vendorCruise.append(new Option(dataFilter.vendor, dataFilter.vendorId))
-        vendorCruise.style['pointer-events'] = 'none'
-
-        date.value = dataFilter.date
-        date.style['pointer-events'] = 'none'
-
-        url = url + 'resellers/channel/3'
-        break
-    }
-
-    const vendor = document.querySelector('[name="vendor"]')
-    const dataElement = {
-      id: null,
-      key: 'reseller_name',
-      value: 'reseller_id',
-      element: vendor
-    }
-    clone.removeOptions(vendor)
-    utils.api(JSON.stringify({}), url, 'GET', clone.loadOptions, dataElement)
-  },
-  setData: function (band) {
-    if (band === true) {
-      document.querySelector('[name="channel"]').setAttribute('disabled', 'disabled')
-      document.querySelector('[name="vendor"]').setAttribute('disabled', 'disabled')
-      document.querySelector('[name="cruise"]').setAttribute('disabled', 'disabled')
-      document.querySelector('[name="date"]').setAttribute('disabled', 'disabled')
-      document.querySelector('.save').setAttribute('disabled', 'disabled')
-      document.querySelector('.recovery').setAttribute('disabled', 'disabled')
-    } else {
-      document.querySelector('[name="channel"]').removeAttribute('disabled')
-      document.querySelector('[name="vendor"]').removeAttribute('disabled')
-      document.querySelector('[name="cruise"]').removeAttribute('disabled')
-      document.querySelector('[name="date"]').removeAttribute('disabled')
-
-      switch (parseInt(dataFilter.channelId)) {
-        case 2:
-          var arrayData = new Array([2, 3])
-          clone.setSelect('channel', arrayData)
-          break
-
-        case 3:
-          arrayData = new Array([2, 3])
-          clone.setSelect('channel', arrayData)
-          break
+      item.shared_schedule = 0
+      if (document.querySelector(`#shared${id}`).checked) {
+        item.shared_schedule = 1
       }
-    }
-  }
-}
 
-var selectChannel = document.querySelector('[name="channel"]')
-
-if (selectChannel != null) {
-  selectChannel.addEventListener('change', function (e) {
-    e.preventDefault()
-    clone.changeChannel()
-  })
-}
-
-var selectVendor = document.querySelector('[name="vendor"]')
-
-if (selectVendor != null) {
-  selectVendor.append(new Option('-- Choose option --'))
-
-  selectVendor.addEventListener('change', function (e) {
-    e.preventDefault()
-    const channel = document.querySelector('[name="channel"]').value
-
-    if (parseInt(channel) === 1) {
-      const cruise = document.querySelector('[name="cruise"]')
-      const dataElement = {
-        id: null,
-        key: 'ship_name',
-        value: 'ship_id',
-        element: cruise
+      item.private_service = 0
+      if (document.querySelector(`#private${id}`).checked) {
+        item.private_service = 1
       }
-      clone.removeOptions(cruise)
-      utils.api(JSON.stringify({}), `${apiHost}arrives/shipsarrive/${this.value}`, 'GET', clone.loadOptions, dataElement)
+
+      item.clone = 0
+      if (document.querySelector(`#clone${id}`).checked) {
+        item.clone = 1
+      }
+
+      item.message = ''
+      item.available = ''
+      item.allotment_id = id
+      item.service_name = rows[i].innerText
+      item.overlap = document.querySelector(`#overlap${id}`).value
+      item.schedule_end = document.querySelector(`#hrEnd${id}`).value
+      item.service_id = parseInt(rows[i].getAttribute('service_id'), 10)
+      item.schedule_start = document.querySelector(`#hrStart${id}`).value
+      item.arrive_id = parseInt(document.querySelector(`#arriveId${id}`).value, 10)
+      item.min_available = parseInt(document.querySelector(`#min${id}`).value, 10)
+      item.max_available = parseInt(document.querySelector(`#max${id}`).value, 10)
+      item.active_status = parseInt(document.querySelector(`#status${id}`).dataset.status, 10)
+      item.available_status = parseInt(document.querySelector(`#status${id}`).dataset.status, 10)
+
+      list.push(item)
     }
-  })
-}
 
-var selectVendorCruise = document.querySelector('[name="vendor_cruise"]')
+    const info = {}
 
-if (selectVendorCruise != null) {
-  selectVendorCruise.append(new Option('-- Choose option --'))
+    info.list = list
+    info.newAllotment = allotment
 
-  selectVendorCruise.addEventListener('change', function (e) {
-    e.preventDefault()
+    utils.api(JSON.stringify(info), `${apiHost}allotments/clonealloments`, 'POST', clone.deploy)
+  },
+  deploy: (response) => {
+    try {
+      MicroModal.close('wait-modal')
+      response = JSON.parse(response)
 
-    let channel = document.querySelector('[name="channel"]').value
-    const cruise = document.querySelector('[name="cruise"]')
-    const dataElement = {
-      id: null,
-      key: 'ship_name',
-      value: 'ship_id',
-      element: cruise
-    }
+      const table = document.querySelector('#allotments-clone')
+      const content = document.querySelector('.table-clone')
+      const cloneContent = document.querySelector('.clone-details')
 
-    clone.removeOptions(cruise)
-    utils.api(JSON.stringify({}), `${apiHost}arrives/shipsarrive/${this.value}`, 'GET', clone.loadOptions, dataElement)
-  })
-}
+      utils.dropTable(table)
 
-var selectCruise = document.querySelector('[name="cruise"]')
+      const nodeTable = utils.createElement('table', '', 'allotments-clone', '')
 
-if (selectCruise != null) {
-  selectCruise.append(new Option('-- Choose option --'))
-}
+      content.appendChild(nodeTable)
 
-var search = document.getElementById('btn-search')
-const btnSearch = utils.createElement('button', 'btn btn-primary', 'Search', 'Search')
-btnSearch.setAttribute('name', 'btn_modal_search')
-search.appendChild(btnSearch)
+      if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
+        configTable = clone.getTableConfig([])
 
-form = document.getElementById('clone-form')
-form.setAttribute('method', 'POST')
-form.setAttribute('action', `${base}allotments/config`)
+        if (response.code === 404) {
+          utils.displayModal(alertModal, 'Not found allotment with the data selected')
+        } else {
+          utils.displayModal(alertModal, response.message)
+        }
 
-var formbtn = document.querySelector('.form-actions')
-formbtn.classList.add('col-md-5')
+        cloneContent.classList.add('d-none')
 
-formbtn.childNodes[1].childNodes[1].remove()// Remove button cancel
-var _btnRecovery = utils.createElement('button', 'btn btn-primary recovery', '', 'Recovery')
-_btnRecovery.setAttribute('id', 'recovery')
-formbtn.childNodes[1].appendChild(_btnRecovery)
+        $(nodeTable).DataTable(configTable).draw()
+      } else {
+        let registers = response.message
+        if (utils.isJson(registers)) {
+          registers = JSON.parse(registers)
+          registers = registers.list
+        }
 
-var _btnSimulates = document.querySelector('.save')
-_btnSimulates.addEventListener('click', function (e) {
-  e.preventDefault()
-  clone.confirm()
-})
+        dataFilter = registers
 
-// Create modal for search allotments
-var newDataAllotment = document.querySelector('[name="btn_modal_search"]')
-newDataAllotment.addEventListener('click', function (e) {
-  e.preventDefault()
+        configTable = clone.getTableConfig(registers)
 
-  var _alertModal = document.getElementById('confirm-modal-content')
-  _alertModal.innerHTML = ''
-  _alertModal.setAttribute('style', 'min-width:320px;')
+        $(nodeTable).DataTable(configTable).draw()
 
-  var _form = document.createElement('form', '', '', '')
-  _form.setAttribute('id', 'frmSearch')
-  _form.setAttribute('method', 'POST')
-  _form.setAttribute('action', `${base}allotments/clone`)
-
-  var _labelChannel = utils.createElement('span', 'control-label', '', 'Channel:')
-  var _inputChannel = document.querySelector('[name="channelaux"]').cloneNode(true)
-  _inputChannel.setAttribute('name', 'modalchannel')
-  _inputChannel.setAttribute('id', 'modalchannel')
-  var _inputChannelText = utils.createElement('input', 'hidden', '', '')
-  _inputChannelText.setAttribute('name', 'modalchanneltext')
-  _inputChannelText.setAttribute('id', 'modalchanneltext')
-
-  var _labelReseller = utils.createElement('span', 'control-label', '', 'Vendor:')
-  var _inputReseller = utils.createElement('select', 'form-control reseller', '', '')
-  _inputReseller.setAttribute('name', 'modalvendor')
-  _inputReseller.setAttribute('id', 'modalvendor')
-  var _inputResellerText = utils.createElement('input', 'hidden', '', '')
-  _inputResellerText.setAttribute('name', 'modalvendortext')
-  _inputResellerText.setAttribute('id', 'modalvendortext')
-  _inputReseller.append(new Option('-- Chosse option --'), '')
-
-  var _labelDate = utils.createElement('span', 'control-label', '', 'Date:')
-  var _inputDate = utils.createElement('input', 'form-control date', '', '')
-  _inputDate.setAttribute('id', 'date')
-  _inputDate.setAttribute('name', 'modaldate')
-
-  _inputDate.setAttribute('maxlength', '45')
-  _inputDate.setAttribute('placeholder', 'Y-m-d')
-  _inputDate.flatpickr({
-    dateFormat: 'Y-m-d'
-  })
-
-  _form.appendChild(_labelChannel)
-  _form.appendChild(_inputChannel)
-  _form.appendChild(_inputChannelText)
-  _form.appendChild(_labelReseller)
-  _form.appendChild(_inputReseller)
-  _form.appendChild(_inputResellerText)
-  _form.appendChild(_labelDate)
-  _form.appendChild(_inputDate)
-
-  _alertModal.appendChild(_form)
-
-  MicroModal.show('confirm-modal')
-
-  var inpModalChannel = document.querySelector('[name="modalchannel"]')
-  inpModalChannel.addEventListener('change', function (e) {
-    e.preventDefault()
-    var vendor = document.querySelector('[name="modalvendor"]')
-    var cruise = document.querySelector('[name="modalcruise"]')
-
-    if (parseInt(this.value) === 1) {
-      if (cruise === null) {
-        var _labelCruise = utils.createElement('span', 'control-label', '', 'Cruise:')
-        _labelCruise.setAttribute('id', 'lblCruise')
-        var _inputCruise = utils.createElement('select', 'form-control date', '', '')
-
-        _inputCruise.setAttribute('id', 'inpCruise')
-        _inputCruise.setAttribute('name', 'modalcruise')
-        _inputCruise.append(new Option('-- chosse option --'), '')
-
-        var _inputCruiseText = utils.createElement('input', 'hidden', '', '')
-        _inputCruiseText.setAttribute('name', 'modalcruisetext')
-
-        document.querySelector('[name="modalvendor"]').after(_inputCruise)
-        document.querySelector('[name="modalvendor"]').after(_labelCruise)
-        document.querySelector('[name="modalvendor"]').after(_inputCruiseText)
-
-        vendor.addEventListener('change', function (e) {
-          e.preventDefault()
-          e.stopImmediatePropagation()
-
-          var shipOpt = document.querySelector('[name="modalcruise"]')
-          if (shipOpt != null) {
-            const dataElement = {
-              id: null,
-              key: 'ship_name',
-              value: 'ship_id',
-              element: shipOpt
-            }
-
-            const id = this.value
-            clone.removeOptions(shipOpt)
-            utils.api(JSON.stringify({}), `${apiHost}ships/reseller/${id}`, 'GET', clone.loadOptions, dataElement)
-          }
+        flatpickr('.time-format', {
+          enableTime: true,
+          noCalendar: true,
+          dateFormat: 'H:i',
+          time_24hr: true
         })
+
+        flatpickr('.overlap', {
+          enableTime: true,
+          noCalendar: true,
+          dateFormat: 'H:i',
+          time_24hr: true
+        })
+
+        cloneContent.classList.remove('d-none')
       }
-    } else {
-      if (cruise != null) {
-        document.getElementById('lblCruise').remove()
-        document.getElementById('inpCruise').remove()
-      }
+    } catch (e) {
+      console.log(e)
+      utils.displayModal(alertModal, '')
+    }
+  },
+  changeChannel: (channelOption, target) => {
+    let url = `${apiHost}resellers/channel/${channelOption}`
+    if (channelOption === 1) {
+      url = `${apiHost}arrives/vendorarrive/list`
     }
 
-    const dataElement = {
+    let element = document.querySelector('[name="reseller"]')
+    let shipContent = document.querySelector('[name="ship"]').closest('.form-group')
+
+    if (target === 'clone') {
+      element = document.querySelector('[name="reseller-clone"]')
+      shipContent = document.querySelector('[name="ship-clone"]').closest('.form-group')
+    }
+
+    if (channelOption != 2) {
+      shipContent.classList.remove('d-none')
+    } else {
+      shipContent.classList.add('d-none')
+    }
+
+    const data = {
       id: null,
       key: 'reseller_name',
       value: 'reseller_id',
-      element: vendor
+      element: element
     }
 
-    const id = this.value
-    clone.removeOptions(vendor)
+    utils.api(JSON.stringify({}), url, 'GET', clone.deployOptions, data)
+  },
+  deployOptions: (response, data) => {
+    response = JSON.parse(response)
 
-    utils.api(JSON.stringify({}), `${apiHost}resellers/channel/${id}`, 'GET', clone.loadOptions, dataElement)
-  })
+    utils.removeOptions(data.element, 0)
 
-  var btnSearch = document.querySelector('.confirm-delete')
-  btnSearch.addEventListener('click', function (e) {
-    e.preventDefault()
+    utils.buildOptions(data, response.message, 1)
 
-    var inpChannel = document.querySelector("[name='modalchannel']")
-    var inpVendor = document.querySelector("[name='modalvendor']")
-    var inpCruise = document.querySelector("[name='modalcruise']")
-
-    var optionChannel = inpChannel.getElementsByTagName('option')
-    var optionVendor = inpVendor.getElementsByTagName('option')
-    if (inpCruise != null) {
-      var optionCruise = inpCruise.getElementsByTagName('option')
-      document.querySelector('[name="modalcruisetext"]').value = optionCruise[inpCruise.selectedIndex].innerHTML
+    MicroModal.close('wait-modal')
+  },
+  getTableConfig: (registers) => {
+    const config = {
+        info:false,
+        paging: false,
+        responsive: true,
+        searching: false,
+        fixedHeader: true,
     }
 
-    document.querySelector('[name="modalchanneltext"]').value = optionChannel[inpChannel.selectedIndex].innerHTML
-    document.querySelector('[name="modalvendortext"]').value = optionVendor[inpVendor.selectedIndex].innerHTML
+    const columns = [
+      {
+        title: 'Service',
+        data: 'allotment_id',
+        render: (data, type, row, meta) => {
+          const service = utils.createElement('span', 'row-allotmetns', data, row.service_name)
+          service.setAttribute('service_id', row.service_id)
 
-    document.getElementById('frmSearch').submit()
-  })
-})
+          const arrive = utils.createElement('input', 'form-control', `arriveId${row.allotment_id}`)
+          arrive.setAttribute('type', 'hidden')
+          arrive.setAttribute('value', row.arrive_id)
 
+          return `${service.outerHTML} ${arrive.outerHTML}`
+        }
+      },
+      {
+        title: 'Schedule start',
+        data: 'schedule_start',
+        render: (data, type, row, meta) => {
+          const scheduleStart = utils.createElement('input', 'form-control hrStart time-format', `hrStart${row.allotment_id}`)
 
-var configTable = document.getElementById('allotments-clone')
+          scheduleStart.setAttribute('value', data)
+          scheduleStart.setAttribute('type', 'text')
 
-const utilAjaxExecute = function () {
-  var url = ''
-  var method = 'POST'
-  var dataObj = new Object()
+          return scheduleStart.outerHTML
+        }
+      },
+      {
+        title: 'Schedule End',
+        data: 'schedule_end',
+        render: (data, type, row, meta) => {
+          const scheduleEnd = utils.createElement('input', 'form-control hrEnd time-format', `hrEnd${row.allotment_id}`)
 
-  dataFilter.channelId
+          scheduleEnd.setAttribute('value', data)
+          scheduleEnd.setAttribute('type', 'text')
 
-  if (dataFilter.arriveId === null) {
-    switch (parseInt(dataFilter.channelId)) {
-      case 1:
-        url = '/ship/' + dataFilter.cruiseId
-        dataObj.start_date = dataFilter.date
-        break
-      case 2:
-        url = '/reseller/' + dataFilter.vendorId
-        dataObj.start_date = dataFilter.date
-        break
-      case 3:
-        url = '/reseller/' + dataFilter.vendorId
-        dataObj.start_date = dataFilter.date
-        break
-    }
-  } else {
-    if (dataFilter.arriveId !== null) {
-      url = '/arrive/' + dataFilter.arriveId
-      method = 'GET'
-    }
-  }
+          return scheduleEnd.outerHTML
+        }
+      },
+      {
+        title: 'Minimum',
+        data: 'min_available',
+        render: (data, type, row, meta) => {
+          const minAvailable = utils.createElement('input', 'form-control min', `min${row.allotment_id}`)
 
-  if (configTable !== undefined && configTable !== null && configTable !== undefined && configTable !== undefined) {
-    var band = (url === '') ? true : false
+          minAvailable.setAttribute('value', data)
+          minAvailable.setAttribute('type', 'number')
 
-    utils.api(JSON.stringify(dataObj), `${apiHost}allotments${url}`, method, clone.loadData, band)
+          return minAvailable.outerHTML
+        }
+      },
+      {
+        title: 'Maximum',
+        data: 'max_available',
+        render: (data, type, row, meta) => {
+          const maxAvailable = utils.createElement('input', 'form-control max', `max${row.allotment_id}`)
+
+          maxAvailable.setAttribute('value', data)
+          maxAvailable.setAttribute('type', 'number')
+
+          return maxAvailable.outerHTML
+        }
+      },
+      {
+        title: 'Shared',
+        data: 'shared_schedule',
+        render: (data, type, row, meta) => {
+          const shared = utils.createElement('input', 'shared', `shared${row.allotment_id}`)
+
+          shared.setAttribute('type', 'checkbox')
+
+          if (data === 1) {
+            shared.setAttribute('checked', true)
+          }
+
+          return shared.outerHTML
+        }
+      },
+      {
+        title: 'Private',
+        data: 'private_service',
+        render: (data, type, row, meta) => {
+          const privateService = utils.createElement('input', 'private', `private${row.allotment_id}`)
+
+          privateService.setAttribute('type', 'checkbox')
+
+          if (data === 1) {
+            privateService.setAttribute('checked', true)
+          }
+
+          return privateService.outerHTML
+        }
+      },
+      {
+        title: 'Overlap',
+        data: 'overlap',
+        render: (data, type, row, meta) => {
+          const overlap = utils.createElement('input', 'form-control overlap', `overlap${row.allotment_id}`)
+
+          overlap.setAttribute('type', 'text')
+          overlap.setAttribute('value', data)
+
+          return overlap.outerHTML
+        }
+      },
+      {
+        title: 'Clone',
+        data: 'clone',
+        render: (data, type, row, meta) => {
+          const checkClone = utils.createElement('input', 'clone', `clone${row.allotment_id}`)
+
+          checkClone.setAttribute('type', 'checkbox')
+          if (data === undefined || data === 1) {
+            checkClone.setAttribute('checked', true)
+          }
+
+          return checkClone.outerHTML
+        }
+      },
+      {
+        title: 'Status',
+        data: 'active_status',
+        render: (data, type, row, meta) => {
+          const status = utils.createElement('span', 'badge badge-danger', `status${row.allotment_id}`, 'Inactive')
+
+          if (row.available_status !== undefined) {
+            data = row.available_status
+          }
+
+          if (data === 1) {
+            status.innerHTML = 'Active'
+            status.classList.add('badge-success')
+            status.classList.remove('badge-danger')
+          }
+
+          status.setAttribute('data-status', data)
+
+          return status.outerHTML
+        }
+      },
+      {
+        title: 'Message',
+        data: 'message',
+        render: (data, type, row, meta) => {
+          const message = utils.createElement('span', 'message', '', data)
+
+          return message.outerHTML
+        }
+      },
+    ]
+
+    config.data = registers
+    config.columns = columns
+
+    return config
   }
 }
 
-clone.setTitle()
-
-utilAjaxExecute()
-
-$(function () {
-  document.getElementsByClassName('date-format').flatpickr({
-    dateFormat: 'Y-m-d',
-    minDate: 'today'
-  })
-})
+clone.init()
