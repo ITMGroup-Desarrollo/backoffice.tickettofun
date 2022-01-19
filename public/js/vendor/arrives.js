@@ -212,6 +212,10 @@ const arrives = {
         MicroModal.close('wait-modal')
         response = JSON.parse(response)
 
+        const table = document.querySelector('#arrives-registers')
+
+        utils.dropTable(table)
+
         const content = document.querySelector('.table-arrives')
         const nodeTable = utils.createElement('table', '', 'arrives-registers', '')
 
