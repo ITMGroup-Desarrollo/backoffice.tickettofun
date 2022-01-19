@@ -227,30 +227,34 @@ var utils = {
     var valid = 'true'
 
     for (var i = 0, l = fields.length; i < l; i++) {
-      fields[i].value = fields[i].value.trim()
+      var parent = fields[i].closest('.form-group')
 
-      if (fields[i].getAttribute('data-validator').split('^').length > 1) {
-        var options = fields[i].getAttribute('data-validator').split('^')
-        var messages = fields[i].getAttribute('data-validator-msg').split('^')
+      if (!parent.classList.contains('d-none')) {
+        fields[i].value = fields[i].value.trim()
 
-        for (var j = 0, k = options.length; j < k; j++) {
-          if (options[j] === 'optional' && fields[i].value === '') {
-            j = options.length + 1
+        if (fields[i].getAttribute('data-validator').split('^').length > 1) {
+          var options = fields[i].getAttribute('data-validator').split('^')
+          var messages = fields[i].getAttribute('data-validator-msg').split('^')
+
+          for (var j = 0, k = options.length; j < k; j++) {
+            if (options[j] === 'optional' && fields[i].value === '') {
+              j = options.length + 1
+            }
+
+            valid = validator.isValid(fields[i], options[j], messages[j])
+
+            if (!valid && options[j] !== 'optional') {
+              return false
+            }
           }
+        } else {
+          valid = validator.isValid(fields[i],
+            fields[i].getAttribute('data-validator')
+          )
 
-          valid = validator.isValid(fields[i], options[j], messages[j])
-
-          if (!valid && options[j] !== 'optional') {
+          if (!valid) {
             return false
           }
-        }
-      } else {
-        valid = validator.isValid(fields[i],
-          fields[i].getAttribute('data-validator')
-        )
-
-        if (!valid) {
-          return false
         }
       }
     }
@@ -330,6 +334,8 @@ var utils = {
         .destroy()
 
       table.parentNode.removeChild(table)
+    } else if (table !== null) {
+      table.remove()
     }
   },
   addStatusFormat: function (status, id) {
