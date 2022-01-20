@@ -16,7 +16,7 @@ class Booths extends BaseController
     public function index()
     {
         if ( ! $this->user->active_session())
-            redirect(base_url('signin'));
+            return redirect()->to(base_url('signin'));
 
         $view   = $this->request->uri->getSegment(1);
         $option = $this->request->uri->getSegment(2);
@@ -70,7 +70,7 @@ class Booths extends BaseController
     public function update()
     {
         if ( ! $this->user->active_session())
-            redirect(base_url('signin'));
+            return redirect()->to(base_url('signin'));
 
         $view   = $this->request->uri->getSegment(1);
         $option = $this->request->uri->getSegment(2);
@@ -105,7 +105,7 @@ class Booths extends BaseController
 
     public function configuration(){
         if ( ! $this->user->active_session())
-            redirect(base_url('signin'));
+            return redirect()->to(base_url('signin'));
 
         $view   = $this->request->uri->getSegment(1);
         $option = $this->request->uri->getSegment(2);

@@ -23,7 +23,7 @@ class Allotments extends BaseController
     public function index()
     {
         if ( ! $this->user->active_session())
-            redirect(base_url('signin'));
+            return redirect()->to(base_url('signin'));
 
         $view   = $this->request->uri->getSegment(1);
         $option = $this->request->uri->getSegment(2);
@@ -69,7 +69,7 @@ class Allotments extends BaseController
     public function update()
     {
         if ( ! $this->user->active_session())
-            redirect(base_url('signin'));
+            return redirect()->to(base_url('signin'));
 
         $view   = $this->request->uri->getSegment(1);
         $option = $this->request->uri->getSegment(2);
@@ -102,7 +102,7 @@ class Allotments extends BaseController
     public function itinerary()
     {
         if ( ! $this->user->active_session())
-            redirect(base_url('signin'));
+            return redirect()->to(base_url('signin'));
 
         $view   = 'schedules';
         $id     = $this->request->uri->getSegment(3);
@@ -186,7 +186,7 @@ class Allotments extends BaseController
     private function _get_dynamic_html($id)
     {
         if ( ! $this->user->active_session())
-            redirect(base_url('signin'));
+            return redirect()->to(base_url('signin'));
 
         $view   = 'schedules';
         $id     = $this->request->uri->getSegment(3);
@@ -210,7 +210,7 @@ class Allotments extends BaseController
     public function configuration()
     {
         if ( ! $this->user->active_session())
-            redirect(base_url('signin'));
+            return redirect()->to(base_url('signin'));
 
         $view   = 'config';
         $option = $this->request->uri->getSegment(2);
@@ -241,7 +241,7 @@ class Allotments extends BaseController
     public function create_configuration()
     {
         if ( ! $this->user->active_session())
-            redirect(base_url('signin'));
+            return redirect()->to(base_url('signin'));
 
         $view   = 'config';
         $option = $this->request->uri->getSegment(2);
@@ -291,7 +291,7 @@ class Allotments extends BaseController
     public function configuration_update()
     {
         if ( ! $this->user->active_session())
-            redirect(base_url('signin'));
+            return redirect()->to(base_url('signin'));
 
         $view   = 'config';// $this->request->uri->getSegment(1);
         $id = $this->request->uri->getSegment(3);
@@ -349,7 +349,7 @@ class Allotments extends BaseController
     public function clone()
     {
         if ( ! $this->user->active_session())
-            redirect(base_url('signin'));
+            return redirect()->to(base_url('signin'));
 
         $this->page->page_name = 'clone';
 
@@ -461,7 +461,7 @@ class Allotments extends BaseController
     public function config()
     {
         if ( ! $this->user->active_session())
-            redirect(base_url('signin'));
+            return redirect()->to(base_url('signin'));
 
         $this->page->page_name = 'allotments-config';
 
@@ -566,7 +566,7 @@ class Allotments extends BaseController
     public function transfer()
     {
         if ( ! $this->user->active_session())
-            redirect(base_url('signin'));
+            return redirect()->to(base_url('signin'));
 
         $view   = $this->request->uri->getSegment(1);
         $option = $this->request->uri->getSegment(2);

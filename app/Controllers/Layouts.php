@@ -21,11 +21,11 @@ class Layouts extends BaseController
     public function index() // TODO: Fix route {layout/download} download get 404 error
     {
         if (!$this->user->active_session())
-            redirect(base_url('signin'));
+            return redirect()->to(base_url('signin'));
 
         $view   = $this->request->uri->getSegment(1);
         $option = $this->request->uri->getSegment(2);
-        
+
         $this->page->page_name      = $view;
         $this->page->menu_active    = 'Layouts';
         $this->page->submenu_active = $option;
@@ -56,11 +56,11 @@ class Layouts extends BaseController
     public function upload()
     {
         if (!$this->user->active_session())
-            redirect(base_url('signin'));
+            return redirect()->to(base_url('signin'));
 
         $view   = $this->request->uri->getSegment(1);
         $option = $this->request->uri->getSegment(2);
-        
+
         $this->page->page_name      = $view;
         $this->page->menu_active    = 'layouts';
         $this->page->submenu_active = $option;
@@ -97,7 +97,7 @@ class Layouts extends BaseController
     public function export()
     {
         if (!$this->user->active_session())
-            redirect(base_url('signin'));
+            return redirect()->to(base_url('signin'));
 
         $option = $this->request->uri->getSegment(3);
 
@@ -117,7 +117,7 @@ class Layouts extends BaseController
 
     public function upload_file()
     {
-        try 
+        try
         {
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -158,8 +158,8 @@ class Layouts extends BaseController
                     $response['data'] = $this->layout->get_data_rows();
                     $response['data_errors'] = $this->layout->get_data_errors();
                 }
-            } 
-            else 
+            }
+            else
             {
                 throw new Exception("Denied permissions.");
             }

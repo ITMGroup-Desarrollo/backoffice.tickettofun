@@ -11,7 +11,7 @@ class Calendars extends BaseController
     public function index()
     {
         if ( ! $this->user->active_session())
-            redirect(base_url('signin'));
+            return redirect()->to(base_url('signin'));
 
         $view   = $this->request->uri->getSegment(1);
         $option = $this->request->uri->getSegment(2);

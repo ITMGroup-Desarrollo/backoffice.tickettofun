@@ -16,11 +16,11 @@ class Diary extends BaseController
     public function index()
     {
         if ( ! $this->user->active_session())
-            redirect(base_url('signin'));
+            return redirect()->to(base_url('signin'));
 
         $view   = $this->request->uri->getSegment(1);
         $option = $this->request->uri->getSegment(2);
-        
+
         $this->page->page_name      = $view;
         $this->page->menu_active    = 'diary';
         $this->page->submenu_active = $option;
@@ -80,7 +80,7 @@ class Diary extends BaseController
             'code' => 500,
             'message' => 'Something wrong!'
         );
-        
+
         $this->page->page_name = 'diary';
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST')

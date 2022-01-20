@@ -4,23 +4,23 @@ namespace App\Controllers;
 class Roles extends BaseController
 {
     public $rol;
-    
+
     public function __construct()
     {
         $this->rol = new \App\Models\Rol();
     }
-    
+
     /**
     *Index page for this controller
     */
     public function index()
     {
         if ( ! $this->user->active_session())
-            redirect(base_url('signin'));
+            return redirect()->to(base_url('signin'));
 
         $view   = $this->request->uri->getSegment(1);
         $option = $this->request->uri->getSegment(2);
-        
+
         $this->page->page_name      = $view;
         $this->page->menu_active    = 'roles';
         $this->page->submenu_active = $option;
@@ -66,7 +66,7 @@ class Roles extends BaseController
     public function update()
     {
         if ( ! $this->user->active_session())
-            redirect(base_url('signin'));
+            return redirect()->to(base_url('signin'));
 
         $view   = $this->request->uri->getSegment(1);
         $option = $this->request->uri->getSegment(2);
