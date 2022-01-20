@@ -227,9 +227,14 @@ var utils = {
     var valid = 'true'
 
     for (var i = 0, l = fields.length; i < l; i++) {
+      var hidden = true
       var parent = fields[i].closest('.form-group')
 
-      if (!parent.classList.contains('d-none')) {
+      if (parent != null && parent.classList.contains('d-none')) {
+        hidden = false
+      }
+
+      if (hidden) {
         fields[i].value = fields[i].value.trim()
 
         if (fields[i].getAttribute('data-validator').split('^').length > 1) {

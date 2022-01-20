@@ -417,7 +417,7 @@ class Forms
         $value = $key_value[0];
 
         $endpoint = $api_endpoint;
-       $token     = $this->session->get('token');
+        $token     = $this->session->get('token');
 
         $response = json_decode(
             $this->api->request_api('GET', $endpoint, $params, $token)

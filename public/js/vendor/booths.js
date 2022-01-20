@@ -10,7 +10,7 @@ var data
 var ulNew
 
 var booth = {
-    assing: function(){       
+    assing: function(){
 
             booth.getReps()
 
@@ -41,7 +41,7 @@ var booth = {
                     utils.api(JSON.stringify({}), url, 'GET', booth.addLocations, listLocations)
                 }
             })
-            
+
            listLocations.addEventListener('change', function (e) {
                 e.preventDefault()
                 let id = e.target.value
@@ -55,7 +55,7 @@ var booth = {
                 if (id !== '') {
                     url = `${apiHost}booths/location/${id}`
                     utils.api(JSON.stringify({}), url, 'GET', booth.addBooths, listBooths)
-                } 
+                }
             })
 
             listBooths.addEventListener('change', function (e) {
@@ -69,7 +69,7 @@ var booth = {
                     listResellers = []
                     url = `${apiHost}rep_booth/booth/${id}`
                     utils.api(JSON.stringify({}), url, 'GET', booth.getRepBooth,ulNew)
-                } 
+                }
             })
 
 
@@ -100,7 +100,7 @@ var booth = {
         }
     },
     addAssing: function(response) {
-        MicroModal.close('wait-modal')        
+        MicroModal.close('wait-modal')
         response = JSON.parse(response)
         var _message = ''
         var _alertModal = document.getElementById('alert-modal-content')
@@ -113,7 +113,7 @@ var booth = {
 
             MicroModal.show('alert-modal')
         } else if (response.code === 200) {
-            
+
             _message = utils.createElement('p', '', '', response.message.message)
 
             _alertModal.innerHTML = ''
@@ -184,7 +184,7 @@ var booth = {
         document.querySelector('[name="status"]').value = boothData.active_status
         document.querySelector('[name="booth_name"]').value = boothData.booth_name
         document.querySelector('[name="location"]').value = boothData.location_id
-        
+
     },
     getReps: function() {
 
@@ -193,13 +193,13 @@ var booth = {
                 document.getElementById('reps_select').innerHTML += '<option value="' + repData[_count].rep_id + '">' + repData[_count].fullname + '</option>'
             }
         }
-    },    
+    },
     addLocations: function(response,element){
         try {
             MicroModal.close('wait-modal')
             response = JSON.parse(response)
-            const options = response         
-    
+            const options = response
+
             if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
               utils.displayModal(alertModal, response.message)
             } else {
@@ -207,21 +207,21 @@ var booth = {
                 element: element,
                 value: 'sale_location_id',
                 key: 'name'
-              }              
-              
+              }
+
               utils.buildOptions(data, options.message, 1)
             }
-          } catch (e) {             
+          } catch (e) {
             utils.displayModal(alertModal, '')
           }
-       
+
     },
     addBooths: function(response,element){
         try {
             MicroModal.close('wait-modal')
             response = JSON.parse(response)
             const options = response
-    
+
             if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
                 console.log(response.code)
               utils.displayModal(alertModal, response.message)
@@ -231,7 +231,7 @@ var booth = {
                 value: 'booth_id',
                 key: 'booth_name'
               }
-            
+
               utils.buildOptions(data, options.message, 1)
             }
           } catch (e) {
@@ -356,6 +356,21 @@ if (cancel != null) {
             form.reset()
         }
 
+        form = document.querySelector('#booth-rep')
+        if (form != null) {
+            form.reset()
+
+            const sales = form.querySelector('.list-sales')
+            if (sales != null) {
+              sales.classList.add('d-none')
+            }
+
+            const list = form.querySelector('#listrep')
+            if (list != null) {
+              list.innerHTML = ''
+            }
+        }
+
         form = document.querySelector('#update-booth')
         if (form != null) {
             booth.setData()
@@ -373,7 +388,7 @@ if (save != null) {
 
         valid = utils.dataValidator(fields)
 
-        if (valid) {            
+        if (valid) {
 
             form = document.querySelector('#add-booth')
 
@@ -381,9 +396,9 @@ if (save != null) {
                 info = {
                     booth_name: document.querySelector('[name="booth_name"]').value,
                     location_id: document.querySelector('[name="location"]').value,
-                    user_create_id : userCreateId            
+                    user_create_id : userCreateId
                 }
-                
+
                 var url = `${apiHost}booths/add`
                 utils.api(JSON.stringify(info), url, 'POST', booth.add)
             }

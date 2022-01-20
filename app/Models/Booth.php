@@ -88,7 +88,7 @@ class Booth extends Model
 
                 $this->anchor_attrib['class'] = 'edit';
                 $this->anchor_attrib['href']  = base_url($path);
-                
+
                 $edit = custom('i', array('class' => 'fas fa-edit'), '');
                 $edit = custom('a', $this->anchor_attrib, $edit);
 
@@ -108,12 +108,7 @@ class Booth extends Model
         }
         else
         {
-            $aux = '';
-            for ($i = 0; $i < 3; $i++) {
-                $aux .= custom('td', '', '');
-            }
-            
-            $this->model = custom('tr', '', $aux);
+            $this->model = '';
         }
 
         $this->model = str_replace('{rows}', $this->model, $table_content);
@@ -180,7 +175,7 @@ class Booth extends Model
             $booth->location_id = $response->message->location_id;
             $booth->location_name = $response->message->location_name;
             $booth->active_status = $response->message->active_status;
-           
+
         }
         else
         {
