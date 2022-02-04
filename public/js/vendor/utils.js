@@ -198,12 +198,14 @@ var utils = {
     }
 
     for (var i in options) {
-      element.append(new Option(options[i][key], options[i][value]))
-      element.options.item(index).setAttribute('id', options[i][value])
+      if (options[i]['active_status'] === 1) {
+        element.append(new Option(options[i][key], options[i][value]))
+        element.options.item(index).setAttribute('id', options[i][value])
 
-      if (typeof data.extraData === 'object' && data.extraData !== null) {
-        for (var [k, v] of Object.entries(data.extraData)) {
-          element.options.item(index).setAttribute(k, v)
+        if (typeof data.extraData === 'object' && data.extraData !== null) {
+          for (var [k, v] of Object.entries(data.extraData)) {
+            element.options.item(index).setAttribute(k, v)
+          }
         }
       }
 
