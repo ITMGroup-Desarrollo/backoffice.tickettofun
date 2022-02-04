@@ -90,7 +90,7 @@ class Diaries extends Model
         $ship_name   = '';
         $ship_time   = '';
         $total_tours = 0;
-        
+
         $extra_data  = new stdClass();
 
         $row = $result->getRow();
@@ -154,7 +154,7 @@ class Diaries extends Model
                     $body        = '';
                     $total_tours = 0;
                     $ship_name   = "{$row->ship_name} &#60;";
-                    
+
                     $ship_name .= "{$row->arrival_time} - {$row->departure_time}&#62;";
 
                     $extra_data = $row;
@@ -169,9 +169,23 @@ class Diaries extends Model
                     $aux .= custom('td', '', $row->service_equivalence_name);
                 }
 
+                $duration = '0';
+                $time1 = date_create($row->schedule_start);
+                $time2 = date_create($row->schedule_end);
+
+                $difference = date_diff($time1, $time2);
+
+                $duration = $difference->h . ':';
+
+                if ($difference->i < 10) {
+                    $duration .= '0' . $difference->i;
+                } else {
+                    $duration .= $difference->i;
+                }
+
                 $aux .= custom('td', '', $row->schedule_start);
                 $aux .= custom('td', '', $row->schedule_end);
-                $aux .= custom('td', '', $row->duration);
+                $aux .= custom('td', '', $duration);
 
                 if ($this->print == 0) // Remove columns on print
                 {
@@ -192,7 +206,7 @@ class Diaries extends Model
 
                 $total       += $row->pax;
                 $total_tours += $row->pax;
-                
+
                 $body .=  custom('tr', '', $aux);
             }
 
@@ -211,7 +225,7 @@ class Diaries extends Model
 
             $this->model['total_tours'] = $total;
             $table                      = str_replace('{rows}', $body, $table);
-            
+
             $details .= str_replace('{tours_details}', $table, $ship_details);
 
             $details = str_replace('{ship_cruise}', $ship_name, $details);
@@ -234,7 +248,7 @@ class Diaries extends Model
                     {
                         $items = str_replace('{count}', $row->total, $element);
                         $items = str_replace('{location}', $row->location_name, $items);
-    
+
                         $this->model['tours'] .= $items;
                     }
                 }
