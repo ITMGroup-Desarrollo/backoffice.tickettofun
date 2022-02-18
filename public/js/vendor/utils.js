@@ -197,8 +197,23 @@ var utils = {
       index = 0
     }
 
-    for (var i in options) {
-      if (options[i]['active_status'] === 1) {
+    if (Object.prototype.hasOwnProperty.call('active_status', options[0])) {
+      for (var i in options) {
+        if (options[i]['active_status'] === 1) {
+          element.append(new Option(options[i][key], options[i][value]))
+          element.options.item(index).setAttribute('id', options[i][value])
+
+          if (typeof data.extraData === 'object' && data.extraData !== null) {
+            for (var [k, v] of Object.entries(data.extraData)) {
+              element.options.item(index).setAttribute(k, v)
+            }
+          }
+        }
+
+        index++
+      }
+    } else {
+      for (var i in options) {
         element.append(new Option(options[i][key], options[i][value]))
         element.options.item(index).setAttribute('id', options[i][value])
 
@@ -207,9 +222,9 @@ var utils = {
             element.options.item(index).setAttribute(k, v)
           }
         }
-      }
 
-      index++
+        index++
+      }
     }
 
     if (Number.isInteger(data.id) && data.id !== null) {
