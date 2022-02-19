@@ -407,6 +407,10 @@ const arrives = {
         response = JSON.parse(response)
 
         configTable = arrives.update.getTableConfig([])
+        const table = document.querySelector('#allotments-registers')
+
+        utils.dropTable(table)
+
         const content = document.querySelector('.table-allotment')
         const nodeTable = utils.createElement('table', '', 'allotments-registers', '')
 
@@ -429,6 +433,11 @@ const arrives = {
             var  dRegisters = JSON.parse(registers)
             registers = dRegisters.list
           }
+
+          // filter by cruise channel
+          registers = registers.filter((row) => {
+            return row.channel_id == 1
+          })
 
           configTable = arrives.update.getTableConfig(registers)
 
