@@ -120,7 +120,7 @@ const clone = {
         e.preventDefault()
         var url = `${apiHost}arrives/shipsarrive/${e.target.value}`
 
-        if (channelClone.value == 1) {
+        if (channelClone.value !== 2) {
           const data = {
             id: null,
             key: 'ship_name',
@@ -128,14 +128,9 @@ const clone = {
             element: document.querySelector('[name="ship-clone"]')
           }
 
-          utils.api(JSON.stringify({}), url, 'GET', clone.deployOptions, data)
-        } else {
-          utils.removeOptions(shipClone, 0)
-
-          shipClone.appendChild(new Option(dataFilter[0].ship_name, dataFilter[0].ship_id))
-          shipClone.value = dataFilter[0].ship_id
-
           arriveClone.value = dataFilter[0].start_date
+
+          utils.api(JSON.stringify({}), url, 'GET', clone.deployOptions, data)
         }
       })
     }
@@ -317,7 +312,7 @@ const clone = {
   },
   changeChannel: (channelOption, target) => {
     let url = `${apiHost}resellers/channel/${channelOption}`
-    if (channelOption === 1) {
+    if (channelOption !== 2) {
       url = `${apiHost}arrives/vendorarrive/list`
     }
 
