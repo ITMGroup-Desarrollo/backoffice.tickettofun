@@ -20,8 +20,8 @@ class Signin extends BaseController
         $view = (empty($view)) ? 'signin' : $view;
 
         if ($this->user->active_session())
-            redirect(base_url($this->session->userdata()['page_default']));
-        
+            return redirect()->to(base_url($this->session->get('page_default')));
+
         $this->page->page_name = $view;
 
         $data = $this->page->get_contents();
