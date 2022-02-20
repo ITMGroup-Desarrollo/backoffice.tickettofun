@@ -147,6 +147,11 @@ $routes->add("sale-locations/list", "Sale_locations::index/$1");
 $routes->add("sale-locations/new", "Sale_locations::index/$1");
 $routes->add("sale-locations/(:num)", "Sale_locations::update/$1");
 
+//Costs
+$routes->add("costs/list", "Costs::index/$1");
+$routes->add("costs/new", "Costs::index/$1");
+$routes->add("costs/(:num)", "Costs::update/$1");
+
 /*
  * --------------------------------------------------------------------
  * Additional Routing
