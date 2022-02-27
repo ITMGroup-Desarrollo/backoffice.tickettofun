@@ -641,7 +641,7 @@ const arrives = {
           }
         },
         {
-          data: 'min_available_base',
+          data: 'capacity_min',
           title: 'Min.Capacity',
           render: (data, type, row, meta) => {
             const startTime = utils.createElement(
@@ -659,7 +659,7 @@ const arrives = {
           }
         },
         {
-          data: 'max_available_base',
+          data: 'capacity_max',
           title: 'Max.Capacity',
           render: (data, type, row, meta) => {
             const startTime = utils.createElement(
