@@ -112,7 +112,7 @@ class Apikey extends Model
                         $this->anchor_attrib['href']    = '#';
                         $this->anchor_attrib['class']   = 'delete';
                         $this->anchor_attrib['data-id'] = $row->id;
-                        
+
                         $delete = custom('i', array('class' => 'fas fa-trash'), '');
                         $delete = custom('a', $this->anchor_attrib, $delete);
                     }
@@ -172,7 +172,7 @@ class Apikey extends Model
         }
         else
         {
-            redirect('/apikeys/list');
+            return redirect()->to('/apikeys/list');
         }
 
         return $api_key;

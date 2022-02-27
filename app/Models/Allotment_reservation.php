@@ -73,7 +73,7 @@ class Allotment_reservation extends Model
     {
         $form     = 'ALLOTMENT_RESERVATIONS_FORM';
         $contents = $this->page->get_settings('allotments');
-       
+
         if ($option == 'search')
         {
             $form = 'ALLOTMENTS_RESERVATIONS_FORM_SEARCH';
@@ -111,7 +111,7 @@ class Allotment_reservation extends Model
         }
         else
         {
-            redirect('/allotments/list');
+            return redirect()->to('/allotments/list');
         };
 
         return $allotment_reservatoin;
