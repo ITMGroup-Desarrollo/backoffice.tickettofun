@@ -464,7 +464,7 @@ const arrives = {
 
           $(nodeTable).DataTable(configTable).draw()
 
-          flatpickr('.hrStart', {
+          flatpickr('.hours', {
             enableTime: true,
             noCalendar: true,
             dateFormat: 'H:i',
@@ -508,6 +508,7 @@ const arrives = {
         const table = document.querySelector('#allotments-registers')
         const dataAllotment = document.querySelectorAll('.data-allotment')
 
+        const endHours = table.querySelectorAll('.hrEnd')
         const startHours = table.querySelectorAll('.hrStart')
         const maxAvailable = table.querySelectorAll('.capmax')
         const minAvailable = table.querySelectorAll('.capmin')
@@ -520,6 +521,7 @@ const arrives = {
           const allotment = {}
 
           allotment.schedule_start = schedulesBase[i].innerText
+          allotment.schedule_end = schedulesEndBase[i].innerText
 
           allotment.service_name = dataAllotment[i].dataset.serviceName
           allotment.schedule_start_base = schedulesBase[i].innerText
@@ -553,6 +555,10 @@ const arrives = {
             valid = false
             arrives.errorMsg('exceded', 'minimum capacity', minAvailable[i], allotment.service_name)
             break
+          }
+
+          if (endHours[i].value !== '') {
+            allotment.schedule_end = endHours[i].value
           }
 
           if (startHours[i].value !== '') {
@@ -628,7 +634,24 @@ const arrives = {
           title: 'Schedule start',
           render: (data, type, row, meta) => {
             const startTime = utils.createElement(
-              'input', 'form-control-plaintext hrStart', `hrStart${row.allotment_id}`, ''
+              'input', 'form-control-plaintext hrStart hours', `hrStart${row.allotment_id}`, ''
+            )
+
+            startTime.setAttribute('value', data)
+
+            if (status === 0) {
+              startTime.setAttribute('disabled', 'disabled')
+            }
+
+            return startTime.outerHTML
+          }
+        },
+        {
+          data: 'schedule_end',
+          title: 'Schedule end',
+          render: (data, type, row, meta) => {
+            const startTime = utils.createElement(
+              'input', 'form-control-plaintext hrEnd hours', `hrEnd${row.allotment_id}`, ''
             )
 
             startTime.setAttribute('value', data)
