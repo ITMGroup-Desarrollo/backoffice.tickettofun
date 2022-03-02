@@ -140,7 +140,8 @@ $routes->add("layouts/download", "Layouts::index/$1");
 $routes->add("layouts/export/(:any)", "Layouts::export/$1");
 
 // Diary
-$routes->add("diary/print/(:num)", "Diary::print/$1");
+$routes->add("diary/lmps", "Diary::lmps/$1");
+$routes->add("diary/print/(:any)", "Diary::print/$1");
 
 //Sale locations
 $routes->add("sale-locations/list", "Sale_locations::index/$1");

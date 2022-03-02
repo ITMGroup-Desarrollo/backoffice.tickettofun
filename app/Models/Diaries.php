@@ -49,9 +49,8 @@ class Diaries extends Model
         $this->specifications = 'SHIP_SPEC';
     }
 
-    public function get_location_distribution($next_date = NULL, $view = NULL)
+    public function get_location_distribution($next_date = NULL, $view = NULL, $channel_id = 1)
     {
-        $locations      = array();
         $this->settings = $this->page->get_settings('diary');
 
         $element = $this->build->build_components($this->settings['SPEC']);
@@ -78,7 +77,7 @@ class Diaries extends Model
         }
 
         $query = 'CALL get_allotment_reservation(?, ?, ?, ?, ?, ?, ?)';
-        $data = array('bydate', NULL, $next_date, NULL, NULL, NULL, NULL);
+        $data = array('bydate', NULL, $next_date, $channel_id, NULL, NULL, NULL);
 
         $result = $this->db->query($query, $data);
 
@@ -86,7 +85,6 @@ class Diaries extends Model
         $body        = '';
         $total       = 0;
         $details     = '';
-        $arrive_id   = 0;
         $ship_name   = '';
         $ship_time   = '';
         $total_tours = 0;
@@ -288,6 +286,11 @@ class Diaries extends Model
         foreach ($extra_data as $key => $value)
         {
             $replace_key = '{' . $key . '}';
+
+            if ($value == NULL) {
+                $value = '';
+            }
+
             $details     = str_replace($replace_key, $value, $details);
         }
 

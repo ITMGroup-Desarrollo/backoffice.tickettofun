@@ -1,13 +1,17 @@
 <?php
 namespace App\Controllers;
 
+use App\Libraries\Build;
+use \DateTime;
+
 class Diary extends BaseController
 {
     public $diaries;
 
     public function __construct()
     {
-        $this->diaries= new \App\Models\Diaries();
+        $this->build   = new Build();
+        $this->diaries = new \App\Models\Diaries();
     }
 
     /**
@@ -27,6 +31,64 @@ class Diary extends BaseController
 
         $data      = $this->page->get_contents();
         $locations = $this->diaries->get_location_distribution();
+
+        $data['contents'] = str_replace(
+            '{title}', ucwords($view), $data['contents']
+        );
+
+        $data['contents'] = str_replace(
+            '{spec}', $locations['tours'], $data['contents']
+        );
+
+        $data['contents'] = str_replace(
+            '{sub-title}', 'Port of Costa Maya', $data['contents']
+        );
+
+        $data['contents'] = str_replace(
+            '{option}', $locations['display'], $data['contents']
+        );
+
+        $data['contents'] = str_replace(
+            '{msg}', $locations['message'], $data['contents']
+        );
+
+        $data['contents'] = str_replace(
+            '{total_tours}', $locations['total_tours'], $data['contents']
+        );
+
+        $data['contents'] = str_replace(
+            '{details}', $locations['details'], $data['contents']
+        );
+
+        $form = $this->diaries->get_form();
+        $form = str_replace(
+            '{display}', $locations['display'], $form
+        );
+
+        $data['contents'] = str_replace(
+            'form-send', $form, $data['contents']
+        );
+
+        return view('Master', $data);
+    }
+
+    public function lmps()
+    {
+        if ( ! $this->user->active_session())
+            return redirect()->to(base_url('signin'));
+
+        $view   = $this->request->uri->getSegment(1);
+        $option = $this->request->uri->getSegment(2);
+
+        $this->page->page_name      = $view;
+        $this->page->menu_active    = 'diary';
+        $this->page->submenu_active = $option;
+
+        $date = new DateTime();
+        $operation_date = $date->format('Y-m-d');
+
+        $data      = $this->page->get_contents();
+        $locations = $this->diaries->get_location_distribution($operation_date, NULL, 3);
 
         $data['contents'] = str_replace(
             '{title}', ucwords($view), $data['contents']
@@ -108,7 +170,7 @@ class Diary extends BaseController
     {
         $date = $this->request->uri->getSegment(3);
 
-        $pdf = new \App\Libraries\Pdfgenerator();
+        //$pdf = new \App\Libraries\Pdfgenerator();
 
         $settings = $this->page->get_settings('diary');
 
@@ -124,7 +186,8 @@ class Diary extends BaseController
         $document = str_replace('{port_of}', $header_title, $document);
         $document = str_replace('{body}', $contents['details'], $document);
 
-        $filename = 'Diary operation journal';
-        $pdf->generate($document, $filename, true, 'A4', 'portrait');
+        return $document;
+        //$filename = 'Diary operation journal';
+        //$pdf->generate($document, $filename, true, 'A4', 'portrait');
     }
 }
