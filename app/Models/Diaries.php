@@ -54,6 +54,9 @@ class Diaries extends Model
         $this->settings = $this->page->get_settings('diary');
 
         $element = $this->build->build_components($this->settings['SPEC']);
+        if ($channel_id === 3) {
+            $this->specifications = 'SHIP_SPEC_LMPS';
+        }
 
         $table        = '';
         $ship_details = '';

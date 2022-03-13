@@ -198,9 +198,6 @@ if (send !== null) {
 const element = document.querySelector('.flatpickr')
 if (element != null) {
   const date = new Date(Date.now())
-  const container = document.querySelector('.date-container')
-
-  container.append(element)
 
   const month = date.getMonth()
   const year = date.getFullYear()

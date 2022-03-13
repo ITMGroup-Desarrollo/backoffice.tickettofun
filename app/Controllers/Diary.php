@@ -45,6 +45,10 @@ class Diary extends BaseController
         );
 
         $data['contents'] = str_replace(
+            '{id}', 'form-picker', $data['contents']
+        );
+
+        $data['contents'] = str_replace(
             '{option}', $locations['display'], $data['contents']
         );
 
@@ -65,6 +69,10 @@ class Diary extends BaseController
             '{display}', $locations['display'], $form
         );
 
+        $form = str_replace(
+            '{id}', 'form-actions', $form
+        );
+
         $data['contents'] = str_replace(
             'form-send', $form, $data['contents']
         );
@@ -78,11 +86,10 @@ class Diary extends BaseController
             return redirect()->to(base_url('signin'));
 
         $view   = $this->request->uri->getSegment(1);
-        $option = $this->request->uri->getSegment(2);
 
         $this->page->page_name      = $view;
-        $this->page->menu_active    = 'diary';
-        $this->page->submenu_active = $option;
+        $this->page->menu_active    = 'diary lmps';
+        $this->page->submenu_active = '';
 
         $date = new DateTime();
         $operation_date = $date->format('Y-m-d');
@@ -118,13 +125,8 @@ class Diary extends BaseController
             '{details}', $locations['details'], $data['contents']
         );
 
-        $form = $this->diaries->get_form();
-        $form = str_replace(
-            '{display}', $locations['display'], $form
-        );
-
         $data['contents'] = str_replace(
-            'form-send', $form, $data['contents']
+            'form-send', '', $data['contents']
         );
 
         return view('Master', $data);
@@ -149,7 +151,12 @@ class Diary extends BaseController
         {
             $data = json_decode(file_get_contents('php://input'));
 
-            $diary = $this->diaries->get_location_distribution($data->date);
+            $channel = 1;
+            if (property_exists($data, 'channel')) {
+                $channel = 3;
+            }
+
+            $diary = $this->diaries->get_location_distribution($data->date, NULL, $channel);
 
             if ($diary['code'] == 200)
             {
