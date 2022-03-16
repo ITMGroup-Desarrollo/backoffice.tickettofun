@@ -128,6 +128,7 @@ $routes->add("courtesies/(:num)", "Courtesies::update/$1");
 $routes->add("reps/list", "Reps::index/$1");
 $routes->add("reps/new", "Reps::index/$1");
 $routes->add("reps/(:num)", "Reps::update/$1");
+$routes->add("reps/sales", "Reps::listSales/$1");
 
 // Booths
 $routes->add("booths/list", "Booths::index/$1");

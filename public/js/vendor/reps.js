@@ -374,3 +374,17 @@ if (repsTable !== null) {
     })
 }
 
+var tableSales = document.querySelector('#table-sales')
+if (tableSales !== null) {
+    $(function() {
+        $('#table-sales').dataTable({
+            sPaginationType: 'full_numbers',
+            iDisplayLength: 20,
+            aLengthMenu: [
+                [20, 50, 100, -1],
+                [20, 50, 100, 'All']
+            ]
+        })
+    })
+}
+

@@ -103,4 +103,37 @@ class Reps extends BaseController
 
         return view('Master', $data);
     }
+
+    public function listSales()
+    {
+        if (!$this->user->active_session())
+            return redirect()->to(base_url('signin'));
+
+        $view   = $this->request->uri->getSegment(1);
+        $option = $this->request->uri->getSegment(2);
+
+        $this->page->page_name = $view;
+
+        $data = $this->page->get_contents();
+
+        $table = $this->rep->get_list_sales();
+
+        $data['contents'] = str_replace(
+            '{title}',
+            'List Sales by Rep',
+            $data['contents']
+        );
+
+        $data['contents'] = str_replace(
+            '{content}',
+            $table,
+            $data['contents']
+        );
+
+        $rep = 'window.user_create_id = ' . $this->session->get('user_id');
+        $script = custom('script', '', $rep);
+        $data['scripts'] = $script .  $data['scripts'];
+
+        return view('Master', $data);
+    }
 }

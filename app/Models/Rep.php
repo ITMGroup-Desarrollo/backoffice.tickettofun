@@ -177,4 +177,85 @@ class Rep extends Model
 
         return $sales_rep;
     }
+
+    public function get_list_sales()
+    {
+        $table_content = $this->page->get_settings('reps');
+
+        $table_content = $this->build->build_components(
+            $table_content['SALES_TABLE']
+        );
+
+        // Call API here!
+        $params   = new stdClass();
+        $endpoint = GET_BOOKINGS_DATE_ROUTE . date('Y-m-d');
+
+        $token = $this->session->get('token');
+
+        $response = json_decode(
+            $this->api->request_api('GET', $endpoint, $params, $token)
+        );
+
+        if ($response->code == 200)
+        {
+            $rows = $response->message;
+
+            foreach ($rows as $row)
+            {
+                $aux = '';
+                $this->anchor_attrib = array();
+
+                $aux .= custom('td', '', $row->booking_reference);
+                $aux .= custom('td', '', $row->reseller_name);
+                $aux .= custom('td', '', $row->ship_name);
+                $aux .= custom('td', '', $row->cabin);
+                $aux .= custom('td', '', $row->total_amount);
+                $aux .= custom('td', '', $row->rep_name);
+
+                $status = '';
+                $delete = '';
+                if ($row->status_name == 'Confirmed')
+                {
+                    $status = custom('span', $this->active, $row->status_name);
+                }
+                else
+                {
+                    $status = custom('span', $this->inactive, $row->status_name);
+                }
+
+                $status_attrib                = $this->attrib;
+                $status_attrib['data-status'] =  $row->booking_id;
+
+                $aux .= custom('td', $status_attrib, $status);              
+
+                if ($row->status_name != 'Cancel') 
+                {
+                    $this->anchor_attrib['href']    = '#';
+                    $this->anchor_attrib['class']   = 'delete';
+                    $this->anchor_attrib['data-id'] = $row->booking_reference;
+                
+                    $delete = custom('i', array('class' => 'fas fa-trash'), '');
+                    $delete = custom('a', $this->anchor_attrib, $delete);
+                }
+
+                $aux .= custom('td', $this->attrib, $delete);
+
+                $this->model .= custom('tr', '', $aux);
+            }
+        }
+        else
+        {
+            $aux = '';
+            for ($i = 0; $i < 3; $i++) {
+                $aux .= custom('td', '', '');
+            }
+
+            $this->model = custom('tr', '', $aux);
+        }
+
+        $this->model = str_replace('{rows}', $this->model, $table_content);
+
+        return $this->model;
+    }
+
 }

@@ -114,6 +114,7 @@ defined('GET_ARRIVES_ALLOTMENTS_ROUTE')     || define('GET_ARRIVES_ALLOTMENTS_RO
 
 defined('GET_SALE_LOCATION_ROUTE')  || define('GET_SALE_LOCATION_ROUTE', 'api/v1/sale_locations');
 defined('GET_COST_ROUTE')  || define('GET_COST_ROUTE', 'api/v1/costs');
+defined('GET_BOOKINGS_DATE_ROUTE')  || define('GET_BOOKINGS_DATE_ROUTE', 'api/v1/bookings/date/');
 
 defined('LABEL_SUCCESS') || define('LABEL_SUCCESS', 'badge badge-success');
 defined('LABEL_DANGER')  || define('LABEL_DANGER', 'badge badge-danger');
