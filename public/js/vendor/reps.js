@@ -104,7 +104,7 @@ var rep = {
         document.querySelector('[name="last_name"]').value = repData.last_name
 
         document.querySelector('[name="code"]').value = repData['code_rep'];
-        
+
     },
     setUserData: function(response) {
         MicroModal.close('wait-modal')
@@ -176,25 +176,32 @@ var rep = {
 form = document.querySelector('form')
 if (form) {
     var searchEmail = utils.createElement('div', 'form-group email-rep row')
-    var labeltext = utils.createElement('label', 'col-sm-2 col-md-2 control-label', '', 'Email')
+    var labeltext = utils.createElement('label', 'col-sm-2 col-md-2 control-label', '', 'User Name')
+
     searchEmail.appendChild(labeltext)
+
     var divgroup = utils.createElement('div', 'input-group')
     var inputEmail = document.createElement('input')
+
     inputEmail.setAttribute('type', 'text')
     inputEmail.setAttribute('name', 'email')
     inputEmail.setAttribute('class', 'form-control')
     inputEmail.setAttribute('data-validator', 'empty')
     inputEmail.setAttribute('data-validator-msg', 'The email is required!')
     inputEmail.setAttribute('maxlength', '45')
+
     var span = utils.createElement('span', 'input-group-btn')
     var searchbtn = document.createElement('button')
+
     searchbtn.setAttribute('class', 'btn btn-default')
     searchbtn.setAttribute('type', 'button')
     searchbtn.setAttribute('name', 'searchbtn')
     searchbtn.innerHTML = 'Check'
     span.appendChild(searchbtn)
+
     divgroup.appendChild(inputEmail)
     divgroup.appendChild(span)
+
     var inputArea = utils.createElement('div', 'col-sm-10 col-md-8')
     inputArea.appendChild(divgroup)
     searchEmail.appendChild(inputArea)
@@ -231,11 +238,12 @@ if (save != null) {
         if (valid) {
             info = {
                 code: document.querySelector('[name="code"]').value,
-                user_create_id: userCreateId,                
+                user_create_id: userCreateId,
                 user: {
                     first_name: document.querySelector('[name="first_name"]').value,
                     last_name: document.querySelector('[name="last_name"]').value,
-                    email_addr: document.querySelector('[name="email"]').value,
+                    email_addr: null,
+                    user_name: document.querySelector('[name="email"]').value,
                     user_password: document.querySelector('[name="user_password"]').value,
                     confirm_password: document.querySelector('[name="confirm_password"]').value,
                     user_id: userId,
@@ -293,8 +301,8 @@ if (save != null) {
     })
 }
 
-var datepicker = (document.querySelector('[name="dates"]') ? document.querySelector('[name="dates"]') : '')
-if (datepicker !== '') {
+var datepicker = document.querySelector('[name="dates"]')
+if (datepicker !== null) {
     datepicker.parentElement.parentElement.classList.add('disable')
     datepicker.flatpickr({
         altFormat: 'F j, Y',
@@ -306,8 +314,8 @@ if (datepicker !== '') {
     })
 }
 
-var booths = document.querySelector('[name="booths"]') ? document.querySelector('[name="booths"]') : ''
-if (booths !== '') {
+var booths = document.querySelector('[name="booths"]')
+if (booths !== null) {
     booths.addEventListener('change', function(e) {
         if (this.value !== '') {
             datepicker.disabled = true
@@ -335,9 +343,9 @@ for (var i = 0, l = options.length; i < l; i++) {
     })
 }
 
-var btnemail = (document.querySelector('[name="searchbtn"]') ? document.querySelector('[name="searchbtn"]') : '')
+var btnemail = document.querySelector('[name="searchbtn"]')
 
-if (btnemail !== '') {
+if (btnemail !== null) {
     btnemail.addEventListener('click', function(e) {
         var valid = true
         var emailField = document.querySelectorAll('[name="email"]')
@@ -345,7 +353,7 @@ if (btnemail !== '') {
         valid = utils.dataValidator(emailField)
         if (valid) {
             emailField = document.querySelector('[name="email"]')
-            utils.api(JSON.stringify({}), `${apiHost}users/email/${emailField.value}`, 'GET', rep.setUserData)
+            utils.api(JSON.stringify({}), `${apiHost}users/username/${emailField.value}`, 'GET', rep.setUserData)
         }
     })
 }
