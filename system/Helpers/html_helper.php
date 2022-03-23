@@ -111,6 +111,8 @@ if (! function_exists('img')) {
         if (! preg_match('#^([a-z]+:)?//#i', $src['src']) && strpos($src['src'], 'data:') !== 0) {
             if ($indexPage === true) {
                 $img .= ' src="' . site_url($src['src']) . '"';
+            } else if ($src['src'] === '{img_avatar}') {
+                $img .= ' src="' . $src['src'] . '"';
             } else {
                 $img .= ' src="' . slash_item('baseURL') . $src['src'] . '"';
             }
