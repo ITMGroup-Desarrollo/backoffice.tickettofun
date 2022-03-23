@@ -1200,11 +1200,17 @@ body.open-sidebar #wrapper #content {
 }
 
 #sidebar-default .current-user .name .avatar {
-    max-width: 41px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     position: relative;
     top: 2px;
     margin-right: 12px;
+}
+
+.profile-avatar {
+    width: 100px;
+    height: 100px;
 }
 
 #sidebar-default .current-user .name span {
@@ -3557,13 +3563,13 @@ body.open-sidebar #wrapper #content {
     }
 }
 
-#reports .stats .stat, , #arrives .stats .stat {
+#reports .stats .stat, #arrives .stats .stat {
     float: left;
     width: 25%;
 }
 
 @media (max-width: 767px) {
-    #reports .stats .stat, , #arrives .stats .stat {
+    #reports .stats .stat, #arrives .stats .stat {
         width: 50%;
         margin-bottom: 20px;
     }
