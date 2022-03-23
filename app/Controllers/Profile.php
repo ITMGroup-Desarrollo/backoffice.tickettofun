@@ -41,7 +41,9 @@ class Profile extends BaseController
 
         $data['scripts'] = $script .  $data['scripts'];
 
-        $pathAvatar = "window.pathAvatar = '{$this->config->item("avatar_addr")}'";
+        $avatar_addr = getenv('avatarAddr');
+
+        $pathAvatar = "window.pathAvatar = '{$avatar_addr}'";
         $script = custom('script', '', $pathAvatar);
 
         $data['scripts'] = $script .  $data['scripts'];
