@@ -57,7 +57,7 @@ class User extends Model
         // Call API here!
         $params   = new stdClass();
         $endpoint = GET_USERS_ROUTE;
-        
+
         $token = $this->session->get('token');
 
         $response = json_decode(
@@ -75,6 +75,7 @@ class User extends Model
 
                 $aux .= custom('td', '', $row->first_name);
                 $aux .= custom('td', '', $row->last_name);
+                $aux .= custom('td', '', $row->user_name);
                 $aux .= custom('td', '', $row->rol_name);
                 $aux .= custom('td', '', $row->email_addr);
 
@@ -107,12 +108,12 @@ class User extends Model
 
                 if ($rol_id == 1 || in_array('d_users', $this->session->get('permissions')))
                 {
-                    if ($row->active_status == 1) 
+                    if ($row->active_status == 1)
                     {
                         $this->anchor_attrib['href']    = '#';
                         $this->anchor_attrib['class']   = 'delete';
                         $this->anchor_attrib['data-id'] = $row->user_id;
-                    
+
                         $delete = custom('i', array('class' => 'fas fa-trash'), '');
                         $delete = custom('a', $this->anchor_attrib, $delete);
                     }
