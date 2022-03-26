@@ -7,6 +7,7 @@ var user = window.user
 var dataFilter = window.dataArrive
 var configTable = utils.getDataTableConfig()
 
+let count = 1
 const defaultOption = '-- Choose option --'
 
 const clone = {
@@ -203,10 +204,10 @@ const clone = {
     allotment.vendor = parseInt(form.querySelector('[name="reseller-clone"]').value ,10)
 
     let list = []
-    const rows = document.querySelectorAll('.row-allotmetns')
+    const rows = document.querySelectorAll('.row-allotments')
     // Build array of allotmeent data
     for (let i = 0, l = rows.length; i < l; i++) {
-      const id = parseInt(rows[i].id, 10);
+      const id = rows[i].id
 
       const item = {}
 
@@ -227,7 +228,6 @@ const clone = {
 
       item.message = ''
       item.available = ''
-      item.allotment_id = id
       item.service_name = rows[i].innerText
       item.overlap = document.querySelector(`#overlap${id}`).value
       item.schedule_end = document.querySelector(`#hrEnd${id}`).value
@@ -238,6 +238,12 @@ const clone = {
       item.max_available = parseInt(document.querySelector(`#max${id}`).value, 10)
       item.active_status = parseInt(document.querySelector(`#status${id}`).dataset.status, 10)
       item.available_status = parseInt(document.querySelector(`#status${id}`).dataset.status, 10)
+
+      if (id.split('-').length > 0) {
+        item.allotment_id = null
+      } else {
+        parseInt(id, 10);
+      }
 
       list.push(item)
     }
@@ -283,6 +289,10 @@ const clone = {
           registers = registers.list
         }
 
+        for (let i = 0; i < registers.length; i++) {
+          registers[i].addPlusIcon = true
+        }
+
         dataFilter = registers
 
         configTable = clone.getTableConfig(registers)
@@ -302,6 +312,20 @@ const clone = {
           dateFormat: 'H:i',
           time_24hr: true
         })
+
+        const addElements = document.querySelectorAll('.add')
+        for (let i = 0; i < addElements.length; i++) {
+          addElements[i].addEventListener('click', (e) => {
+            e.preventDefault()
+
+            let element = e.target
+            if (!e.target.getAttribute('data-column')) {
+              element = e.target.parentElement
+            }
+
+            clone.addNewRow(element)
+          })
+        }
 
         cloneContent.classList.remove('d-none')
       }
@@ -348,6 +372,41 @@ const clone = {
 
     MicroModal.close('wait-modal')
   },
+  addNewRow: (element) => {
+    const registers = []
+    const data = JSON.parse(element.dataset.column)
+
+    data.addPlusIcon = false
+    data.allotment_id = `${data.allotment_id}-${count}`
+
+    registers.push(data)
+
+    count++
+    const table = $('#allotments-clone').DataTable()
+
+    table.rows.add(registers).draw()
+
+    flatpickr(`#hrStart${data.allotment_id}`, {
+      enableTime: true,
+      noCalendar: true,
+      dateFormat: 'H:i',
+      time_24hr: true
+    })
+
+    flatpickr(`#hrEnd${data.allotment_id}`, {
+      enableTime: true,
+      noCalendar: true,
+      dateFormat: 'H:i',
+      time_24hr: true
+    })
+
+    flatpickr(`#overlap${data.allotment_id}`, {
+      enableTime: true,
+      noCalendar: true,
+      dateFormat: 'H:i',
+      time_24hr: true
+    })
+  },
   getTableConfig: (registers) => {
     const config = {
         info:false,
@@ -357,12 +416,13 @@ const clone = {
         fixedHeader: true,
     }
 
+
     const columns = [
       {
         title: 'Service',
         data: 'allotment_id',
         render: (data, type, row, meta) => {
-          const service = utils.createElement('span', 'row-allotmetns', data, row.service_name)
+          const service = utils.createElement('span', 'row-allotments', data, row.service_name)
           service.setAttribute('service_id', row.service_id)
 
           const arrive = utils.createElement('input', 'form-control', `arriveId${row.allotment_id}`)
@@ -495,6 +555,26 @@ const clone = {
           status.setAttribute('data-status', data)
 
           return status.outerHTML
+        }
+      },
+      {
+        title: 'Actions',
+        data: 'addPlusIcon',
+        render: (data, type, row, meta) => {
+          if (data) {
+            const addNew = utils.createElement('a', 'add', '', '')
+
+            addNew.setAttribute('href', '#')
+            addNew.setAttribute('data-column', JSON.stringify(row))
+
+            const plus = utils.createElement('i', 'fas fa-plus', '', '')
+
+            addNew.append(plus)
+
+            return addNew.outerHTML
+          }
+
+          return ''
         }
       },
       {
