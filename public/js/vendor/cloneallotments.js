@@ -122,8 +122,15 @@ const clone = {
         var url = `${apiHost}arrives/shipsarrive/${e.target.value}`
 
         if (channelClone.value !== 2) {
+          let id = null
+          const ship = document.querySelector('[name="ship"]')
+
+          if (ship !== null) {
+            id = parseInt(ship.value, 10)
+          }
+
           const data = {
-            id: null,
+            id: id,
             key: 'ship_name',
             value: 'ship_id',
             element: document.querySelector('[name="ship-clone"]')
@@ -340,10 +347,12 @@ const clone = {
       url = `${apiHost}arrives/vendorarrive/list`
     }
 
+    let id = null
     let element = document.querySelector('[name="reseller"]')
     let shipContent = document.querySelector('[name="ship"]').closest('.form-group')
 
     if (target === 'clone') {
+      id = parseInt(element.value, 10)
       element = document.querySelector('[name="reseller-clone"]')
       shipContent = document.querySelector('[name="ship-clone"]').closest('.form-group')
     }
@@ -355,7 +364,7 @@ const clone = {
     }
 
     const data = {
-      id: null,
+      id: id,
       key: 'reseller_name',
       value: 'reseller_id',
       element: element
@@ -369,6 +378,10 @@ const clone = {
     utils.removeOptions(data.element, 0)
 
     utils.buildOptions(data, response.message, 1)
+
+    if (data.id !== null) {
+      data.element.dispatchEvent(new Event('change'))
+    }
 
     MicroModal.close('wait-modal')
   },
