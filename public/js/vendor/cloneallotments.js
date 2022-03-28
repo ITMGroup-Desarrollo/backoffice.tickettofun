@@ -8,10 +8,14 @@ var dataFilter = window.dataArrive
 var configTable = utils.getDataTableConfig()
 
 let count = 1
+let arriveData = null
 const defaultOption = '-- Choose option --'
 
 const clone = {
   init: () => {
+    const generate = document.querySelector('.generate-schedule')
+    const overlap = document.querySelector('[name="overlap"]')
+
     // search form events
     const channel = document.querySelector('[name="channel"]')
     if (channel != null) {
@@ -177,6 +181,29 @@ const clone = {
         form.reset()
       })
     }
+
+    // Schedule generates
+    if (overlap != null) {
+      flatpickr(overlap, {
+        altInput: false,
+        enableTime: true,
+        noCalendar: true,
+        dateFormat: 'H:i',
+        defaultHour: 0,
+        defaultMinute: 30,
+        maxTime: '05:00',
+        minuteIncrement: 30,
+        time_24hr: true
+      })
+    }
+
+    if (generate != null) {
+      generate.addEventListener('click', (e) => {
+        e.preventDefault()
+
+        clone.loadData()
+      })
+    }
   },
   confirm: () => {
     const confirmModal = document.querySelector('#confirm-modal-content')
@@ -296,9 +323,14 @@ const clone = {
           registers = registers.list
         }
 
+        let arriveId= null
         for (let i = 0; i < registers.length; i++) {
+          arriveId = registers[i].arrive_id
           registers[i].addPlusIcon = true
         }
+
+        // Get arrive information
+        utils.api(JSON.stringify(''), `${apiHost}arrives/${arriveId}`, 'GET', clone.arriveDeploy)
 
         dataFilter = registers
 
@@ -335,6 +367,43 @@ const clone = {
         }
 
         cloneContent.classList.remove('d-none')
+      }
+    } catch (e) {
+      console.log(e)
+      utils.displayModal(alertModal, '')
+    }
+  },
+  arriveDeploy: (response) => {
+    try {
+      MicroModal.close('wait-modal')
+      response = JSON.parse(response)
+
+      if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
+        if (response.code === 404) {
+          utils.displayModal(alertModal, 'Not found arrive data')
+        } else {
+          utils.displayModal(alertModal, response.message)
+        }
+      } else {
+        const item = response.message
+
+        arriveData = {
+          id: item.arrive_id,
+          ship_name: item.ship_name,
+          channel_id: item.channel_id,
+          reseller_id: item.reseller_id,
+          channel_name: item.channel_name,
+          reseller_name: item.reseller_name,
+          active: item.active_status,
+          ship_id: item.ship_id,
+          markup_end: item.markup_end,
+          arrival_date: item.arrival_date,
+          markup_start: item.markup_start,
+          arrival_time: item.arrival_time,
+          departure_time: item.departure_time,
+          arrival_time_markup: item.arrival_time_markup,
+          departure_time_markup: item.departure_time_markup
+        }
       }
     } catch (e) {
       console.log(e)
@@ -383,7 +452,49 @@ const clone = {
       data.element.dispatchEvent(new Event('change'))
     }
 
+    if (data.element.id == 'ship-clone') {
+      clone.getServicesEquivalences(data.id)
+    }
+
     MicroModal.close('wait-modal')
+  },
+  getServicesEquivalences: (id) => {
+    const service = document.querySelector('[name="service"]')
+
+    if (service != null) {
+      service.append(new Option('-- Choose option --', ''))
+
+      utils.api(JSON.stringify({}), `${apiHost}equivalences/ship/${id}`, 'GET', clone.serviceList, service)
+    }
+  },
+  serviceList: (response, element) => {
+    try {
+      MicroModal.close('wait-modal')
+      response = JSON.parse(response)
+
+      if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
+        if (response.code === 404) {
+          utils.displayModal(alertModal, 'Not found services')
+        } else {
+          utils.displayModal(alertModal, response.message)
+        }
+      } else {
+        const data = {
+          key: 'service_name',
+          value: 'service_id',
+          element: element
+        }
+
+        const wrapper = element.closest('.schedules')
+        if (wrapper != null) {
+          wrapper.classList.remove('d-none')
+        }
+
+        utils.buildOptions(data, response.message, 1)
+      }
+    } catch (e) {
+      utils.displayModal(alertModal, '')
+    }
   },
   addNewRow: (element) => {
     const registers = []
@@ -420,6 +531,78 @@ const clone = {
       time_24hr: true
     })
   },
+  loadData: () => {
+    var valid = true
+    const fields = document.querySelectorAll('[data-validator]')
+
+    valid = utils.dataValidator(fields)
+
+    if (valid) {
+      const service = document.querySelector('[name="service"]')
+      const overlap = document.querySelector('[name="overlap"]')
+      const ship = document.querySelector('[name="ship-clone"]')
+      const arriveDate = document.querySelector('[name="date-clone"]')
+
+      const info = {
+        arrive: arriveData,
+        overlap: overlap.value,
+        service: service.value,
+        ship: parseInt(ship.value, 10),
+        start_date: arriveDate.value,
+      }
+
+      utils.api(JSON.stringify(info), `${apiHost}allotments/shipservice`, 'POST', clone.addTour)
+    }
+  },
+  addTour:(response) => {
+    try {
+      MicroModal.close('wait-modal')
+      response = JSON.parse(response)
+
+      if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
+        if (response.code === 404) {
+          utils.displayModal(alertModal, 'Not found schedules')
+        } else {
+          utils.displayModal(alertModal, response.message)
+        }
+      } else {
+        const row = {}
+        const data = response.message
+        const service = document.querySelector('[name="service"]')
+
+        const element = utils.createElement('span', 'fake-element', '', '')
+
+        for (let i = 0; i < data.length; i++) {
+          row.allotment_id = data[i].arrive_id
+          row.channel_id = arriveData.channel_id
+          row.reseller_id = arriveData.reseller_id
+          row.arrive_id =  data[i].arrive_id
+          row.ship_id = arriveData.ship_id
+          row.service_id = data[i].service_id
+          row.service_name = service.options[service.selectedIndex].text
+          row.service_equivalence_name = service
+          row.start_date = arriveData.arrival_date
+          row.end_date = arriveData.arrival_date
+          row.schedule_start = data[i].schedule_end
+          row.schedule_end = data[i].schedule_end
+          row.overlap = data[i].overlap
+          row.shared_schedule = data[i].shared_schedule
+          row.private_service = 0
+          row.min_available = data[i].min_available,
+          row.max_available = data[i].max_available
+          row.active_status =  1
+          row.addPlusIcon = true
+          row.clone = 1
+
+          element.setAttribute('data-column', JSON.stringify(row))
+          clone.addNewRow(element)
+        }
+      }
+    } catch (e) {
+      console.log(e)
+      utils.displayModal(alertModal, '')
+    }
+  },
   getTableConfig: (registers) => {
     const config = {
         info:false,
@@ -428,7 +611,6 @@ const clone = {
         searching: false,
         fixedHeader: true,
     }
-
 
     const columns = [
       {

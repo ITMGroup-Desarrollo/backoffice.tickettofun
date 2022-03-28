@@ -29,7 +29,8 @@ var utils = {
   api: function (data, endpoint, httpverb, method, element, contentType) {
     var token = window.token
 
-    if (method !== null) MicroModal.show('wait-modal')
+    if (method !== null)
+      MicroModal.show('wait-modal')
 
     var xHR = new XMLHttpRequest()
 
