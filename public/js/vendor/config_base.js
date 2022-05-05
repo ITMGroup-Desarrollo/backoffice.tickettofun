@@ -140,6 +140,8 @@ var config = {
     }
 
     editor = $('#config-base-registers').DataTable({
+      responsive: true,
+      fixedHeader: true,
       retrieve: true,
       data: datatable,
       columnDefs: columns,

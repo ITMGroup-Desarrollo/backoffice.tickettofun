@@ -112,11 +112,10 @@ var allotment = {
     },
     {
       targets: 8,
-      width: '160px',
       className: 'center',
       render: function (data, type, row, meta) {
         var _input = utils.createElement('input', 'form-control input-pax mr-2', row[12], '')
-        _input.setAttribute('style', 'border-radius:3px')
+        _input.setAttribute('style', 'border-radius:3px; width:80px')
         _input.setAttribute('type', 'number')
         _input.setAttribute('value', row[10])
         _input.setAttribute('data-validator', 'number')
@@ -172,6 +171,8 @@ var allotment = {
       .on('order.dt', function () {})
       .on('page.dt', function () {})
       .DataTable({
+        responsive: true,
+        fixedHeader: true,
         retrieve: true,
         data: dataTable,
         columnDefs: columns,
