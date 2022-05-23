@@ -22,7 +22,7 @@ const arrives = {
       // Initialize pickers
       flatpickr('.date-format', {
         dateFormat: 'Y-m-d',
-        minDate: new Date().fp_incr(1)
+        minDate: new Date()
       })
 
       flatpickr('.time-format', {
