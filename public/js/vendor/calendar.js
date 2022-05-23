@@ -15,13 +15,20 @@ configCalendar = {
   header: {
     left: 'prevYear,prev,next,nextYear today',
     center: 'title',
-    right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+    right: 'dayGridMonth,timeGridWeek,listWeek'
   },
   defaultView: 'dayGridMonth',
   navLinks: true, // can click day/week names to navigate views
-  editable: true,
-  eventLimit: true,
-  events: events
+  editable: false,
+  views: {
+    timeGrid: {
+      eventLimit: 4,
+      minTime: '06:00:00',
+      maxTime: '24:00:00'
+    }
+  },
+  events: events,
+  allDaySlot: false
 }
 
 if (md.mobile() !== null) {
