@@ -192,7 +192,7 @@ class Diary extends BaseController
         // Build html
         $document = view('Print', $data);
 
-        $filename = 'Diary operation journal';
-        $pdf->generate($document, $filename, true, 'A4', 'portrait');
+        $filename = 'Diary-operation-journal';
+        $pdf->generate($document, $filename, 'A4', 'portrait');
     }
 }
