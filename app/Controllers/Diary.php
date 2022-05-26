@@ -177,24 +177,22 @@ class Diary extends BaseController
     {
         $date = $this->request->uri->getSegment(3);
 
-        //$pdf = new \App\Libraries\Pdfgenerator();
+        $pdf = new \App\Libraries\Pdfgenerator();
 
-        $settings = $this->page->get_settings('diary');
-
-        // Build html
-        $document = doctype('html5');
-        $document = $this->build->build_components($settings['PRINT_DIARY']);
         $contents = $this->diaries->get_location_distribution($date, 'PRINT');
 
         $title        = 'Diary - ' . $date;
         $header_title = 'Port of Costa Maya ' . date('l jS M Y', strtotime($date));
 
-        $document = str_replace('{title}', $title, $document);
-        $document = str_replace('{port_of}', $header_title, $document);
-        $document = str_replace('{body}', $contents['details'], $document);
+        $data = array();
+        $data["title"] = $title;
+        $data["port_of"] = $header_title;
+        $data["contents"] = $contents['details'];
 
-        return $document;
-        //$filename = 'Diary operation journal';
-        //$pdf->generate($document, $filename, true, 'A4', 'portrait');
+        // Build html
+        $document = view('Print', $data);
+
+        $filename = 'Diary operation journal';
+        $pdf->generate($document, $filename, true, 'A4', 'portrait');
     }
 }
