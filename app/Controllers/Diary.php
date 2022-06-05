@@ -37,6 +37,10 @@ class Diary extends BaseController
         );
 
         $data['contents'] = str_replace(
+            '{id}', 'form-date', $data['contents']
+        );
+
+        $data['contents'] = str_replace(
             '{sub-title}', 'Port of Costa Maya', $data['contents']
         );
 
@@ -95,6 +99,10 @@ class Diary extends BaseController
 
         $data['contents'] = str_replace(
             '{spec}', $locations['tours'], $data['contents']
+        );
+
+        $data['contents'] = str_replace(
+            '{id}', 'form-date', $data['contents']
         );
 
         $data['contents'] = str_replace(
@@ -175,9 +183,14 @@ class Diary extends BaseController
     {
         $date = $this->request->uri->getSegment(3);
 
+        $channel = 1;
+        if ($this->request->uri->getSegment(4) != null) {
+            $channel = $this->request->uri->getSegment(4);
+        }
+
         $pdf = new \App\Libraries\Pdfgenerator();
 
-        $contents = $this->diaries->get_location_distribution($date, 'PRINT');
+        $contents = $this->diaries->get_location_distribution($date, 'PRINT', $channel);
 
         $title        = 'Diary - ' . $date;
         $header_title = 'Port of Costa Maya ' . date('l jS M Y', strtotime($date));

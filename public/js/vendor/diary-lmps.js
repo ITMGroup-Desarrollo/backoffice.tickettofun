@@ -109,7 +109,7 @@ if (printButton !== null) {
     e.preventDefault()
 
     var date = document.querySelector('[name="inputDate"]').value
-    var endpoint = `${base}/diary/print/${date}`
+    var endpoint = `${base}/diary/print/${date}/3`
 
     window.open(endpoint, '_blank')
   })
