@@ -7,6 +7,13 @@ configTable.order = [2, 'ASC']
 configTable.paging = false
 
 var lmps = {
+  initPermissions: () => {
+    utils.post(
+      JSON.stringify({table:'diary'}),
+      `${base}/users/permissions`,
+      lmps.calendarInit
+    )
+  },
   refresh: function (response) {
     try {
       MicroModal.close('wait-modal')
@@ -43,35 +50,54 @@ var lmps = {
     }
   },
   tableInit: function () {
+    MicroModal.close('wait-modal')
+
     var tourDetails = document.querySelector('.details-registers')
     if (tourDetails !== null) {
       $(function () {
         $('.details-registers').dataTable(configTable)
       })
     }
-  }
-}
+  },
+  calendarInit: function (response) {
+    MicroModal.close('wait-modal')
 
-const element = document.querySelector('.flatpickr')
-if (element != null) {
-  const date = new Date(Date.now())
+    try {
+      response = JSON.parse(response)
+      if (!Object.prototype.hasOwnProperty.call(codes, response.code)) {
+        const data = response.message
 
-  flatpickr(element, {
-    altInput: true,
-    dateFormat: 'Y-m-d',
-    altFormat: 'l J F Y',
-    defaultDate: new Date(),
-    disableMobile: true,
-    onChange: function (selectedDates, dateStr, instance) {
-      var data = {
-        date: dateStr,
-        channel: 'lmps'
+        const element = document.querySelector('.flatpickr')
+        if (element != null) {
+          let configFlat = {
+            altInput: true,
+            dateFormat: 'Y-m-d',
+            altFormat: 'l J F Y',
+            defaultDate: new Date(),
+            disableMobile: true,
+            onChange: function (selectedDates, dateStr, instance) {
+              var data = {
+                date: dateStr,
+                channel: 'lmps'
+              }
+
+              const url = `${base}/diary/get_diary`
+              utils.post(JSON.stringify(data), url, lmps.refresh)
+            }
+          }
+
+          if (data.s === 0) {
+            configFlat.maxDate = new Date().fp_incr(1)
+          }
+
+          flatpickr(element, configFlat)
+        }
       }
-
-      const url = `${base}/diary/get_diary`
-      utils.post(JSON.stringify(data), url, lmps.refresh)
+    } catch (e) {
+      console.log(e)
+      utils.displayModal(alertModal, '')
     }
-  })
+  }
 }
 
 var printButton = document.querySelector('[name="print"]')
@@ -89,4 +115,5 @@ if (printButton !== null) {
   })
 }
 
+lmps.initPermissions()
 lmps.tableInit()

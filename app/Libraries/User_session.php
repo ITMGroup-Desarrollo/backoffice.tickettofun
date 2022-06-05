@@ -100,6 +100,7 @@ class User_session
             'uElement'      => '',
             'd'             => 0,
             'dElement'      => '',
+            's'       => 0,
             'statusElement' => ''
         );
 
@@ -116,6 +117,7 @@ class User_session
         $insert = "i_{$table}";
         $update = "u_{$table}";
         $delete = "d_{$table}";
+        $schedule = "s_{$table}";
 
         if ($rol == 1 || in_array($get, $this->session->get('permissions')))
         {
@@ -167,6 +169,10 @@ class User_session
             $delete = custom('a', $anchor_attrib, $delete);
 
             $permissions['dElement'] = $delete;
+        }
+
+        if ($rol == 1 || in_array($schedule, $this->session->get('permissions'))) {
+            $permissions['s'] = 1;
         }
 
         return $permissions;
