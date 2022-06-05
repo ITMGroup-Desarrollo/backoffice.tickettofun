@@ -48,7 +48,7 @@ var allotment = {
     let dataTable = []
 
     if (Array.isArray(data.message)) {
-      dataTable = data.message.map(data => {
+      dataTable = data.message.filter(data => data.allotment_active_status === 1).map(data => {
         const dataArray = [
           data.channel_name,
           data.reseller_name,
