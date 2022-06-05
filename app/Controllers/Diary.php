@@ -33,10 +33,6 @@ class Diary extends BaseController
         $locations = $this->diaries->get_location_distribution();
 
         $data['contents'] = str_replace(
-            '{title}', ucwords($view), $data['contents']
-        );
-
-        $data['contents'] = str_replace(
             '{spec}', $locations['tours'], $data['contents']
         );
 
@@ -98,10 +94,6 @@ class Diary extends BaseController
         $locations = $this->diaries->get_location_distribution($operation_date, NULL, 3);
 
         $data['contents'] = str_replace(
-            '{title}', ucwords($view), $data['contents']
-        );
-
-        $data['contents'] = str_replace(
             '{spec}', $locations['tours'], $data['contents']
         );
 
@@ -125,8 +117,14 @@ class Diary extends BaseController
             '{details}', $locations['details'], $data['contents']
         );
 
+        $form = $this->diaries->get_form(3);
+
+        $form = str_replace(
+            '{id}', 'form-actions', $form
+        );
+
         $data['contents'] = str_replace(
-            'form-send', '', $data['contents']
+            'form-send', $form, $data['contents']
         );
 
         return view('Master', $data);

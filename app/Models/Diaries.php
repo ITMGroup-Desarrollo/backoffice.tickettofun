@@ -277,11 +277,14 @@ class Diaries extends Model
         return $this->model;
     }
 
-    public function get_form()
+    public function get_form(int $channel = 1)
     {
         $contents = $this->page->get_settings('diary');
 
         $form = 'DIARY_FORM';
+        if ($channel == 3) {
+            $form = 'PRINT';
+        }
 
         $this->model = $this->build->build_components(
             $contents[$form]

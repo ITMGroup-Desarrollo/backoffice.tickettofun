@@ -58,7 +58,6 @@ if (element != null) {
 
   flatpickr(element, {
     altInput: true,
-    maxDate: new Date(),
     dateFormat: 'Y-m-d',
     altFormat: 'l J F Y',
     defaultDate: new Date(),
@@ -75,9 +74,19 @@ if (element != null) {
   })
 }
 
-const title = document.querySelector('.page-title')
-if (title != null) {
-  title.innerText = 'Diary Lmps'
+var printButton = document.querySelector('[name="print"]')
+if (printButton !== null) {
+  var icon = utils.createElement('i', 'fa fa-print', '', '')
+  printButton.appendChild(icon)
+
+  printButton.addEventListener('click', function (e) {
+    e.preventDefault()
+
+    var date = document.querySelector('[name="inputDate"]').value
+    var endpoint = `${base}/diary/print/${date}`
+
+    window.open(endpoint, '_blank')
+  })
 }
 
 lmps.tableInit()
