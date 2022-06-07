@@ -169,6 +169,10 @@ var prices = {
             document.querySelector('[name="currency"]').disabled = true
             document.querySelector('[name="pax"]').disabled = true
             document.querySelector('[name="price"]').disabled = true
+            document.querySelector('[name="pAdult"]').disabled = true
+            document.querySelector('[name="pChildren"]').disabled = true
+            document.querySelector('[name="pInfant"]').disabled = true
+            document.querySelector('[name="pCourtesy"]').disabled = true
 
             _message = utils.createElement('p', '', '', response.message)
             _alertModal.innerHTML = ''
@@ -182,6 +186,10 @@ var prices = {
             document.querySelector('[name="currency"]').disabled = false
             document.querySelector('[name="pax"]').disabled = false
             document.querySelector('[name="price"]').disabled = false
+            document.querySelector('[name="pAdult"]').disabled = false
+            document.querySelector('[name="pChildren"]').disabled = false
+            document.querySelector('[name="pInfant"]').disabled = false
+            document.querySelector('[name="pCourtesy"]').disabled = false
 
             response.message.forEach(service => {
                 element.innerHTML += '<option value="' + service.service_id + '">' + service.service_reseller + ' / <span style="color:red;">' + service.service_name + '<span></option>'
@@ -280,7 +288,6 @@ function getListServicesByReseller(resellerId) {
     let element = document.querySelector('[name="service"]')
     let url = apiHost + `equivalences/reseller/${resellerId}`
     utils.api({}, url, 'GET', prices.setListEquivalences, element)
-
 }
 
 var save = document.querySelector('.save')
@@ -299,6 +306,12 @@ if (save != null) {
         let elementPrice = document.querySelector('[name="price"]').value
         let elementShip = document.querySelector('[name="ship"]').value
 
+        // paxes
+        let adultPrice = document.querySelector('[name="pAdult"]').value
+        let childrenPrice = document.querySelector('[name="pChildren"]').value
+        let infantPrice = document.querySelector('[name="pInfant"]').value
+        let courtesyPrice = document.querySelector('[name="pCourtesy"]').value
+
         if (isNaN(elementShip))
             elementShip = 0
 
@@ -306,6 +319,7 @@ if (save != null) {
 
         if (valid && prices.isValidPurchaseDate(elementStartPurchaseDate, elementEndPurchaseDate)) {
             info = {
+                prices: [],
                 service_id: elementService,
                 reseller_id: elementReseller,
                 pax_id: elementPax,
@@ -322,8 +336,38 @@ if (save != null) {
 
             form = document.querySelector('#add-price')
 
+
             let url = ''
             if (form != null) {
+
+                if (adultPrice != '') {
+                    info.prices.push({
+                        pax_id: 1,
+                        price: adultPrice
+                    })
+                }
+
+                if (childrenPrice != '') {
+                    info.prices.push({
+                        pax_id: 2,
+                        price: childrenPrice
+                    })
+                }
+
+                if (infantPrice != '') {
+                    info.prices.push({
+                        pax_id: 3,
+                        price: infantPrice
+                    })
+                }
+
+                if (courtesyPrice != '') {
+                    info.prices.push({
+                        pax_id: 4,
+                        price: courtesyPrice
+                    })
+                }
+
                 url = apiHost + 'prices/add'
                 utils.api(JSON.stringify(info), url, 'POST', prices.add)
             }
@@ -362,6 +406,12 @@ if (form != null) {
     let statusCombo = form.querySelector('.select-status')
     statusCombo.remove()
 
+    const paxContent = document.querySelector('[name="pax"]').closest('.form-group')
+    const priceContent = document.querySelector('[name="price"]').closest('.form-group')
+
+    paxContent.classList.add('d-none')
+    priceContent.classList.add('d-none')
+
     if (document.querySelector('.date-range')) {
         flatpickr('.date-range', {
             altFormat: 'F j, Y',
@@ -374,6 +424,16 @@ if (form != null) {
 
 form = document.querySelector('#update-price')
 if (form != null) {
+    const adult = document.querySelector('[name="pAdult"]').closest('.form-group')
+    const children = document.querySelector('[name="pChildren"]').closest('.form-group')
+    const infant = document.querySelector('[name="pInfant"]').closest('.form-group')
+    const courtesy = document.querySelector('[name="pCourtesy"]').closest('.form-group')
+
+    adult.classList.add('d-none')
+    children.classList.add('d-none')
+    infant.classList.add('d-none')
+    courtesy.classList.add('d-none')
+
     prices.setData()
 }
 
