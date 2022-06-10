@@ -22,6 +22,32 @@ const sale_report = {
       })
     }
 
+    const exportBtn = document.querySelector('.export')
+    if (exportBtn !== null) {
+      exportBtn.addEventListener(clickEvent, (e) => {
+
+        const dates = document.querySelector('[name="dates"]').value
+        let start_date =''
+        let end_date = ''
+
+        if (dates.trim() !== '') {
+          const aDates = dates.split(' to ')
+
+          start_date = aDates[0]
+          end_date = aDates[0]
+          if (aDates.length === 2) {
+            end_date = aDates[1]
+          }
+        } else {
+          start_date = utils.getDate()
+          end_date = utils.getDate(1)
+        }
+
+        url = `${base}/sale-reports/export/${start_date}/${end_date}`
+        window.open(url)
+      })
+    }
+
     let datepicker = document.querySelector('[name="dates"]')
     if (datepicker !== null) {
       datepicker.parentElement.parentElement.classList.add('disable')
@@ -38,6 +64,14 @@ const sale_report = {
     if (servicesTable !== null) {
       $(function () {
         $('#table-sales').dataTable(utils.getDataTableConfig())
+        let tbl = $('#table-sales').DataTable()
+        let dataRows = tbl.rows().data()
+
+        if(dataRows[0][0]==='')
+          document.querySelector('.export').classList.add('d-none')
+        else
+          document.querySelector('.export').classList.remove('d-none')
+        
       })
     }
   },
@@ -80,7 +114,7 @@ const sale_report = {
         configTable = sale_report.getTableConfig([])
 
         if (response.code === 404) {
-          utils.displayModal(alertModal, 'Not found calls with the selected data')
+          utils.displayModal(alertModal, 'Not found sales with the selected data')
         } else {
           utils.displayModal(alertModal, response.message)
         }
@@ -97,6 +131,18 @@ const sale_report = {
       console.log(e)
       utils.displayModal(alertModal, '')
     }
+ 
+    let tbl = $('#table-sales').DataTable()
+    let tblSettings = tbl.rows().data()
+
+    console.log(tblSettings)
+
+    if(tblSettings.length==0)
+      document.querySelector('.export').classList.add('d-none')
+    else
+      document.querySelector('.export').classList.remove('d-none')
+
+
   },
   getTableConfig: (registers) => {
     const config = utils.getDataTableConfig()
@@ -129,7 +175,7 @@ const sale_report = {
     config.columns = columns
 
     return config
-  },
+  }
 }
 
 sale_report.init();

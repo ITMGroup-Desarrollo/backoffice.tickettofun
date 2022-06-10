@@ -138,7 +138,30 @@ class Sale_report extends Model
         );
 
         return $this->model;
-    }  
+    }
+    
+    public function get_sales($start_date,$end_date){
+
+        // Call API here!
+        $params   = new stdClass();
+        $endpoint = GET_BOOKINGS_DATE_ROUTE;
+        $params->start_date = $start_date;
+        $params->end_date = $end_date;
+
+        $token = $this->session->get('token');
+
+        $response = json_decode(
+            $this->api->request_api('POST', $endpoint, $params, $token)
+        );
+
+        if ($response->code == 200)
+            return $response->message;
+            
+        return null;
+
+    }
+
+    
 
     
 
