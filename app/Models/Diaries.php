@@ -245,8 +245,8 @@ class Diaries extends Model
             // If is a print option don't build this secction
             if ($this->print == 0) {
                 // Locations distribution
-                $data   = array($next_date);
-                $query  = 'CALL get_sales_tours(?)';
+                $data   = array($next_date, $channel_id);
+                $query  = 'CALL get_sales_tours(?,?)';
                 $result = $this->db->query($query, $data);
 
                 foreach ($result->getResult() as $row)
