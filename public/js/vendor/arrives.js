@@ -257,7 +257,6 @@ const arrives = {
           }
         }
       } catch (e) {
-        console.log(e)
         utils.displayModal(alertModal, '')
       }
     },
@@ -419,13 +418,33 @@ const arrives = {
         if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
           configTable = arrives.update.getTableConfig([])
 
+          let dRegisters = {}
+          let registers = response.message
+
+          if (utils.isJson(registers)) {
+            dRegisters = JSON.parse(registers)
+            registers = dRegisters.list
+          } else {
+            dRegisters = registers
+          }
+
           if (response.code === 404) {
             utils.displayModal(alertModal, 'Not allotment configuration found!')
           } else {
-            utils.displayModal(alertModal, response.message)
+            let error = JSON.parse(dRegisters.error[0])
+            utils.displayModal(alertModal, error.message)
           }
 
+          // filter by cruise channel
+          registers = registers.filter((row) => {
+            return row.channel_id == 1
+          })
+
+          configTable = arrives.update.getTableConfig(registers)
+
           $(nodeTable).DataTable(configTable).draw()
+
+          arrives.update.setActions()
         } else {
           var registers = response.message
 
@@ -464,15 +483,48 @@ const arrives = {
 
           $(nodeTable).DataTable(configTable).draw()
 
-          flatpickr('.hours', {
-            enableTime: true,
-            noCalendar: true,
-            dateFormat: 'H:i',
-            time_24hr: true
-          })
+          arrives.update.setActions()
         }
       } catch (e) {
+        console.log(e)
         utils.displayModal(alertModal, '')
+      }
+    },
+    setActions: () => {
+      flatpickr('.hours', {
+        enableTime: true,
+        noCalendar: true,
+        dateFormat: 'H:i',
+        time_24hr: true
+      })
+      // Add event listener to change status
+      const statusElements = document.querySelectorAll('.status-option')
+      for (let i = 0, l = statusElements.length; i < l; i++) {
+        statusElements[i].addEventListener('click', function (e) {
+          e.preventDefault()
+
+          var element = e.target
+          if (e.target.getAttribute('data-status')) {
+            element = e.target.parentElement
+          }
+
+          const inputHidden = element.parentElement.querySelector('.data-allotment')
+
+          let label = ''
+          if (inputHidden !== null) {
+            if (inputHidden.value == 0) {
+              inputHidden.value = 1
+              inputHidden.dataset.status = 1
+              label = utils.addStatusFormat(1, inputHidden.dataset.allotmentId)
+            } else {
+              inputHidden.value = 0
+              inputHidden.dataset.status = 0
+              label = utils.addStatusFormat(0, inputHidden.dataset.allotmentId)
+            }
+
+            element.innerHTML = label
+          }
+        })
       }
     },
     loadObject: () => {
@@ -539,7 +591,7 @@ const arrives = {
             valid = false
             arrives.errorMsg('missing', 'minimum capacity', minAvailable[i], allotment.service_name)
             break
-          } else if (allotment.capacity_min <= 0) {
+          } else if (allotment.capacity_min < 0) {
             valid = false
             arrives.errorMsg('lessThanZero', 'minimum capacity', minAvailable[i], allotment.service_name)
             break
@@ -705,11 +757,20 @@ const arrives = {
           render: (data, type, row, meta) => {
             const labelStatus = utils.addStatusFormat(data, row.allotment_id)
 
+            const anchor = utils.createElement(
+              'a', 'status-option', '', ''
+            )
+
+            anchor.setAttribute('href', '#')
+
+            anchor.innerHTML = labelStatus
+
             var dataAllotment = utils.createElement(
               'input', 'data-allotment', '', ''
             )
 
             dataAllotment.setAttribute('type', 'hidden')
+            dataAllotment.setAttribute('value', row.active_status)
 
             dataAllotment.dataset.status = row.active_status
             dataAllotment.dataset.serviceId = row.service_id
@@ -717,7 +778,7 @@ const arrives = {
             dataAllotment.dataset.serviceName = row.service_name
             dataAllotment.dataset.statusBase = row.active_status_base
 
-            return `${labelStatus} ${dataAllotment.outerHTML}`
+            return `${anchor.outerHTML} ${dataAllotment.outerHTML}`
           }
         },
         {
@@ -809,7 +870,6 @@ if (form !== null) {
   const confirmButton = document.querySelector('.confirm-delete')
   confirmButton.classList.remove('confirm-delete')
   confirmButton.classList.add('confirm-save')
-
 
   arrives.update.loadData()
 }
