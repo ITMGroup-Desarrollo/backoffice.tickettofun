@@ -51,9 +51,7 @@ class Arrives extends BaseController
                 '{search}', $form, $data['contents']
             );
 
-            $data['contents'] = str_replace(
-                '{allotmentsTitle}', '', $data['contents']
-            );
+            $data['contents'] = str_replace('{id}', 'channel-filter', $data['contents']);
 
             $data['contents'] = str_replace(
                 '{allotments}', '', $data['contents']
@@ -76,9 +74,7 @@ class Arrives extends BaseController
                 '{search}', $form, $data['contents']
             );
 
-            $data['contents'] = str_replace(
-                '{allotmentsTitle}', '', $data['contents']
-            );
+            $data['contents'] = str_replace('{id}', 'channel-filter', $data['contents']);
 
             $data['contents'] = str_replace(
                 '{allotments}', '', $data['contents']
@@ -119,9 +115,7 @@ class Arrives extends BaseController
             '{search}', $form, $data['contents']
         );
 
-        $data['contents'] = str_replace(
-            '{allotmentsTitle}', 'Edit Allotments of Cruise', $data['contents']
-        );
+        $data['contents'] = str_replace('{id}', 'channel-filter', $data['contents']);
 
         $export_icon = '<i class="fa fa-file-excel"></i>';
         $data['contents'] = str_replace('EXPORT', $export_icon, $data['contents']);

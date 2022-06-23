@@ -102,7 +102,7 @@ class Ship extends Model
                 }
                 if ($rol_id == 1 || in_array('d_ships', $this->session->get('permissions')))
                 {
-                    if ($row->active_status == 1) 
+                    if ($row->active_status == 1)
                     {
                         $this->anchor_attrib['href']    = '#';
                         $this->anchor_attrib['class']   = 'delete';
@@ -163,7 +163,7 @@ class Ship extends Model
             $ship->active   = $response->message->active_status;
             $ship->reseller = $response->message->reseller_id;
             $ship->capacity = $response->message->ship_capacity;
-            
+
         }else{
             redirect('/ships/list');
         }

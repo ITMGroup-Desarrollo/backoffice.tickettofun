@@ -346,6 +346,22 @@ const arrives = {
       form.querySelector('[name="markup_end"]').value = dataArrive.markup_end
       form.querySelector('[name="status"]').value = dataArrive.active
 
+      let channel = document.querySelector('[name="channel"]')
+      if (channel != null) {
+        for (let i = 0, l = channel.length; i < l - 1; i++) {
+          if (channel.options[i].value == 2) {
+            channel.remove(i);
+          }
+        }
+
+        channel.value = 1
+
+        channel.addEventListener('change', (e) => {
+          e.preventDefault()
+          utils.api(JSON.stringify({}), url, 'GET', arrives.update.deploy)
+        })
+      }
+
       flatpickr('.date-format', {
         dateFormat: 'Y-m-d',
         minDate: dataArrive.arrival_date
@@ -415,6 +431,9 @@ const arrives = {
 
         content.appendChild(nodeTable)
 
+        // Get channel
+        let channel = document.querySelector('[name="channel"]')
+
         if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
           configTable = arrives.update.getTableConfig([])
 
@@ -437,7 +456,7 @@ const arrives = {
 
           // filter by cruise channel
           registers = registers.filter((row) => {
-            return row.channel_id == 1
+            return row.channel_id == channel.value
           })
 
           configTable = arrives.update.getTableConfig(registers)
@@ -455,7 +474,7 @@ const arrives = {
 
           // filter by cruise channel
           registers = registers.filter((row) => {
-            return row.channel_id == 1
+            return row.channel_id == channel.value
           })
 
           configTable = arrives.update.getTableConfig(registers)
@@ -850,6 +869,11 @@ if (btnExport !== null) {
 // Evaluate if exists table element
 form = document.querySelector('#form-arrives-search')
 if (form !== null) {
+  let channel = document.querySelector('#channel-filter').closest('div')
+  if (channel != null) {
+    channel.innerHTML = ''
+  }
+
   arrives.list.init()
 }
 
@@ -857,6 +881,11 @@ if (form !== null) {
 form = document.querySelector('#add-arrives')
 if (form !== null) {
   MicroModal.close('wait-modal')
+
+  let channel = document.querySelector('#channel-filter').closest('div')
+  if (channel != null) {
+    channel.innerHTML = ''
+  }
 
   arrives.add.init()
 }

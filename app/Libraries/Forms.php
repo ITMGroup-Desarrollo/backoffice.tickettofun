@@ -122,7 +122,8 @@ class Forms
                 else if ($params[0] != 'signin' &&
                     $params[0] != 'update_call_extra' &&
                     $params[0] != 'arrives_search' &&
-                    $params[0] != 'schedule-filters_search'
+                    $params[0] != 'schedule-filters_search' &&
+                    $params[0] != 'channel-filter'
                     )
                 {
                     $label   = form_label($row->label_name, '', $this->attrib);
