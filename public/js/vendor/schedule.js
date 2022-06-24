@@ -18,6 +18,17 @@ const schedules = {
       $(assingment).DataTable(configTable)
     }
 
+    let channel = document.querySelector('[name="channel"]')
+    if (channel != null) {
+      for (let i = 0, l = channel.length; i < l - 1; i++) {
+        if (channel.options[i].value == 2) {
+          channel.remove(i);
+        }
+      }
+
+      channel.value = 1
+    }
+
     if (service != null) {
       service.append(new Option('-- Choose option --', ''))
 
@@ -153,11 +164,13 @@ const schedules = {
               sharedSchedule = 1
             }
 
+            let channel = document.querySelector('[name="channel"]')
+
             const info = {
               arrive_id: arriveData.id,
               shared_schedule: sharedSchedule,
               private_service: privateService,
-              channel_id: arriveData.channel_id,
+              channel_id: channel.value,
               end_date: arriveData.arrival_date,
               start_date: arriveData.arrival_date,
               reseller_id: arriveData.reseller_id,

@@ -116,6 +116,7 @@ class Arrives extends BaseController
         );
 
         $data['contents'] = str_replace('{id}', 'channel-filter', $data['contents']);
+        $data['contents'] = str_replace('{text}', 'Edit Allotments of ', $data['contents']);
 
         $export_icon = '<i class="fa fa-file-excel"></i>';
         $data['contents'] = str_replace('EXPORT', $export_icon, $data['contents']);
