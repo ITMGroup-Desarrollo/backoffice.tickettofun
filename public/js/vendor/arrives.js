@@ -358,6 +358,8 @@ const arrives = {
 
         channel.addEventListener('change', (e) => {
           e.preventDefault()
+
+          url = `${apiHost}allotments/arrive/${dataArrive.id}`
           utils.api(JSON.stringify({}), url, 'GET', arrives.update.deploy)
         })
       }
