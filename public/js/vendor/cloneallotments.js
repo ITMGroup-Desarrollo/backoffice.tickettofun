@@ -367,6 +367,18 @@ const clone = {
         }
 
         cloneContent.classList.remove('d-none')
+
+        const cloneChk = document.querySelector('.cloneAll')
+
+        if (cloneChk != null) {
+          cloneChk.addEventListener('click', (e) => {
+            const cloneBtns = document.querySelectorAll('.clone')
+
+            for(let i = 0, l = cloneBtns.length; i < l; i++) {
+              cloneBtns[i].checked ^= 1
+            }
+          })
+        }
       }
     } catch (e) {
       console.log(e)
@@ -610,6 +622,25 @@ const clone = {
         responsive: true,
         searching: false,
         fixedHeader: true,
+        initComplete: function() {
+          const table = this.api();
+
+          const wrapper = utils.createElement('div', 'form-check', '')
+
+          const label = utils.createElement('label', 'form-check-label', '')
+          label.setAttribute('for', 'cloneAll')
+          label.innerText = 'Clone'
+
+          const checkClones = utils.createElement('input', 'cloneAll form-check-input', 'cloneAll')
+          checkClones.setAttribute('type', 'checkbox')
+          checkClones.setAttribute('name', 'cloneAll')
+          checkClones.setAttribute('checked', true)
+
+          wrapper.append(checkClones)
+          wrapper.append(label)
+
+          table.column(8).header().innerHTML = wrapper.outerHTML
+        }
     }
 
     const columns = [
@@ -720,6 +751,7 @@ const clone = {
       {
         title: 'Clone',
         data: 'clone',
+        orderable: false,
         render: (data, type, row, meta) => {
           const checkClone = utils.createElement('input', 'clone', `clone${row.allotment_id}`)
 
@@ -755,6 +787,7 @@ const clone = {
       {
         title: 'Actions',
         data: 'addPlusIcon',
+        orderable: false,
         render: (data, type, row, meta) => {
           if (data) {
             const addNew = utils.createElement('a', 'add', '', '')
@@ -775,6 +808,7 @@ const clone = {
       {
         title: 'Message',
         data: 'message',
+        orderable: false,
         render: (data, type, row, meta) => {
           const message = utils.createElement('span', 'message', '', data)
 
