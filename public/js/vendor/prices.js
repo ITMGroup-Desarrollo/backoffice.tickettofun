@@ -14,22 +14,61 @@ var prices = {
         var _alertModal = document.getElementById('alert-modal-content')
 
         if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
-            _message = utils.createElement('p', '', '', response.message)
+            const data = JSON.parse(response.message)
+            const table = $('#price-registers').DataTable()
+
+            const rows = table.rows().data()
+
+            for (let i = 0, l = rows.length; i < l; i++) {
+              const service = data.prices.filter((row) => {
+                return row.service_id == rows[i].service_id
+              })
+
+              let message = ''
+              service.forEach(element => {
+                message += element.message
+              });
+
+              let msgElement = document.querySelector(`#msg${rows[i].service_id}`)
+              msgElement.innerText = message
+            }
+
+            _message = utils.createElement('p', '', '', 'Something wen wrong! please check the data')
 
             _alertModal.innerHTML = ''
             _alertModal.appendChild(_message)
 
             MicroModal.show('alert-modal')
         } else if (response.code === 201) {
+            const data = JSON.parse(response.message)
+            const table = $('#price-registers').DataTable()
+
+            const rows = table.rows().data()
+
+            for (let i = 0, l = rows.length; i < l; i++) {
+              const service = data.prices.filter((row) => {
+                return row.service_id == rows[i].service_id
+              })
+
+              let message = ''
+              service.forEach(element => {
+                if (element.message == null) {
+                    element.message = ''
+                }
+
+                message += element.message
+              });
+
+              let msgElement = document.querySelector(`#msg${rows[i].service_id}`)
+              msgElement.innerText = message
+            }
+
             _message = utils.createElement('p', '', '', 'Success! price added correctly')
 
             _alertModal.innerHTML = ''
             _alertModal.appendChild(_message)
 
             MicroModal.show('alert-modal')
-
-            form = document.querySelector('#add-price')
-            form.reset()
         }
     },
     update: function(response) {
@@ -88,10 +127,11 @@ var prices = {
         }
     },
     setData: function() {
-
         if (pricesData.ship_id > 0) {
             document.querySelector('.select-ship').classList.remove('d-none')
+
             let element = document.querySelector('[name="ship"]')
+
             element.innerHTML = '<option value="' + pricesData.ship_id + '">' + pricesData.ship_name + '</option>'
             element.disabled = true
         }
@@ -155,24 +195,28 @@ var prices = {
         MicroModal.close('wait-modal')
     },
     setListEquivalences: function(response, element) {
+      try {
         MicroModal.close('wait-modal')
 
         response = JSON.parse(response)
         var _message = ''
         var _alertModal = document.getElementById('alert-modal-content')
 
-        if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
+        let configTable = {}
+        const table = document.querySelector('#price-registers')
 
-            element.innerHTML = '<option value="0">This Reseller has no assigned any equivalence</option>'
-            element.disabled = true
+        utils.dropTable(table)
+
+        const content = document.querySelector('.table-prices')
+        const nodeTable = utils.createElement('table', '', 'price-registers', '')
+
+        content.appendChild(nodeTable)
+
+        if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
             document.querySelector('.save').disabled = true
             document.querySelector('[name="currency"]').disabled = true
             document.querySelector('[name="pax"]').disabled = true
             document.querySelector('[name="price"]').disabled = true
-            document.querySelector('[name="pAdult"]').disabled = true
-            document.querySelector('[name="pChildren"]').disabled = true
-            document.querySelector('[name="pInfant"]').disabled = true
-            document.querySelector('[name="pCourtesy"]').disabled = true
 
             _message = utils.createElement('p', '', '', response.message)
             _alertModal.innerHTML = ''
@@ -180,24 +224,216 @@ var prices = {
 
             MicroModal.show('alert-modal')
         } else if (response.code === 200) {
-
-            element.disabled = false
             document.querySelector('.save').disabled = false
             document.querySelector('[name="currency"]').disabled = false
             document.querySelector('[name="pax"]').disabled = false
             document.querySelector('[name="price"]').disabled = false
-            document.querySelector('[name="pAdult"]').disabled = false
-            document.querySelector('[name="pChildren"]').disabled = false
-            document.querySelector('[name="pInfant"]').disabled = false
-            document.querySelector('[name="pCourtesy"]').disabled = false
 
-            response.message.forEach(service => {
-                element.innerHTML += '<option value="' + service.service_id + '">' + service.service_reseller + ' / <span style="color:red;">' + service.service_name + '<span></option>'
-            });
+            form = document.querySelector('#add-price')
+
+            if (form != null) {
+              configTable = prices.getTableConfig(response.message)
+              $(nodeTable).DataTable(configTable).draw()
+
+              const serviceChk = document.querySelector('.serviceAll')
+              if (serviceChk != null) {
+                serviceChk.addEventListener('click', (e) => {
+                  const cloneBtns = document.querySelectorAll('.services')
+
+                  for(let i = 0, l = cloneBtns.length; i < l; i++) {
+                    cloneBtns[i].checked ^= 1
+                  }
+                })
+              }
+
+              const courtesyChk = document.querySelector('.courtesyAll')
+              if (courtesyChk != null) {
+                courtesyChk.addEventListener('click', (e) => {
+                  const cloneBtns = document.querySelectorAll('.courtesy')
+
+                  for(let i = 0, l = cloneBtns.length; i < l; i++) {
+                    cloneBtns[i].checked ^= 1
+                  }
+                })
+              }
+
+              const infantChk = document.querySelector('.infantAll')
+              if (infantChk != null) {
+                infantChk.addEventListener('click', (e) => {
+                  const cloneBtns = document.querySelectorAll('.infant')
+
+                  for(let i = 0, l = cloneBtns.length; i < l; i++) {
+                    cloneBtns[i].checked ^= 1
+                  }
+                })
+              }
+            }
+
+            form = document.querySelector('#update-price')
+
+            if (form != null) {
+              element.disabled = false
+
+              response.message.forEach(service => {
+               element.innerHTML += '<option value="' + service.service_id + '">' + service.service_reseller + ' / <span style="color:red;">' + service.service_name + '<span></option>'
+              });
+            }
 
             MicroModal.close('wait-modal')
         }
+      } catch(e) {
+        console.log(e)
+        utils.displayModal(alertModal, '')
+      }
+    },
+    getTableConfig: (registers) => {
+      const config = {
+        info:false,
+        paging: false,
+        responsive: true,
+        searching: false,
+        fixedHeader: true,
+        initComplete: function() {
+          const table = this.api();
 
+          const wrapper = utils.createElement('div', 'form-check', '')
+
+          const label = utils.createElement('label', 'form-check-label', '')
+          label.setAttribute('for', 'courtesyAll')
+          label.innerText = 'Courtesy'
+
+          const checkClones = utils.createElement('input', 'courtesyAll form-check-input', 'courtesyAll')
+          checkClones.setAttribute('type', 'checkbox')
+          checkClones.setAttribute('name', 'courtesyAll')
+          checkClones.setAttribute('checked', true)
+
+          wrapper.append(checkClones)
+          wrapper.append(label)
+
+          table.column(4).header().innerHTML = wrapper.outerHTML
+
+          wrapper.innerHTML = ''
+
+          label.setAttribute('for', 'serviceAll')
+          label.innerText = 'Service'
+
+          const checkServices = utils.createElement('input', 'serviceAll form-check-input', 'serviceAll')
+          checkServices.setAttribute('type', 'checkbox')
+          checkServices.setAttribute('name', 'serviceAll')
+          checkServices.setAttribute('checked', true)
+
+          wrapper.append(checkServices)
+          wrapper.append(label)
+
+          table.column(0).header().innerHTML = wrapper.outerHTML
+
+          wrapper.innerHTML = ''
+
+          label.setAttribute('for', 'infantAll')
+          label.innerText = 'Infant'
+
+          const checkInfants = utils.createElement('input', 'infantAll form-check-input', 'infantAll')
+          checkInfants.setAttribute('type', 'checkbox')
+          checkInfants.setAttribute('name', 'infantAll')
+          checkInfants.setAttribute('checked', true)
+
+          wrapper.append(checkInfants)
+          wrapper.append(label)
+
+          table.column(3).header().innerHTML = wrapper.outerHTML
+        }
+      }
+
+      // filter by status
+      registers = registers.filter((row) => {
+        return row.active_status == 1
+      })
+
+      const columns = [
+        {
+          data: 'service',
+          title: 'Service',
+          render: (data, type, row, meta) => {
+            const service = utils.createElement('input', 'services', row.service_id, '')
+
+            service.setAttribute('type', 'checkbox')
+            if (data === undefined || data === 1) {
+              service.setAttribute('checked', true)
+            }
+
+            return `${service.outerHTML} ${row.service_reseller} / ${row.service_name}`
+          }
+        },
+        {
+          data: 'service_id',
+          title: 'Adult',
+          orderable: false,
+          render: (data, type, row, meta) => {
+            const adult = utils.createElement('input', 'form-control-plaintext', `adult${data}`, '')
+
+            adult.setAttribute('type', 'number')
+            adult.setAttribute('step', 'any')
+            adult.setAttribute('placeholder', '$ 100.00')
+
+            return adult.outerHTML
+          }
+        },
+        {
+          data: 'service_id',
+          title: 'Child',
+          orderable: false,
+          render: (data, type, row, meta) => {
+            const child = utils.createElement('input', 'form-control-plaintext', `child${data}`, '')
+
+            child.setAttribute('type', 'number')
+            child.setAttribute('step', 'any')
+            child.setAttribute('placeholder', '$ 90.00')
+
+            return child.outerHTML
+          }
+        },
+        {
+          data: 'service_id',
+          title: 'Infant',
+          orderable: false,
+          render: (data, type, row, meta) => {
+            const infant = utils.createElement('input', 'infant', `infant${data}`, '')
+
+            infant.setAttribute('type', 'checkbox')
+            infant.setAttribute('checked', true)
+
+            return infant.outerHTML
+          }
+        },
+        {
+          data: 'service_id',
+          title: 'Courtesy',
+          orderable: false,
+          render: (data, type, row, meta) => {
+            const courtesy = utils.createElement('input', 'courtesy', `courtesy${data}`, '')
+
+            courtesy.setAttribute('type', 'checkbox')
+            courtesy.setAttribute('checked', true)
+
+            return courtesy.outerHTML
+          }
+        },
+        {
+          data: 'Message',
+          title: 'Message',
+          orderable: false,
+          render: (data, type, row, meta) => {
+            const message = utils.createElement('span', 'message', `msg${row.service_id}`, data)
+
+            return message.outerHTML
+          }
+        }
+      ]
+
+      config.data = registers
+      config.columns = columns
+
+      return config
     },
     isValidPurchaseDate: function(startDate, endDate) {
 
@@ -240,10 +476,8 @@ if (reseller != null) {
         e.preventDefault()
 
         let shipElement = document.querySelector('[name="ship"]')
-        let serviceElement = document.querySelector('[name="service"]')
 
         resetSelectElement(shipElement)
-        resetSelectElement(serviceElement)
 
         if (!isNaN(reseller.value)) {
             getListServicesByReseller(reseller.value)
@@ -255,19 +489,18 @@ if (reseller != null) {
 var channel = document.querySelector('[name="channel"]')
 if (channel != null) {
     let reseller = document.querySelector('[name="reseller"]')
-    let service = document.querySelector('[name="service"]')
 
     channel.addEventListener('change', function(e) {
         e.preventDefault()
         document.querySelector('.select-ship').classList.add('d-none')
         reseller.options[0].selected = true
-        resetSelectElement(service)
+
         for (var x = 1; x < reseller.options.length; x++) {
-            if (reseller.options[x].getAttribute('data-value') !== channel.value) {
-                reseller.options[x].hidden = true
-            } else {
-                reseller.options[x].removeAttribute('hidden')
-            }
+          if (reseller.options[x].getAttribute('data-value') !== channel.value) {
+            reseller.options[x].hidden = true
+          } else {
+            reseller.options[x].removeAttribute('hidden')
+          }
         }
     })
 }
@@ -285,9 +518,8 @@ function getListShipByReseller(resellerId) {
 }
 
 function getListServicesByReseller(resellerId) {
-    let element = document.querySelector('[name="service"]')
     let url = apiHost + `equivalences/reseller/${resellerId}`
-    utils.api({}, url, 'GET', prices.setListEquivalences, element)
+    utils.api({}, url, 'GET', prices.setListEquivalences)
 }
 
 var save = document.querySelector('.save')
@@ -297,20 +529,16 @@ if (save != null) {
 
         let valid = true
         let fields = document.querySelectorAll('[data-validator]')
-        let elementStartPurchaseDate = document.querySelector('[name="start-purchase"]').value
-        let elementEndPurchaseDate = document.querySelector('[name="end-purchase"]').value
-        let elementService = document.querySelector('[name="service"]').value
-        let elementReseller = document.querySelector('[name="reseller"]').value
-        let elementPax = document.querySelector('[name="pax"]').value
-        let elementCurrency = document.querySelector('[name="currency"]').value
-        let elementPrice = document.querySelector('[name="price"]').value
-        let elementShip = document.querySelector('[name="ship"]').value
 
-        // paxes
-        let adultPrice = document.querySelector('[name="pAdult"]').value
-        let childrenPrice = document.querySelector('[name="pChildren"]').value
-        let infantPrice = document.querySelector('[name="pInfant"]').value
-        let courtesyPrice = document.querySelector('[name="pCourtesy"]').value
+        let elementPax = document.querySelector('[name="pax"]').value
+        let elementShip = document.querySelector('[name="ship"]').value
+        let elementPrice = document.querySelector('[name="price"]').value
+        let elementService = document.querySelector('[name="service"]').value
+        let elementCurrency = document.querySelector('[name="currency"]').value
+        let elementReseller = document.querySelector('[name="reseller"]').value
+        let elementEndPurchaseDate = document.querySelector('[name="end-purchase"]').value
+        let elementStartPurchaseDate = document.querySelector('[name="start-purchase"]').value
+
 
         if (isNaN(elementShip))
             elementShip = 0
@@ -318,65 +546,95 @@ if (save != null) {
         valid = utils.dataValidator(fields)
 
         if (valid && prices.isValidPurchaseDate(elementStartPurchaseDate, elementEndPurchaseDate)) {
-            info = {
-                prices: [],
-                service_id: elementService,
-                reseller_id: elementReseller,
-                pax_id: elementPax,
-                currency_id: elementCurrency
-            }
-
-            info.price = elementPrice
-            info.start_date_purchase = elementStartPurchaseDate
-            info.end_date_purchase = elementEndPurchaseDate
-            info.seasson_start = elementStartPurchaseDate
-            info.seasson_end = elementEndPurchaseDate
-            info.ship_id = elementShip
-            info.user_id = userCreateId
-
             form = document.querySelector('#add-price')
 
-
-            let url = ''
             if (form != null) {
+                let list = []
+                let registers = document.querySelectorAll('.services')
 
-                if (adultPrice != '') {
-                    info.prices.push({
+                for (let i = 0, l = registers.length; i < l; i++) {
+                  let isAdded = 0
+                  let price = {}
+
+                  if (registers[i].checked) {
+                    isAdded = 1
+                  }
+
+                  price.message = ''
+                  price.isAdded = isAdded
+                  price.ship_id = elementShip
+                  price.user_id = userCreateId
+                  price.service_id = registers[i].id
+                  price.reseller_id = elementReseller
+                  price.currency_id = elementCurrency
+                  price.seasson_end = elementEndPurchaseDate
+                  price.seasson_start = elementStartPurchaseDate
+                  price.end_date_purchase = elementEndPurchaseDate
+                  price.start_date_purchase = elementStartPurchaseDate
+
+                  let adult = document.querySelector(`#adult${price.service_id}`)
+                  let child = document.querySelector(`#child${price.service_id}`)
+                  let infant = document.querySelector(`#infant${price.service_id}`)
+                  let courtesy = document.querySelector(`#courtesy${price.service_id}`)
+
+                  if (adult.value != '') {
+                      list.push(Object.assign({}, price, {
                         pax_id: 1,
-                        price: adultPrice
-                    })
-                }
+                        price: adult.value
+                      }))
+                  }
 
-                if (childrenPrice != '') {
-                    info.prices.push({
+                  if (child.value != '') {
+                      list.push(Object.assign({}, price, {
                         pax_id: 2,
-                        price: childrenPrice
-                    })
-                }
+                        price: child.value
+                      }))
+                  }
 
-                if (infantPrice != '') {
-                    info.prices.push({
+                  if (infant.checked) {
+                      list.push(Object.assign({}, price, {
                         pax_id: 3,
-                        price: infantPrice
-                    })
-                }
+                        price: 0
+                      }))
+                  }
 
-                if (courtesyPrice != '') {
-                    info.prices.push({
+                  if (courtesy.checked) {
+                      list.push(Object.assign({}, price, {
                         pax_id: 4,
-                        price: courtesyPrice
-                    })
+                        price: 0
+                      }))
+                  }
                 }
 
-                url = apiHost + 'prices/add'
+                info = {
+                  prices: list
+                }
+
+                let url = apiHost + 'prices/add'
                 utils.api(JSON.stringify(info), url, 'POST', prices.add)
             }
 
             form = document.querySelector('#update-price')
 
             if (form != null) {
+                info = {
+                  service_id: elementService,
+                  reseller_id: elementReseller,
+                  pax_id: elementPax,
+                  currency_id: elementCurrency
+                }
+
+                info.price = elementPrice
+                info.start_date_purchase = elementStartPurchaseDate
+                info.end_date_purchase = elementEndPurchaseDate
+                info.seasson_start = elementStartPurchaseDate
+                info.seasson_end = elementEndPurchaseDate
+                info.ship_id = elementShip
+                info.user_id = userCreateId
+
                 info.active_status = document.querySelector('[name="active"]').value
-                url = apiHost + `prices/edit/${pricesData.price_id}`
+
+                let url = apiHost + `prices/edit/${pricesData.price_id}`
                 utils.api(JSON.stringify(info), url, 'PUT', prices.update)
             }
         }
@@ -408,9 +666,11 @@ if (form != null) {
 
     const paxContent = document.querySelector('[name="pax"]').closest('.form-group')
     const priceContent = document.querySelector('[name="price"]').closest('.form-group')
+    const serviceContent = document.querySelector('[name="service"]').closest('.form-group')
 
     paxContent.classList.add('d-none')
     priceContent.classList.add('d-none')
+    serviceContent.classList.add('d-none')
 
     if (document.querySelector('.date-range')) {
         flatpickr('.date-range', {
@@ -420,20 +680,20 @@ if (form != null) {
             minDate: '2020-01-01'
         })
     }
+
+    $(function() {
+    $('#price-registers').dataTable({
+        info:false,
+        paging: false,
+        responsive: true,
+        searching: false,
+        fixedHeader: true,
+      })
+    })
 }
 
 form = document.querySelector('#update-price')
 if (form != null) {
-    const adult = document.querySelector('[name="pAdult"]').closest('.form-group')
-    const children = document.querySelector('[name="pChildren"]').closest('.form-group')
-    const infant = document.querySelector('[name="pInfant"]').closest('.form-group')
-    const courtesy = document.querySelector('[name="pCourtesy"]').closest('.form-group')
-
-    adult.classList.add('d-none')
-    children.classList.add('d-none')
-    infant.classList.add('d-none')
-    courtesy.classList.add('d-none')
-
     prices.setData()
 }
 

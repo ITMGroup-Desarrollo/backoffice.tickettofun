@@ -1,12 +1,16 @@
 <?php
 namespace App\Controllers;
 
+use App\Libraries\Build;
+
 class Prices extends BaseController
 {
     public $price;
+    public $build;
 
     public function __construct()
     {
+        $this->build   = new Build();
         $this->price = new \App\Models\Price();
     }
 
@@ -44,6 +48,9 @@ class Prices extends BaseController
             $form = $this->price->get_form();
             $form = str_replace('{id}', 'add-price', $form);
 
+            $contents = $this->page->get_settings('prices');
+            $table = $this->build->build_components($contents['PRICES_CONFIG_TABLE']);
+
             $data['contents'] = str_replace(
                 '{title}', 'New price', $data['contents']
             );
@@ -52,15 +59,13 @@ class Prices extends BaseController
                 '{content}', $form, $data['contents']
             );
 
-            // $equivalece = $this->price->get_equivalences();
-            // $equivalece = 'window.equivalences = ' . json_encode($equivalece);
+            $data['contents'] = str_replace(
+                '{table}', $table, $data['contents']
+            );
 
-            // $script_equivalence = custom('script', '', $equivalece);
-
-            $price              = 'window.user_create_id = ' . $this->session->get('user_id');
-            $script             = custom('script', '', $price);
-            $data['scripts']    = $script . $data['scripts'];
-            // $data['scripts'] = $script . $script_equivalence. $data['scripts'];
+            $price           = 'window.user_create_id = ' . $this->session->get('user_id');
+            $script          = custom('script', '', $price);
+            $data['scripts'] = $script . $data['scripts'];
         }
 
         return view('Master', $data);
@@ -91,6 +96,10 @@ class Prices extends BaseController
 
         $data['contents'] = str_replace(
             '{content}', $form, $data['contents']
+        );
+
+        $data['contents'] = str_replace(
+            '{table}', '', $data['contents']
         );
 
         $price = $this->price->get_data($option);
