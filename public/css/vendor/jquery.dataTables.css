@@ -8,7 +8,7 @@
     width: 100%;
     margin-bottom: 35px;
     border-collapse: separate;
-    border-spacing: 1px;
+    border-spacing: 5px;
 }
 
 table.dataTable tbody tr{
@@ -22,7 +22,7 @@ table.dataTable thead th {
     cursor: pointer;
     *cursor: hand;
     border-collapse: separate;
-    border-spacing: 1px;
+    border-spacing: 3px;
 }
 
 table.dataTable tfoot th {
