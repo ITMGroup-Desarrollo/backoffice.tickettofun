@@ -95,6 +95,7 @@ const schedules = {
 
       const info = {
         arrive: arriveData,
+        channel_id: arriveData.channel_id,
         overlap: overlap.value,
         service: service.value,
         ship: arriveData.ship_id,
