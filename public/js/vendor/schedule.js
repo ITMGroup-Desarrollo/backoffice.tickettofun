@@ -77,6 +77,10 @@ const schedules = {
           element: element
         }
 
+        response.message = response.message.filter((row) => {
+          return row.active_status == 1
+        })
+
         utils.buildOptions(data, response.message, 1)
       }
     } catch (e) {
