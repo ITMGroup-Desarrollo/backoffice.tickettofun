@@ -307,10 +307,18 @@ const clone = {
       if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
         configTable = clone.getTableConfig([])
 
+        let registers = response.message
+        if (utils.isJson(registers)) {
+          registers = JSON.parse(registers)
+          registers = registers.list
+        }
+
+        configTable = clone.getTableConfig(registers)
+
         if (response.code === 404) {
           utils.displayModal(alertModal, 'Not found allotment with the data selected')
         } else {
-          utils.displayModal(alertModal, response.message)
+          utils.displayModal(alertModal, 'Something wrong! More information in the respective row')
         }
 
         cloneContent.classList.add('d-none')
@@ -381,7 +389,6 @@ const clone = {
         }
       }
     } catch (e) {
-      console.log(e)
       utils.displayModal(alertModal, '')
     }
   },
