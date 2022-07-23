@@ -35,7 +35,7 @@ class Sale_report extends Model
         $this->build   = new Build();
         $this->page    = new \App\Models\Page();
         $this->session = \Config\Services::session();
-        
+
         $this->model    = '';
         $this->attrib   = array('class' => 'center');
         $this->active   = array('class' => LABEL_SUCCESS);
@@ -84,7 +84,7 @@ class Sale_report extends Model
                 $aux .= custom('td', '', $row->schedule_start);
                 $aux .= custom('td', '', $row->pax_name);
                 $aux .= custom('td', '', $row->quantity);
-               
+
 
                 $status = '';
                 $delete = '';
@@ -126,7 +126,7 @@ class Sale_report extends Model
 
         if(empty($form))
             $form = 'SALES_TABLE';
-        
+
         switch($form){
             case 'filters':
                 $form = 'SALES_FORM_FILTERS';
@@ -139,7 +139,7 @@ class Sale_report extends Model
 
         return $this->model;
     }
-    
+
     public function get_sales($start_date,$end_date){
 
         // Call API here!
@@ -156,13 +156,8 @@ class Sale_report extends Model
 
         if ($response->code == 200)
             return $response->message;
-            
+
         return null;
 
     }
-
-    
-
-    
-
 }

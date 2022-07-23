@@ -25,6 +25,7 @@ const sale_report = {
     const exportBtn = document.querySelector('.export')
     if (exportBtn !== null) {
       exportBtn.addEventListener(clickEvent, (e) => {
+        e.preventDefault()
 
         const dates = document.querySelector('[name="dates"]').value
         let start_date =''
@@ -44,6 +45,7 @@ const sale_report = {
         }
 
         url = `${base}/sale-reports/export/${start_date}/${end_date}`
+
         window.open(url)
       })
     }
@@ -71,7 +73,7 @@ const sale_report = {
           document.querySelector('.export').classList.add('d-none')
         else
           document.querySelector('.export').classList.remove('d-none')
-        
+
       })
     }
   },
@@ -99,7 +101,7 @@ const sale_report = {
   deploy: function (response) {
     try {
       MicroModal.close('wait-modal')
-      response = JSON.parse(response)      
+      response = JSON.parse(response)
 
       const table = document.querySelector('#table-sales')
 
@@ -125,13 +127,13 @@ const sale_report = {
 
         configTable = sale_report.getTableConfig(registers)
 
-        $(nodeTable).DataTable(configTable).draw()      
+        $(nodeTable).DataTable(configTable).draw()
       }
     } catch (e) {
       console.log(e)
       utils.displayModal(alertModal, '')
     }
- 
+
     let tbl = $('#table-sales').DataTable()
     let tblSettings = tbl.rows().data()
 
@@ -152,7 +154,7 @@ const sale_report = {
       { data: 'service_name', title: 'Service' },
       { data: 'schedule_start', title: 'Schedule' },
       { data: 'pax_name', title: 'Pax' },
-      { data: 'quantity', title: 'Quantity' },      
+      { data: 'quantity', title: 'Quantity' },
       {
         data: 'status_name',
         title: 'Status',
@@ -160,14 +162,14 @@ const sale_report = {
           let  labelStatus = 'success'
 
           if (data !== 'Confirmed') {
-            labelStatus = 'danger'            
+            labelStatus = 'danger'
           }
 
           const status_name = utils.createElement('span', `badge badge-${labelStatus}`, row.booking_id,data)
-          return status_name.outerHTML          
-           
+          return status_name.outerHTML
+
         }
-      }      
+      }
     ]
 
     config.order = [2, 'asc']
