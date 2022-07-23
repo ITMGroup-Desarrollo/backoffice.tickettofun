@@ -863,6 +863,7 @@ arrives.initPermissions()
 const btnExport = document.querySelector('[name="export"]')
 if (btnExport !== null) {
   btnExport.addEventListener('click', (e) => {
+    e.preventDefault()
     url = `${base}/arrives/export/${dataArrive.id}`
     window.open(url)
   })
