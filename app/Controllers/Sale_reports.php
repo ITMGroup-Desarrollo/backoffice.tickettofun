@@ -58,7 +58,6 @@ class Sale_reports extends BaseController
         $script = custom('script', '', $rep);
         $data['scripts'] = $script .  $data['scripts'];
 
-
         return view('Master', $data);
     }
 
@@ -69,6 +68,7 @@ class Sale_reports extends BaseController
 
         $response = $this->sale_report->get_sales($start_date, $end_date);
 
+        // Filter just confirmed sales
         $response = array_filter($response , function($data) {
             return $data->process_status_id == 6;
         });
@@ -245,24 +245,24 @@ class Sale_reports extends BaseController
             $cruise_pos++;
 
             foreach ($reseller as $key_service => $service) {
-                $adult    = $adult + $service["Adult"];
-                $children = $children + $service["Children"];
-                $total    = $total + $service["Total"];
+                $adult    = $adult + $service["adult"];
+                $children = $children + $service["children"];
+                $total    = $total + $service["total"];
 
                 $sheet->setCellValue("B{$start_pos}", $key_service);
-                $sheet->setCellValue("C{$start_pos}", $service["Adult"]);
-                $sheet->setCellValue("D{$start_pos}", $service["Children"]);
-                $sheet->setCellValue("E{$start_pos}", $service["Total"]);
+                $sheet->setCellValue("C{$start_pos}", $service["adult"]);
+                $sheet->setCellValue("D{$start_pos}", $service["children"]);
+                $sheet->setCellValue("E{$start_pos}", $service["total"]);
 
                 $sheet->getStyle("E{$start_pos}")->getNumberFormat()
                     ->setFormatCode(NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
 
                 // Set detail cruise information
-                $code = $service["Code"];
+                $code = $service["code"];
 
                 $cruiseSheet->setCellValue("B{$cruise_pos}", "{$code} {$key_service}");
-                $cruiseSheet->setCellValue("C{$cruise_pos}", $service["Adult"]);
-                $cruiseSheet->setCellValue("D{$cruise_pos}", $service["Children"]);
+                $cruiseSheet->setCellValue("C{$cruise_pos}", $service["adult"]);
+                $cruiseSheet->setCellValue("D{$cruise_pos}", $service["children"]);
 
                 $start_pos++;
                 $cruise_pos++;
@@ -271,16 +271,18 @@ class Sale_reports extends BaseController
                 $cruiseSheet->setCellValue("B10", 'Booking Reference');
                 $cruiseSheet->setCellValue("C10", 'Guest');
                 $cruiseSheet->setCellValue("D10", '# Cabin');
-                $cruiseSheet->setCellValue("E10", 'Ticket');
+                $cruiseSheet->setCellValue("E10", 'Adultos');
+                $cruiseSheet->setCellValue("F10", 'Menores');
+                $cruiseSheet->setCellValue("G10", 'Ticket');
 
-                $cruiseSheet->getColumnDimension('E')->setAutoSize(true);
+                $cruiseSheet->getColumnDimension('G')->setAutoSize(true);
 
-                $cruiseSheet->getStyle('B10:E10')->getFont()
+                $cruiseSheet->getStyle('B10:G10')->getFont()
                     ->applyFromArray($hFColor);
-                $cruiseSheet->getStyle('B10:E10')->getFill()
+                $cruiseSheet->getStyle('B10:G10')->getFill()
                     ->applyFromArray($hPBackground);
 
-                $cruiseSheet->getStyle("C10:E10")->getAlignment()
+                $cruiseSheet->getStyle("C10:G10")->getAlignment()
                     ->setHorizontal('center');
 
                 $sales = array_filter($bookings, function($data) USE($key_reseller) {
@@ -294,14 +296,20 @@ class Sale_reports extends BaseController
                         $cruiseSheet->setCellValue("B{$booking_pos}", $booking->booking_reference);
                         $cruiseSheet->setCellValue("C{$booking_pos}", $booking->guest_name);
                         $cruiseSheet->setCellValue("D{$booking_pos}", $booking->cabin);
-                        $cruiseSheet->setCellValue("E{$booking_pos}", 'View PDF');
+                        $cruiseSheet->setCellValue("E{$booking_pos}", $booking->quantity);
+                        $cruiseSheet->setCellValue("G{$booking_pos}", 'View PDF');
 
                         $url = "https://lmps.cancunhostingcenter.com/#/status?booking={$booking->uuid_seq}";
 
-                        $cruiseSheet->getCell("E{$booking_pos}")->getHyperlink()
+                        $cruiseSheet->getCell("G{$booking_pos}")->getHyperlink()
                             ->setUrl($url);
 
                         $booking_pos++;
+                    }
+                    else if ($booking->pax_name == 'Children')
+                    {
+                        $last_pos = ($booking_pos - 1);
+                        $cruiseSheet->setCellValue("F{$last_pos}", $booking->quantity);
                     }
                 }
             }
@@ -367,24 +375,22 @@ class Sale_reports extends BaseController
 
     private function groupByResellerService($data){
         //Agrupar por reseller
-        $data = $this->group_by("reseller_name",$data);
+        $data = $this->group_by("reseller_name", $data);
 
         //Agrupar por servicio
         foreach($data as &$service){
-            $service = $this->group_by("service_name",$service);
+            $service = $this->group_by("service_name", $service);
         }
 
-        $adult = 0;
+        $adult    = 0;
         $children = 0;
-        $courtesy=0;
-        $total = 0.0;
+        $courtesy = 0;
+        $total    = 0.0;
 
         //Realizar conteo de pax
-        foreach($data as &$reseller){
-
-            foreach($reseller as &$service){
+        foreach($data as &$reseller) {
+            foreach($reseller as &$service) {
                 $code = '';
-
                 foreach($service as $element) {
 
                     switch($element->pax_name) {
@@ -401,24 +407,23 @@ class Sale_reports extends BaseController
 
                     $total = $total + $element->total;
 
-                    $code = $element->code;
+                    $code = $element->lmps_code;
                 }
 
                 //Generando nueva estructura
                 $service = array(
-                    "Adult"    => $adult,
-                    "Children" => $children,
-                    "Courtesy" => $courtesy,
-                    "Total"    => $total,
-                    "Code"     => $code
+                    "adult"    => $adult,
+                    "children" => $children,
+                    "courtesy" => $courtesy,
+                    "total"    => $total,
+                    "code"     => $code
                 );
 
                 //Reiniciando valores
-                $adult = 0;
+                $adult    = 0;
                 $children = 0;
-                $courtesy=0;
-                $total = 0.0;
-
+                $courtesy = 0;
+                $total    = 0.0;
             }
 
         }
