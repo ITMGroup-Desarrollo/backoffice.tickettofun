@@ -79,6 +79,7 @@ class Equivalence extends Model
                 $aux .= custom('td', '', $row->service_name);
                 $aux .= custom('td', '', $row->reseller_name);
                 $aux .= custom('td', '', $row->code);
+                $aux .= custom('td', '', $row->lmps_code);
                 $aux .= custom('td', '', $row->service_reseller);
 
                 $status = '';
@@ -102,13 +103,13 @@ class Equivalence extends Model
 
                     $this->anchor_attrib['class'] = 'edit';
                     $this->anchor_attrib['href']  = base_url($path);
-                    
+
                     $edit = custom('i', array('class' => 'fas fa-edit'), '');
                     $edit = custom('a', $this->anchor_attrib, $edit);
                 }
                 if ($rol_id == 1 || in_array('d_equivalences', $this->session->get('permissions')))
                 {
-                    if ($row->active_status == 1) 
+                    if ($row->active_status == 1)
                     {
                         $this->anchor_attrib['href']    = '#';
                         $this->anchor_attrib['class']   = 'delete';
@@ -169,13 +170,14 @@ class Equivalence extends Model
             $equivalence->vendor           = $response->message->reseller_id;
             $equivalence->active           = $response->message->active_status;
             $equivalence->service          = $response->message->service_id;
+            $equivalence->lmps_code        = $response->message->lmps_code;
             $equivalence->service_reseller = $response->message->service_reseller;
         }
         else
         {
             redirect('/equivalences/list');
         }
-        
+
         return $equivalence;
     }
 }
