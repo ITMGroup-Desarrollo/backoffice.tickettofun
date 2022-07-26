@@ -241,6 +241,29 @@ class Sale_reports extends BaseController
 
             $cruiseSheet->setCellValue("B{$cruise_pos}", $key_reseller);
 
+            // Add boking details
+            $cruiseSheet->setCellValue('G2', 'Booking Reference');
+            $cruiseSheet->setCellValue('H2', 'Guest');
+            $cruiseSheet->setCellValue('I2', '# Cabin');
+            $cruiseSheet->setCellValue('J2', 'Adultos');
+            $cruiseSheet->setCellValue('K2', 'Menores');
+            $cruiseSheet->setCellValue('L2', 'Ticket');
+
+            $cruiseSheet->getColumnDimension('G')->setAutoSize(true);
+            $cruiseSheet->getColumnDimension('H')->setAutoSize(true);
+            $cruiseSheet->getColumnDimension('I')->setAutoSize(true);
+            $cruiseSheet->getColumnDimension('J')->setAutoSize(true);
+            $cruiseSheet->getColumnDimension('K')->setAutoSize(true);
+            $cruiseSheet->getColumnDimension('L')->setAutoSize(true);
+
+            $cruiseSheet->getStyle('G2:L2')->getFont()
+                ->applyFromArray($hFColor);
+            $cruiseSheet->getStyle('G2:L2')->getFill()
+                ->applyFromArray($hPBackground);
+
+            $cruiseSheet->getStyle('G2:L2')->getAlignment()
+                ->setHorizontal('center');
+
             $start_pos++;
             $cruise_pos++;
 
@@ -267,41 +290,23 @@ class Sale_reports extends BaseController
                 $start_pos++;
                 $cruise_pos++;
 
-                // Add boking details
-                $cruiseSheet->setCellValue("B10", 'Booking Reference');
-                $cruiseSheet->setCellValue("C10", 'Guest');
-                $cruiseSheet->setCellValue("D10", '# Cabin');
-                $cruiseSheet->setCellValue("E10", 'Adultos');
-                $cruiseSheet->setCellValue("F10", 'Menores');
-                $cruiseSheet->setCellValue("G10", 'Ticket');
-
-                $cruiseSheet->getColumnDimension('G')->setAutoSize(true);
-
-                $cruiseSheet->getStyle('B10:G10')->getFont()
-                    ->applyFromArray($hFColor);
-                $cruiseSheet->getStyle('B10:G10')->getFill()
-                    ->applyFromArray($hPBackground);
-
-                $cruiseSheet->getStyle("C10:G10")->getAlignment()
-                    ->setHorizontal('center');
-
                 $sales = array_filter($bookings, function($data) USE($key_reseller) {
                     return $data->reseller_name == $key_reseller;
                 });
 
-                $booking_pos = 11;
+                $booking_pos = 3;
                 foreach($sales as $booking) {
                     if ($booking->pax_name == 'Adult')
                     {
-                        $cruiseSheet->setCellValue("B{$booking_pos}", $booking->booking_reference);
-                        $cruiseSheet->setCellValue("C{$booking_pos}", $booking->guest_name);
-                        $cruiseSheet->setCellValue("D{$booking_pos}", $booking->cabin);
-                        $cruiseSheet->setCellValue("E{$booking_pos}", $booking->quantity);
-                        $cruiseSheet->setCellValue("G{$booking_pos}", 'View PDF');
+                        $cruiseSheet->setCellValue("G{$booking_pos}", $booking->booking_reference);
+                        $cruiseSheet->setCellValue("H{$booking_pos}", $booking->guest_name);
+                        $cruiseSheet->setCellValue("I{$booking_pos}", $booking->cabin);
+                        $cruiseSheet->setCellValue("J{$booking_pos}", $booking->quantity);
+                        $cruiseSheet->setCellValue("L{$booking_pos}", 'View PDF');
 
                         $url = "https://lmps.cancunhostingcenter.com/#/status?booking={$booking->uuid_seq}";
 
-                        $cruiseSheet->getCell("G{$booking_pos}")->getHyperlink()
+                        $cruiseSheet->getCell("L{$booking_pos}")->getHyperlink()
                             ->setUrl($url);
 
                         $booking_pos++;
@@ -309,7 +314,7 @@ class Sale_reports extends BaseController
                     else if ($booking->pax_name == 'Children')
                     {
                         $last_pos = ($booking_pos - 1);
-                        $cruiseSheet->setCellValue("F{$last_pos}", $booking->quantity);
+                        $cruiseSheet->setCellValue("K{$last_pos}", $booking->quantity);
                     }
                 }
             }
