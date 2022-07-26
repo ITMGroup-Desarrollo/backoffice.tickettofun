@@ -152,7 +152,7 @@ class Sale_reports extends BaseController
         $drawing = new Drawing();
         $drawing->setName('Logo');
         $drawing->setDescription('Logo');
-        $drawing->setPath(APPPATH . '../writable/uploads/costa-maya.png');
+        $drawing->setPath(APPPATH . '../public/img/costa-maya.png');
         $drawing->setCoordinates('I1');
         $drawing->setHeight(76);
 
