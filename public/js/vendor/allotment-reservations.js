@@ -171,7 +171,6 @@ var allotment = {
       .on('order.dt', function () {})
       .on('page.dt', function () {})
       .DataTable({
-        responsive: true,
         fixedHeader: true,
         retrieve: true,
         data: dataTable,

@@ -341,7 +341,6 @@ var utils = {
   },
   getDataTableConfig: function () {
     const configDataTable = {
-      responsive: true,
       fixedHeader: true,
       iDisplayLength: 20,
       sPaginationType: 'full_numbers',
