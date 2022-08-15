@@ -604,6 +604,7 @@ const arrives = {
           allotment.schedule_start = schedulesBase[i].innerText
           allotment.schedule_end = schedulesEndBase[i].innerText
 
+          allotment.channel_id = dataAllotment[i].dataset.channel_id
           allotment.service_name = dataAllotment[i].dataset.serviceName
           allotment.schedule_start_base = schedulesBase[i].innerText
           allotment.schedule_end_base = schedulesEndBase[i].innerText
@@ -805,6 +806,7 @@ const arrives = {
             dataAllotment.dataset.allotmentId = row.allotment_id
             dataAllotment.dataset.serviceName = row.service_name
             dataAllotment.dataset.statusBase = row.active_status_base
+            dataAllotment.dataset.channel_id = row.channel_id
 
             return `${anchor.outerHTML} ${dataAllotment.outerHTML}`
           }
