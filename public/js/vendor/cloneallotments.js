@@ -425,7 +425,6 @@ const clone = {
         }
       }
     } catch (e) {
-      console.log(e)
       utils.displayModal(alertModal, '')
     }
   },
@@ -568,6 +567,7 @@ const clone = {
         service: service.value,
         ship: parseInt(ship.value, 10),
         start_date: arriveDate.value,
+        channel_id: arriveData.channel_id
       }
 
       utils.api(JSON.stringify(info), `${apiHost}allotments/shipservice`, 'POST', clone.addTour)
