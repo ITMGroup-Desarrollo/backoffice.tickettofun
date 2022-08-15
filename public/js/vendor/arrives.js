@@ -42,7 +42,7 @@ const arrives = {
 
       var cancel = document.querySelector('.cancel')
       if (cancel != null) {
-        cancel.addEventListener('click', function (e) {
+        cancel.addEventListener(clickEvent, function (e) {
           e.preventDefault()
           form = document.querySelector('#add-arrives')
           form.reset()
@@ -52,7 +52,7 @@ const arrives = {
 
       var save = document.querySelector('.save')
       if (save != null) {
-        save.addEventListener('click', function (e) {
+        save.addEventListener(clickEvent, function (e) {
           e.preventDefault()
 
           arrives.add.saveArrive()
@@ -148,7 +148,7 @@ const arrives = {
 
       const cancel = document.querySelector('.cancel')
       if (cancel != null) {
-        cancel.addEventListener('click', (e) => {
+        cancel.addEventListener(clickEvent, (e) => {
           e.preventDefault()
 
           const form = document.querySelector('#add-arrives')
@@ -394,7 +394,7 @@ const arrives = {
 
       var saveButton = document.querySelector('.save')
       if (saveButton != null) {
-        saveButton.addEventListener('click', (e) => {
+        saveButton.addEventListener(clickEvent, (e) => {
           e.preventDefault()
 
           arrives.confirm()
@@ -403,7 +403,7 @@ const arrives = {
 
       var confirmButton = document.querySelector('.confirm-save')
       if (confirmButton != null) {
-        confirmButton.addEventListener('click', (e) => {
+        confirmButton.addEventListener(clickEvent, (e) => {
           e.preventDefault()
 
           const info = arrives.update.loadObject()
@@ -489,7 +489,7 @@ const arrives = {
 
             cancelButton.after(simulateBtn)
 
-            simulateBtn.addEventListener('click', (e) => {
+            simulateBtn.addEventListener(clickEvent, (e) => {
               e.preventDefault()
 
               const info = arrives.update.loadObject()
@@ -521,7 +521,7 @@ const arrives = {
       // Add event listener to change status
       const statusElements = document.querySelectorAll('.status-option')
       for (let i = 0, l = statusElements.length; i < l; i++) {
-        statusElements[i].addEventListener('click', function (e) {
+        statusElements[i].addEventListener(clickEvent, function (e) {
           e.preventDefault()
 
           var element = e.target
@@ -581,14 +581,22 @@ const arrives = {
         const table = document.querySelector('#allotments-registers')
         const dataAllotment = document.querySelectorAll('.data-allotment')
 
-        const endHours = table.querySelectorAll('.hrEnd')
-        const startHours = table.querySelectorAll('.hrStart')
+        const eHours = table.querySelectorAll('.hrEnd')
+        const sHours = table.querySelectorAll('.hrStart')
         const maxAvailable = table.querySelectorAll('.capmax')
         const minAvailable = table.querySelectorAll('.capmin')
         const maxCapacityBase = table.querySelectorAll('.max-base')
         const minCapacityBase = table.querySelectorAll('.min-base')
         const schedulesBase = table.querySelectorAll('.schedule-start-base')
         const schedulesEndBase = table.querySelectorAll('.schedule-end-base')
+
+        const startHours = Array.from(sHours).filter(element => {
+          return element.id !== ''
+        })
+
+        const endHours= Array.from(eHours).filter(element => {
+          return element.id !== ''
+        })
 
         for (let i = 0, l = startHours.length; i < l; i++) {
           const allotment = {}
@@ -861,7 +869,7 @@ arrives.initPermissions()
 //Add export actions
 const btnExport = document.querySelector('[name="export"]')
 if (btnExport !== null) {
-  btnExport.addEventListener('click', (e) => {
+  btnExport.addEventListener(clickEvent, (e) => {
     e.preventDefault()
     url = `${base}/arrives/export/${dataArrive.id}`
     window.open(url)
