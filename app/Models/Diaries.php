@@ -103,7 +103,8 @@ class Diaries extends Model
             foreach ($result->getResult() as $row)
             {
                 $this->model['code'] = 200;
-                $ship_details        = str_replace('{type}', 'flex', $ship_details);
+
+                $ship_details = str_replace('{type}', 'flex', $ship_details);
 
                 if ($id == 0)
                 {
@@ -122,21 +123,21 @@ class Diaries extends Model
                 {
                     if ($this->print == 1)
                     {
-                        $ship_details = str_replace(
+                        $details = str_replace(
                             '{ship_time}'
                             , $ship_time
                             , $ship_details
                         );
 
-                        $ship_details = str_replace(
+                        $details = str_replace(
                             '{total_tours}'
                             , $total_tours
-                            , $ship_details
+                            , $details
                         );
                     }
                     else
                     {
-                        $ship_details = str_replace(
+                        $details = str_replace(
                             '{total_tours}'
                             , $total_tours
                             , $ship_details
@@ -146,8 +147,8 @@ class Diaries extends Model
                     $id        = $row->ship_id;
                     $schedules = str_replace('{rows}', $body, $table);
 
-                    $details .= str_replace(
-                        '{tours_details}', $schedules, $ship_details
+                    $details = str_replace(
+                        '{tours_details}', $schedules, $details
                     );
 
                     $details = str_replace(
@@ -221,19 +222,19 @@ class Diaries extends Model
 
             if ($this->print == 1)
             {
-                $ship_details = str_replace('{ship_time}', $ship_time, $ship_details);
-                $ship_details = str_replace('{total_tours}', $total_tours, $ship_details);
+                $details .= str_replace('{ship_time}', $ship_time, $ship_details);
+                $details = str_replace('{total_tours}', $total, $details);
             }
             else
             {
-                $ship_details = str_replace('{type}', 'flex', $ship_details);
-                $ship_details = str_replace('{total_tours}', $total_tours, $ship_details);
+                $details .= str_replace('{type}', 'flex', $ship_details);
+                $details = str_replace('{total_tours}', $total_tours, $details);
             }
 
             $this->model['total_tours'] = $total;
             $table                      = str_replace('{rows}', $body, $table);
 
-            $details .= str_replace('{tours_details}', $table, $ship_details);
+            $details = str_replace('{tours_details}', $table, $details);
 
             $details = str_replace('{ship_cruise}', $ship_name, $details);
             $details = $this->_set_values_headship($extra_data, $details);
@@ -271,7 +272,7 @@ class Diaries extends Model
 
             // For default view
             $this->model['display']     = 'none';
-            $this->model['total_tours'] = $total_tours;
+            $this->model['total_tours'] = $total;
         }
 
         return $this->model;
