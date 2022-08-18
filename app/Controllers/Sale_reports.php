@@ -245,9 +245,10 @@ class Sale_reports extends BaseController
             $cruiseSheet->setCellValue('G2', 'Booking Reference');
             $cruiseSheet->setCellValue('H2', 'Guest');
             $cruiseSheet->setCellValue('I2', '# Cabin');
-            $cruiseSheet->setCellValue('J2', 'Adultos');
-            $cruiseSheet->setCellValue('K2', 'Menores');
-            $cruiseSheet->setCellValue('L2', 'Ticket');
+            $cruiseSheet->setCellValue('J2', 'Tour');
+            $cruiseSheet->setCellValue('K2', 'Adultos');
+            $cruiseSheet->setCellValue('L2', 'Menores');
+            $cruiseSheet->setCellValue('M2', 'Ticket');
 
             $cruiseSheet->getColumnDimension('G')->setAutoSize(true);
             $cruiseSheet->getColumnDimension('H')->setAutoSize(true);
@@ -255,13 +256,14 @@ class Sale_reports extends BaseController
             $cruiseSheet->getColumnDimension('J')->setAutoSize(true);
             $cruiseSheet->getColumnDimension('K')->setAutoSize(true);
             $cruiseSheet->getColumnDimension('L')->setAutoSize(true);
+            $cruiseSheet->getColumnDimension('M')->setAutoSize(true);
 
-            $cruiseSheet->getStyle('G2:L2')->getFont()
+            $cruiseSheet->getStyle('G2:M2')->getFont()
                 ->applyFromArray($hFColor);
-            $cruiseSheet->getStyle('G2:L2')->getFill()
+            $cruiseSheet->getStyle('G2:M2')->getFill()
                 ->applyFromArray($hPBackground);
 
-            $cruiseSheet->getStyle('G2:L2')->getAlignment()
+            $cruiseSheet->getStyle('G2:M2')->getAlignment()
                 ->setHorizontal('center');
 
             $start_pos++;
@@ -298,15 +300,19 @@ class Sale_reports extends BaseController
                 foreach($sales as $booking) {
                     if ($booking->pax_name == 'Adult')
                     {
+                        $code    = $booking->code;
+                        $service = $booking->service_name;
+
                         $cruiseSheet->setCellValue("G{$booking_pos}", $booking->booking_reference);
                         $cruiseSheet->setCellValue("H{$booking_pos}", $booking->guest_name);
                         $cruiseSheet->setCellValue("I{$booking_pos}", $booking->cabin);
-                        $cruiseSheet->setCellValue("J{$booking_pos}", $booking->quantity);
-                        $cruiseSheet->setCellValue("L{$booking_pos}", 'View PDF');
+                        $cruiseSheet->setCellValue("J{$booking_pos}", "{$code} {$service}");
+                        $cruiseSheet->setCellValue("K{$booking_pos}", $booking->quantity);
+                        $cruiseSheet->setCellValue("M{$booking_pos}", 'View PDF');
 
                         $url = "https://lmps.cancunhostingcenter.com/#/status?booking={$booking->uuid_seq}";
 
-                        $cruiseSheet->getCell("L{$booking_pos}")->getHyperlink()
+                        $cruiseSheet->getCell("M{$booking_pos}")->getHyperlink()
                             ->setUrl($url);
 
                         $booking_pos++;
@@ -314,7 +320,7 @@ class Sale_reports extends BaseController
                     else if ($booking->pax_name == 'Children')
                     {
                         $last_pos = ($booking_pos - 1);
-                        $cruiseSheet->setCellValue("K{$last_pos}", $booking->quantity);
+                        $cruiseSheet->setCellValue("L{$last_pos}", $booking->quantity);
                     }
                 }
             }
