@@ -67,6 +67,7 @@ var equivalences = {
     document.querySelector('[name="vendor"]').value = equivalencesData.vendor
     document.querySelector('[name="service"]').value = equivalencesData.service
     document.querySelector('[name="code"]').value = equivalencesData.code
+    document.querySelector('[name="lmps-code"]').value = equivalencesData.lmps_code
     document.querySelector('[name="service_name"]').value = equivalencesData.service_reseller
     document.querySelector('[name="status"]').value = equivalencesData.active
   }
@@ -103,6 +104,7 @@ if (save != null) {
       info = {
         user_create_id: userCreateId,
         code: document.querySelector('[name="code"]').value,
+        lmps_code: document.querySelector('[name="lmps-code"]').value,
         service_id: document.querySelector('[name="service"]').value,
         reseller_id: document.querySelector('[name="vendor"]').value,
         service_name: document.querySelector('[name="service_name"]').value

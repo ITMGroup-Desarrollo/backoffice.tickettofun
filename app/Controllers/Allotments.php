@@ -166,6 +166,7 @@ class Allotments extends BaseController
         $data['contents'] = str_replace('{cruise-edit}', $call, $data['contents']);
         $data['contents'] = str_replace('{id}', 'schedules-search', $data['contents']);
         $data['contents'] = str_replace('{title}', 'Schedules suggested', $data['contents']);
+        $data['contents'] = str_replace('{text}', 'Allotments for ', $data['contents']);
 
         $userId = 'window.user = ' . $this->session->get('user_id');
         $script = custom('script', '', $userId);

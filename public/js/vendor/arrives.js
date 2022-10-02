@@ -22,7 +22,7 @@ const arrives = {
       // Initialize pickers
       flatpickr('.date-format', {
         dateFormat: 'Y-m-d',
-        minDate: new Date().fp_incr(1)
+        minDate: new Date()
       })
 
       flatpickr('.time-format', {
@@ -42,7 +42,7 @@ const arrives = {
 
       var cancel = document.querySelector('.cancel')
       if (cancel != null) {
-        cancel.addEventListener('click', function (e) {
+        cancel.addEventListener(clickEvent, function (e) {
           e.preventDefault()
           form = document.querySelector('#add-arrives')
           form.reset()
@@ -52,7 +52,7 @@ const arrives = {
 
       var save = document.querySelector('.save')
       if (save != null) {
-        save.addEventListener('click', function (e) {
+        save.addEventListener(clickEvent, function (e) {
           e.preventDefault()
 
           arrives.add.saveArrive()
@@ -148,7 +148,7 @@ const arrives = {
 
       const cancel = document.querySelector('.cancel')
       if (cancel != null) {
-        cancel.addEventListener('click', (e) => {
+        cancel.addEventListener(clickEvent, (e) => {
           e.preventDefault()
 
           const form = document.querySelector('#add-arrives')
@@ -257,7 +257,6 @@ const arrives = {
           }
         }
       } catch (e) {
-        console.log(e)
         utils.displayModal(alertModal, '')
       }
     },
@@ -347,6 +346,24 @@ const arrives = {
       form.querySelector('[name="markup_end"]').value = dataArrive.markup_end
       form.querySelector('[name="status"]').value = dataArrive.active
 
+      let channel = document.querySelector('[name="channel"]')
+      if (channel != null) {
+        for (let i = 0, l = channel.length; i < l - 1; i++) {
+          if (channel.options[i].value == 2) {
+            channel.remove(i);
+          }
+        }
+
+        channel.value = 1
+
+        channel.addEventListener('change', (e) => {
+          e.preventDefault()
+
+          url = `${apiHost}allotments/arrive/${dataArrive.id}`
+          utils.api(JSON.stringify({}), url, 'GET', arrives.update.deploy)
+        })
+      }
+
       flatpickr('.date-format', {
         dateFormat: 'Y-m-d',
         minDate: dataArrive.arrival_date
@@ -377,7 +394,7 @@ const arrives = {
 
       var saveButton = document.querySelector('.save')
       if (saveButton != null) {
-        saveButton.addEventListener('click', (e) => {
+        saveButton.addEventListener(clickEvent, (e) => {
           e.preventDefault()
 
           arrives.confirm()
@@ -386,7 +403,7 @@ const arrives = {
 
       var confirmButton = document.querySelector('.confirm-save')
       if (confirmButton != null) {
-        confirmButton.addEventListener('click', (e) => {
+        confirmButton.addEventListener(clickEvent, (e) => {
           e.preventDefault()
 
           const info = arrives.update.loadObject()
@@ -416,16 +433,39 @@ const arrives = {
 
         content.appendChild(nodeTable)
 
+        // Get channel
+        let channel = document.querySelector('[name="channel"]')
+
         if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
           configTable = arrives.update.getTableConfig([])
+
+          let dRegisters = {}
+          let registers = response.message
+
+          if (utils.isJson(registers)) {
+            dRegisters = JSON.parse(registers)
+            registers = dRegisters.list
+          } else {
+            dRegisters = registers
+          }
 
           if (response.code === 404) {
             utils.displayModal(alertModal, 'Not allotment configuration found!')
           } else {
-            utils.displayModal(alertModal, response.message)
+            let error = JSON.parse(dRegisters.error[0])
+            utils.displayModal(alertModal, error.message)
           }
 
+          // filter by cruise channel
+          registers = registers.filter((row) => {
+            return row.channel_id == channel.value
+          })
+
+          configTable = arrives.update.getTableConfig(registers)
+
           $(nodeTable).DataTable(configTable).draw()
+
+          arrives.update.setActions()
         } else {
           var registers = response.message
 
@@ -436,7 +476,7 @@ const arrives = {
 
           // filter by cruise channel
           registers = registers.filter((row) => {
-            return row.channel_id == 1
+            return row.channel_id == channel.value
           })
 
           configTable = arrives.update.getTableConfig(registers)
@@ -449,7 +489,7 @@ const arrives = {
 
             cancelButton.after(simulateBtn)
 
-            simulateBtn.addEventListener('click', (e) => {
+            simulateBtn.addEventListener(clickEvent, (e) => {
               e.preventDefault()
 
               const info = arrives.update.loadObject()
@@ -464,15 +504,48 @@ const arrives = {
 
           $(nodeTable).DataTable(configTable).draw()
 
-          flatpickr('.hours', {
-            enableTime: true,
-            noCalendar: true,
-            dateFormat: 'H:i',
-            time_24hr: true
-          })
+          arrives.update.setActions()
         }
       } catch (e) {
+        console.log(e)
         utils.displayModal(alertModal, '')
+      }
+    },
+    setActions: () => {
+      flatpickr('.hours', {
+        enableTime: true,
+        noCalendar: true,
+        dateFormat: 'H:i',
+        time_24hr: true
+      })
+      // Add event listener to change status
+      const statusElements = document.querySelectorAll('.status-option')
+      for (let i = 0, l = statusElements.length; i < l; i++) {
+        statusElements[i].addEventListener(clickEvent, function (e) {
+          e.preventDefault()
+
+          var element = e.target
+          if (e.target.getAttribute('data-status')) {
+            element = e.target.parentElement
+          }
+
+          const inputHidden = element.parentElement.querySelector('.data-allotment')
+
+          let label = ''
+          if (inputHidden !== null) {
+            if (inputHidden.value == 0) {
+              inputHidden.value = 1
+              inputHidden.dataset.status = 1
+              label = utils.addStatusFormat(1, inputHidden.dataset.allotmentId)
+            } else {
+              inputHidden.value = 0
+              inputHidden.dataset.status = 0
+              label = utils.addStatusFormat(0, inputHidden.dataset.allotmentId)
+            }
+
+            element.innerHTML = label
+          }
+        })
       }
     },
     loadObject: () => {
@@ -508,8 +581,8 @@ const arrives = {
         const table = document.querySelector('#allotments-registers')
         const dataAllotment = document.querySelectorAll('.data-allotment')
 
-        const endHours = table.querySelectorAll('.hrEnd')
-        const startHours = table.querySelectorAll('.hrStart')
+        const eHours = table.querySelectorAll('.hrEnd')
+        const sHours = table.querySelectorAll('.hrStart')
         const maxAvailable = table.querySelectorAll('.capmax')
         const minAvailable = table.querySelectorAll('.capmin')
         const maxCapacityBase = table.querySelectorAll('.max-base')
@@ -517,12 +590,21 @@ const arrives = {
         const schedulesBase = table.querySelectorAll('.schedule-start-base')
         const schedulesEndBase = table.querySelectorAll('.schedule-end-base')
 
+        const startHours = Array.from(sHours).filter(element => {
+          return element.id !== ''
+        })
+
+        const endHours= Array.from(eHours).filter(element => {
+          return element.id !== ''
+        })
+
         for (let i = 0, l = startHours.length; i < l; i++) {
           const allotment = {}
 
           allotment.schedule_start = schedulesBase[i].innerText
           allotment.schedule_end = schedulesEndBase[i].innerText
 
+          allotment.channel_id = dataAllotment[i].dataset.channel_id
           allotment.service_name = dataAllotment[i].dataset.serviceName
           allotment.schedule_start_base = schedulesBase[i].innerText
           allotment.schedule_end_base = schedulesEndBase[i].innerText
@@ -539,7 +621,7 @@ const arrives = {
             valid = false
             arrives.errorMsg('missing', 'minimum capacity', minAvailable[i], allotment.service_name)
             break
-          } else if (allotment.capacity_min <= 0) {
+          } else if (allotment.capacity_min < 0) {
             valid = false
             arrives.errorMsg('lessThanZero', 'minimum capacity', minAvailable[i], allotment.service_name)
             break
@@ -582,7 +664,6 @@ const arrives = {
       const config = {
         info:false,
         paging: false,
-        responsive: true,
         searching: false,
         fixedHeader: true,
       }
@@ -705,19 +786,29 @@ const arrives = {
           render: (data, type, row, meta) => {
             const labelStatus = utils.addStatusFormat(data, row.allotment_id)
 
+            const anchor = utils.createElement(
+              'a', 'status-option', '', ''
+            )
+
+            anchor.setAttribute('href', '#')
+
+            anchor.innerHTML = labelStatus
+
             var dataAllotment = utils.createElement(
               'input', 'data-allotment', '', ''
             )
 
             dataAllotment.setAttribute('type', 'hidden')
+            dataAllotment.setAttribute('value', row.active_status)
 
             dataAllotment.dataset.status = row.active_status
             dataAllotment.dataset.serviceId = row.service_id
             dataAllotment.dataset.allotmentId = row.allotment_id
             dataAllotment.dataset.serviceName = row.service_name
             dataAllotment.dataset.statusBase = row.active_status_base
+            dataAllotment.dataset.channel_id = row.channel_id
 
-            return `${labelStatus} ${dataAllotment.outerHTML}`
+            return `${anchor.outerHTML} ${dataAllotment.outerHTML}`
           }
         },
         {
@@ -780,7 +871,8 @@ arrives.initPermissions()
 //Add export actions
 const btnExport = document.querySelector('[name="export"]')
 if (btnExport !== null) {
-  btnExport.addEventListener('click', (e) => {
+  btnExport.addEventListener(clickEvent, (e) => {
+    e.preventDefault()
     url = `${base}/arrives/export/${dataArrive.id}`
     window.open(url)
   })
@@ -789,6 +881,11 @@ if (btnExport !== null) {
 // Evaluate if exists table element
 form = document.querySelector('#form-arrives-search')
 if (form !== null) {
+  let channel = document.querySelector('#channel-filter').closest('div')
+  if (channel != null) {
+    channel.innerHTML = ''
+  }
+
   arrives.list.init()
 }
 
@@ -796,6 +893,11 @@ if (form !== null) {
 form = document.querySelector('#add-arrives')
 if (form !== null) {
   MicroModal.close('wait-modal')
+
+  let channel = document.querySelector('#channel-filter').closest('div')
+  if (channel != null) {
+    channel.innerHTML = ''
+  }
 
   arrives.add.init()
 }
@@ -809,7 +911,6 @@ if (form !== null) {
   const confirmButton = document.querySelector('.confirm-delete')
   confirmButton.classList.remove('confirm-delete')
   confirmButton.classList.add('confirm-save')
-
 
   arrives.update.loadData()
 }

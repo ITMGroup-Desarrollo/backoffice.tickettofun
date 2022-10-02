@@ -1712,7 +1712,7 @@ body.open-sidebar #wrapper #content {
 #content .menubar .page-title {
     float: left;
     position: relative;
-    font-size: 17px;
+    font-size: 1rem;
     line-height: 26px;
     color: #333;
 }
@@ -1973,7 +1973,7 @@ body.open-sidebar #wrapper #content {
 #users #content .page-title {
     float: left;
     position: relative;
-    font-size: 17px;
+    font-size: 1rem;
     line-height: 26px;
     color: #333;
 }
@@ -2727,7 +2727,7 @@ body.open-sidebar #wrapper #content {
 
 #invoice .invoice-wrapper .line-items .total .field.grand-total {
     margin-top: 10px;
-    font-size: 17px;
+    font-size: 1rem;
     font-weight: 500;
 }
 
@@ -3980,7 +3980,7 @@ body.open-sidebar #wrapper #content {
 
 @media (max-width: 767px) {
     #pricing .pricing-wizard .choose-plan .plans .plan .price {
-        font-size: 17px;
+        font-size: 1rem;
         float: none;
         padding-left: 0;
         top: 0;
@@ -3994,7 +3994,7 @@ body.open-sidebar #wrapper #content {
 }
 
 #pricing .pricing-wizard .choose-plan .plans .plan .info .name {
-    font-size: 17px;
+    font-size: 1rem;
     font-weight: 600;
     color: #3e95f1;
 }
@@ -4033,7 +4033,7 @@ body.open-sidebar #wrapper #content {
 }
 
 #pricing .pricing-wizard .choose-plan .plans .action .btn {
-    font-size: 17px;
+    font-size: 1rem;
 }
 
 #pricing .pricing-wizard .choose-plan .plans .action .btn i {
@@ -4058,7 +4058,7 @@ body.open-sidebar #wrapper #content {
 
 #pricing .pricing-wizard .billing .secure .lock .fa-lock {
     color: #ccc;
-    font-size: 17px;
+    font-size: 1rem;
     margin-right: 7px;
     position: relative;
     top: 1px;
@@ -4250,7 +4250,7 @@ body.open-sidebar #wrapper #content {
 }
 
 #pricing-alt #first-option .charts .chart .quantity .period {
-    font-size: 17px;
+    font-size: 1rem;
     position: relative;
     top: -8px;
     margin-left: 4px;
@@ -4316,7 +4316,7 @@ body.open-sidebar #wrapper #content {
 
 #pricing-alt #first-option .faq .questions .question strong {
     font-weight: 500;
-    font-size: 17px;
+    font-size: 1rem;
     color: #333;
 }
 
@@ -4394,7 +4394,7 @@ body.open-sidebar #wrapper #content {
 
 #billing-form .billing .secure .lock .fa-lock {
     color: #ccc;
-    font-size: 17px;
+    font-size: 1rem;
     margin-right: 7px;
     position: relative;
     top: 1px;
@@ -5487,7 +5487,7 @@ body.open-sidebar #wrapper #content {
 #latest-activity .moment .icon .fa.fa-files-o {
     top: 10px;
     left: 9px;
-    font-size: 17px;
+    font-size: 1rem;
 }
 
 #latest-activity .moment .icon .fa.fa-quote-left {
@@ -5940,7 +5940,7 @@ body.open-sidebar #wrapper #content {
 #search .content-wrapper .filters h3 {
     padding: 0 20px;
     margin: 20px 0;
-    font-size: 17px;
+    font-size: 1rem;
     margin-bottom: 25px;
     text-align: center;
 }
@@ -6632,7 +6632,7 @@ body.open-sidebar #wrapper #content {
 }
 
 #account #content #panel.billing .plan .invoices h3 {
-    font-size: 17px;
+    font-size: 1rem;
     font-weight: 600;
     color: #555;
 }

@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2-release - 2022-10-01
+
+### Added
+- Add Prices page
+- Add Costs page
+- Add LMPS pages
+
+### Changed
+- Update application files from codeigniter3 to codeigniter4
+
+### Fixed
+- Fix JSON response on mehtod get_dairy
+
 ## 1.1-release - 2020‑01‑08
 
 ### Added

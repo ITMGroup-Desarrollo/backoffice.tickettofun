@@ -8,6 +8,8 @@ use App\Libraries\Build;
 use stdClass;
 use DateTime;
 
+use function PHPUnit\Framework\isNull;
+
 /**
 * Dary Model
 *
@@ -101,7 +103,8 @@ class Diaries extends Model
             foreach ($result->getResult() as $row)
             {
                 $this->model['code'] = 200;
-                $ship_details        = str_replace('{type}', 'flex', $ship_details);
+
+                $ship_details = str_replace('{type}', 'flex', $ship_details);
 
                 if ($id == 0)
                 {
@@ -111,28 +114,30 @@ class Diaries extends Model
                     $ship_name .= "{$row->arrival_time} - {$row->departure_time}&#62;";
 
                     $extra_data = $row;
-                    $ship_time  = $row->ship_time;
+                    if (!isNull($row->ship_time)) {
+                        $ship_time  = $row->ship_time;
+                    }
                 }
 
                 if ($id != $row->ship_id)
                 {
                     if ($this->print == 1)
                     {
-                        $ship_details = str_replace(
+                        $details = str_replace(
                             '{ship_time}'
                             , $ship_time
                             , $ship_details
                         );
 
-                        $ship_details = str_replace(
+                        $details = str_replace(
                             '{total_tours}'
                             , $total_tours
-                            , $ship_details
+                            , $details
                         );
                     }
                     else
                     {
-                        $ship_details = str_replace(
+                        $details = str_replace(
                             '{total_tours}'
                             , $total_tours
                             , $ship_details
@@ -142,8 +147,8 @@ class Diaries extends Model
                     $id        = $row->ship_id;
                     $schedules = str_replace('{rows}', $body, $table);
 
-                    $details .= str_replace(
-                        '{tours_details}', $schedules, $ship_details
+                    $details = str_replace(
+                        '{tours_details}', $schedules, $details
                     );
 
                     $details = str_replace(
@@ -159,7 +164,9 @@ class Diaries extends Model
                     $ship_name .= "{$row->arrival_time} - {$row->departure_time}&#62;";
 
                     $extra_data = $row;
-                    $ship_time  = $row->ship_time;
+                    if (!isNull($row->ship_time)) {
+                        $ship_time  = $row->ship_time;
+                    }
                 }
 
                 $aux = '';
@@ -215,19 +222,19 @@ class Diaries extends Model
 
             if ($this->print == 1)
             {
-                $ship_details = str_replace('{ship_time}', $ship_time, $ship_details);
-                $ship_details = str_replace('{total_tours}', $total_tours, $ship_details);
+                $details .= str_replace('{ship_time}', $ship_time, $ship_details);
+                $details = str_replace('{total_tours}', $total, $details);
             }
             else
             {
-                $ship_details = str_replace('{type}', 'flex', $ship_details);
-                $ship_details = str_replace('{total_tours}', $total_tours, $ship_details);
+                $details .= str_replace('{type}', 'flex', $ship_details);
+                $details = str_replace('{total_tours}', $total_tours, $details);
             }
 
             $this->model['total_tours'] = $total;
             $table                      = str_replace('{rows}', $body, $table);
 
-            $details .= str_replace('{tours_details}', $table, $ship_details);
+            $details = str_replace('{tours_details}', $table, $details);
 
             $details = str_replace('{ship_cruise}', $ship_name, $details);
             $details = $this->_set_values_headship($extra_data, $details);
@@ -239,8 +246,8 @@ class Diaries extends Model
             // If is a print option don't build this secction
             if ($this->print == 0) {
                 // Locations distribution
-                $data   = array($next_date);
-                $query  = 'CALL get_sales_tours(?)';
+                $data   = array($next_date, $channel_id);
+                $query  = 'CALL get_sales_tours(?,?)';
                 $result = $this->db->query($query, $data);
 
                 foreach ($result->getResult() as $row)
@@ -265,17 +272,20 @@ class Diaries extends Model
 
             // For default view
             $this->model['display']     = 'none';
-            $this->model['total_tours'] = $total_tours;
+            $this->model['total_tours'] = $total;
         }
 
         return $this->model;
     }
 
-    public function get_form()
+    public function get_form(int $channel = 1)
     {
         $contents = $this->page->get_settings('diary');
 
         $form = 'DIARY_FORM';
+        if ($channel == 3) {
+            $form = 'PRINT';
+        }
 
         $this->model = $this->build->build_components(
             $contents[$form]

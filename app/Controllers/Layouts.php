@@ -1,6 +1,8 @@
 <?php
 namespace App\Controllers;
 
+require APPPATH . 'Libraries/vendor/autoload.php';
+
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
@@ -18,7 +20,7 @@ class Layouts extends BaseController
     /**
      *Index page for this controller
      */
-    public function index() // TODO: Fix route {layout/download} download get 404 error
+    public function index()
     {
         if (!$this->user->active_session())
             return redirect()->to(base_url('signin'));

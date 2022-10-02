@@ -1,12 +1,16 @@
 <?php
 namespace App\Controllers;
 
+use App\Libraries\Build;
+
 class Costs extends BaseController
 {
     public $cost;
+    public $build;
 
     public function __construct()
     {
+        $this->build = new Build();
         $this->cost = new \App\Models\Cost();
     }
 
@@ -44,12 +48,19 @@ class Costs extends BaseController
             $form = $this->cost->get_form();
             $form = str_replace('{id}', 'add-cost', $form);
 
+            $contents = $this->page->get_settings('costs');            
+            $table = $this->build->build_components($contents['COST_CONFIG_TABLE']);            
+
             $data['contents'] = str_replace(
                 '{title}', 'New cost', $data['contents']
             );
 
             $data['contents'] = str_replace(
                 '{content}', $form, $data['contents']
+            );
+
+            $data['contents'] = str_replace(
+                '{table}', $table, $data['contents']
             );
 
             $cost              = 'window.user_create_id = ' . $this->session->get('user_id');
@@ -86,6 +97,10 @@ class Costs extends BaseController
 
         $data['contents'] = str_replace(
             '{content}', $form, $data['contents']
+        );
+
+        $data['contents'] = str_replace(
+            '{table}', '', $data['contents']
         );
 
         $cost = $this->cost->get_data($option);

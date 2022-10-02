@@ -87,7 +87,7 @@ class User_session
     * @param string table name
     * @return array permissions on table an actions buttons
     */
-    private function _get_actions_elements($table) 
+    private function _get_actions_elements($table)
     {
         $anchor_attrib = array();
 
@@ -100,6 +100,7 @@ class User_session
             'uElement'      => '',
             'd'             => 0,
             'dElement'      => '',
+            's'       => 0,
             'statusElement' => ''
         );
 
@@ -112,21 +113,22 @@ class User_session
 
         $rol = $this->session->get('rol_id');
 
-        $get    = "g_{table}";
-        $insert = "i_{table}";
-        $update = "u_{table}";
-        $delete = "d_{table}";
+        $get    = "g_{$table}";
+        $insert = "i_{$table}";
+        $update = "u_{$table}";
+        $delete = "d_{$table}";
+        $schedule = "s_{$table}";
 
-        if ($rol == 1 || in_array($get, $this->session->get('permissions'))) 
+        if ($rol == 1 || in_array($get, $this->session->get('permissions')))
         {
             $permissions['g'] = 1;
         }
 
-        if ($rol == 1 || in_array($insert, $this->session->get('permissions'))) 
+        if ($rol == 1 || in_array($insert, $this->session->get('permissions')))
         {
             $permissions['i'] = 1;
 
-            if ($table == 'arrives') 
+            if ($table == 'arrives')
             {
                 $anchor_attrib['class'] = 'schedule';
                 $anchor_attrib['href']  = base_url() . '/allotments/itinerary/{id}';
@@ -144,7 +146,7 @@ class User_session
             }
         }
 
-        if ($rol == 1 || in_array($update, $this->session->get('permissions'))) 
+        if ($rol == 1 || in_array($update, $this->session->get('permissions')))
         {
             $permissions['u']       = 1;
             $anchor_attrib['class'] = 'edit';
@@ -167,6 +169,10 @@ class User_session
             $delete = custom('a', $anchor_attrib, $delete);
 
             $permissions['dElement'] = $delete;
+        }
+
+        if ($rol == 1 || in_array($schedule, $this->session->get('permissions'))) {
+            $permissions['s'] = 1;
         }
 
         return $permissions;

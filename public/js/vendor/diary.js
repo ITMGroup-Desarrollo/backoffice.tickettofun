@@ -7,6 +7,13 @@ configTable.order = [2, 'ASC']
 configTable.paging = false
 
 var diary = {
+  initPermissions: () => {
+    utils.post(
+      JSON.stringify({table:'diary'}),
+      `${base}/users/permissions`,
+      diary.calendarInit
+    )
+  },
   refresh: function (response) {
     try {
       MicroModal.close('wait-modal')
@@ -61,11 +68,57 @@ var diary = {
     }
   },
   tableInit: function () {
+
+
     var tourDetails = document.querySelector('.details-registers')
     if (tourDetails !== null) {
       $(function () {
         $('.details-registers').dataTable(configTable)
       })
+    }
+  },
+  calendarInit: function (response) {
+    MicroModal.close('wait-modal')
+
+    try {
+      response = JSON.parse(response)
+      if (!Object.prototype.hasOwnProperty.call(codes, response.code)) {
+        const data = response.message
+
+        const element = document.querySelector('.flatpickr')
+        if (element != null) {
+          const date = new Date(Date.now())
+
+          const month = date.getMonth()
+          const year = date.getFullYear()
+          const maxDate = utils.dateFormat('Y-m-d', new Date(year, month + 1, 7))
+
+          let configFlat = {
+            altInput: true,
+            dateFormat: 'Y-m-d',
+            altFormat: 'l J F Y',
+            defaultDate: new Date().fp_incr(1),
+            disableMobile: true,
+            onChange: function (selectedDates, dateStr, instance) {
+              var data = {
+                date: dateStr
+              }
+
+              const url = `${base}/diary/get_diary`
+              utils.post(JSON.stringify(data), url, diary.refresh)
+            }
+          }
+
+          if (data.s === 0) {
+            configFlat.maxDate = maxDate
+          }
+
+          flatpickr(element, configFlat)
+        }
+      }
+    } catch (e) {
+      console.log(e)
+      utils.displayModal(alertModal, '')
     }
   },
   loadForm: function (idCall) {
@@ -195,32 +248,6 @@ if (send !== null) {
   })
 }
 
-const element = document.querySelector('.flatpickr')
-if (element != null) {
-  const date = new Date(Date.now())
-
-  const month = date.getMonth()
-  const year = date.getFullYear()
-  const maxDate = utils.dateFormat('Y-m-d', new Date(year, month + 1, 7))
-
-  flatpickr(element, {
-    altInput: true,
-    maxDate: maxDate,
-    dateFormat: 'Y-m-d',
-    altFormat: 'l J F Y',
-    defaultDate: new Date().fp_incr(1),
-    disableMobile: true,
-    onChange: function (selectedDates, dateStr, instance) {
-      var data = {
-        date: dateStr
-      }
-
-      const url = `${base}/diary/get_diary`
-      utils.post(JSON.stringify(data), url, diary.refresh)
-    }
-  })
-}
-
 var modal = document.getElementById('confirm-modal-footer')
 if (modal !== null) {
   var updateBtn = modal.querySelector('.confirm-delete')
@@ -256,5 +283,6 @@ if (printButton !== null) {
   })
 }
 
+diary.initPermissions()
 diary.setActions()
 diary.tableInit()

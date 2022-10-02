@@ -1,6 +1,8 @@
 <?php
 namespace App\Controllers;
 
+require APPPATH . 'Libraries/vendor/autoload.php';
+
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Border;
@@ -49,9 +51,7 @@ class Arrives extends BaseController
                 '{search}', $form, $data['contents']
             );
 
-            $data['contents'] = str_replace(
-                '{allotmentsTitle}', '', $data['contents']
-            );
+            $data['contents'] = str_replace('{id}', 'channel-filter', $data['contents']);
 
             $data['contents'] = str_replace(
                 '{allotments}', '', $data['contents']
@@ -74,9 +74,7 @@ class Arrives extends BaseController
                 '{search}', $form, $data['contents']
             );
 
-            $data['contents'] = str_replace(
-                '{allotmentsTitle}', '', $data['contents']
-            );
+            $data['contents'] = str_replace('{id}', 'channel-filter', $data['contents']);
 
             $data['contents'] = str_replace(
                 '{allotments}', '', $data['contents']
@@ -117,9 +115,8 @@ class Arrives extends BaseController
             '{search}', $form, $data['contents']
         );
 
-        $data['contents'] = str_replace(
-            '{allotmentsTitle}', 'Edit Allotments of Cruise', $data['contents']
-        );
+        $data['contents'] = str_replace('{id}', 'channel-filter', $data['contents']);
+        $data['contents'] = str_replace('{text}', 'Edit Allotments of ', $data['contents']);
 
         $export_icon = '<i class="fa fa-file-excel"></i>';
         $data['contents'] = str_replace('EXPORT', $export_icon, $data['contents']);
@@ -255,26 +252,28 @@ class Arrives extends BaseController
                 $pos = 11;
                 foreach ($allotments as $row)
                 {
-                    $sheet->setCellValue('B'.$pos, $row->service_name);
-                    $sheet->setCellValue('C'.$pos, $row->schedule_start_base);
-                    $sheet->setCellValue('D'.$pos, $row->schedule_end_base);
-                    $sheet->setCellValue('E'.$pos, $row->min_available_base);
-                    $sheet->setCellValue('F'.$pos, $row->max_available_base);
+                    if ($row->active_status == 1) {
+                        $sheet->setCellValue('B'.$pos, $row->service_name);
+                        $sheet->setCellValue('C'.$pos, $row->schedule_start_base);
+                        $sheet->setCellValue('D'.$pos, $row->schedule_end_base);
+                        $sheet->setCellValue('E'.$pos, $row->min_available_base);
+                        $sheet->setCellValue('F'.$pos, $row->max_available_base);
 
-                    if ($pos % 2 == 0)
-                    {
-                        $sheet->getStyle('B'.$pos.':F'.$pos)->getFill()->applyFromArray(
-                            [
-                                'fillType' => Fill::FILL_GRADIENT_LINEAR,
-                                'rotation' => 0,
-                                'color'    => [
-                                    'rgb'  => '8EABCC'
+                        if ($pos % 2 == 0)
+                        {
+                            $sheet->getStyle('B'.$pos.':F'.$pos)->getFill()->applyFromArray(
+                                [
+                                    'fillType' => Fill::FILL_GRADIENT_LINEAR,
+                                    'rotation' => 0,
+                                    'color'    => [
+                                        'rgb'  => '8EABCC'
+                                    ]
                                 ]
-                            ]
-                        );
-                    }
+                            );
+                        }
 
-                    $pos++;
+                        $pos++;
+                    }
                 }
             }
         }

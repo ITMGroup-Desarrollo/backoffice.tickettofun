@@ -33,11 +33,11 @@ class Diary extends BaseController
         $locations = $this->diaries->get_location_distribution();
 
         $data['contents'] = str_replace(
-            '{title}', ucwords($view), $data['contents']
+            '{spec}', $locations['tours'], $data['contents']
         );
 
         $data['contents'] = str_replace(
-            '{spec}', $locations['tours'], $data['contents']
+            '{id}', 'form-date', $data['contents']
         );
 
         $data['contents'] = str_replace(
@@ -98,11 +98,11 @@ class Diary extends BaseController
         $locations = $this->diaries->get_location_distribution($operation_date, NULL, 3);
 
         $data['contents'] = str_replace(
-            '{title}', ucwords($view), $data['contents']
+            '{spec}', $locations['tours'], $data['contents']
         );
 
         $data['contents'] = str_replace(
-            '{spec}', $locations['tours'], $data['contents']
+            '{id}', 'form-date', $data['contents']
         );
 
         $data['contents'] = str_replace(
@@ -125,8 +125,14 @@ class Diary extends BaseController
             '{details}', $locations['details'], $data['contents']
         );
 
+        $form = $this->diaries->get_form(3);
+
+        $form = str_replace(
+            '{id}', 'form-actions', $form
+        );
+
         $data['contents'] = str_replace(
-            'form-send', '', $data['contents']
+            'form-send', $form, $data['contents']
         );
 
         return view('Master', $data);
@@ -177,24 +183,27 @@ class Diary extends BaseController
     {
         $date = $this->request->uri->getSegment(3);
 
-        //$pdf = new \App\Libraries\Pdfgenerator();
+        $channel = 1;
+        if ($this->request->uri->getSegment(4) != null) {
+            $channel = $this->request->uri->getSegment(4);
+        }
 
-        $settings = $this->page->get_settings('diary');
+        $pdf = new \App\Libraries\Pdfgenerator();
 
-        // Build html
-        $document = doctype('html5');
-        $document = $this->build->build_components($settings['PRINT_DIARY']);
-        $contents = $this->diaries->get_location_distribution($date, 'PRINT');
+        $contents = $this->diaries->get_location_distribution($date, 'PRINT', $channel);
 
         $title        = 'Diary - ' . $date;
         $header_title = 'Port of Costa Maya ' . date('l jS M Y', strtotime($date));
 
-        $document = str_replace('{title}', $title, $document);
-        $document = str_replace('{port_of}', $header_title, $document);
-        $document = str_replace('{body}', $contents['details'], $document);
+        $data = array();
+        $data["title"] = $title;
+        $data["port_of"] = $header_title;
+        $data["contents"] = $contents['details'];
 
-        return $document;
-        //$filename = 'Diary operation journal';
-        //$pdf->generate($document, $filename, true, 'A4', 'portrait');
+        // Build html
+        $document = view('Print', $data);
+
+        $filename = 'Diary-operation-journal';
+        $pdf->generate($document, $filename, 'A4', 'portrait');
     }
 }

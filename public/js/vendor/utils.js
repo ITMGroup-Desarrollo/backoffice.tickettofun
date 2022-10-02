@@ -29,7 +29,8 @@ var utils = {
   api: function (data, endpoint, httpverb, method, element, contentType) {
     var token = window.token
 
-    if (method !== null) MicroModal.show('wait-modal')
+    if (method !== null)
+      MicroModal.show('wait-modal')
 
     var xHR = new XMLHttpRequest()
 
@@ -340,7 +341,6 @@ var utils = {
   },
   getDataTableConfig: function () {
     const configDataTable = {
-      responsive: true,
       fixedHeader: true,
       iDisplayLength: 20,
       sPaginationType: 'full_numbers',
