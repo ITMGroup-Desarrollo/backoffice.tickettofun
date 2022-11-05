@@ -8,8 +8,6 @@ use App\Libraries\Build;
 use stdClass;
 use DateTime;
 
-use function PHPUnit\Framework\isNull;
-
 /**
 * Dary Model
 *
@@ -114,7 +112,7 @@ class Diaries extends Model
                     $ship_name .= "{$row->arrival_time} - {$row->departure_time}&#62;";
 
                     $extra_data = $row;
-                    if (!isNull($row->ship_time)) {
+                    if (!is_null($row->ship_time)) {
                         $ship_time  = $row->ship_time;
                     }
                 }
@@ -164,7 +162,7 @@ class Diaries extends Model
                     $ship_name .= "{$row->arrival_time} - {$row->departure_time}&#62;";
 
                     $extra_data = $row;
-                    if (!isNull($row->ship_time)) {
+                    if (!is_null($row->ship_time)) {
                         $ship_time  = $row->ship_time;
                     }
                 }

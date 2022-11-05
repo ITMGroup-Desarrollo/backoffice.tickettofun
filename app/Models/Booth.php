@@ -149,7 +149,7 @@ class Booth extends Model
         }
         else
         {
-            redirect('/booths/list');
+            redirect()->to(base_url('/booths/list'));
         }
 
         return $sales_rep;
@@ -179,7 +179,7 @@ class Booth extends Model
         }
         else
         {
-            redirect('/booths/list');
+            redirect()->to(base_url('/booths/list'));
         }
 
         return $booth;
