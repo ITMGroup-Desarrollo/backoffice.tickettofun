@@ -8,7 +8,9 @@
     width: 100%;
     margin-bottom: 35px;
     border-collapse: separate;
-    border-spacing: 5px;
+    border-spacing: 0px;
+
+    font-size: .94rem;
 }
 
 table.dataTable tbody tr{
@@ -31,7 +33,7 @@ table.dataTable tfoot th {
 }
 
 table.dataTable td {
-    padding: 20px 9px;
+    padding: 10px 10px;
 }
 
 table.dataTable td.right {

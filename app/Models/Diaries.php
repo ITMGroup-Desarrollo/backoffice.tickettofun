@@ -121,24 +121,22 @@ class Diaries extends Model
                 {
                     if ($this->print == 1)
                     {
-                        $details = str_replace(
-                            '{ship_time}'
-                            , $ship_time
-                            , $ship_details
+                        $details .= str_replace(
+                            '{ship_time}', $ship_time, $ship_details
                         );
 
                         $details = str_replace(
-                            '{total_tours}'
-                            , $total_tours
-                            , $details
+                            '{total_tours}', $total, $details
                         );
                     }
                     else
                     {
+                        $details .= str_replace(
+                            '{type}', 'flex', $ship_details
+                        );
+
                         $details = str_replace(
-                            '{total_tours}'
-                            , $total_tours
-                            , $ship_details
+                            '{total_tours}', $total_tours, $details
                         );
                     }
 
