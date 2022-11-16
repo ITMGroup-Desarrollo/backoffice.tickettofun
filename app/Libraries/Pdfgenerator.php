@@ -15,7 +15,7 @@ class Pdfgenerator
         $dompdf->loadHtml($html);
         $dompdf->setPaper($paper, $orientation);
         $dompdf->render();
-        $dompdf->stream($filename);
+        $dompdf->stream($filename, array("Attachment" => false));
     }
 }
 ?>

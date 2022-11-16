@@ -390,7 +390,6 @@ const schedules = {
     const config = {
       info:false,
       paging: false,
-      responsive: true,
       searching: false,
       fixedHeader: true,
     }
