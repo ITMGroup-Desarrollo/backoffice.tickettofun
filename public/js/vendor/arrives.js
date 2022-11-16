@@ -467,11 +467,15 @@ const arrives = {
 
           arrives.update.setActions()
         } else {
+          utils.displayModal(alertModal, 'Success!')
+
           var registers = response.message
 
           if (utils.isJson(registers)) {
             var  dRegisters = JSON.parse(registers)
             registers = dRegisters.list
+          } else if (registers.list) {
+            registers = registers.list
           }
 
           // filter by cruise channel

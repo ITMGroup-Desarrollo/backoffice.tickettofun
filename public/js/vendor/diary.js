@@ -73,6 +73,10 @@ var diary = {
     var tourDetails = document.querySelector('.details-registers')
     if (tourDetails !== null) {
       $(function () {
+
+        configTable.autoWidth = false
+        configTable.order = [[2, 'asc']]
+
         $('.details-registers').dataTable(configTable)
       })
     }

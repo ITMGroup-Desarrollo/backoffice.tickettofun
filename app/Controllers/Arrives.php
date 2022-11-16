@@ -253,7 +253,7 @@ class Arrives extends BaseController
                 foreach ($allotments as $row)
                 {
                     if ($row->active_status == 1) {
-                        $sheet->setCellValue('B'.$pos, $row->service_name);
+                        $sheet->setCellValue('B'.$pos, $row->equivalence_name);
                         $sheet->setCellValue('C'.$pos, $row->schedule_start_base);
                         $sheet->setCellValue('D'.$pos, $row->schedule_end_base);
                         $sheet->setCellValue('E'.$pos, $row->min_available_base);
