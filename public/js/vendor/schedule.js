@@ -12,7 +12,7 @@ const schedules = {
 
     if (assingment != null) {
       configTable.iDisplayLength = 5
-      configTable.order = [[0, 'desc']]
+      configTable.order = [[6, 'asc']]
       configTable.aLengthMenu = [[5, 10, 25, -1], [5, 10, 25, 'All']]
 
       $(assingment).DataTable(configTable)
@@ -30,6 +30,20 @@ const schedules = {
     }
 
     if (service != null) {
+      // add event
+      service.addEventListener('change', (e) => {
+        e.preventDefault()
+
+        const table = $(assingment).DataTable()
+        const option = e.target.options[e.target.selectedIndex]
+
+        if (option.value !== '') {
+          table.search(option.text).draw() // filter data by selected option
+        } else {
+          table.search('').draw() // reset table
+        }
+      })
+
       service.append(new Option('-- Choose option --', ''))
 
       utils.api(JSON.stringify({}), `${apiHost}equivalences/ship/${arriveData.ship_id}`, 'GET', schedules.serviceList, service)
@@ -278,10 +292,12 @@ const schedules = {
           var  dRegisters = JSON.parse(registers)
           registers = dRegisters.list
         }
+        const content = document.querySelector('.table-previous-assignment')
+
+        const searchElement = content.querySelector('[type="search"]')
 
         utils.dropTable(document.querySelector('#previous-assignment'))
 
-        const content = document.querySelector('.table-previous-assignment')
         const nodeTable = utils.createElement('table', '', 'previous-assignment', '')
 
         content.appendChild(nodeTable)
@@ -289,6 +305,9 @@ const schedules = {
         configTable = schedules.getAllotmentTableConfig(registers)
 
         $(nodeTable).DataTable(configTable).draw()
+
+        const table = $(nodeTable).DataTable()
+        table.search(searchElement.value).draw()
 
         message = utils.createElement('p', '', '', 'Success! Schedule added correctly')
 
@@ -305,7 +324,7 @@ const schedules = {
     var config = utils.getDataTableConfig()
 
     config.iDisplayLength = 5
-    config.order = [[0, 'desc']]
+    config.order = [[6, 'asc']]
     config.aLengthMenu = [[5, 10, 25, -1], [5, 10, 25, 'All']]
 
     const columns = [
@@ -382,7 +401,6 @@ const schedules = {
 
     config.data = registers
     config.columns = columns
-    config.order = [[0, 'desc']]
 
     return config
   },
@@ -391,7 +409,7 @@ const schedules = {
       info:false,
       paging: false,
       searching: false,
-      fixedHeader: true,
+      fixedHeader: true
     }
 
     const columns = [

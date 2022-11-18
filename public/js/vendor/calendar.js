@@ -11,9 +11,9 @@ var md = new MobileDetect(window.navigator.userAgent)
 
 configCalendar = {
   plugins: ['interaction', 'dayGrid', 'timeGrid', 'list'],
-  height: 'parent',
+  height: '100vh',
   header: {
-    left: 'prevYear,prev,next,nextYear today',
+    left: 'prevYear,prev,next,nextYear, today',
     center: 'title',
     right: 'dayGridMonth,timeGridWeek,listWeek'
   },
@@ -32,18 +32,15 @@ configCalendar = {
 }
 
 if (md.mobile() !== null) {
-  configCalendar.height = ''
-  configCalendar.plugins = ['list']
+  configCalendar.plugins = ['dayGrid','list']
   configCalendar.header = {
     left: 'title',
     center: '',
-    right: 'prev,next,listDay,listWeek'
-  }
+    right: 'prev,next,dayGridMonth,listWeek'
+  },
   configCalendar.views = {
-    listDay: { buttonText: 'Day' },
-    listWeek: { buttonText: 'Week' }
+    listWeek: { buttonText: 'week' }
   }
-  configCalendar.defaultView = 'listWeek'
 }
 
 document.addEventListener('DOMContentLoaded', function () {
