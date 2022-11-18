@@ -136,29 +136,31 @@ class Allotments extends BaseController
 
             for ($i = 0; $i < count($rows); $i++)
             {
-                $column = "";
+                if ($rows[$i]->active_status == 1) {
+                    $column = "";
 
-                $shared = "No";
-                if ($rows[$i]->shared_schedule == 1) {
-                    $shared = "Yes";
+                    $shared = "No";
+                    if ($rows[$i]->shared_schedule == 1) {
+                        $shared = "Yes";
+                    }
+
+                    $private = "No";
+                    if ($rows[$i]->private_service == 1) {
+                        $private = "Yes";
+                    }
+
+                    $column = custom('td', '', $rows[$i]->allotment_id);
+                    $column .= custom('td', '', $rows[$i]->channel_name);
+                    $column .= custom('td', '', $rows[$i]->reseller_name);
+                    $column .= custom('td', '', $rows[$i]->ship_name);
+                    $column .= custom('td', '', $rows[$i]->service_name);
+                    $column .= custom('td', '', "{$rows[$i]->min_available} - {$rows[$i]->max_available}");
+                    $column .= custom('td', '', "{$rows[$i]->schedule_start} - {$rows[$i]->schedule_end}");
+                    $column .= custom('td', '', $shared);
+                    $column .= custom('td', '', $private);
+
+                    $dataRows .= custom('tr', '', $column);
                 }
-
-                $private = "No";
-                if ($rows[$i]->private_service == 1) {
-                    $private = "Yes";
-                }
-
-                $column = custom('td', '', $rows[$i]->allotment_id);
-                $column .= custom('td', '', $rows[$i]->channel_name);
-                $column .= custom('td', '', $rows[$i]->reseller_name);
-                $column .= custom('td', '', $rows[$i]->ship_name);
-                $column .= custom('td', '', $rows[$i]->service_name);
-                $column .= custom('td', '', "{$rows[$i]->min_available} - {$rows[$i]->max_available}");
-                $column .= custom('td', '', "{$rows[$i]->schedule_start} - {$rows[$i]->schedule_end}");
-                $column .= custom('td', '', $shared);
-                $column .= custom('td', '', $private);
-
-                $dataRows .= custom('tr', '', $column);
             }
         }
 
