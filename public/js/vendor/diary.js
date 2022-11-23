@@ -137,8 +137,8 @@ var diary = {
     const items = document.querySelectorAll(`[data-id-odd="${idCall}"] > [data-name], [data-id-pair="${idCall}"] > [data-name]`)
 
     for (let i = 0, l = items.length; i < l; i++) {
-      id = items[i].getAttribute('data-name')
-      text = items[i].innerText.split(':')[1].trim()
+      const id = items[i].getAttribute('data-name')
+      let text = items[i].innerText.split(':')[1].trim()
 
       inputElement = document.querySelector(`[name="${id}"`)
       if (inputElement != null) {
@@ -148,10 +148,9 @@ var diary = {
           inputElement.value = 'Costa Maya'
         }
 
-        if (id === 'all_aboard') {
-          if (text !== '') {
-            inputElement.value = `${text}:${items[i].innerText.split(':')[2].trim()}`
-          }
+        if (id === 'all_aboard' && text !== '') {
+          text = items[i].innerText.split(': ')[1];
+          inputElement.value = `${text.trim()}`
 
           inputElement.flatpickr({
             enableTime: true,

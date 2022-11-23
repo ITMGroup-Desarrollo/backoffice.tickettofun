@@ -34,7 +34,7 @@ var config = {
           data.max_available,
           data.available,
           data.shared_schedule,
-          data.privateService,
+          data.private_service,
           data.active_status,
           data.allotment_id,
           data.arrive_active_status,
@@ -74,7 +74,7 @@ var config = {
       }
     }, {
       targets: 10,
-      data: 'privateService',
+      data: 'private_service',
       render: function (data, type, row, meta) {
         const checkboxContainer = utils.createElement('div', 'checkbox')
         const checkboxInput = utils.createElement('input', '')
@@ -485,7 +485,7 @@ if (save != null) {
         min_available: document.querySelector('[name="min_available"]').value,
         max_available: document.querySelector('[name="max_available"]').value,
         shared_schedule: document.querySelector('[name="shared"]').checked ? 1 : 0,
-        privateService: document.querySelector('[name="private"]').checked ? 1 : 0,
+        private_service: document.querySelector('[name="private"]').checked ? 1 : 0,
         user_id: user
       }
       form = document.querySelector('#add-config')
