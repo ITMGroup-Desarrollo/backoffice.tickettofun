@@ -8,7 +8,7 @@ const schedules = {
     const overlap = document.querySelector('[name="overlap"]')
     const service = document.querySelector('[name="service"]')
     const generate = document.querySelector('.generate-schedule')
-    const assingment = document.querySelector('.previous-assignment')
+    const assingment = document.querySelector('#previous-assignment')
 
     if (assingment != null) {
       configTable.iDisplayLength = 5
@@ -33,6 +33,8 @@ const schedules = {
       // add event
       service.addEventListener('change', (e) => {
         e.preventDefault()
+
+        const assingment = document.querySelector('#previous-assignment')
 
         const table = $(assingment).DataTable()
         const option = e.target.options[e.target.selectedIndex]
@@ -294,7 +296,7 @@ const schedules = {
         }
         const content = document.querySelector('.table-previous-assignment')
 
-        const searchElement = content.querySelector('[type="search"]')
+        const search = content.querySelector('[type="search"]').value
 
         utils.dropTable(document.querySelector('#previous-assignment'))
 
@@ -304,10 +306,10 @@ const schedules = {
 
         configTable = schedules.getAllotmentTableConfig(registers)
 
-        $(nodeTable).DataTable(configTable).draw()
+        $(nodeTable).DataTable(configTable)
 
         const table = $(nodeTable).DataTable()
-        table.search(searchElement.value).draw()
+        table.search(search).draw()
 
         message = utils.createElement('p', '', '', 'Success! Schedule added correctly')
 
