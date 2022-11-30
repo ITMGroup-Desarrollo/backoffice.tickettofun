@@ -45,8 +45,14 @@ var diary = {
 
         actionButtons.classList.remove('d-none')
         chart.classList.remove('d-none')
-        sendBtn.classList.remove('d-none')
-        printBtn.classList.remove('d-none')
+
+        if (sendBtn !== null) {
+          sendBtn.classList.remove('d-none')
+        }
+
+        if (sendBtn !== null) {
+          printBtn.classList.remove('d-none')
+        }
 
         diary.setActions()
         diary.tableInit()
@@ -121,7 +127,6 @@ var diary = {
         }
       }
     } catch (e) {
-      console.log(e)
       utils.displayModal(alertModal, '')
     }
   },
@@ -148,9 +153,11 @@ var diary = {
           inputElement.value = 'Costa Maya'
         }
 
-        if (id === 'all_aboard' && text !== '') {
-          text = items[i].innerText.split(': ')[1];
-          inputElement.value = `${text.trim()}`
+        if (id === 'all_aboard') {
+          if (text !== '') {
+            text = items[i].innerText.split(': ')[1];
+            inputElement.value = `${text.trim()}`
+          }
 
           inputElement.flatpickr({
             enableTime: true,
@@ -233,7 +240,6 @@ var diary = {
         diary.resetForm()
       }
     } catch (e) {
-      console.log(e)
       utils.displayModal(alertModal, '')
     }
   }
