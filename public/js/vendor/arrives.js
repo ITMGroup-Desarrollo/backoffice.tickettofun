@@ -366,7 +366,7 @@ const arrives = {
 
       flatpickr('.date-format', {
         dateFormat: 'Y-m-d',
-        minDate: dataArrive.arrival_date
+        minDate: 'today'
       })
 
       flatpickr('.time-format', {
