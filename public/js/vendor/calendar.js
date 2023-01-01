@@ -11,7 +11,8 @@ var md = new MobileDetect(window.navigator.userAgent)
 
 configCalendar = {
   plugins: ['interaction', 'dayGrid', 'timeGrid', 'list'],
-  height: '100vh',
+  height: '100%',
+  contentHeight: 'auto',
   header: {
     left: 'prevYear,prev,next,nextYear, today',
     center: 'title',
