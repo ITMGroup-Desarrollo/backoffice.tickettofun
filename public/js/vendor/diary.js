@@ -20,27 +20,39 @@ var diary = {
 
       response = JSON.parse(response)
 
+      var total = document.querySelector('.price')
+      var specs = document.querySelector('.specs')
+      var container = document.getElementById('list')
+      var chart = document.querySelector('.featured')
+      var msgTitle = document.querySelector('.msg-title')
+      var sendBtn = document.querySelector('[name="send"]')
+      var printBtn = document.querySelector('[name="print"]')
+
       var actionButtons = document.querySelector('#form-diary')
       if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
         utils.displayModal(alertModal, response.message)
 
+        specs.innerHTML = ''
+        total.innerText = '0'
+        container.innerHTML = ''
+        msgTitle.innerText = 'Not found calls for this date'
+
         actionButtons.classList.add('d-none')
+        chart.classList.add('d-none')
+
+        if (sendBtn !== null) {
+          sendBtn.classList.add('d-none')
+        }
+
+        if (sendBtn !== null) {
+          printBtn.classList.add('d-none')
+        }
       } else if (response.code === 200) {
         var data = JSON.parse(response.message)
 
-        var total = document.querySelector('.price')
-        var specs = document.querySelector('.specs')
-        var container = document.getElementById('list')
-        var chart = document.querySelector('.featured')
-        var sendBtn = document.querySelector('[name="send"]')
-        var printBtn = document.querySelector('[name="print"]')
-
-        if (document.querySelector('.msg-title') !== null) {
-          document.querySelector('.msg-title').remove()
-        }
-
         specs.innerHTML = data.tours
         total.innerText = data.total_tours
+        msgTitle.innerText = ''
         container.innerHTML = data.details
 
         actionButtons.classList.remove('d-none')
@@ -74,8 +86,6 @@ var diary = {
     }
   },
   tableInit: function () {
-
-
     var tourDetails = document.querySelector('.details-registers')
     if (tourDetails !== null) {
       $(function () {
@@ -131,8 +141,6 @@ var diary = {
     }
   },
   loadForm: function (idCall) {
-    let id
-    let text
     let inputElement
 
     // Clean previous datas
@@ -200,6 +208,7 @@ var diary = {
       all_aboard_time: formUpdate.querySelector('[name="all_aboard"]').value,
       shorex_name: formUpdate.querySelector('[name="shorex_manager"]').value,
       assistant_name: formUpdate.querySelector('[name="assistant_name"]').value,
+      home_port_name: formUpdate.querySelector('[name="home_port"]').value,
       origin_port_name: formUpdate.querySelector('[name="origin_port"]').value,
       destiny_port_name: formUpdate.querySelector('[name="port_destiny"]').value,
       next_port_name: formUpdate.querySelector('[name="next_port"]').value,

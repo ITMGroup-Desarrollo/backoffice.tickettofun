@@ -300,7 +300,7 @@ class Diaries extends Model
                 $value = '';
             }
 
-            $details     = str_replace($replace_key, $value, $details);
+            $details = str_replace($replace_key, $value, $details);
         }
 
         return $details;
