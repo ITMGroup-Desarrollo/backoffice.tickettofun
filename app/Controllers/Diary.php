@@ -6,6 +6,7 @@ use \DateTime;
 
 class Diary extends BaseController
 {
+    public $build;
     public $diaries;
 
     public function __construct()
@@ -162,7 +163,11 @@ class Diary extends BaseController
                 $channel = 3;
             }
 
-            $diary = $this->diaries->get_location_distribution($data->date, NULL, $channel);
+            $diary = $this->diaries->get_location_distribution(
+                $data->date,
+                NULL,
+                $channel
+            );
 
             if ($diary['code'] == 200)
             {

@@ -75,9 +75,9 @@ class User extends Model
 
                 $aux .= custom('td', '', $row->first_name);
                 $aux .= custom('td', '', $row->last_name);
-                $aux .= custom('td', '', $row->user_name);
                 $aux .= custom('td', '', $row->rol_name);
                 $aux .= custom('td', '', $row->email_addr);
+                $aux .= custom('td', '', $row->user_name);
 
                 $status = '';
                 $delete = '';
