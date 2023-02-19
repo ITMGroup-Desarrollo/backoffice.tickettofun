@@ -410,7 +410,13 @@ const arrives = {
           if (info.frm !== null) {
             pendingChanges = false
             url = `${apiHost}arrives/edit/${dataArrive.id}`
-            utils.api(JSON.stringify(info), url, 'PUT', arrives.update.deploy)
+            utils.api(
+              JSON.stringify(info),
+              url,
+              'PUT',
+              arrives.update.deploy,
+              confirmButton
+            )
           }
         })
       }
@@ -418,7 +424,7 @@ const arrives = {
       url = `${url}/arrive/${dataArrive.id}`
       utils.api(JSON.stringify({}), url, 'GET', arrives.update.deploy)
     },
-    deploy: function (response) {
+    deploy: function (response, element) {
       try {
         MicroModal.close('wait-modal')
         response = JSON.parse(response)
@@ -467,7 +473,9 @@ const arrives = {
 
           arrives.update.setActions()
         } else {
-          utils.displayModal(alertModal, 'Success!')
+          if (typeof element !== 'undefined') {
+            utils.displayModal(alertModal, 'Success! changes were applied correctly')
+          }
 
           var registers = response.message
 

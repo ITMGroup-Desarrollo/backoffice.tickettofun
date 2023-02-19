@@ -182,7 +182,7 @@ const schedules = {
             }
 
             if (nodeTable.querySelector(`[name="private${id}"]`).checked) {
-              sharedSchedule = 1
+              privateService = 1
             }
 
             let channel = document.querySelector('[name="channel"]')
