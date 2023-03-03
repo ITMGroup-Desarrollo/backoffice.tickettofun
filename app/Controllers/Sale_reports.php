@@ -1,6 +1,9 @@
 <?php
 namespace App\Controllers;
 require APPPATH . 'Libraries/vendor/autoload.php';
+
+use PhpOffice\PhpSpreadsheet\Calculation\TextData;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
@@ -306,11 +309,13 @@ class Sale_reports extends BaseController
                         $cruiseSheet->setCellValue("G{$booking_pos}", $booking->booking_reference);
                         $cruiseSheet->setCellValue("H{$booking_pos}", $booking->guest_name);
                         $cruiseSheet->setCellValue("I{$booking_pos}", $booking->cabin);
+                        $cruiseSheet->setCellValueExplicit("I{$booking_pos}", $booking->cabin, DataType::TYPE_STRING);
+
                         $cruiseSheet->setCellValue("J{$booking_pos}", "{$code} {$service}");
                         $cruiseSheet->setCellValue("K{$booking_pos}", $booking->quantity);
                         $cruiseSheet->setCellValue("M{$booking_pos}", 'View PDF');
 
-                        $url = "https://lmps.cancunhostingcenter.com/#/status?booking={$booking->uuid_seq}";
+                        $url = getenv('lmpsBooking') . $booking->uuid_seq;
 
                         $cruiseSheet->getCell("M{$booking_pos}")->getHyperlink()
                             ->setUrl($url);
