@@ -303,7 +303,7 @@ class Sale_reports extends BaseController
                 foreach($sales as $booking) {
                     if ($booking->pax_name == 'Adult')
                     {
-                        $code    = $booking->code;
+                        $code    = $booking->lmps_code;
                         $service = $booking->service_name;
 
                         $cruiseSheet->setCellValue("G{$booking_pos}", $booking->booking_reference);
@@ -445,7 +445,6 @@ class Sale_reports extends BaseController
         }
 
         return $data;
-
     }
 
     private function group_by($key, $data) {
