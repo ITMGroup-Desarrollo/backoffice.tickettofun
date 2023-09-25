@@ -83,7 +83,7 @@ class Sale_reports extends BaseController
 
         $response = $this->groupByResellerService($response);
 
-        $file_name   = 'sales';
+        $file_name = 'sales';
 
         // Some styles defenition
         $default = array(
@@ -389,7 +389,203 @@ class Sale_reports extends BaseController
         exit();
     }
 
-    private function groupByResellerService($data){
+    public function export_global_sales()
+    {
+        $end_date   = $this->request->uri->getSegment(4);
+        $start_date = $this->request->uri->getSegment(3);
+
+        $response = $this->sale_report->get_sales($start_date, $end_date);
+
+        // Filter just confirmed sales
+        $response = array_filter($response , function($data) {
+            return $data->process_status_id == 6;
+        });
+
+        $bookings = $response;
+
+        if(is_null($response))
+            return;
+
+        $response = $this->groupByResellerService($response);
+
+        $file_name = 'global-sales';
+
+        // Header font color
+        $hFColor = array (
+            'bold'     => TRUE,
+            'color'    => [
+                'rgb'  => 'FBFCFC'
+            ]
+        );
+
+        // Header pax background
+        $hPBackground = array(
+            'fillType' => Fill::FILL_GRADIENT_LINEAR,
+            'rotation' => 0,
+            'color'    => [
+                'rgb'  => '517094'
+            ]
+        );
+
+        $spreadsheet = new Spreadsheet();
+        $spreadsheet->setActiveSheetIndex(0);
+
+        $adult = 0;
+        $total = 0.0;
+        $cost_total = 0.0;
+
+        $cruiseSheet = $spreadsheet->getActiveSheet();
+        $cruiseSheet->setTitle('Sales Report');
+
+        $cruiseSheet->setCellValue("B2", 'Barco');
+        $cruiseSheet->setCellValue("C2", 'Naviera');
+        $cruiseSheet->setCellValue("D2", 'Booth');
+        $cruiseSheet->setCellValue("E2", 'Num Vendedor');
+        $cruiseSheet->setCellValue("F2", 'Vendedor');
+        $cruiseSheet->setCellValue("G2", 'Folio');
+        $cruiseSheet->setCellValue("H2", 'Clave de producto');
+        $cruiseSheet->setCellValue("I2", 'Producto');
+        $cruiseSheet->setCellValue("J2", 'Adultos');
+        $cruiseSheet->setCellValue("K2", 'Menores');
+        $cruiseSheet->setCellValue("L2", 'Total pax');
+        $cruiseSheet->setCellValue("M2", 'Precio adulto');
+        $cruiseSheet->setCellValue("N2", 'Precio menor');
+        $cruiseSheet->setCellValue("O2", 'Total venta $');
+        $cruiseSheet->setCellValue("P2", 'Venta sin IVA');
+        $cruiseSheet->setCellValue("Q2", 'Costo adulto');
+        $cruiseSheet->setCellValue("R2", 'Costo menor');
+        $cruiseSheet->setCellValue("S2", 'Costo total $');
+
+        $cruiseSheet->getColumnDimension('B')->setAutoSize(true);
+        $cruiseSheet->getColumnDimension('C')->setAutoSize(true);
+        $cruiseSheet->getColumnDimension('D')->setAutoSize(true);
+        $cruiseSheet->getColumnDimension('E')->setAutoSize(true);
+        $cruiseSheet->getColumnDimension('F')->setAutoSize(true);
+        $cruiseSheet->getColumnDimension('G')->setAutoSize(true);
+        $cruiseSheet->getColumnDimension('H')->setAutoSize(true);
+        $cruiseSheet->getColumnDimension('I')->setAutoSize(true);
+        $cruiseSheet->getColumnDimension('J')->setAutoSize(true);
+        $cruiseSheet->getColumnDimension('K')->setAutoSize(true);
+        $cruiseSheet->getColumnDimension('L')->setAutoSize(true);
+        $cruiseSheet->getColumnDimension('M')->setAutoSize(true);
+        $cruiseSheet->getColumnDimension('N')->setAutoSize(true);
+        $cruiseSheet->getColumnDimension('O')->setAutoSize(true);
+        $cruiseSheet->getColumnDimension('P')->setAutoSize(true);
+        $cruiseSheet->getColumnDimension('Q')->setAutoSize(true);
+        $cruiseSheet->getColumnDimension('R')->setAutoSize(true);
+        $cruiseSheet->getColumnDimension('S')->setAutoSize(true);
+
+        $cruiseSheet->getStyle('B2:S2')->getFont()
+            ->applyFromArray($hFColor);
+
+        $cruiseSheet->getStyle('B2:S2')->getFill()
+            ->applyFromArray($hPBackground);
+
+        $cruiseSheet->getStyle('B2:S2')->getAlignment()
+            ->setHorizontal('center');
+
+        $cruiseSheet->getStyle("M3:M1000")->getNumberFormat()
+            ->setFormatCode(NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
+
+        $cruiseSheet->getStyle("N3:N1000")->getNumberFormat()
+            ->setFormatCode(NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
+
+        $cruiseSheet->getStyle("O3:O1000")->getNumberFormat()
+            ->setFormatCode(NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
+
+        $cruiseSheet->getStyle("P3:P1000")->getNumberFormat()
+            ->setFormatCode(NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
+
+        $cruiseSheet->getStyle("Q3:Q1000")->getNumberFormat()
+            ->setFormatCode(NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
+
+        $cruiseSheet->getStyle("R3:R1000")->getNumberFormat()
+            ->setFormatCode(NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
+
+        $cruiseSheet->getStyle("S3:S1000")->getNumberFormat()
+            ->setFormatCode(NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
+
+        $cruiseSheet->getStyle('A1')->getAlignment()
+            ->setHorizontal('center');
+
+        $cruise_pos = 2;
+        foreach ($response as $key_reseller => $reseller) {
+            $cruise_pos++;
+
+            $sales = array_filter($bookings, function($data) USE($key_reseller) {
+                return $data->reseller_name == $key_reseller;
+            });
+
+            $booking_pos = 3;
+            foreach($sales as $booking) {
+
+                if ($booking->pax_name == 'Adult')
+                {
+                    $cruiseSheet->setCellValue("B{$booking_pos}", $key_reseller);
+                    $cruiseSheet->setCellValue("C{$booking_pos}", $booking->ship_name);
+                    $cruiseSheet->setCellValue("D{$booking_pos}", $booking->booth_name);
+                    $cruiseSheet->setCellValue("E{$booking_pos}", $booking->rep_id);
+                    $cruiseSheet->setCellValue("F{$booking_pos}", $booking->rep_name);
+                    $cruiseSheet->setCellValue("G{$booking_pos}", $booking->booking_reference);
+                    $cruiseSheet->setCellValue("H{$booking_pos}", $booking->lmps_code);
+                    $cruiseSheet->setCellValue("I{$booking_pos}", $booking->service_name);
+                    $cruiseSheet->setCellValue("J{$booking_pos}", $booking->quantity);
+                    $cruiseSheet->setCellValue("L{$booking_pos}", $booking->quantity);
+                    $cruiseSheet->setCellValue("M{$booking_pos}", $booking->total);
+                    $cruiseSheet->setCellValue("Q{$booking_pos}", $booking->cost);
+
+                    $adult = $booking->quantity;
+                    $total = $booking->quantity * $booking->total;
+                    $cost_total = $booking->quantity * $booking->cost;
+
+                    $cruiseSheet->setCellValue("O{$booking_pos}", $total);
+                    $cruiseSheet->setCellValue("P{$booking_pos}", ($total / 1.16));
+                    $cruiseSheet->setCellValue("S{$booking_pos}", $cost_total);
+
+
+                    $booking_pos++;
+                }
+                else if ($booking->pax_name == 'Children')
+                {
+                    $last_pos = ($booking_pos - 1);
+
+                    $cruiseSheet->setCellValue("K{$last_pos}", $booking->quantity);
+                    $cruiseSheet->setCellValue("L{$last_pos}", ($adult + $booking->quantity));
+                    $cruiseSheet->setCellValue("N{$last_pos}", $booking->total);
+                    $cruiseSheet->setCellValue("R{$last_pos}", $booking->cost);
+
+                    $total += $booking->quantity * $booking->total;
+                    $cost_total += $booking->quantity * $booking->cost;
+
+                    $cruiseSheet->setCellValue("O{$last_pos}", $total);
+                    $cruiseSheet->setCellValue("P{$last_pos}", ($total / 1.16));
+                    $cruiseSheet->setCellValue("S{$last_pos}", $cost_total);
+
+                    $adult = 0;
+                    $total = 0.0;
+                    $cost_total = 0.0;
+                }
+            }
+
+            $cruise_pos++;
+
+            $adult = 0;
+            $total = 0.0;
+            $cost_total = 0.0;
+        }
+
+        $writer = new Xlsx($spreadsheet);
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="'. $file_name .'.xlsx"');
+        header('Cache-Control: max-age=0');
+
+        $writer->save('php://output'); // download file
+        exit();
+    }
+
+    private function groupByResellerService($data)
+    {
         //Agrupar por reseller
         $data = $this->group_by("reseller_name", $data);
 
@@ -411,13 +607,13 @@ class Sale_reports extends BaseController
 
                     switch($element->pax_name) {
                         case "Adult":
-                            $adult = $adult + $element->quantity;
+                            $adult += $element->quantity;
                             break;
                         case "Children":
-                            $children = $children + $element->quantity;
+                            $children += $element->quantity;
                             break;
                         case "Courtesy":
-                            $courtesy = $courtesy + $element->quantity;
+                            $courtesy += $element->quantity;
                             break;
                     }
 

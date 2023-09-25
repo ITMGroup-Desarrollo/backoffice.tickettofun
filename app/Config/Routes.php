@@ -132,6 +132,7 @@ $routes->add("reps/(:num)", "Reps::update/$1");
 //Sale reports
 $routes->add("sale-reports/sales", "Sale_reports::index/$1");
 $routes->add("sale-reports/export/(:any)", "Sale_reports::export/$1");
+$routes->add("sale-reports/export-global/(:any)", "Sale_reports::export_global_sales/$1");
 
 // Booths
 $routes->add("booths/list", "Booths::index/$1");

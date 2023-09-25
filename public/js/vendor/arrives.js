@@ -37,7 +37,8 @@ const arrives = {
           noCalendar: true,
           dateFormat: 'H:i',
           defaultDate: '00:30',
-          time_24hr: true
+          time_24hr: true,
+          disabledMobile: true
       })
 
       var cancel = document.querySelector('.cancel')
