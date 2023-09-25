@@ -50,6 +50,34 @@ const sale_report = {
       })
     }
 
+    const exportGlobalBtn = document.querySelector('.global-export')
+    if (exportGlobalBtn !== null) {
+      exportGlobalBtn.addEventListener(clickEvent, (e) => {
+        e.preventDefault()
+
+        const dates = document.querySelector('[name="dates"]').value
+        let start_date =''
+        let end_date = ''
+
+        if (dates.trim() !== '') {
+          const aDates = dates.split(' to ')
+
+          start_date = aDates[0]
+          end_date = aDates[0]
+          if (aDates.length === 2) {
+            end_date = aDates[1]
+          }
+        } else {
+          start_date = utils.getDate()
+          end_date = utils.getDate(1)
+        }
+
+        url = `${base}/sale-reports/export-global/${start_date}/${end_date}`
+
+        window.open(url)
+      })
+    }
+
     let datepicker = document.querySelector('[name="dates"]')
     if (datepicker !== null) {
       datepicker.parentElement.parentElement.classList.add('disable')
@@ -69,15 +97,19 @@ const sale_report = {
         let tbl = $('#table-sales').DataTable()
         let dataRows = tbl.rows().data()
 
-        if(dataRows[0][0]==='')
+        if(dataRows[0][0]==='') {
           document.querySelector('.export').classList.add('d-none')
-        else
+          document.querySelector('.global-export').classList.add('d-none')
+        }
+        else {
           document.querySelector('.export').classList.remove('d-none')
+          document.querySelector('.global-export').classList.remove('d-none')
+        }
 
       })
     }
   },
-  load:function(){
+  load: function() {
     const info = {}
     url = `${apiHost}bookings_detail/bookings`
     const dates = document.querySelector('[name="dates"]').value
@@ -137,14 +169,14 @@ const sale_report = {
     let tbl = $('#table-sales').DataTable()
     let tblSettings = tbl.rows().data()
 
-    console.log(tblSettings)
-
-    if(tblSettings.length==0)
+    if(tblSettings.length === 0) {
       document.querySelector('.export').classList.add('d-none')
-    else
+      document.querySelector('.global-export').classList.add('d-none')
+    }
+    else {
       document.querySelector('.export').classList.remove('d-none')
-
-
+      document.querySelector('.global-export').classList.remove('d-none')
+    }
   },
   getTableConfig: (registers) => {
     const config = utils.getDataTableConfig()
@@ -181,7 +213,3 @@ const sale_report = {
 }
 
 sale_report.init();
-
-
-
-
