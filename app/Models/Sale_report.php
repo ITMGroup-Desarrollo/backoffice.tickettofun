@@ -140,8 +140,8 @@ class Sale_report extends Model
         return $this->model;
     }
 
-    public function get_sales($start_date,$end_date){
-
+    public function get_sales($start_date,$end_date)
+    {
         // Call API here!
         $params   = new stdClass();
         $endpoint = GET_BOOKINGS_DATE_ROUTE;
@@ -158,6 +158,5 @@ class Sale_report extends Model
             return $response->message;
 
         return null;
-
     }
 }
