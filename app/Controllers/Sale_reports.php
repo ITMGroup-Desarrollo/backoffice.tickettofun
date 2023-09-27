@@ -437,24 +437,25 @@ class Sale_reports extends BaseController
         $cruiseSheet = $spreadsheet->getActiveSheet();
         $cruiseSheet->setTitle('Sales Report');
 
-        $cruiseSheet->setCellValue("B2", 'Barco');
-        $cruiseSheet->setCellValue("C2", 'Naviera');
-        $cruiseSheet->setCellValue("D2", 'Booth');
-        $cruiseSheet->setCellValue("E2", 'Num Vendedor');
-        $cruiseSheet->setCellValue("F2", 'Vendedor');
-        $cruiseSheet->setCellValue("G2", 'Folio');
-        $cruiseSheet->setCellValue("H2", 'Clave de producto');
-        $cruiseSheet->setCellValue("I2", 'Producto');
-        $cruiseSheet->setCellValue("J2", 'Adultos');
-        $cruiseSheet->setCellValue("K2", 'Menores');
-        $cruiseSheet->setCellValue("L2", 'Total pax');
-        $cruiseSheet->setCellValue("M2", 'Precio adulto');
-        $cruiseSheet->setCellValue("N2", 'Precio menor');
-        $cruiseSheet->setCellValue("O2", 'Total venta $');
-        $cruiseSheet->setCellValue("P2", 'Venta sin IVA');
-        $cruiseSheet->setCellValue("Q2", 'Costo adulto');
-        $cruiseSheet->setCellValue("R2", 'Costo menor');
-        $cruiseSheet->setCellValue("S2", 'Costo total $');
+        $cruiseSheet->setCellValue("B2", 'Fecha');
+        $cruiseSheet->setCellValue("C2", 'Barco');
+        $cruiseSheet->setCellValue("D2", 'Naviera');
+        $cruiseSheet->setCellValue("E2", 'Booth');
+        $cruiseSheet->setCellValue("F2", 'Num Vendedor');
+        $cruiseSheet->setCellValue("G2", 'Vendedor');
+        $cruiseSheet->setCellValue("H2", 'Folio');
+        $cruiseSheet->setCellValue("I2", 'Clave de producto');
+        $cruiseSheet->setCellValue("J2", 'Producto');
+        $cruiseSheet->setCellValue("K2", 'Adultos');
+        $cruiseSheet->setCellValue("L2", 'Menores');
+        $cruiseSheet->setCellValue("M2", 'Total pax');
+        $cruiseSheet->setCellValue("N2", 'Precio adulto');
+        $cruiseSheet->setCellValue("O2", 'Precio menor');
+        $cruiseSheet->setCellValue("P2", 'Total venta $');
+        $cruiseSheet->setCellValue("Q2", 'Venta sin IVA');
+        $cruiseSheet->setCellValue("R2", 'Costo adulto');
+        $cruiseSheet->setCellValue("S2", 'Costo menor');
+        $cruiseSheet->setCellValue("T2", 'Costo total $');
 
         $cruiseSheet->getColumnDimension('B')->setAutoSize(true);
         $cruiseSheet->getColumnDimension('C')->setAutoSize(true);
@@ -474,18 +475,19 @@ class Sale_reports extends BaseController
         $cruiseSheet->getColumnDimension('Q')->setAutoSize(true);
         $cruiseSheet->getColumnDimension('R')->setAutoSize(true);
         $cruiseSheet->getColumnDimension('S')->setAutoSize(true);
+        $cruiseSheet->getColumnDimension('T')->setAutoSize(true);
 
-        $cruiseSheet->getStyle('B2:S2')->getFont()
+        $cruiseSheet->getStyle('B2:T2')->getFont()
             ->applyFromArray($hFColor);
 
-        $cruiseSheet->getStyle('B2:S2')->getFill()
+        $cruiseSheet->getStyle('B2:T2')->getFill()
             ->applyFromArray($hPBackground);
 
-        $cruiseSheet->getStyle('B2:S2')->getAlignment()
+        $cruiseSheet->getStyle('B2:T2')->getAlignment()
             ->setHorizontal('center');
 
-        $cruiseSheet->getStyle("M3:M1000")->getNumberFormat()
-            ->setFormatCode(NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
+        $cruiseSheet->getStyle('B3:B1000')->getNumberFormat()
+                ->setFormatCode(NumberFormat::FORMAT_DATE_YYYYMMDD);
 
         $cruiseSheet->getStyle("N3:N1000")->getNumberFormat()
             ->setFormatCode(NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
@@ -505,6 +507,9 @@ class Sale_reports extends BaseController
         $cruiseSheet->getStyle("S3:S1000")->getNumberFormat()
             ->setFormatCode(NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
 
+        $cruiseSheet->getStyle("T3:T1000")->getNumberFormat()
+            ->setFormatCode(NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
+
         $cruiseSheet->getStyle('A1')->getAlignment()
             ->setHorizontal('center');
 
@@ -521,26 +526,27 @@ class Sale_reports extends BaseController
 
                 if ($booking->pax_name == 'Adult')
                 {
-                    $cruiseSheet->setCellValue("B{$booking_pos}", $key_reseller);
-                    $cruiseSheet->setCellValue("C{$booking_pos}", $booking->ship_name);
-                    $cruiseSheet->setCellValue("D{$booking_pos}", $booking->booth_name);
-                    $cruiseSheet->setCellValue("E{$booking_pos}", $booking->rep_id);
-                    $cruiseSheet->setCellValue("F{$booking_pos}", $booking->rep_name);
-                    $cruiseSheet->setCellValue("G{$booking_pos}", $booking->booking_reference);
-                    $cruiseSheet->setCellValue("H{$booking_pos}", $booking->lmps_code);
-                    $cruiseSheet->setCellValue("I{$booking_pos}", $booking->service_name);
-                    $cruiseSheet->setCellValue("J{$booking_pos}", $booking->quantity);
-                    $cruiseSheet->setCellValue("L{$booking_pos}", $booking->quantity);
-                    $cruiseSheet->setCellValue("M{$booking_pos}", $booking->total);
-                    $cruiseSheet->setCellValue("Q{$booking_pos}", $booking->cost);
+                    $cruiseSheet->setCellValue("B{$booking_pos}", Date::PHPToExcel($booking->visit_date));
+                    $cruiseSheet->setCellValue("C{$booking_pos}", $key_reseller);
+                    $cruiseSheet->setCellValue("D{$booking_pos}", $booking->ship_name);
+                    $cruiseSheet->setCellValue("E{$booking_pos}", $booking->booth_name);
+                    $cruiseSheet->setCellValue("F{$booking_pos}", $booking->rep_id);
+                    $cruiseSheet->setCellValue("G{$booking_pos}", $booking->rep_name);
+                    $cruiseSheet->setCellValue("H{$booking_pos}", $booking->booking_reference);
+                    $cruiseSheet->setCellValue("I{$booking_pos}", $booking->lmps_code);
+                    $cruiseSheet->setCellValue("J{$booking_pos}", $booking->service_name);
+                    $cruiseSheet->setCellValue("K{$booking_pos}", $booking->quantity);
+                    $cruiseSheet->setCellValue("M{$booking_pos}", $booking->quantity);
+                    $cruiseSheet->setCellValue("N{$booking_pos}", $booking->total);
+                    $cruiseSheet->setCellValue("R{$booking_pos}", $booking->cost);
 
                     $adult = $booking->quantity;
                     $total = $booking->quantity * $booking->total;
                     $cost_total = $booking->quantity * $booking->cost;
 
-                    $cruiseSheet->setCellValue("O{$booking_pos}", $total);
-                    $cruiseSheet->setCellValue("P{$booking_pos}", ($total / 1.16));
-                    $cruiseSheet->setCellValue("S{$booking_pos}", $cost_total);
+                    $cruiseSheet->setCellValue("P{$booking_pos}", $total);
+                    $cruiseSheet->setCellValue("Q{$booking_pos}", ($total / 1.16));
+                    $cruiseSheet->setCellValue("T{$booking_pos}", $cost_total);
 
 
                     $booking_pos++;
@@ -550,16 +556,16 @@ class Sale_reports extends BaseController
                     $last_pos = ($booking_pos - 1);
 
                     $cruiseSheet->setCellValue("K{$last_pos}", $booking->quantity);
-                    $cruiseSheet->setCellValue("L{$last_pos}", ($adult + $booking->quantity));
-                    $cruiseSheet->setCellValue("N{$last_pos}", $booking->total);
-                    $cruiseSheet->setCellValue("R{$last_pos}", $booking->cost);
+                    $cruiseSheet->setCellValue("M{$last_pos}", ($adult + $booking->quantity));
+                    $cruiseSheet->setCellValue("O{$last_pos}", $booking->total);
+                    $cruiseSheet->setCellValue("S{$last_pos}", $booking->cost);
 
                     $total += $booking->quantity * $booking->total;
                     $cost_total += $booking->quantity * $booking->cost;
 
-                    $cruiseSheet->setCellValue("O{$last_pos}", $total);
-                    $cruiseSheet->setCellValue("P{$last_pos}", ($total / 1.16));
-                    $cruiseSheet->setCellValue("S{$last_pos}", $cost_total);
+                    $cruiseSheet->setCellValue("P{$last_pos}", $total);
+                    $cruiseSheet->setCellValue("Q{$last_pos}", ($total / 1.16));
+                    $cruiseSheet->setCellValue("T{$last_pos}", $cost_total);
 
                     $adult = 0;
                     $total = 0.0;
