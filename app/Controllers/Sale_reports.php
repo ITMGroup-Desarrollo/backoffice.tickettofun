@@ -555,7 +555,7 @@ class Sale_reports extends BaseController
                 {
                     $last_pos = ($booking_pos - 1);
 
-                    $cruiseSheet->setCellValue("K{$last_pos}", $booking->quantity);
+                    $cruiseSheet->setCellValue("L{$last_pos}", $booking->quantity);
                     $cruiseSheet->setCellValue("M{$last_pos}", ($adult + $booking->quantity));
                     $cruiseSheet->setCellValue("O{$last_pos}", $booking->total);
                     $cruiseSheet->setCellValue("S{$last_pos}", $booking->cost);
