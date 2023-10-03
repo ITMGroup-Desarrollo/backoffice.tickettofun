@@ -537,11 +537,11 @@ class Sale_reports extends BaseController
                     $cruiseSheet->setCellValue("J{$booking_pos}", $booking->service_name);
                     $cruiseSheet->setCellValue("K{$booking_pos}", $booking->quantity);
                     $cruiseSheet->setCellValue("M{$booking_pos}", $booking->quantity);
-                    $cruiseSheet->setCellValue("N{$booking_pos}", $booking->total);
+                    $cruiseSheet->setCellValue("N{$booking_pos}", $booking->unit_price);
                     $cruiseSheet->setCellValue("R{$booking_pos}", $booking->cost);
 
                     $adult = $booking->quantity;
-                    $total = $booking->quantity * $booking->total;
+                    $total = $booking->total;
                     $cost_total = $booking->quantity * $booking->cost;
 
                     $cruiseSheet->setCellValue("P{$booking_pos}", $total);
@@ -557,10 +557,10 @@ class Sale_reports extends BaseController
 
                     $cruiseSheet->setCellValue("L{$last_pos}", $booking->quantity);
                     $cruiseSheet->setCellValue("M{$last_pos}", ($adult + $booking->quantity));
-                    $cruiseSheet->setCellValue("O{$last_pos}", $booking->total);
+                    $cruiseSheet->setCellValue("O{$last_pos}", $booking->unit_price);
                     $cruiseSheet->setCellValue("S{$last_pos}", $booking->cost);
 
-                    $total += $booking->quantity * $booking->total;
+                    $total += $booking->total;
                     $cost_total += $booking->quantity * $booking->cost;
 
                     $cruiseSheet->setCellValue("P{$last_pos}", $total);
