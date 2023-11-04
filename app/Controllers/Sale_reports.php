@@ -430,10 +430,6 @@ class Sale_reports extends BaseController
         $spreadsheet = new Spreadsheet();
         $spreadsheet->setActiveSheetIndex(0);
 
-        $adult = 0;
-        $total = 0.0;
-        $cost_total = 0.0;
-
         $cruiseSheet = $spreadsheet->getActiveSheet();
         $cruiseSheet->setTitle('Sales Report');
 
@@ -513,7 +509,12 @@ class Sale_reports extends BaseController
         $cruiseSheet->getStyle('A1')->getAlignment()
             ->setHorizontal('center');
 
+        $adult = 0;
+        $total = 0.0;
+        $cost_total = 0.0;
+
         $cruise_pos = 2;
+        $booking_pos = 3;
         foreach ($response as $key_reseller => $reseller) {
             $cruise_pos++;
 
@@ -521,7 +522,6 @@ class Sale_reports extends BaseController
                 return $data->reseller_name == $key_reseller;
             });
 
-            $booking_pos = 3;
             foreach($sales as $booking) {
 
                 if ($booking->pax_name == 'Adult')
