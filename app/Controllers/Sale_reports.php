@@ -225,21 +225,23 @@ class Sale_reports extends BaseController
             $cruiseSheet = $spreadsheet->createSheet();
             $cruiseSheet->setTitle($key_reseller);
 
+            $cruiseSheet->mergeCells("B{$cruise_pos}:C{$cruise_pos}");
+
             $cruiseSheet->setCellValue("B{$cruise_pos}", $key_reseller);
-            $cruiseSheet->setCellValue("C{$cruise_pos}", 'Adultos');
-            $cruiseSheet->setCellValue("D{$cruise_pos}", 'Menores');
+            $cruiseSheet->setCellValue("D{$cruise_pos}", 'Adultos');
+            $cruiseSheet->setCellValue("E{$cruise_pos}", 'Menores');
 
             $cruiseSheet->getColumnDimension('B')->setAutoSize(true);
             $cruiseSheet->getColumnDimension('C')->setAutoSize(true);
             $cruiseSheet->getColumnDimension('D')->setAutoSize(true);
 
-            $cruiseSheet->getStyle("C{$cruise_pos}:D{$cruise_pos}")->getAlignment()
+            $cruiseSheet->getStyle("C{$cruise_pos}:E{$cruise_pos}")->getAlignment()
                 ->setHorizontal('center');
 
-            $cruiseSheet->getStyle("B{$cruise_pos}:D{$cruise_pos}")->getFill()
+            $cruiseSheet->getStyle("B{$cruise_pos}:E{$cruise_pos}")->getFill()
                 ->applyFromArray($hBackground);
 
-            $cruiseSheet->getStyle("B{$cruise_pos}:D{$cruise_pos}")->getFont()
+            $cruiseSheet->getStyle("B{$cruise_pos}:E{$cruise_pos}")->getFont()
                 ->applyFromArray($default);
 
             $cruiseSheet->setCellValue("B{$cruise_pos}", $key_reseller);
@@ -248,10 +250,11 @@ class Sale_reports extends BaseController
             $cruiseSheet->setCellValue('G2', 'Booking Reference');
             $cruiseSheet->setCellValue('H2', 'Guest');
             $cruiseSheet->setCellValue('I2', '# Cabin');
-            $cruiseSheet->setCellValue('J2', 'Tour');
-            $cruiseSheet->setCellValue('K2', 'Adultos');
-            $cruiseSheet->setCellValue('L2', 'Menores');
-            $cruiseSheet->setCellValue('M2', 'Ticket');
+            $cruiseSheet->setCellValue('J2', 'Tour code');
+            $cruiseSheet->setCellValue('K2', 'Tour');
+            $cruiseSheet->setCellValue('L2', 'Adultos');
+            $cruiseSheet->setCellValue('M2', 'Menores');
+            $cruiseSheet->setCellValue('N2', 'Ticket');
 
             $cruiseSheet->getColumnDimension('G')->setAutoSize(true);
             $cruiseSheet->getColumnDimension('H')->setAutoSize(true);
@@ -260,13 +263,14 @@ class Sale_reports extends BaseController
             $cruiseSheet->getColumnDimension('K')->setAutoSize(true);
             $cruiseSheet->getColumnDimension('L')->setAutoSize(true);
             $cruiseSheet->getColumnDimension('M')->setAutoSize(true);
+            $cruiseSheet->getColumnDimension('N')->setAutoSize(true);
 
-            $cruiseSheet->getStyle('G2:M2')->getFont()
+            $cruiseSheet->getStyle('G2:N2')->getFont()
                 ->applyFromArray($hFColor);
-            $cruiseSheet->getStyle('G2:M2')->getFill()
+            $cruiseSheet->getStyle('G2:N2')->getFill()
                 ->applyFromArray($hPBackground);
 
-            $cruiseSheet->getStyle('G2:M2')->getAlignment()
+            $cruiseSheet->getStyle('G2:N2')->getAlignment()
                 ->setHorizontal('center');
 
             $start_pos++;
@@ -288,9 +292,10 @@ class Sale_reports extends BaseController
                 // Set detail cruise information
                 $code = $service["code"];
 
-                $cruiseSheet->setCellValue("B{$cruise_pos}", "{$code} {$key_service}");
-                $cruiseSheet->setCellValue("C{$cruise_pos}", $service["adult"]);
-                $cruiseSheet->setCellValue("D{$cruise_pos}", $service["children"]);
+                $cruiseSheet->setCellValue("B{$cruise_pos}", $code);
+                $cruiseSheet->setCellValue("C{$cruise_pos}", $key_service);
+                $cruiseSheet->setCellValue("D{$cruise_pos}", $service["adult"]);
+                $cruiseSheet->setCellValue("E{$cruise_pos}", $service["children"]);
 
                 $start_pos++;
                 $cruise_pos++;
@@ -311,9 +316,10 @@ class Sale_reports extends BaseController
                         $cruiseSheet->setCellValue("I{$booking_pos}", $booking->cabin);
                         $cruiseSheet->setCellValueExplicit("I{$booking_pos}", $booking->cabin, DataType::TYPE_STRING);
 
-                        $cruiseSheet->setCellValue("J{$booking_pos}", "{$code} {$service}");
-                        $cruiseSheet->setCellValue("K{$booking_pos}", $booking->quantity);
-                        $cruiseSheet->setCellValue("M{$booking_pos}", 'View PDF');
+                        $cruiseSheet->setCellValue("J{$booking_pos}", $code);
+                        $cruiseSheet->setCellValue("K{$booking_pos}", $service);
+                        $cruiseSheet->setCellValue("M{$booking_pos}", $booking->quantity);
+                        $cruiseSheet->setCellValue("N{$booking_pos}", 'View PDF');
 
                         $url = getenv('lmpsBooking') . $booking->uuid_seq;
 
@@ -345,14 +351,16 @@ class Sale_reports extends BaseController
                 ->setFormatCode(NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
 
              // Set detail cruise information
-            $cruiseSheet->setCellValue("B{$cruise_pos}", "Total");
-            $cruiseSheet->setCellValue("C{$cruise_pos}", $adult);
-            $cruiseSheet->setCellValue("D{$cruise_pos}", $children);
+            $cruiseSheet->mergeCells("B{$cruise_pos}:C{$cruise_pos}");
 
-            $cruiseSheet->getStyle("B{$cruise_pos}:D{$cruise_pos}")->getFill()
+            $cruiseSheet->setCellValue("B{$cruise_pos}", "Total");
+            $cruiseSheet->setCellValue("D{$cruise_pos}", $adult);
+            $cruiseSheet->setCellValue("E{$cruise_pos}", $children);
+
+            $cruiseSheet->getStyle("B{$cruise_pos}:E{$cruise_pos}")->getFill()
                 ->applyFromArray($fTBackground);
 
-            $cruiseSheet->getStyle("B{$cruise_pos}:D{$cruise_pos}")->getFont()
+            $cruiseSheet->getStyle("B{$cruise_pos}:E{$cruise_pos}")->getFont()
                 ->applyFromArray($default);
 
             $adultGeneral    = $adultGeneral  + $adult;
