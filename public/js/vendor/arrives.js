@@ -29,7 +29,8 @@ const arrives = {
           enableTime: true,
           noCalendar: true,
           dateFormat: 'H:i',
-          time_24hr: true
+          time_24hr: true,
+          disableMobile: true
       })
 
       flatpickr('.markup', {
@@ -374,7 +375,8 @@ const arrives = {
         enableTime: true,
         noCalendar: true,
         dateFormat: 'H:i',
-        time_24hr: true
+        time_24hr: true,
+        disableMobile: true
       })
 
       flatpickr('.markup', {
@@ -382,7 +384,8 @@ const arrives = {
         noCalendar: true,
         dateFormat: 'H:i',
         defaultDate: '00:30',
-        time_24hr: true
+        time_24hr: true,
+        disableMobile: true
       })
 
       //Listener if exists unapplied changes before to leave page
@@ -529,7 +532,8 @@ const arrives = {
         enableTime: true,
         noCalendar: true,
         dateFormat: 'H:i',
-        time_24hr: true
+        time_24hr: true,
+        disableMobile: true
       })
       // Add event listener to change status
       const statusElements = document.querySelectorAll('.status-option')
