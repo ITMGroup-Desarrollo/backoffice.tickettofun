@@ -1,6 +1,8 @@
 <?php
 namespace App\Libraries;
 
+use Config\Services;
+
 /**
 * Build Content Class
 *
@@ -18,12 +20,13 @@ class Build {
     public $session;
     public $submenu;
     public $columns;
+    public $page_name;
     public $component;
 
     public function __construct()
     {
         $this->component = '';
-        $this->session   = \Config\Services::session();
+        $this->session   = Services::session();
     }
 
     public function build_components($contents)
@@ -40,10 +43,10 @@ class Build {
         if (is_array($contents->element))
             return '';
 
-        if (property_exists($contents, 'withPrivilegies')) 
+        if (property_exists($contents, 'withPrivilegies'))
         {
             if ($contents->withPrivilegies == 'default') {
-                if ($this->rol_id != 1 && !in_array('g_roles', $this->session->get('permissions'))) 
+                if ($this->rol_id != 1 && !in_array('g_roles', $this->session->get('permissions')))
                 {
                     return '';
                 }
@@ -69,18 +72,18 @@ class Build {
             if ($element == 'ul')
             {
                 $li_elements = array();
-                foreach ($contents->contents as $value) 
+                foreach ($contents->contents as $value)
                 {
                     $li_elements[] = $this->_get_element($value);
                 }
-                    
+
                 $content .= $this->build_element(
                     $element
                     , $attrib
                     , $li_elements
                 );
             }
-            else if ($element == 'row') 
+            else if ($element == 'row')
             {
                 $content = $this->_get_row($attrib, $contents->contents);
             }
@@ -144,9 +147,7 @@ class Build {
                 }
             }
 
-            $library = "App\\Libraries\\" . ucfirst($library);
-
-            $short_code = new $library;
+            $short_code = $this->_get_library($library);
 
             if (count($data) > 0)
             {
@@ -227,8 +228,8 @@ class Build {
 
     private function _get_library($library)
     {
-        $this->CI->load->library($library);
+        $library = "App\\Libraries\\" . ucfirst($library);
 
-        return $this->CI->$library;
+        return new $library;
     }
 }

@@ -1,6 +1,8 @@
 <?php
 namespace App\Libraries;
 
+use Config\Services;
+
 /**
 * User session class
 *
@@ -18,7 +20,7 @@ class User_session
 
     public function __construct()
     {
-        $this->session = \Config\Services::session();
+        $this->session = Services::session();
     }
 
     /**

@@ -7,8 +7,11 @@ use CodeIgniter\HTTP\CLIRequest;
 use CodeIgniter\HTTP\IncomingRequest;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
+use CodeIgniter\Session\Session;
+use Config\Services;
 use Psr\Log\LoggerInterface;
 
+use App\Models\Page;
 use App\Libraries\User_session;
 
 /**
@@ -40,6 +43,21 @@ class BaseController extends Controller
     protected $helpers = ['html', 'form', 'cookie'];
 
     /**
+     * @property User_session $user
+     */
+    protected $user;
+
+    /**
+     * @property Page $page
+     */
+    protected $page;
+
+    /**
+     * @property Session $session
+     */
+    protected $session;
+
+    /**
      * Constructor.
      */
     public function initController(RequestInterface $request, ResponseInterface $response, LoggerInterface $logger)
@@ -49,7 +67,7 @@ class BaseController extends Controller
 
         // Preload any models, libraries, etc, here.
         $this->user    = new User_session();
-        $this->page    = new \App\Models\Page();
-        $this->session = \Config\Services::session();
+        $this->page    = new Page();
+        $this->session = Services::session();
     }
 }
