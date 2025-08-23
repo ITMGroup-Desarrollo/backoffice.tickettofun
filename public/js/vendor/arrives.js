@@ -14,7 +14,7 @@ const arrives = {
     utils.post(
       JSON.stringify({table:'arrives'}),
       `${base}/users/permissions`,
-      utils.setPermissions
+      arrives.setConfigFront
     )
   },
   add: {
@@ -74,7 +74,8 @@ const arrives = {
           arrival_time: document.querySelector('[name="arrival_time"]').value,
           departure_time: document.querySelector('[name="departure_time"]').value,
           markup_start: document.querySelector('[name="markup_start"]').value,
-          markup_end: document.querySelector('[name="markup_end"]').value
+          markup_end: document.querySelector('[name="markup_end"]').value,
+          business_unit: document.querySelector('[name="unities"]').value
         }
 
         var url = `${apiHost}arrives/add`
@@ -111,10 +112,16 @@ const arrives = {
   },
   list: {
     init: () => {
+      const form = document.querySelector('#search')
+      const unities = document.querySelector('.form-bussines-unities')
+
+      form.prepend(unities)
+
       const searchBtn = document.querySelector('.search')
       const ship = document.querySelector('[name="ship"]')
       const dateRange = document.querySelector('.date-range')
       const reseller = document.querySelector('[name="reseller"]')
+      const businessUnit = document.querySelector('[name="business_unit"]')
 
       if (reseller !== null && ship !== null) {
         initialOptions = ship.innerHTML
@@ -144,7 +151,7 @@ const arrives = {
       if (searchBtn !== null) {
         searchBtn.addEventListener(clickEvent, (e) => {
           e.preventDefault()
-          arrives.list.load(ship, reseller)
+          arrives.list.load(ship, reseller, businessUnit)
         })
       }
 
@@ -178,14 +185,16 @@ const arrives = {
         })
       }
 
-      arrives.list.load(ship, reseller)
+      arrives.list.load(ship, reseller, businessUnit)
     },
-    load: function (ship, reseller) {
+    load: function (ship, reseller, businessUnit) {
       const info = {}
-      url = `${apiHost}arrives`
+      url = `${apiHost}arrives/list`
 
-      const idShip = parseInt(ship.value, 10)
-      const idReseller = parseInt(reseller.value, 10)
+      info.ship = (ship.value !== '') ? parseInt(ship.value, 10) : null
+      info.reseller = (reseller.value !== '') ? parseInt(reseller.value, 10) : null
+      info.unities = (businessUnit.value !== '') ? parseInt(businessUnit.value, 10) : null
+
       const dates = document.querySelector('[name="dates"]').value
 
       if (dates.trim() !== '') {
@@ -201,13 +210,13 @@ const arrives = {
         info.end_date = utils.getDate(1)
       }
 
-      if (Number.isInteger(idReseller) && idReseller > 0 && !Number.isInteger(idShip)) {
-        url = `${url}/reseller/${idReseller}`
-      } else if (Number.isInteger(idShip) && idShip > 0) {
-        url = `${url}/ship/${idShip}`
+      let params = utils.filterQueryParams(info)
+
+      if (params !== '') {
+        url = `${url}?${params}`
       }
 
-      utils.api(JSON.stringify(info), url, 'POST', arrives.list.deploy)
+      utils.api(null, url, 'GET', arrives.list.deploy)
     },
     deploy: function (response) {
       try {
@@ -219,7 +228,7 @@ const arrives = {
         utils.dropTable(table)
 
         const content = document.querySelector('.table-arrives')
-        const nodeTable = utils.createElement('table', '', 'arrives-registers', '')
+        const nodeTable = utils.createElement('table', 'cell-border stripe', 'arrives-registers', '')
 
         content.appendChild(nodeTable)
 
@@ -259,6 +268,7 @@ const arrives = {
           }
         }
       } catch (e) {
+        console.log(e)
         utils.displayModal(alertModal, '')
       }
     },
@@ -286,6 +296,7 @@ const arrives = {
       const config = utils.getDataTableConfig()
 
       const columns = [
+        { data: 'unity_name', title: 'Business unit' },
         { data: 'reseller_name', title: 'Vendor' },
         { data: 'ship_name', title: 'Cruise' },
         { data: 'arrival_date', title: 'Arrival date' },
@@ -309,7 +320,7 @@ const arrives = {
         }
       ]
 
-      config.order = [2, 'asc']
+      config.order = [3, 'asc']
       config.data = registers
       config.columns = columns
 
@@ -347,6 +358,7 @@ const arrives = {
       form.querySelector('[name="markup_start"]').value = dataArrive.markup_start
       form.querySelector('[name="markup_end"]').value = dataArrive.markup_end
       form.querySelector('[name="status"]').value = dataArrive.active
+      form.querySelector('[name="unities"]').value = dataArrive.business_unit
 
       let channel = document.querySelector('[name="channel"]')
       if (channel != null) {
@@ -879,55 +891,58 @@ const arrives = {
     })
 
     utils.displayModal(alertModal, msg)
+  },
+  setConfigFront: (response) => {
+    utils.setPermissions(response)
+
+    //Add export actions
+    const btnExport = document.querySelector('[name="export"]')
+    if (btnExport !== null) {
+      btnExport.addEventListener(clickEvent, (e) => {
+        e.preventDefault()
+        url = `${base}/arrives/export/${dataArrive.id}`
+        window.open(url)
+      })
+    }
+
+    // Evaluate if exists table element
+    form = document.querySelector('#form-arrives-search')
+    if (form !== null) {
+      let channel = document.querySelector('#channel-filter').closest('div')
+      if (channel != null) {
+        channel.innerHTML = ''
+      }
+
+      arrives.list.init()
+    }
+
+    // Evaluate if exists add form
+    form = document.querySelector('#add-arrives')
+    if (form !== null) {
+      MicroModal.close('wait-modal')
+
+      let channel = document.querySelector('#channel-filter').closest('div')
+      if (channel != null) {
+        channel.innerHTML = ''
+      }
+
+      arrives.add.init()
+    }
+
+    // Evaluate if exists update form
+    form = document.querySelector('#update-arrives')
+    if (form !== null) {
+      dataArrive = window.arrives
+
+      // rename confirm button
+      const confirmButton = document.querySelector('.confirm-delete')
+      confirmButton.classList.remove('confirm-delete')
+      confirmButton.classList.add('confirm-save')
+
+      arrives.update.loadData()
+    }
   }
 }
 
 // Set permissions
 arrives.initPermissions()
-
-//Add export actions
-const btnExport = document.querySelector('[name="export"]')
-if (btnExport !== null) {
-  btnExport.addEventListener(clickEvent, (e) => {
-    e.preventDefault()
-    url = `${base}/arrives/export/${dataArrive.id}`
-    window.open(url)
-  })
-}
-
-// Evaluate if exists table element
-form = document.querySelector('#form-arrives-search')
-if (form !== null) {
-  let channel = document.querySelector('#channel-filter').closest('div')
-  if (channel != null) {
-    channel.innerHTML = ''
-  }
-
-  arrives.list.init()
-}
-
-// Evaluate if exists add form
-form = document.querySelector('#add-arrives')
-if (form !== null) {
-  MicroModal.close('wait-modal')
-
-  let channel = document.querySelector('#channel-filter').closest('div')
-  if (channel != null) {
-    channel.innerHTML = ''
-  }
-
-  arrives.add.init()
-}
-
-// Evaluate if exists update form
-form = document.querySelector('#update-arrives')
-if (form !== null) {
-  dataArrive = window.arrives
-
-  // rename confirm button
-  const confirmButton = document.querySelector('.confirm-delete')
-  confirmButton.classList.remove('confirm-delete')
-  confirmButton.classList.add('confirm-save')
-
-  arrives.update.loadData()
-}

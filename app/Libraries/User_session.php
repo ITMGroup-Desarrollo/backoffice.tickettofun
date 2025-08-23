@@ -38,7 +38,8 @@ class User_session
             'token'        => $credentials->token,
             'avatar'       => $credentials->user->avatar,
             'page_default' => $credentials->user->page_default,
-            'permissions'  => $this->_get_permissions($credentials->user->permissions)
+            'permissions'  => $this->_get_permissions($credentials->user->permissions),
+            'business_unities' => $credentials->user->business_unities,
         );
 
         if ($credentials->remember == 1)
@@ -68,12 +69,101 @@ class User_session
         return $active;
     }
 
-    public function get_actions($table) {
+    public function get_business_unities_params(): string
+    {
+        $businessUnities = '';
+        if (count($this->session->get('business_unities')) > 0) {
+            $values = '';
+            $businessUnities = $this->session->get('business_unities');
+
+            foreach ($businessUnities as $businessUnit) {
+                $values .= $businessUnit->unity_id.',';
+            }
+
+            $unities = trim($values, ',');
+
+            $businessUnities = http_build_query(['filter[unities]' => $unities]);
+        }
+
+        return $businessUnities;
+    }
+
+    public function get_business_unties_element($witLabel = true, $selected = '', $form = ''): string
+    {
+        $businessUnitElement = '';
+
+        if (count($this->session->get('business_unities')) > 0) {
+            $label = '';
+
+            $labelClass = ['class' => 'mr-2'];
+            $divClass =  ['class' => 'form-group mr-sm-3 form-bussines-unities'];
+
+            switch ($form) {
+                case 'wrapper':
+                    $divClass =  ['class' => 'form-group row form-bussines-unities'];
+                    $labelClass = ['class' => 'col-sm-2 col-md-2 control-label'];
+                    break;
+                case 'inline':
+                    $divClass =  ['class' => 'form-inline mr-sm-3 mb-5 form-bussines-unities'];
+                    break;
+                case 'calendar':
+                        $divClass =  ['class' => 'form-inline my-2 form-bussines-unities'];
+                        break;
+                default:
+                    break;
+            }
+
+            if ($witLabel) {
+                $label = custom('label', $labelClass, 'Business unit');
+            }
+
+            $options = custom('option', ['value' => ''], '-- Choose option --');
+
+            $businessUnities = $this->session->get('business_unities');
+            foreach ($businessUnities as $businessUnit) {
+                $attrib = [
+                    'value' => $businessUnit->unity_id
+                ];
+
+                if ($selected == $businessUnit->unity_id) {
+                    $attrib['selected'] = 'selected';
+                }
+
+                $options .= custom('option', $attrib, $businessUnit->unity_name);
+            }
+
+            $attrib = [
+                'name' => 'business_unit',
+                'class' => 'form-control',
+            ];
+
+            $select = custom('select', $attrib, $options);
+
+            if ($form != 'inline') {
+                $select =  custom(
+                    'div',
+                    ['class' => 'col-sm-10 col-md-8'],
+                    $select
+                );
+            }
+
+            $businessUnitElement = custom(
+                'div',
+                $divClass,
+                $label.$select
+            );
+        }
+
+        return $businessUnitElement;
+    }
+
+    public function get_actions($table)
+    {
         return $this->_get_actions_elements($table);
     }
 
-    private function _get_permissions($data_permissions) {
-
+    private function _get_permissions($data_permissions)
+    {
         $permissions = array();
 
         for ($i = 0; $i < count($data_permissions); $i++) {

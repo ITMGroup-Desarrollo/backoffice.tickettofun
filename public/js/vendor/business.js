@@ -64,6 +64,9 @@ var business = {
     document.querySelector('[name="name"]').value = businessData.name
     document.querySelector('[name="status"]').value = businessData.active
     document.querySelector('[name="destination"]').value = businessData.destination
+    document.querySelector('[name="text-color"]').value = businessData.textColor
+    document.querySelector('[name="border-color"]').value = businessData.borderColor
+    document.querySelector('[name="background-color"]').value = businessData.backgroundColor
   }
 }
 
@@ -94,11 +97,18 @@ if (save != null) {
 
     valid = utils.dataValidator(fields)
 
+    let calendarConfig = {
+      textColor: document.querySelector('[name="text-color"]').value,
+      borderColor: document.querySelector('[name="border-color"]').value,
+      backgroundColor: document.querySelector('[name="background-color"]').value
+    }
+
     if (valid) {
       info = {
         user_create_id: userCreateId,
         name: document.querySelector('[name="name"]').value,
-        destination: document.querySelector('[name="destination"]').value
+        destination: document.querySelector('[name="destination"]').value,
+        calendarConfig: JSON.stringify(calendarConfig)
       }
 
       form = document.querySelector('#add-business')

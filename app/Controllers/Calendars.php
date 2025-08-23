@@ -21,13 +21,19 @@ class Calendars extends BaseController
 
         $data = $this->page->get_contents();
 
+        $businessUnitElement = $this->user->get_business_unties_element();
+
         $data['contents'] = str_replace(
             '{title}', 'Ship calendar', $data['contents']
         );
 
+        $data['contents'] = str_replace(
+            '{unities}', $businessUnitElement, $data['contents']
+        );
+
         $calendar = new Calendar();
 
-        $events = $calendar->get_arrives();
+        $events = $calendar->get_arrives($this->user->get_business_unities_params());
         $data['scripts'] = $events . $data['scripts'];
 
         return view('Master', $data);

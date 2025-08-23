@@ -42,7 +42,7 @@ class Location extends Model
         $this->inactive = array('class' => LABEL_DANGER);
     }
 
-    public function get_list()
+    public function get_list(string $businessUnities)
     {
         $rol_id        = $this->session->get('rol_id');
         $table_content = $this->page->get_settings('locations');
@@ -60,7 +60,7 @@ class Location extends Model
 
         // Call API here!
         $params   = new stdClass();
-        $endpoint = GET_LOCATIONS_ROUTE;
+        $endpoint = GET_LOCATIONS_ROUTE.'?'.$businessUnities;
 
         $token = $this->session->get('token');
 
@@ -93,27 +93,27 @@ class Location extends Model
 
                 $status_attrib                = $this->attrib;
                 $status_attrib['data-status'] =  $row->location_id;
-                
+
                 $aux .= custom('td', $status_attrib, $status);
 
                 if ($rol_id == 1 || in_array('u_locations', $this->session->get('permissions')))
                 {
                     $path = 'locations/' . $row->location_id;
-                
+
                     $this->anchor_attrib['class'] = 'edit';
                     $this->anchor_attrib['href']  = base_url($path);
-                
+
                     $edit = custom('i', array('class' => 'fas fa-edit'), '');
                     $edit = custom('a', $this->anchor_attrib, $edit);
                 }
                 if ($rol_id == 1 || in_array('d_locations', $this->session->get('permissions')))
                 {
-                    if ($row->active_status == 1) 
+                    if ($row->active_status == 1)
                     {
                         $this->anchor_attrib['href']    = '#';
                         $this->anchor_attrib['class']   = 'delete';
                         $this->anchor_attrib['data-id'] = $row->location_id;
-                    
+
                         $delete = custom('i', array('class' => 'fas fa-trash'), '');
                         $delete = custom('a', $this->anchor_attrib, $delete);
                     }

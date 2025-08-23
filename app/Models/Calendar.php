@@ -30,16 +30,17 @@ class Calendar extends Model
         $this->session = \Config\Services::session();
     }
 
-    public function get_arrives()
+    public function get_arrives(string $businessUnities)
     {
         // Call API here!
         $params   = new stdClass();
-        $endpoint = GET_ARRIVES_ROUTE;
+        $endpoint = GET_ARRIVES_ROUTE.'/list?'.$businessUnities;
+        $endpoint .= '&filter[status]=1';
 
         $token = $this->session->get('token');
 
         $response = json_decode(
-            $this->api->request_api('POST', $endpoint, $params, $token)
+            $this->api->request_api('GET', $endpoint, NULL, $token)
         );
 
         $events = array();
@@ -49,27 +50,35 @@ class Calendar extends Model
 
             foreach ($rows as $row)
             {
-                // TODO:  Fix store procedure to evaluate active_status
-                if ($row->active_status == 1)
-                {
-                    $event        = new stdClass();
-                    $event->title = $row->reseller_name . PHP_EOL . $row->ship_name;
+                $event = new stdClass();
+                $calendarConfig = json_decode($row->calendar_config);
 
-                    if ($row->arrival_time == '0' || $row->arrival_time == '') {
-                        $row->arrival_time   = '00:00:00';
-                        $row->departure_time = '00:00:00';
-                    }
+                $event->title = sprintf(
+                    '%s-%s%s%s',
+                    $row->unity_name,
+                    $row->reseller_name,
+                    PHP_EOL,
+                    $row->ship_name
+                );
 
-                    $arrival_date   = strtotime($row->arrival_date . ' ' . $row->arrival_time);
-                    $departure_date = strtotime($row->arrival_date . ' ' . $row->departure_time);
-
-                    $event->end    = date("c", $departure_date);
-                    $event->start  = date("c", $arrival_date);
-
-                    $event->allDay = false;
-
-                    $events[] = $event;
+                if ($row->arrival_time == '0' || $row->arrival_time == '') {
+                    $row->arrival_time   = '00:00:00';
+                    $row->departure_time = '00:00:00';
                 }
+
+                $arrival_date   = strtotime($row->arrival_date . ' ' . $row->arrival_time);
+                $departure_date = strtotime($row->arrival_date . ' ' . $row->departure_time);
+
+                $event->end    = date("c", $departure_date);
+                $event->start  = date("c", $arrival_date);
+
+                $event->allDay = false;
+
+                $event->textColor = $calendarConfig->textColor;
+                $event->borderColor = $calendarConfig->borderColor;
+                $event->backgroundColor = $calendarConfig->backgroundColor;
+
+                $events[] = $event;
             }
         }
 

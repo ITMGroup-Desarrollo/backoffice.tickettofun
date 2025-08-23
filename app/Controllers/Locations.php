@@ -30,20 +30,24 @@ class Locations extends BaseController
 
         if ($option == 'list')
         {
-            $table = $this->location->get_list();
+            $businessUnitElement = $this->user->get_business_unties_element(true, '', 'inline');
+
+            $table = $this->location->get_list($this->user->get_business_unities_params());
 
             $data['contents'] = str_replace(
                 '{title}', 'List of locations', $data['contents']
             );
 
             $data['contents'] = str_replace(
-                '{content}', $table, $data['contents']
+                '{content}', $businessUnitElement.$table, $data['contents']
             );
         }
         else
         {
+            $businessUnitElement = $this->user->get_business_unties_element(true, '', 'wrapper');
+
             $form = $this->location->get_form();
-            $form = str_replace('{id}', 'add-location', $form);
+            $form = str_replace('{id}', 'add-location', $businessUnitElement.$form);
 
             $data['contents'] = str_replace(
                 '{title}', 'New location', $data['contents']

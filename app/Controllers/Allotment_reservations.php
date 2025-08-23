@@ -37,8 +37,10 @@ class Allotment_reservations extends BaseController
                 '{title}', 'List of allotment reservations', $data['contents']
             );
 
+            $businessUnitElement = $this->user->get_business_unties_element();
+
             $form = $this->allotment_reservation->get_form('search');
-            $form = str_replace('{id}', 'search', $form);
+            $form = str_replace('{id}', 'search', $businessUnitElement.$form);
 
             $data['contents'] = str_replace(
                 '{search}', $form, $data['contents']

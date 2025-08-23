@@ -17,7 +17,8 @@ use stdClass;
 
 class Forms
 {
-    public $bd;
+    public $db;
+    public $api;
     public $form;
     public $attrib;
     public $rol_id;

@@ -84,6 +84,19 @@ var diary = {
         diary.loadForm(idCall)
       })
     }
+
+    const businessUnit = document.querySelector('[name="business_unit"]')
+    businessUnit.addEventListener('change', (e) => {
+      e.preventDefault()
+
+      var data = {
+        date: document.querySelector('[name="inputDate"]').value,
+        business_unit_id: parseInt(e.target.value, 10)
+      }
+
+      const url = `${base}/diary/get_diary`
+      utils.post(JSON.stringify(data), url, diary.refresh)
+    });
   },
   tableInit: function () {
     var tourDetails = document.querySelector('.details-registers')
@@ -120,8 +133,10 @@ var diary = {
             defaultDate: new Date().fp_incr(1),
             disableMobile: true,
             onChange: function (selectedDates, dateStr, instance) {
+              const businessUnit = document.querySelector('[name="business_unit"]')
               var data = {
-                date: dateStr
+                date: dateStr,
+                business_unit_id: parseInt(businessUnit.value, 10)
               }
 
               const url = `${base}/diary/get_diary`
@@ -294,8 +309,10 @@ if (printButton !== null) {
   printButton.addEventListener('click', function (e) {
     e.preventDefault()
 
+    const businessUnit = document.querySelector('[name="business_unit"]').value
+
     var date = document.querySelector('[name="inputDate"]').value
-    var endpoint = `${base}/diary/print/${date}`
+    var endpoint = `${base}/diary/print/${date}/${businessUnit}`
 
     window.open(endpoint, '_blank')
   })

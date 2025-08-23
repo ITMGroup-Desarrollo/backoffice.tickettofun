@@ -10,7 +10,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class Arrives extends BaseController
 {
-    public $bd;
+    public $db;
     public $arrive;
 
     public function __construct()
@@ -44,8 +44,10 @@ class Arrives extends BaseController
                 '{title}', 'List of calls', $data['contents']
             );
 
+            $businessUnitElement = $this->user->get_business_unties_element();
+
             $form = $this->arrive->get_form('search');
-            $form = str_replace('{id}', 'search', $form);
+            $form = str_replace('{id}', 'search', $businessUnitElement.$form);
 
             $data['contents'] = str_replace(
                 '{search}', $form, $data['contents']
@@ -209,10 +211,10 @@ class Arrives extends BaseController
                     ),
                 );
 
-                $sheet ->getStyle("B10:G" .(10 + $num_rows))->applyFromArray($styleheaderAllotments);
+                $sheet ->getStyle("B10:H" .(10 + $num_rows))->applyFromArray($styleheaderAllotments);
 
                 // Background default of Header of Allotments
-                $sheet->getStyle('B10:G10')->getFill()->applyFromArray(
+                $sheet->getStyle('B10:H10')->getFill()->applyFromArray(
                     [
                         'fillType' => Fill::FILL_GRADIENT_LINEAR,
                         'rotation' => 0,
@@ -223,7 +225,7 @@ class Arrives extends BaseController
                 );
 
                 //Font Style on Header Allotments
-                $sheet->getStyle('B10:G10')->getFont()->applyFromArray(
+                $sheet->getStyle('B10:H10')->getFont()->applyFromArray(
                          [
                             'bold'     => TRUE,
                             'color'    => [
@@ -233,14 +235,15 @@ class Arrives extends BaseController
                 );
 
                 $sheet->setCellValue('B10', 'Service');
-                $sheet->setCellValue('C10', 'Cruise Service');
-                $sheet->setCellValue('D10', 'Schedule start');
-                $sheet->setCellValue('E10', 'Schedule end');
-                $sheet->setCellValue('F10', 'Minimum capacity');
-                $sheet->setCellValue('G10', 'Maximum capacity');
+                $sheet->setCellValue('C10', 'Service code');
+                $sheet->setCellValue('D10', 'Cruise Service');
+                $sheet->setCellValue('E10', 'Schedule start');
+                $sheet->setCellValue('F10', 'Schedule end');
+                $sheet->setCellValue('G10', 'Minimum capacity');
+                $sheet->setCellValue('H10', 'Maximum capacity');
 
                 //background default of body of Allotments #DCE6F2
-                $sheet->getStyle('B11:G'.(10 + $num_rows))->getFill()->applyFromArray(
+                $sheet->getStyle('B11:H'.(10 + $num_rows))->getFill()->applyFromArray(
                     [
                         'fillType' => Fill::FILL_GRADIENT_LINEAR,
                         'rotation' => 0,
@@ -255,15 +258,16 @@ class Arrives extends BaseController
                 {
                     if ($row->active_status == 1) {
                         $sheet->setCellValue('B'.$pos, $row->service_name);
-                        $sheet->setCellValue('C'.$pos, $row->equivalence_name);
-                        $sheet->setCellValue('D'.$pos, $row->schedule_start_base);
-                        $sheet->setCellValue('E'.$pos, $row->schedule_end_base);
-                        $sheet->setCellValue('F'.$pos, $row->min_available_base);
-                        $sheet->setCellValue('G'.$pos, $row->max_available_base);
+                        $sheet->setCellValue('C'.$pos, $row->code);
+                        $sheet->setCellValue('D'.$pos, $row->equivalence_name);
+                        $sheet->setCellValue('E'.$pos, $row->schedule_start_base);
+                        $sheet->setCellValue('F'.$pos, $row->schedule_end_base);
+                        $sheet->setCellValue('G'.$pos, $row->min_available_base);
+                        $sheet->setCellValue('H'.$pos, $row->max_available_base);
 
                         if ($pos % 2 == 0)
                         {
-                            $sheet->getStyle('B'.$pos.':G'.$pos)->getFill()->applyFromArray(
+                            $sheet->getStyle('B'.$pos.':H'.$pos)->getFill()->applyFromArray(
                                 [
                                     'fillType' => Fill::FILL_GRADIENT_LINEAR,
                                     'rotation' => 0,

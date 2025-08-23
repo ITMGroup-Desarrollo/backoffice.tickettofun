@@ -78,6 +78,7 @@ class Service extends Model
                 $this->anchor_attrib = array();
 
                 $aux .= custom('td', '', $row->service_name);
+                $aux .= custom('td', '', $row->unity_name);
                 $aux .= custom('td', '', $row->location_name);
                 $aux .= custom('td', '', $row->duration);
                 $aux .= custom('td', $this->attrib, $row->min_available_num);
@@ -101,7 +102,7 @@ class Service extends Model
                 if ($rol_id == 1 || in_array('u_services', $this->session->get('permissions')))
                 {
                     $path = 'services/' . $row->service_id;
-                    
+
                     $this->anchor_attrib['class'] = 'edit';
                     $this->anchor_attrib['href']  = base_url($path);
 
@@ -111,12 +112,12 @@ class Service extends Model
 
                 if ($rol_id == 1 || in_array('d_services', $this->session->get('permissions')))
                 {
-                    if ($row->active_status == 1) 
+                    if ($row->active_status == 1)
                     {
                         $this->anchor_attrib['href']    = '#';
                         $this->anchor_attrib['class']   = 'delete';
                         $this->anchor_attrib['data-id'] = $row->service_id;
-                    
+
                         $delete = custom('i', array('class' => 'fas fa-trash'), '');
                         $delete = custom('a', $this->anchor_attrib, $delete);
                     }
@@ -175,8 +176,9 @@ class Service extends Model
             $service->name     = $response->message->service_name;
             $service->active   = $response->message->active_status;
             $service->location = $response->message->location_id;
+            $service->unit_id = $response->message->unity_id;
             $service->duration = $response->message->duration;
-            
+
         }
 
         return $service;

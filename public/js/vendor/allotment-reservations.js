@@ -185,7 +185,7 @@ var allotment = {
       })
 
     editor.draw()
-    editor.columns.adjust().draw()
+    //editor.columns.adjust().draw()
 
     var _spanIcons = document.querySelectorAll('.spanicon')
     for (var i = 0, l = _spanIcons.length; i < l; i++) {
@@ -315,8 +315,14 @@ if (vendor != null) {
   })
 }
 
-var search = document.querySelector('.search')
-if (vendor != null) {
+const form = document.querySelector('#search')
+if (form != null) {
+  const unities = document.querySelector('.form-bussines-unities')
+
+  form.prepend(unities)
+
+  let search = document.querySelector('.search')
+
   search.addEventListener('click', function (e) {
     e.preventDefault()
     utilAjaxExecute()
@@ -329,10 +335,16 @@ var utilAjaxExecute = function () {
     var url = `${apiHost}allotment_reservations`
     var date = document.querySelector('[name="date"]').value
     const reseller = document.querySelector('[name="reseller"]').value
-    const ship = document.querySelector('[name="ship"]').value
+    const ship = document.querySelector('[name="ship"]')
+    let unit_id = document.querySelector('[name="business_unit"]').value ?? null
+
+    if (unit_id === '') {
+      unit_id = null
+    }
 
     var info = {}
     info.start_date = date
+    info.business_unit_id = unit_id
 
     if (reseller !== '' && ship !== '') {
       url = url + `/ship/${ship}`

@@ -2,6 +2,7 @@
 namespace App\Models;
 
 use CodeIgniter\Model;
+use Config\Services;
 use App\Libraries\Api;
 use App\Libraries\Build;
 
@@ -34,7 +35,7 @@ class Price extends Model
         $this->api     = new Api();
         $this->build   = new Build();
         $this->page    = new \App\Models\Page();
-        $this->session = \Config\Services::session();
+        $this->session = Services::session();
 
         $this->model    = '';
         $this->attrib   = array('class' => 'center');
@@ -79,29 +80,16 @@ class Price extends Model
                 $aux .= custom('td', '', $row->reseller_name);
                 $aux .= custom('td', '', $row->ship_name);
                 $aux .= custom('td', '', $row->service_name);
-                $aux .= custom('td', '', $row->pax_name);
-                $aux .= custom('td', '', $row->symbol_currency." ".$row->price);
+                $aux .= custom('td', '', $row->symbol_currency.' '.$row->adult);
+                $aux .= custom('td', '', $row->symbol_currency.' '.$row->children);
+                $aux .= custom('td', '', ($row->infant == 1) ? 'Yes' : 'No');
+                $aux .= custom('td', '', ($row->courtesy == 1) ? 'Yes' : 'No');
                 $aux .= custom('td', '', $row->iso);
-
-                $span_down = custom('span', array('class' => 'caret'), '');
-                $btn_down  = custom('button', array('class' => 'btn btn-default dropdown-toggle', 'type' => 'button', 'id' => 'dropdown-'.$row->price_id, 'data-toggle' => 'dropdown', 'aria-haspopup' => 'true', 'aria-expanded' => 'false'), 'Show date ' . $span_down);
-
-                $head_purchase = custom('li', array('class' => 'dropdown-header'), 'Range Date to Purchase');
-                $a_purcahse    = custom('a', array('href' => '#'), $row->start_date_purchase.' - '.$row->end_date_purchase);
-
-                $li_purchase  = custom('li', '', $a_purcahse);
-                $head_seasson = custom('li', array('class' => 'dropdown-header'), 'Season date');
-
-                $a_seasson  = custom('a', array('href' => '#'), $row->seasson_start.' - '.$row->seasson_end);
-                $li_seasson = custom('li', '', $a_seasson);
-
-                $ul_down      = custom('ul', array('class' => 'dropdown-menu', 'aria-labelledby' => 'dropdown-'.$row->price_id), $head_purchase.$li_purchase.$head_seasson.$li_seasson);
-                $section_down = custom('div', array('class' => 'dropdown'), $btn_down. $ul_down);
-
-                $aux .= custom('td', '', $section_down);
+                $aux .= custom('td', '', $row->start_date_purchase);
+                $aux .= custom('td', '', $row->end_date_purchase);
 
                 $status = '';
-                $delete = '';
+
                 if ($row->active_status == 1)
                 {
                     $status = custom('span', $this->active, 'Active');
@@ -111,35 +99,35 @@ class Price extends Model
                     $status = custom('span', $this->inactive, 'Inactive');
                 }
 
-                $status_attrib                = $this->attrib;
-                $status_attrib['data-status'] =  $row->price_id;
+                $status_attrib = $this->attrib;
 
+                $delete = '';
                 $aux .= custom('td', $status_attrib, $status);
 
                 if ($rol_id == 1 || in_array('u_prices', $this->session->get('permissions')))
                 {
-                    $path = 'prices/' . $row->price_id;
-                    
+                    $this->anchor_attrib['href']  = '#';
                     $this->anchor_attrib['class'] = 'edit';
-                    $this->anchor_attrib['href']  = base_url($path);
 
                     $edit = custom('i', array('class' => 'fas fa-edit'), '');
                     $edit = custom('a', $this->anchor_attrib, $edit);
                 }
+
                 if ($rol_id == 1 || in_array('d_prices', $this->session->get('permissions')))
                 {
-                    if ($row->active_status == 1) 
+                    if ($row->active_status == 1)
                     {
                         $this->anchor_attrib['href']    = '#';
                         $this->anchor_attrib['class']   = 'delete';
-                        $this->anchor_attrib['data-id'] = $row->price_id;
-                    
+
                         $delete = custom('i', array('class' => 'fas fa-trash'), '');
                         $delete = custom('a', $this->anchor_attrib, $delete);
                     }
 
                     $aux .= custom('td', $this->attrib, $edit . $delete);
                 }
+
+                $aux .= custom('td', $this->attrib, '');
 
                 $this->model .= custom('tr', '', $aux);
             }

@@ -46,9 +46,16 @@ const schedules = {
         }
       })
 
+      const info = {
+        ship: arriveData.ship_id,
+        unities: arriveData.business_unit_id
+      }
+
+      const params = utils.filterQueryParams(info)
+
       service.append(new Option('-- Choose option --', ''))
 
-      utils.api(JSON.stringify({}), `${apiHost}equivalences/ship/${arriveData.ship_id}`, 'GET', schedules.serviceList, service)
+      utils.api(JSON.stringify({}), `${apiHost}equivalences/list?${params}`, 'GET', schedules.serviceList, service)
     }
 
     if (overlap != null) {
@@ -185,13 +192,13 @@ const schedules = {
               privateService = 1
             }
 
-            let channel = document.querySelector('[name="channel"]')
+            let channel = document.querySelector('[name="channel"]').value
 
             const info = {
-              arrive_id: arriveData.id,
+              arrive_id: arriveData.id ?? arriveData.arrive_id,
               shared_schedule: sharedSchedule,
               private_service: privateService,
-              channel_id: channel.value,
+              channel_id: channel,
               end_date: arriveData.arrival_date,
               start_date: arriveData.arrival_date,
               reseller_id: arriveData.reseller_id,

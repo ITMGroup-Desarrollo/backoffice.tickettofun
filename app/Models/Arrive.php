@@ -76,7 +76,7 @@ class Arrive extends Model
     public function get_data($id, $slug = '')
     {
         $params   = new stdClass();
-        $endpoint = GET_ARRIVES_ROUTE . '/' . $id;
+        $endpoint = 'api/v1/arrive/' . $id;
 
         if ($slug == 'arriveallotment')
         {
@@ -100,6 +100,7 @@ class Arrive extends Model
             $arrives->reseller_id   = $response->message->reseller_id;
             $arrives->channel_name  = $response->message->channel_name;
             $arrives->reseller_name = $response->message->reseller_name;
+            $arrives->business_unit = $response->message->business_unit_id;
 
             $arrives->active                = $response->message->active_status;
             $arrives->ship_id               = $response->message->ship_id;

@@ -77,6 +77,7 @@ class Equivalence extends Model
                 $this->anchor_attrib = array();
 
                 $aux .= custom('td', '', $row->service_name);
+                $aux .= custom('td', '', $row->unity_name);
                 $aux .= custom('td', '', $row->reseller_name);
                 $aux .= custom('td', '', $row->code);
                 $aux .= custom('td', '', $row->lmps_code);
@@ -128,7 +129,7 @@ class Equivalence extends Model
         else
         {
             $aux = '';
-            for ($i = 0; $i < 6; $i++) {
+            for ($i = 0; $i < 8; $i++) {
                 $aux .= custom('td', '', '');
             }
 

@@ -7,6 +7,7 @@ use App\Libraries\Api;
 class Allotments extends BaseController
 {
     public $api;
+    public $ship;
     public $arrive;
     public $allotment;
 
@@ -90,7 +91,7 @@ class Allotments extends BaseController
             '{content}', $form, $data['contents']
         );
 
-        $ship = $this->Ship->get_data('',$option);
+        $ship = $this->ship->get_data('',$option);
         $ship = 'window.ships = ' . json_encode($ship);
 
         $script = custom('script', '', $ship);
@@ -112,9 +113,25 @@ class Allotments extends BaseController
 
         $data = $this->page->get_contents();
 
-        $arrive_data = $this->arrive->get_data($id);
+        // Get arrive information
+        $endpoint = 'api/v1/arrive/'.$id;
 
-        $call = $arrive_data->reseller_name . ' / ';
+        $token = $this->session->get('token');
+
+        $response = json_decode(
+            $this->api->request_api('GET', $endpoint, new stdClass(), $token)
+        );
+
+        $call = '';
+        if ($response->code != 200)
+        {
+            redirect('arrives/list');
+        }
+
+        $arrive_data = $response->message;
+
+        $call .= $arrive_data->unity_name . ' / ';
+        $call .= $arrive_data->reseller_name . ' / ';
         $call .= $arrive_data->ship_name . ' / ';
         $call .= $arrive_data->arrival_date . ' / ';
         $call .= $arrive_data->arrival_time . '-' . $arrive_data->departure_time;

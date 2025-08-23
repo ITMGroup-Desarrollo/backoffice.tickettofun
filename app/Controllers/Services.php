@@ -29,6 +29,8 @@ class Services extends BaseController
 
         if ($option == 'list')
         {
+            $businessUnitElement = $this->user->get_business_unties_element(true, '', 'inline');
+
             $table = $this->service->get_list();
 
             $data['contents'] = str_replace(
@@ -36,13 +38,15 @@ class Services extends BaseController
             );
 
             $data['contents'] = str_replace(
-                '{content}', $table, $data['contents']
+                '{content}', $businessUnitElement.$table, $data['contents']
             );
         }
         else
         {
+            $businessUnitElement = $this->user->get_business_unties_element(true, '', 'wrapper');
+
             $form = $this->service->get_form();
-            $form = str_replace('{id}', 'add-service', $form);
+            $form = str_replace('{id}', 'add-service', $businessUnitElement.$form);
 
             $data['contents'] = str_replace(
                 '{title}', 'New service', $data['contents']

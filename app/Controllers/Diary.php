@@ -41,9 +41,27 @@ class Diary extends BaseController
             '{id}', 'form-date', $data['contents']
         );
 
-        $data['contents'] = str_replace(
-            '{sub-title}', 'Port of Costa Maya', $data['contents']
-        );
+        $ports = $this->session->get('business_unities');
+
+        if (count($ports) > 1) {
+            $businessUnitElement = $this->user->get_business_unties_element(
+                false,
+                $ports[0]->unity_id,
+                'calendar'
+            );
+
+            $data['contents'] = str_replace(
+                '{sub-title}', '', $data['contents']
+            );
+
+            $data['contents'] = str_replace(
+                '{port}', $businessUnitElement, $data['contents']
+            );
+        } else {
+            $data['contents'] = str_replace(
+                '{sub-title}', $ports[0]->unity_name, $data['contents']
+            );
+        }
 
         $data['contents'] = str_replace(
             '{id}', 'form-picker', $data['contents']
@@ -166,7 +184,8 @@ class Diary extends BaseController
             $diary = $this->diaries->get_location_distribution(
                 $data->date,
                 NULL,
-                $channel
+                $channel,
+                $data->business_unit_id
             );
 
             if ($diary['code'] == 200)
@@ -187,18 +206,33 @@ class Diary extends BaseController
     public function print()
     {
         $date = $this->request->uri->getSegment(3);
+        $business_unit_id = $this->request->uri->getSegment(4);
 
         $channel = 1;
-        if ($this->request->uri->getSegment(4) != null) {
-            $channel = $this->request->uri->getSegment(4);
+        if ($this->request->uri->getSegment(5) != null) {
+            $channel = $this->request->uri->getSegment(5);
         }
 
         $pdf = new \App\Libraries\Pdfgenerator();
 
-        $contents = $this->diaries->get_location_distribution($date, 'PRINT', $channel);
+        $contents = $this->diaries->get_location_distribution(
+            $date,
+            'PRINT',
+            $channel,
+            $business_unit_id
+        );
+
+        $ports = $this->session->get('business_unities');
+
+        $index = array_search($business_unit_id, array_column($ports, 'unity_id'));
+        $port = $ports[$index];
 
         $title        = 'Diary - ' . $date;
-        $header_title = 'Port of Costa Maya ' . date('l jS M Y', strtotime($date));
+        $header_title = sprintf(
+            'Port of %s %s',
+            $port->unity_name,
+            date('l jS M Y', strtotime($date))
+        );
 
         $data = array();
         $data["title"] = $title;

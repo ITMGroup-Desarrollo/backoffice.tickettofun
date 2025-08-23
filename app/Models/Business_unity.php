@@ -108,7 +108,7 @@ class Business_unity extends Model
                 }
                 if ($rol_id == 1 || in_array('d_business', $this->session->get('permissions')))
                 {
-                    if ($row->active_status == 1) 
+                    if ($row->active_status == 1)
                     {
                         $this->anchor_attrib['href']    = '#';
                         $this->anchor_attrib['class']   = 'delete';
@@ -161,18 +161,24 @@ class Business_unity extends Model
             $this->api->request_api('GET', $endpoint, $params, $token)
         );
 
-        $service = new stdClass();
+        $business = new stdClass();
 
         if ($response->code == 200)
         {
-            $service->id          = $response->message->unity_id;
-            $service->name        = $response->message->unity_name;
-            $service->active      = $response->message->active_status;
-            $service->destination = $response->message->destination_id;     
+            $calendarConfig = json_decode($response->message->calendar_config);
+
+            $business->id          = $response->message->unity_id;
+            $business->name        = $response->message->unity_name;
+            $business->active      = $response->message->active_status;
+            $business->destination = $response->message->destination_id;
+            $business->textColor = $calendarConfig->textColor;
+            $business->borderColor = $calendarConfig->borderColor;
+            $business->backgroundColor = $calendarConfig->backgroundColor;
+
         }else{
             redirect('/business/list');
         }
 
-        return $service;
+        return $business;
     }
 }

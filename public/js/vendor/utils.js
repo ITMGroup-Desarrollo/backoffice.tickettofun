@@ -58,8 +58,45 @@ var utils = {
     }
 
     xHR.setRequestHeader('Authorization', token)
+    xHR.mode = 'cors'
     xHR.withCredentials = true
     xHR.send(data)
+  },
+  fetchApi: async function(data, endpoint, httpverb, method, element) {
+    try {
+      if (method !== null) {
+        MicroModal.show('wait-modal')
+      }
+
+      const fetchConfig =  {
+        method: httpverb,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': window.token,
+        },
+        mode: 'cors',
+        credentials: 'include'
+      }
+
+      if (httpverb != 'GET') {
+        fetchConfig.body = data
+      }
+
+      const response = await fetch(endpoint, fetchConfig);
+
+      let result
+      let code = 200
+
+      if (response.ok) {
+        result = await response.json();
+      } else {
+        code = response.status;
+      }
+
+      method(result, code, element)
+    } catch (error) {
+      utils.displayModal(alertModal)
+    }
   },
   post: function (data, endpoint, method, element) {
     if (method !== null) MicroModal.show('wait-modal')
@@ -79,6 +116,30 @@ var utils = {
     xHR.open('POST', endpoint, true)
     xHR.setRequestHeader('Content-Type', 'application/json')
     xHR.send(data)
+  },
+  filterQueryParams: (info) => {
+    let params = '';
+    Object.keys(info).forEach(function (key) {
+      if (info[key] !== null) {
+        params += `filter[${key}]=${info[key]}&`
+      }
+    });
+
+    params = params.slice(0, -1)
+
+    return params
+  },
+  getLocations: (unitId, locationsElement, method) => {
+    const filters = {
+      unities: unitId
+    }
+
+    let url = `${apiHost}locations`
+    let params = utils.filterQueryParams(filters)
+
+    url = `${url}?${params}`
+
+    utils.fetchApi(JSON.stringify({}), url, 'GET', method, locationsElement)
   },
   setPermissions: function (response) {
     try {
@@ -341,7 +402,7 @@ var utils = {
   },
   getDataTableConfig: function () {
     const configDataTable = {
-      fixedHeader: true,
+            fixedHeader: true,
       iDisplayLength: 20,
       sPaginationType: 'full_numbers',
       aLengthMenu: [[20, 50, 100, -1], [20, 50, 100, 'All']]
@@ -369,7 +430,7 @@ var utils = {
       textStatus = 'Inactive'
     }
 
-    var statusElement = permissions.statusElement.replace('{status}', labelStatus)
+    let statusElement = permissions.statusElement.replace('{status}', labelStatus)
     statusElement = statusElement.replace('{s_text}', textStatus)
     statusElement = statusElement.replace('{status_value}', id)
 
@@ -384,11 +445,11 @@ var utils = {
     }
 
     if (permissions.u === 1) {
-      actions = `${actions} ${permissions.uElement.replace('{id}', id)}`
+      actions = `${actions} ${permissions.uElement.replace(regexId, id)}`
     }
 
     if (permissions.d === 1) {
-      actions = `${actions} ${permissions.dElement.replace('{id}', id)}`
+      actions = `${actions} ${permissions.dElement.replace(regexId, id)}`
     }
 
     return actions

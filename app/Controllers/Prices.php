@@ -2,6 +2,7 @@
 namespace App\Controllers;
 
 use App\Libraries\Build;
+use App\Models\Price;
 
 class Prices extends BaseController
 {
@@ -11,7 +12,7 @@ class Prices extends BaseController
     public function __construct()
     {
         $this->build   = new Build();
-        $this->price = new \App\Models\Price();
+        $this->price = new Price();
     }
 
     /**
@@ -19,8 +20,9 @@ class Prices extends BaseController
     */
     public function index()
     {
-        if ( ! $this->user->active_session())
+        if ( ! $this->user->active_session()) {
             return redirect()->to(base_url('signin'));
+        }
 
         $view   = $this->request->uri->getSegment(1);
         $option = $this->request->uri->getSegment(2);
@@ -36,11 +38,9 @@ class Prices extends BaseController
             $table = $this->price->get_list();
 
             $data['contents'] = str_replace(
-                '{title}', 'List of Price', $data['contents']
-            );
-
-            $data['contents'] = str_replace(
-                '{content}', $table, $data['contents']
+               ['{title}', '{table}', '{content}'],
+               ['List of Price', $table, ''],
+               $data['contents']
             );
         }
         else
@@ -52,15 +52,9 @@ class Prices extends BaseController
             $table = $this->build->build_components($contents['PRICES_CONFIG_TABLE']);
 
             $data['contents'] = str_replace(
-                '{title}', 'New price', $data['contents']
-            );
-
-            $data['contents'] = str_replace(
-                '{content}', $form, $data['contents']
-            );
-
-            $data['contents'] = str_replace(
-                '{table}', $table, $data['contents']
+                ['{title}', '{content}', '{table}'],
+                ['New price', $form, $table],
+                $data['contents']
             );
 
             $price           = 'window.user_create_id = ' . $this->session->get('user_id');

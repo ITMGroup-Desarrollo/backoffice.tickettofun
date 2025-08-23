@@ -27,7 +27,7 @@ class Api
 
         $endpoint   = TOKEN_ROUTE;
         $params->id = getenv('apiKey');
-        
+
         return $this->_request('POST', $endpoint, $this->headers, $params);
     }
 
@@ -49,7 +49,7 @@ class Api
         $curl = curl_init();
         $data = json_encode($params);
 
-        $endpoint = getenv('apiHost') . $endpoint;
+        $endpoint = 'http://host.docker.internal:8181/' . $endpoint;
 
         curl_setopt_array($curl, array(
             CURLOPT_URL            => $endpoint,

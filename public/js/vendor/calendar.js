@@ -1,6 +1,8 @@
 'use strict'
+var calendar
 var configCalendar = {}
 var events = window.eventData
+const element = document.getElementById('full-calendar')
 
 for (var i = 0, l = events.length; i < l; i++) {
   events[i].end = new Date(events[i].end)
@@ -44,10 +46,79 @@ if (md.mobile() !== null) {
   }
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-  var element = document.getElementById('full-calendar')
+const getArrives = (businessUnit) => {
+  let url = `${apiHost}arrives/list`
+  const filters = {
+     status: 1
+  }
 
-  var calendar = new FullCalendar.Calendar(element, configCalendar)
+  if (businessUnit !== '') {
+    filters.unities = businessUnit
+  }
+
+  let params = utils.filterQueryParams(filters)
+
+  url = `${url}?${params}`
+
+  utils.fetchApi(JSON.stringify({}), url, 'GET', reBuildCalendar)
+}
+
+const reBuildCalendar = (response, code) => {
+  try {
+    MicroModal.close('wait-modal')
+
+    if (Object.prototype.hasOwnProperty.call(codes, code)) {
+      if (code === 404) {
+        utils.displayModal(alertModal, 'Not found calls with the selected data')
+      } else {
+        utils.displayModal(alertModal, response.message)
+      }
+    } else {
+      events = []
+      const arrives = response.message
+      for (let i = 0, l = arrives.length; i < l; i++) {
+        let calendarConfig = JSON.parse(arrives[i].calendar_config)
+
+        events.push({
+          allDay: false,
+          title: `${arrives[i].unity_name}-${arrives[i].reseller_name}\n${arrives[i].ship_name}`,
+          end: new Date(`${arrives[i].arrival_date} ${arrives[i].arrival_time}`),
+          start: new Date(`${arrives[i].arrival_date} ${arrives[i].arrival_time}`),
+          textColor: calendarConfig.textColor,
+          borderColor: calendarConfig.borderColor,
+          backgroundColor: calendarConfig.backgroundColor,
+        })
+      }
+
+      configCalendar.events = events
+
+      calendar.destroy()
+
+      calendar = new FullCalendar.Calendar(element, configCalendar)
+
+      calendar.render()
+    }
+  } catch (e) {
+    console.log(e)
+    utils.displayModal(alertModal, '')
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  calendar = new FullCalendar.Calendar(element, configCalendar)
 
   calendar.render()
+
+  const businessUnit = document.querySelector('[name="business_unit"]')
+
+  if (businessUnit !== null) {
+    businessUnit.addEventListener('change', (e) => {
+      e.preventDefault()
+
+      MicroModal.show('wait-modal')
+      const businessUnit = (e.target.value !== '') ? parseInt(e.target.value, 10) : ''
+      getArrives(businessUnit)
+
+    })
+  }
 })

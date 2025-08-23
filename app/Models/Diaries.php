@@ -49,8 +49,12 @@ class Diaries extends Model
         $this->specifications = 'SHIP_SPEC';
     }
 
-    public function get_location_distribution($next_date = NULL, $view = NULL, $channel_id = 1)
-    {
+    public function get_location_distribution(
+        $next_date = NULL,
+        $view = NULL,
+        $channel_id = 1,
+        $business_unit_id = 1
+    ) {
         $this->settings = $this->page->get_settings('diary');
 
         $element = $this->build->build_components($this->settings['SPEC']);
@@ -79,8 +83,8 @@ class Diaries extends Model
             $next_date = $date->format('Y-m-d');
         }
 
-        $query = 'CALL get_allotment_reservation(?, ?, ?, ?, ?, ?, ?)';
-        $data = array('bydate', NULL, $next_date, $channel_id, NULL, NULL, NULL);
+        $query = 'CALL get_allotment_reservation(?, ?, ?, ?, ?, ?, ?, ?)';
+        $data = array('by_date', NULL, $next_date, $channel_id, NULL, NULL, NULL, $business_unit_id);
 
         $result = $this->db->query($query, $data);
 
@@ -242,8 +246,9 @@ class Diaries extends Model
             // If is a print option don't build this secction
             if ($this->print == 0) {
                 // Locations distribution
-                $data   = array($next_date, $channel_id);
-                $query  = 'CALL get_sales_tours(?,?)';
+                $data   = array($next_date, $channel_id, $business_unit_id);
+
+                $query  = 'CALL get_sales_tours(?,?,?)';
                 $result = $this->db->query($query, $data);
 
                 foreach ($result->getResult() as $row)

@@ -70,6 +70,35 @@ var equivalences = {
     document.querySelector('[name="lmps-code"]').value = equivalencesData.lmps_code
     document.querySelector('[name="service_name"]').value = equivalencesData.service_reseller
     document.querySelector('[name="status"]').value = equivalencesData.active
+  },
+  serviceList: (response, element) => {
+    try {
+      MicroModal.close('wait-modal')
+      response = JSON.parse(response)
+
+      if (Object.prototype.hasOwnProperty.call(codes, response.code)) {
+         if (response.code === 404) {
+          utils.displayModal(alertModal, 'Not found services')
+        } else {
+          utils.displayModal(alertModal, response.message)
+        }
+      } else {
+        const data = {
+          key: 'service_name',
+          value: 'service_id',
+          element: element
+        }
+        console.log(element)
+        response.message = response.message.filter((row) => {
+          return row.active_status == 1
+        })
+
+        utils.buildOptions(data, response.message, 1)
+      }
+    } catch (e) {
+      console.log(e)
+      utils.displayModal(alertModal, '')
+    }
   }
 }
 
@@ -149,12 +178,39 @@ form = document.querySelector('#add-equivalence')
 if (form != null) {
   var statusCombo = form.querySelector('[name="status"]')
   statusCombo.parentElement.parentElement.remove()
+
+  const unities = document.querySelector('.form-bussines-unities')
+  if (unities != null) {
+    form.prepend(unities)
+  }
+
+  const service = document.querySelector('[name="service"]')
+  utils.removeOptions(service, 0)
+
+  unities.addEventListener('change', (e) => {
+    e.preventDefault()
+
+    const service = document.querySelector('[name="service"]')
+    utils.removeOptions(service, 0)
+
+    if (e.target.value !== '') {
+      const info = {
+        unities: e.target.value
+      }
+
+      const params = utils.filterQueryParams(info)
+
+      utils.api(JSON.stringify({}), `${apiHost}service/list?${params}`, 'GET', equivalences.serviceList, service)
+    }
+  })
 }
 
 form = document.querySelector('#update-equivalence')
 if (form != null) {
   equivalences.setData()
 }
+
+const businessUnitElement = document.querySelector('[name="business_unit"]')
 
 var servicesTable = document.querySelector('#equivalences-registers')
 if (servicesTable !== null) {
@@ -163,4 +219,19 @@ if (servicesTable !== null) {
     config.order = [[1, 'asc']]
     $('#equivalences-registers').dataTable(config)
   })
+
+  if (businessUnitElement != null) {
+    businessUnitElement.addEventListener('change', (e) => {
+      e.preventDefault()
+
+      const table = $(servicesTable).DataTable()
+      const option = e.target.options[e.target.selectedIndex]
+
+      if (option.value !== '') {
+        table.search(option.text).draw() // filter data by selected option
+      } else {
+        table.search('').draw() // reset table
+      }
+    })
+  }
 }
