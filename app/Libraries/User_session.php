@@ -1,7 +1,10 @@
 <?php
 namespace App\Libraries;
 
+use App\Libraries\Api;
 use Config\Services;
+
+use stdClass;
 
 /**
 * User session class
@@ -16,10 +19,12 @@ use Config\Services;
 */
 class User_session
 {
+    public $api;
     protected $session;
 
     public function __construct()
     {
+        $this->api = new Api();
         $this->session = Services::session();
     }
 
@@ -92,8 +97,22 @@ class User_session
     {
         $businessUnitElement = '';
 
+        # Get business unities by user
+        $token = $this->session->get('token');
+        $endpoint = 'api/v1/unities/user/'.$this->session->get('user_id');
+
+        $response = json_decode(
+            $this->api->request_api('GET', $endpoint, new stdClass(), $token)
+        );
+
         if (count($this->session->get('business_unities')) > 0) {
             $label = '';
+
+            $businessUnities = $this->session->get('business_unities');
+            if ($response->code == 200)
+            {
+                $businessUnities = $response->message;
+            }
 
             $labelClass = ['class' => 'mr-2'];
             $divClass =  ['class' => 'form-group mr-sm-3 form-bussines-unities'];
@@ -119,7 +138,6 @@ class User_session
 
             $options = custom('option', ['value' => ''], '-- Choose option --');
 
-            $businessUnities = $this->session->get('business_unities');
             foreach ($businessUnities as $businessUnit) {
                 $attrib = [
                     'value' => $businessUnit->unity_id
