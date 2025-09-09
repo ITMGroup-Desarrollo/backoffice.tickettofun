@@ -77,9 +77,23 @@ class User_session
     public function get_business_unities_params(): string
     {
         $businessUnities = '';
+
+        # Get business unities by user
+        $token = $this->session->get('token');
+        $endpoint = 'api/v1/unities/user/'.$this->session->get('user_id');
+
+        $response = json_decode(
+            $this->api->request_api('GET', $endpoint, new stdClass(), $token)
+        );
+
         if (count($this->session->get('business_unities')) > 0) {
             $values = '';
+
             $businessUnities = $this->session->get('business_unities');
+            if ($response->code == 200)
+            {
+                $businessUnities = $response->message;
+            }
 
             foreach ($businessUnities as $businessUnit) {
                 $values .= $businessUnit->unity_id.',';
