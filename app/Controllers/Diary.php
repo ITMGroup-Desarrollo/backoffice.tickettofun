@@ -61,6 +61,10 @@ class Diary extends BaseController
             $data['contents'] = str_replace(
                 '{sub-title}', $ports[0]->unity_name, $data['contents']
             );
+
+            $data['contents'] = str_replace(
+                '{port}', '', $data['contents']
+            );
         }
 
         $data['contents'] = str_replace(
