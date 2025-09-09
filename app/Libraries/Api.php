@@ -49,7 +49,7 @@ class Api
         $curl = curl_init();
         $data = json_encode($params);
 
-        $endpoint = 'http://host.docker.internal:8181/' . $endpoint;
+        $endpoint = getenv('apiHost') . $endpoint;
 
         curl_setopt_array($curl, array(
             CURLOPT_URL            => $endpoint,

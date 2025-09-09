@@ -135,10 +135,14 @@ var diary = {
             defaultDate: new Date().fp_incr(1),
             disableMobile: true,
             onChange: function (selectedDates, dateStr, instance) {
-              const businessUnit = document.querySelector('[name="business_unit"]') ?? 1
+              let businessUnit = 1
+              if (document.querySelector('[name="business_unit"]') !== null) {
+                businessUnit = document.querySelector('[name="business_unit"]').value
+              }
+
               var data = {
                 date: dateStr,
-                business_unit_id: parseInt(businessUnit.value, 10)
+                business_unit_id: parseInt(businessUnit, 10)
               }
 
               const url = `${base}/diary/get_diary`
