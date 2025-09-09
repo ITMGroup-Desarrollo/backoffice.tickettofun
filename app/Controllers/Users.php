@@ -6,6 +6,7 @@ use App\Libraries\User_session;
 class Users extends BaseController
 {
     public $user_model;
+    public $user_actions;
 
     public function __construct()
     {

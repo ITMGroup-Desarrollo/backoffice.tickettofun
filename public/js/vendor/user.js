@@ -4,6 +4,7 @@ var info
 var form
 var userData = window.user
 var userCreateId = window.user_create_id
+let business_unities_base = []
 
 var user = {
   add: function (response) {
@@ -66,6 +67,10 @@ var user = {
     document.querySelector('[name="last_name"]').value = userData.last_name
     document.querySelector('[name="first_name"]').value = userData.first_name
     document.querySelector('[name="email_addr"]').value = userData.email_addr
+
+    const business_unit = document.querySelector('[name="business_select"]')
+    $(business_unit).val(userData.business_unities)
+    business_unities_base = userData.business_unities
   }
 }
 
@@ -98,12 +103,16 @@ if (save != null) {
     valid = utils.dataValidator(fields)
 
     if (valid) {
+      const business_unit = document.querySelector('[name="business_select"]')
+
       info = {
         user_create_id: userCreateId,
         rol_id: document.querySelector('[name="rol"]').value,
         first_name: document.querySelector('[name="first_name"]').value,
         last_name: document.querySelector('[name="last_name"]').value,
-        email_addr: document.querySelector('[name="email_addr"]').value
+        email_addr: document.querySelector('[name="email_addr"]').value,
+        business_unit: $(business_unit).val(),
+        business_unit_base: business_unities_base
       }
 
       form = document.querySelector('#add-user')
@@ -146,6 +155,15 @@ form = document.querySelector('#add-user')
 if (form != null) {
   var statusCombo = form.querySelector('[name="status"]')
   statusCombo.parentElement.parentElement.remove()
+}
+
+let business_unit = document.querySelector('[name="business_select"]')
+if (business_unit != null) {
+  Array.from(business_unit.options).forEach((element, i) => {
+    if (element.value === '') {
+      business_unit.remove(i)
+    }
+  });
 }
 
 form = document.querySelector('#update-user')

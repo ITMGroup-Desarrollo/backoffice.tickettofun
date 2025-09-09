@@ -17,9 +17,13 @@ use stdClass;
 */
 class User extends Model
 {
+    public $api;
+    public $page;
+    public $build;
     public $model;
     public $active;
     public $attrib;
+    public $session;
     public $inactive;
     public $anchor_attrib;
 
@@ -171,6 +175,16 @@ class User extends Model
             $user->last_name  = $response->message->last_name;
             $user->first_name = $response->message->first_name;
             $user->email_addr = $response->message->email_addr;
+
+            $unities = [];
+            if (! empty($response->message->business_unities)) {
+                $l = count($response->message->business_unities);
+                for ($i = 0; $i < $l; $i++) {
+                    $unities[] = $response->message->business_unities[$i]->unity_id;
+                }
+            }
+
+            $user->business_unities = $unities;
         }
         else
         {
