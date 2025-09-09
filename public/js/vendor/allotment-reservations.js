@@ -335,7 +335,7 @@ var utilAjaxExecute = function () {
     var url = `${apiHost}allotment_reservations`
     var date = document.querySelector('[name="date"]').value
     const reseller = document.querySelector('[name="reseller"]').value
-    const ship = document.querySelector('[name="ship"]')
+    const ship = document.querySelector('[name="ship"]').value
     let unit_id = document.querySelector('[name="business_unit"]').value ?? null
 
     if (unit_id === '') {
