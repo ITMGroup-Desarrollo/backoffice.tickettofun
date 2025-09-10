@@ -315,7 +315,10 @@ if (printButton !== null) {
   printButton.addEventListener('click', function (e) {
     e.preventDefault()
 
-    const businessUnit = document.querySelector('[name="business_unit"]').value ?? 1
+    let businessUnit = 1
+    if (document.querySelector('[name="business_unit"]') !== null) {
+      businessUnit = document.querySelector('[name="business_unit"]').value
+    }
 
     var date = document.querySelector('[name="inputDate"]').value
     var endpoint = `${base}/diary/print/${date}/${businessUnit}`
