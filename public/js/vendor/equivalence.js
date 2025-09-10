@@ -88,7 +88,7 @@ var equivalences = {
           value: 'service_id',
           element: element
         }
-        console.log(element)
+
         response.message = response.message.filter((row) => {
           return row.active_status == 1
         })

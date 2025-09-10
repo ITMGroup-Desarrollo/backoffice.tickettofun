@@ -139,7 +139,7 @@ class Allotments extends BaseController
         $params = new stdClass();
 
         $token              = $this->session->get('token');
-        $endpoint           = GET_ALLOTMENTS_ROUTE;
+        $endpoint           = GET_ALLOTMENTS_ROUTE.'/port/'.$arrive_data->business_unit_id;
         $params->start_date = $arrive_data->arrival_date;
 
         $response = json_decode(
