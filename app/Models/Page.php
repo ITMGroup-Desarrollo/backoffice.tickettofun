@@ -221,7 +221,7 @@ class Page extends Model
                 else
                 {
                     $attrib = $this->script_attrib;
-                    $attrib['src'] = base_url($row->script_addr);
+                    $attrib['src'] = base_url($row->script_addr).'?v='.time();
 
                     $this->scripts['js'] .= custom(
                         'script',
