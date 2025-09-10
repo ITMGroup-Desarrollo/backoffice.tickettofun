@@ -18,15 +18,17 @@ class Page extends Model
     public $menu            = '';
     public $metas           = '';
     public $build;
-    public $sesion;
+    public $session;
     public $scripts         = '';
-    public $settings        = array();
+    public $settings        = [];
+    public $meta_tags       = '';
     public $page_name       = '';
     public $menu_active     = '';
-    public $script_attrib   = array();
+    public $script_attrib   = [];
     public $submenu_active  = '';
     public $settings_values = '';
     public $custom_menu_bar = '';
+
 
     public function __construct()
     {

@@ -69,7 +69,7 @@ var service = {
 
     utils.removeOptions(document.querySelector('[name="location"]'), 0)
 
-    service.getLocations(serviceData.unit_id, document.querySelector('[name="location"]'))
+    utils.getLocations(serviceData.unit_id, document.querySelector('[name="location"]'), service.addLocations)
   },
   addLocations: (response, code, locations) => {
     MicroModal.close('wait-modal')
