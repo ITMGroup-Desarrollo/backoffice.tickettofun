@@ -99,6 +99,18 @@ var equivalences = {
       console.log(e)
       utils.displayModal(alertModal, '')
     }
+  },
+  filterQueryParams: (info) => {
+    let params = '';
+    Object.keys(info).forEach(function (key) {
+      if (info[key] !== null) {
+        params += `filter[${key}]=${info[key]}&`
+      }
+    });
+
+    params = params.slice(0, -1)
+
+    return params
   }
 }
 
@@ -198,7 +210,7 @@ if (form != null) {
         unities: e.target.value
       }
 
-      const params = utils.filterQueryParams(info)
+      const params = equivalences.filterQueryParams(info)
 
       utils.api(JSON.stringify({}), `${apiHost}service/list?${params}`, 'GET', equivalences.serviceList, service)
     }

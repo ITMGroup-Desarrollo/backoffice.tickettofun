@@ -17,6 +17,18 @@ const arrives = {
       arrives.setConfigFront
     )
   },
+  filterQueryParams: (info) => {
+    let params = '';
+    Object.keys(info).forEach(function (key) {
+      if (info[key] !== null) {
+        params += `filter[${key}]=${info[key]}&`
+      }
+    });
+
+    params = params.slice(0, -1)
+
+    return params
+  },
   add: {
     init: () => {
       // Initialize pickers
@@ -210,7 +222,7 @@ const arrives = {
         info.end_date = utils.getDate(1)
       }
 
-      let params = utils.filterQueryParams(info)
+      let params = arrives.filterQueryParams(info)
 
       if (params !== '') {
         url = `${url}?${params}`
