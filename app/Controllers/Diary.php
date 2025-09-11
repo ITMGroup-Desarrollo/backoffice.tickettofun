@@ -1,17 +1,21 @@
 <?php
 namespace App\Controllers;
 
+use App\Libraries\Api;
 use App\Libraries\Build;
 use \DateTime;
+use \stdClass;
 
 class Diary extends BaseController
 {
+    public $api;
     public $build;
     public $diaries;
 
     public function __construct()
     {
         $this->build   = new Build();
+        $this->api = new Api();
         $this->diaries = new \App\Models\Diaries();
     }
 
@@ -226,7 +230,19 @@ class Diary extends BaseController
             $business_unit_id
         );
 
+        # Get business unities by user
+        $token = $this->session->get('token');
+        $endpoint = 'api/v1/unities/user/'.$this->session->get('user_id');
+
+        $response = json_decode(
+            $this->api->request_api('GET', $endpoint, new stdClass(), $token)
+        );
+
         $ports = $this->session->get('business_unities');
+        if ($response->code == 200)
+        {
+            $ports = $response->message;
+        }
 
         $index = array_search($business_unit_id, array_column($ports, 'unity_id'));
         $port = $ports[$index];
