@@ -63,9 +63,9 @@ var locations = {
   },
   setData () {
     document.querySelector('[name="name"]').value = locationsData.name
-    document.querySelector('[name="business_unit"]').value = locationsData.unity
     document.querySelector('[name="status"]').value = locationsData.active
     document.querySelector('[name="available"]').value = locationsData.available
+    document.querySelector('[name="business_unit"]').value = locationsData.unity
   }
 }
 
@@ -136,6 +136,11 @@ if (form != null) {
 
 form = document.querySelector('#update-location')
 if (form != null) {
+  const unities = document.querySelector('.form-bussines-unities')
+  if (unities != null) {
+    form.prepend(unities)
+  }
+
   locations.setData()
 }
 

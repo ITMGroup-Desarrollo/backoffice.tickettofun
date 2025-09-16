@@ -76,13 +76,14 @@ class Locations extends BaseController
         $view   = $this->request->uri->getSegment(1);
         $option = $this->request->uri->getSegment(2);
 
-
         $this->page->page_name = $view;
 
         $data = $this->page->get_contents();
 
+        $businessUnitElement = $this->user->get_business_unties_element(true, '', 'wrapper');
+
         $form = $this->location->get_form();
-        $form = str_replace('{id}', 'update-location', $form);
+        $form = str_replace('{id}', 'update-location', $businessUnitElement.$form);
 
         $data['contents'] = str_replace(
             '{title}', 'Edit location', $data['contents']
