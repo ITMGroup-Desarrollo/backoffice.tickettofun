@@ -50,10 +50,10 @@ class Diaries extends Model
     }
 
     public function get_location_distribution(
+        $business_unit_id = 1,
         $next_date = NULL,
         $view = NULL,
         $channel_id = 1,
-        $business_unit_id = 1
     ) {
         $this->settings = $this->page->get_settings('diary');
 

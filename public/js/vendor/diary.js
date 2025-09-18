@@ -6,6 +6,8 @@ configTable.searching = false
 configTable.order = [2, 'ASC']
 configTable.paging = false
 
+const port = window.business_unit
+
 var diary = {
   initPermissions: () => {
     utils.post(
@@ -135,7 +137,7 @@ var diary = {
             defaultDate: new Date().fp_incr(1),
             disableMobile: true,
             onChange: function (selectedDates, dateStr, instance) {
-              let businessUnit = 1
+              let businessUnit = port.unity_id
               if (document.querySelector('[name="business_unit"]') !== null) {
                 businessUnit = document.querySelector('[name="business_unit"]').value
               }
@@ -315,7 +317,7 @@ if (printButton !== null) {
   printButton.addEventListener('click', function (e) {
     e.preventDefault()
 
-    let businessUnit = 1
+    let businessUnit = port.unity_id
     if (document.querySelector('[name="business_unit"]') !== null) {
       businessUnit = document.querySelector('[name="business_unit"]').value
     }

@@ -35,11 +35,6 @@ class Diary extends BaseController
         $this->page->submenu_active = $option;
 
         $data      = $this->page->get_contents();
-        $locations = $this->diaries->get_location_distribution();
-
-        $data['contents'] = str_replace(
-            '{spec}', $locations['tours'], $data['contents']
-        );
 
         $data['contents'] = str_replace(
             '{id}', 'form-date', $data['contents']
@@ -48,6 +43,12 @@ class Diary extends BaseController
         $ports = $this->session->get('business_unities');
 
         if (count($ports) > 1) {
+            $locations = $this->diaries->get_location_distribution($ports[0]->unity_id);
+
+            $data['contents'] = str_replace(
+                '{spec}', $locations['tours'], $data['contents']
+            );
+
             $businessUnitElement = $this->user->get_business_unties_element(
                 false,
                 $ports[0]->unity_id,
@@ -62,6 +63,12 @@ class Diary extends BaseController
                 '{port}', $businessUnitElement, $data['contents']
             );
         } else {
+            $locations = $this->diaries->get_location_distribution($ports[0]->unity_id);
+
+            $data['contents'] = str_replace(
+                '{spec}', $locations['tours'], $data['contents']
+            );
+
             $data['contents'] = str_replace(
                 '{sub-title}', $ports[0]->unity_name, $data['contents']
             );
@@ -69,6 +76,11 @@ class Diary extends BaseController
             $data['contents'] = str_replace(
                 '{port}', '', $data['contents']
             );
+
+            $ports = 'window.business_unit = ' . json_encode($ports[0]);
+
+            $script = custom('script', '', $ports);
+            $data['scripts'] = $script .  $data['scripts'];
         }
 
         $data['contents'] = str_replace(
@@ -121,8 +133,10 @@ class Diary extends BaseController
         $date = new DateTime();
         $operation_date = $date->format('Y-m-d');
 
+        $ports = $this->session->get('business_unities');
+
         $data      = $this->page->get_contents();
-        $locations = $this->diaries->get_location_distribution($operation_date, NULL, 3);
+        $locations = $this->diaries->get_location_distribution($ports[0]->unity_id, $operation_date, NULL, 3);
 
         $data['contents'] = str_replace(
             '{spec}', $locations['tours'], $data['contents']
@@ -190,10 +204,10 @@ class Diary extends BaseController
             }
 
             $diary = $this->diaries->get_location_distribution(
+                $data->business_unit_id,
                 $data->date,
                 NULL,
-                $channel,
-                $data->business_unit_id
+                $channel
             );
 
             if ($diary['code'] == 200)
@@ -224,10 +238,10 @@ class Diary extends BaseController
         $pdf = new \App\Libraries\Pdfgenerator();
 
         $contents = $this->diaries->get_location_distribution(
+            $business_unit_id,
             $date,
             'PRINT',
-            $channel,
-            $business_unit_id
+            $channel
         );
 
         # Get business unities by user
