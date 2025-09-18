@@ -55,6 +55,11 @@ class Diary extends BaseController
                 'calendar'
             );
 
+            $ports = 'window.business_unit = ' . json_encode($ports[0]);
+
+            $script = custom('script', '', $ports);
+            $data['scripts'] = $script .  $data['scripts'];
+
             $data['contents'] = str_replace(
                 '{sub-title}', '', $data['contents']
             );
