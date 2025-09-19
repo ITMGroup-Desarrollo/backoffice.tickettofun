@@ -91,6 +91,7 @@ var diary = {
     if (businessUnit !== null) {
       businessUnit.addEventListener('change', (e) => {
         e.preventDefault()
+        e.stopImmediatePropagation()
 
         var data = {
           date: document.querySelector('[name="inputDate"]').value,
@@ -181,7 +182,9 @@ var diary = {
         inputElement.value = text
 
         if (id === 'port_destiny' && text === '') {
-          inputElement.value = 'Costa Maya'
+          const businessUnit = document.querySelector('[name="business_unit"]')
+
+          inputElement.value = businessUnit.options[businessUnit.selectedIndex].text
         }
 
         if (id === 'all_aboard') {
