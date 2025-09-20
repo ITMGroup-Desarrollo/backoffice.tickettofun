@@ -26,11 +26,14 @@ class Locations extends BaseController
         $this->page->menu_active    = 'locations';
         $this->page->submenu_active = $option;
 
+        $businessUnitElement = '';
         $data = $this->page->get_contents();
 
         if ($option == 'list')
         {
-            $businessUnitElement = $this->user->get_business_unties_element(true, '', 'inline');
+            if (count($this->session->get('business_unities')) > 1) {
+                $businessUnitElement = $this->user->get_business_unties_element(true, '', 'inline');
+            }
 
             $table = $this->location->get_list($this->user->get_business_unities_params());
 
@@ -44,7 +47,9 @@ class Locations extends BaseController
         }
         else
         {
-            $businessUnitElement = $this->user->get_business_unties_element(true, '', 'wrapper');
+            if (count($this->session->get('business_unities')) > 1) {
+                $businessUnitElement = $this->user->get_business_unties_element(true, '', 'wrapper');
+            }
 
             $form = $this->location->get_form();
             $form = str_replace('{id}', 'add-location', $businessUnitElement.$form);

@@ -42,7 +42,7 @@ class Equivalence extends Model
         $this->inactive = array('class' => LABEL_DANGER);
     }
 
-    public function get_list()
+    public function get_list(string $businessUnities)
     {
         $rol_id        = $this->session->get('rol_id');
         $table_content = $this->page->get_settings('equivalences');
@@ -60,7 +60,7 @@ class Equivalence extends Model
 
         // Call API here!
         $params   = new stdClass();
-        $endpoint = GET_EQUIVALENCES_ROUTE;
+        $endpoint = GET_EQUIVALENCES_ROUTE.'/list?'.$businessUnities;
 
         $token = $this->session->get('token');
         $response = json_decode(

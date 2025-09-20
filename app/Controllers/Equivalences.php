@@ -25,13 +25,16 @@ class Equivalences extends BaseController
         $this->page->menu_active    = 'equivalences';
         $this->page->submenu_active = $option;
 
+        $businessUnitElement = '';
         $data = $this->page->get_contents();
 
         if ($option == 'list')
         {
-            $businessUnitElement = $this->user->get_business_unties_element(true, '', 'inline');
+            if (count($this->session->get('business_unities')) > 1) {
+                $businessUnitElement = $this->user->get_business_unties_element(true, '', 'inline');
+            }
 
-            $table = $this->equivalence->get_list();
+            $table = $this->equivalence->get_list($this->user->get_business_unities_params());
 
             $data['contents'] = str_replace(
                 '{title}', 'List of equivalences', $data['contents']
@@ -43,7 +46,9 @@ class Equivalences extends BaseController
         }
         else
         {
-            $businessUnitElement = $this->user->get_business_unties_element(true, '', 'wrapper');
+            if (count($this->session->get('business_unities')) > 1) {
+                $businessUnitElement = $this->user->get_business_unties_element(true, '', 'wrapper');
+            }
 
             $form = $this->equivalence->get_form();
             $form = str_replace('{id}', 'add-equivalence', $businessUnitElement.$form);
