@@ -232,9 +232,16 @@ var allotment = {
     vendor.options.length = 0
     vendor.append(new Option('-- Choose option --', ''))
 
+    let unit_id = document.querySelector('[name="business_unit"]').value ?? null
+
+    if (unit_id === '') {
+      unit_id = null
+    }
+
     info = {
       type: 'channel_search',
-      start_date: document.querySelector('[name="date"]').value
+      start_date: document.querySelector('[name="date"]').value,
+      business_unit_id: unit_id
     }
 
     utils.api(JSON.stringify(info), `${apiHost}allotment_reservations/channel/1`, 'POST', allotment.buildfilterVendors)
@@ -300,9 +307,16 @@ if (vendor != null) {
   vendor.addEventListener('change', function (e) {
     id = $(this).val()
 
+    let unit_id = document.querySelector('[name="business_unit"]').value ?? null
+
+    if (unit_id === '') {
+      unit_id = null
+    }
+
     info = {
       type: 'reseller_search',
-      start_date: document.querySelector('[name="date"]').value
+      start_date: document.querySelector('[name="date"]').value,
+      business_unit_id: unit_id
     }
 
     for (var i = ship.options.length - 1; i > 0; i--) {
@@ -320,6 +334,14 @@ if (form != null) {
   const unities = document.querySelector('.form-bussines-unities')
 
   form.prepend(unities)
+
+  unities.addEventListener('change', function(e) {
+    e.preventDefault()
+
+    if (e.target.value !== '') {
+      allotment.uploadVendor()
+    }
+  })
 
   let search = document.querySelector('.search')
 
