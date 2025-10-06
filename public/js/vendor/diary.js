@@ -284,8 +284,15 @@ var send = document.querySelector('[name="send"]')
 if (send !== null) {
   send.addEventListener('click', function (e) {
     e.preventDefault()
+
+    let businessUnit = port.unity_id
+    if (document.querySelector('[name="business_unit"]') !== null) {
+      businessUnit = document.querySelector('[name="business_unit"]').value
+    }
+
     var data = {
-      date: document.querySelector('[name="inputDate"]').value
+      date: document.querySelector('[name="inputDate"]').value,
+      business_unit_id: businessUnit
     }
 
     utils.api(JSON.stringify(data), `${apiHost}general/sendmail`, 'POST', diary.sendmail)
