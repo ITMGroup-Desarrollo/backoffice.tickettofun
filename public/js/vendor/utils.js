@@ -259,7 +259,7 @@ var utils = {
       index = 0
     }
 
-    if (Object.prototype.hasOwnProperty.call('active_status', options[0])) {
+    if (Object.hasOwn(options[0], 'active_status')) {
       for (var i in options) {
         if (options[i]['active_status'] === 1) {
           element.append(new Option(options[i][key], options[i][value]))
@@ -270,9 +270,9 @@ var utils = {
               element.options.item(index).setAttribute(k, v)
             }
           }
-        }
 
-        index++
+          index++
+        }
       }
     } else {
       for (var i in options) {
