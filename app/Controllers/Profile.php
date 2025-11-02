@@ -81,7 +81,7 @@ class Profile extends BaseController
             '{content}', $form, $data['contents']
         );
 
-        $user = $this->User->get_data($option);
+        $user = $this->user->get_data($option);
         $user = 'window.user = ' . json_encode($user);
 
         $script = custom('script', '', $user);

@@ -76,6 +76,16 @@ class Account_profile extends Model
             $user->email_addr    = $response->message->email_addr;
             $user->active        = $response->message->active_status;
             $user->avatar        = $response->message->avatar;
+
+            $unities = [];
+            if (! empty($response->message->business_unities)) {
+                $l = count($response->message->business_unities);
+                for ($i = 0; $i < $l; $i++) {
+                    $unities[] = $response->message->business_unities[$i]->unity_id;
+                }
+            }
+
+            $user->business_unities = $unities;
         }
 
         return $user;

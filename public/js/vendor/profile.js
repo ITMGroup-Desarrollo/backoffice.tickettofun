@@ -102,7 +102,9 @@ if (saveprofile != null) {
         user_password: document.querySelector('[name="user_password"]').value,
         confirm_password: document.querySelector('[name="confirm_password"]').value,
         active_status: document.querySelector('[name="status"]').value,
-        avatar: document.querySelector('[name="hidden-avatar"]').value
+        avatar: document.querySelector('[name="hidden-avatar"]').value,
+        business_unit: profileData.business_unities,
+        business_unit_base: profileData.business_unities
       }
 
       form = document.querySelector('#account-profile')
