@@ -23,20 +23,9 @@ class App extends BaseConfig
      *
      * @var string
      */
-    public $baseURL = 'http://localhost:8080/';
+    public $baseURL = 'http://10.11.190.36/tickettofun/backoffice/';
+public $indexPage = '';
 
-    /**
-     * --------------------------------------------------------------------------
-     * Index File
-     * --------------------------------------------------------------------------
-     *
-     * Typically this will be your index.php file, unless you've renamed it to
-     * something else. If you are using mod_rewrite to remove the page set this
-     * variable so that it is blank.
-     *
-     * @var string
-     */
-    public $indexPage = 'index.php';
 
     /**
      * --------------------------------------------------------------------------

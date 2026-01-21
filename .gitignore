@@ -96,3 +96,8 @@ writable/cache/*
 !writable/cache/index.html
 writable/uploads/*
 !writable/uploads/index.html
+
+public/img/*
+.htaccess
+public/.htaccess
+src/app/app.php
