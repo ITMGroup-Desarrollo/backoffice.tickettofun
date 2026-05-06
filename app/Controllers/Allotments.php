@@ -121,7 +121,6 @@ class Allotments extends BaseController
         $response = json_decode(
             $this->api->request_api('GET', $endpoint, new stdClass(), $token)
         );
-
         $call = '';
         if ($response->code != 200)
         {

@@ -129,7 +129,7 @@ var diary = {
 
           const month = date.getMonth()
           const year = date.getFullYear()
-          const maxDate = utils.dateFormat('Y-m-d', new Date(year, month + 1, 7))
+          const maxDate = utils.dateFormat('Y-m-d', new Date(year, month + 1, 31))
 
           let configFlat = {
             altInput: true,
@@ -154,7 +154,7 @@ var diary = {
           }
 
           if (data.s === 0) {
-            configFlat.maxDate = maxDate
+            // configFlat.maxDate = maxDate
           }
 
           flatpickr(element, configFlat)
